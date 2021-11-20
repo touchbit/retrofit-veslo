@@ -22,20 +22,38 @@ import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
+import javax.annotation.Nullable;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
-public interface ExtensionConverter<T> {
+public interface ExtensionConverter<DTO> {
 
     @EverythingIsNonNull
-    <M> Converter<M, RequestBody> requestBodyConverter(Type type,
-                                                       Annotation[] parameterAnnotations,
-                                                       Annotation[] methodAnnotations,
-                                                       Retrofit retrofit);
+    RequestBodyConverter requestBodyConverter(Type type,
+                                              Annotation[] parameterAnnotations,
+                                              Annotation[] methodAnnotations,
+                                              Retrofit retrofit);
 
     @EverythingIsNonNull
-    Converter<ResponseBody, T> responseBodyConverter(Type type,
+    ResponseBodyConverter<DTO> responseBodyConverter(Type type,
                                                      Annotation[] methodAnnotations,
                                                      Retrofit retrofit);
+
+    interface RequestBodyConverter extends Converter<Object, RequestBody> {
+
+        @Override
+        @EverythingIsNonNull
+        RequestBody convert(Object value) throws IOException;
+
+    }
+
+    interface ResponseBodyConverter<DTO> extends Converter<ResponseBody, DTO> {
+
+        @Override
+        @Nullable
+        DTO convert(@Nullable ResponseBody value) throws IOException;
+
+    }
 
 }

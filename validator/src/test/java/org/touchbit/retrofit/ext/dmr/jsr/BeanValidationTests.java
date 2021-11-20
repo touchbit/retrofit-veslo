@@ -54,8 +54,8 @@ public class BeanValidationTests {
         String uuid = UUID.randomUUID().toString();
         assertThrow(() -> MOCK_CLIENT.getUser(200, genUserDTO().firstName(uuid))
                 .assertResponse(response -> response.assertSuccessfulBody(UserDTO::assertConsistency)))
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs("" +
+                .assertClass(AssertionError.class)
+                .assertMessageIs("" +
                         "The response contains the following errors:\n" +
                         "Model property: UserDTO.firstName\n" +
                         "Expected: size must be between 1 and 10\n" +
@@ -71,8 +71,8 @@ public class BeanValidationTests {
                 .assertHttpStatusCodeIs(200)
                 .assertSuccessfulBody(UserDTO::assertConsistency));
         assertThrow(runnable)
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs("" +
+                .assertClass(AssertionError.class)
+                .assertMessageIs("" +
                         "The response contains the following errors:\n" +
                         "Model property: UserDTO.passport.number\n" +
                         "Expected: must match \"^[0-9]{6}$\"\n" +

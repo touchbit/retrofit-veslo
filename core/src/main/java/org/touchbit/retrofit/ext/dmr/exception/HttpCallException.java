@@ -22,6 +22,10 @@ public class HttpCallException extends RuntimeException {
         super(message);
     }
 
+    public HttpCallException(Throwable t) {
+        super(t);
+    }
+
     public HttpCallException(String message, Throwable t) {
         super(message, t);
     }

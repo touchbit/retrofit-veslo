@@ -23,10 +23,11 @@ import org.touchbit.retrofit.ext.dmr.client.converter.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.client.model.AnyBody;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
-import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -35,19 +36,19 @@ public class AnyBodyConverter implements ExtensionConverter<AnyBody> {
 
     @Override
     @EverythingIsNonNull
-    public <M> Converter<M, RequestBody> requestBodyConverter(final Type type,
-                                                              final Annotation[] parameterAnnotations,
-                                                              final Annotation[] methodAnnotations,
-                                                              final Retrofit retrofit) {
-        return new Converter<M, RequestBody>() {
+    public RequestBodyConverter requestBodyConverter(final Type type,
+                                                     final Annotation[] parameterAnnotations,
+                                                     final Annotation[] methodAnnotations,
+                                                     final Retrofit retrofit) {
+        return new RequestBodyConverter() {
 
             @Override
             @EverythingIsNonNull
-            public RequestBody convert(M value) {
+            public RequestBody convert(Object value) {
                 if (value instanceof AnyBody) {
                     final AnyBody anyBody = (AnyBody) value;
                     final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
-                    return RequestBody.create(mediaType, anyBody.getBytes());
+                    return RequestBody.create(mediaType, anyBody.bytes());
                 }
                 throw new ConverterUnsupportedTypeException(AnyBodyConverter.class, AnyBody.class, value.getClass());
             }
@@ -57,15 +58,15 @@ public class AnyBodyConverter implements ExtensionConverter<AnyBody> {
 
     @Override
     @EverythingIsNonNull
-    public Converter<ResponseBody, AnyBody> responseBodyConverter(final Type type,
-                                                                  final Annotation[] methodAnnotations,
-                                                                  final Retrofit retrofit) {
-        return new Converter<ResponseBody, AnyBody>() {
+    public ResponseBodyConverter<AnyBody> responseBodyConverter(final Type type,
+                                                                final Annotation[] methodAnnotations,
+                                                                final Retrofit retrofit) {
+        return new ResponseBodyConverter<AnyBody>() {
 
             @Override
-            @EverythingIsNonNull
-            public AnyBody convert(ResponseBody value) throws IOException {
-                return new AnyBody(value.bytes());
+            @Nonnull
+            public AnyBody convert(@Nullable ResponseBody value) throws IOException {
+                return value == null ? new AnyBody((byte[]) null) : new AnyBody(value.bytes());
             }
 
         };

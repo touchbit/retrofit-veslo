@@ -16,6 +16,7 @@
 
 package org.touchbit.retrofit.ext.dmr.client.model;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 
 /**
@@ -31,8 +32,12 @@ public class AnyBody implements IAnyBody {
     /**
      * @param data - byte body
      */
-    public AnyBody(byte[] data) {
+    public AnyBody(@Nullable byte[] data) {
         this.bodyData = data;
+    }
+
+    public AnyBody(String string) {
+        this(string == null ? null : string.getBytes());
     }
 
     public AnyBody assertBodyIsNotNull() {
@@ -80,12 +85,13 @@ public class AnyBody implements IAnyBody {
         return isNullBody() || bodyData.length == 0;
     }
 
-    public byte[] getBytes() {
+    public byte[] bytes() {
         return bodyData;
     }
 
-    @Override
-    public String toString() {
+    @Nullable
+    public String string() {
+        assertBodyIsNotNull();
         return new String(bodyData);
     }
 

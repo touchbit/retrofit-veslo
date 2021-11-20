@@ -18,12 +18,10 @@ package org.touchbit.retrofit.ext.dmr.client.converter.ext;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.client.model.ResourceFile;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
-import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
@@ -35,15 +33,15 @@ public class ResourceFileConverter implements ExtensionConverter<ResourceFile> {
 
     @Override
     @EverythingIsNonNull
-    public <M> Converter<M, RequestBody> requestBodyConverter(final Type type,
-                                                              final Annotation[] parameterAnnotations,
-                                                              final Annotation[] methodAnnotations,
-                                                              final Retrofit retrofit) {
-        return new Converter<M, RequestBody>() {
+    public RequestBodyConverter requestBodyConverter(final Type type,
+                                                     final Annotation[] parameterAnnotations,
+                                                     final Annotation[] methodAnnotations,
+                                                     final Retrofit retrofit) {
+        return new RequestBodyConverter() {
 
             @Override
             @EverythingIsNonNull
-            public RequestBody convert(M value) throws IOException {
+            public RequestBody convert(Object value) throws IOException {
                 if (value instanceof ResourceFile) {
                     ResourceFile resourceFile = (ResourceFile) value;
                     final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
@@ -58,9 +56,9 @@ public class ResourceFileConverter implements ExtensionConverter<ResourceFile> {
 
     @Override
     @EverythingIsNonNull
-    public Converter<ResponseBody, ResourceFile> responseBodyConverter(final Type type,
-                                                                       final Annotation[] methodAnnotations,
-                                                                       final Retrofit retrofit) {
+    public ResponseBodyConverter<ResourceFile> responseBodyConverter(final Type type,
+                                                                     final Annotation[] methodAnnotations,
+                                                                     final Retrofit retrofit) {
         return value -> {
             throw new ConvertCallException("It is forbidden to use the " + ResourceFile.class +
                     " model in a response body.");

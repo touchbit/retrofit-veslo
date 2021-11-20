@@ -66,7 +66,7 @@ public class ThrowableAsserter {
     }
 
     public static ThrowableAsserter assertThrow(Runnable runnable, Class<?> throwableClass, String message) {
-        return assertThrow(runnable).assertThrowClassIs(throwableClass).assertThrowMessageIs(message);
+        return assertThrow(runnable).assertClass(throwableClass).assertMessageIs(message);
     }
 
     public static ThrowableAsserter assertThrow(Runnable runnable) {
@@ -104,11 +104,11 @@ public class ThrowableAsserter {
         this.throwableInfo = throwableInfo;
     }
 
-    public ThrowableAsserter assertThrowMessageIs(String expected) {
+    public ThrowableAsserter assertMessageIs(String expected) {
         return assertIs("Throwable message by:", Throwable::getMessage, expected);
     }
 
-    public ThrowableAsserter assertThrowMessageContains(String... expectedStrings) {
+    public ThrowableAsserter assertMessageContains(String... expectedStrings) {
         for (String expected : expectedStrings) {
             if (throwable.getMessage() == null || !throwable.getMessage().contains(expected)) {
                 String expStr = (expected + "").replace("\n", "\\n");
@@ -122,7 +122,7 @@ public class ThrowableAsserter {
         return assertIs("Throwable message by:", Throwable::getMessage, expectedStrings);
     }
 
-    public ThrowableAsserter assertThrowClassIs(Class<?> expected) {
+    public ThrowableAsserter assertClass(Class<?> expected) {
         return assertIs("Throwable class by:", Throwable::getClass, expected);
     }
 

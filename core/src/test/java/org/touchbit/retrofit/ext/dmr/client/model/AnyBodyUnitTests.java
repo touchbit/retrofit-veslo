@@ -35,18 +35,18 @@ public class AnyBodyUnitTests {
     @DisplayName("Successfully getting empty body if data is empty")
     public void test1635619789030() {
         AnyBody dto = new AnyBody("".getBytes());
-        assertThat("AnyBody.getBody()", dto.getBytes(), is(new byte[]{}));
+        assertThat("AnyBody.getBody()", dto.bytes(), is(new byte[]{}));
         assertThat("AnyBody.isEmptyBody()", dto.isEmptyBody(), is(true));
-        assertThat("AnyBody.toString()", dto.toString(), is(EMPTY_BODY_STRING));
+        assertThat("AnyBody.toString()", dto.string(), is(EMPTY_BODY_STRING));
     }
 
     @Test
     @DisplayName("Successfully getting body if data is present")
     public void test1635620281699() {
         AnyBody dto = new AnyBody("test1635620281699".getBytes());
-        assertThat("AnyBody.body", dto.toString(), is("test1635620281699"));
+        assertThat("AnyBody.body", dto.string(), is("test1635620281699"));
         assertThat("AnyBody.isEmptyBody()", dto.isEmptyBody(), is(false));
-        assertThat("AnyBody.toString()", dto.toString(), is("test1635620281699"));
+        assertThat("AnyBody.toString()", dto.string(), is("test1635620281699"));
     }
 
     @Test
@@ -59,8 +59,8 @@ public class AnyBodyUnitTests {
     @DisplayName("AnyBody#assertBodyIsEmpty(): An error occurs if the body is blank")
     public void test1635886327262() {
         assertThrow(() -> new AnyBody(BLANK_BODY_BYTES).assertBodyIsEmpty())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs("" +
+                .assertClass(AssertionError.class)
+                .assertMessageIs("" +
                         "Response body\n" +
                         "Expected: is empty byte array\n" +
                         "     but: was array length '" + BLANK_BODY_STRING.length() + "'\n");
@@ -76,8 +76,8 @@ public class AnyBodyUnitTests {
     @DisplayName("AnyBody#assertBodyIsNotEmpty(): An error occurs if the body is empty")
     public void test1635887070608() {
         assertThrow(() -> new AnyBody(EMPTY_BODY_BYTES).assertBodyIsNotEmpty())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs("" +
+                .assertClass(AssertionError.class)
+                .assertMessageIs("" +
                         "Response body\n" +
                         "Expected: is not empty byte array\n" +
                         "     but: was []\n");

@@ -58,7 +58,7 @@ public class ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO>
 
     public ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO> assertIsSuccessfulResponse() {
         if (!getResponse().isSuccessful()) {
-            addError(new AssertionError("Received unsuccessful HTTP status code.\n" +
+            addErrors(new AssertionError("Received unsuccessful HTTP status code.\n" +
                     "Expected: in range 200..299\n" +
                     "  Actual: was " + getResponse().getHttpStatusCode()));
         }
@@ -67,7 +67,7 @@ public class ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO>
 
     public ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO> assertSuccessfulDtoNotNull() {
         if (getResponse().getSuccessfulDTO() == null) {
-            addError(new AssertionError("Can't get a successful DTO model. Response body is null."));
+            addErrors(new AssertionError("Can't get a successful DTO model. Response body is null."));
         }
         return this;
     }
@@ -89,7 +89,7 @@ public class ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO>
 
     public ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO> assertIsErrorResponse() {
         if (getResponse().isSuccessful()) {
-            addError(new AssertionError("Received successful HTTP status code.\n" +
+            addErrors(new AssertionError("Received successful HTTP status code.\n" +
                     "Expected: in range 300..599\n" +
                     "  Actual: was " + getResponse().getHttpStatusCode()));
         }
@@ -98,7 +98,7 @@ public class ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO>
 
     public ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO> assertErrorDtoNotNull() {
         if (getResponse().getErrorDTO() == null) {
-            addError(new AssertionError("Can't get a error DTO model. Response body is null."));
+            addErrors(new AssertionError("Can't get a error DTO model. Response body is null."));
         }
         return this;
     }
@@ -106,7 +106,7 @@ public class ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO>
     public ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO> assertHttpStatusCodeIs(int expected) {
         int actual = getResponse().getHttpStatusCode();
         if (actual != expected) {
-            addError(new AssertionError("HTTP status code\n" +
+            addErrors(new AssertionError("HTTP status code\n" +
                     "Expected: is  " + expected + "\n" +
                     "  Actual: was " + actual));
         }
@@ -119,7 +119,7 @@ public class ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO>
             return this;
         }
         if (actual == null || !actual.equalsIgnoreCase(expected)) {
-            addError(new AssertionError("HTTP status message\n" +
+            addErrors(new AssertionError("HTTP status message\n" +
                     "Expected: is  " + expected + "\n" +
                     "  Actual: was " + actual));
         }

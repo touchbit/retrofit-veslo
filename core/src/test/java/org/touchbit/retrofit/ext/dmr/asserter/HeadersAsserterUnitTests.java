@@ -44,8 +44,8 @@ public class HeadersAsserterUnitTests {
     public void test1637280332969() {
         Headers headers = Headers.of();
         assertThrow(() -> new HeadersAsserter(headers).contentTypeIsPresent().blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getIsPresentAssertMessage(H_CONTENT_TYPE));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getIsPresentAssertMessage(H_CONTENT_TYPE));
     }
 
     @Test
@@ -60,8 +60,8 @@ public class HeadersAsserterUnitTests {
     public void test1637280370483() {
         Headers headers = Headers.of(H_CONTENT_TYPE, EXP_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).contentTypeNotPresent().blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getNotPresentAssertMessage(H_CONTENT_TYPE, EXP_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getNotPresentAssertMessage(H_CONTENT_TYPE, EXP_CONTENT));
     }
 
     @Test
@@ -76,8 +76,8 @@ public class HeadersAsserterUnitTests {
     public void test1637280495711() {
         Headers headers = Headers.of(H_CONTENT_TYPE, ANY_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).contentTypeIs(EXP_CONTENT).blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getIsAssertMessage(H_CONTENT_TYPE, EXP_CONTENT, ANY_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getIsAssertMessage(H_CONTENT_TYPE, EXP_CONTENT, ANY_CONTENT));
     }
 
     @Test
@@ -92,8 +92,8 @@ public class HeadersAsserterUnitTests {
     public void test1637280500485() {
         Headers headers = Headers.of(H_CONTENT_TYPE, ANY_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).contentTypeContains(EXP_CONTENT).blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getContainsAssertMessage(H_CONTENT_TYPE, EXP_CONTENT, ANY_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getContainsAssertMessage(H_CONTENT_TYPE, EXP_CONTENT, ANY_CONTENT));
     }
 
     @Test
@@ -108,8 +108,8 @@ public class HeadersAsserterUnitTests {
     public void test1637293287754() {
         Headers headers = Headers.of();
         assertThrow(() -> new HeadersAsserter(headers).accessControlAllowOriginIsPresent().blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getIsPresentAssertMessage(H_ACCESS_CONTROL_ALLOW_ORIGIN));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getIsPresentAssertMessage(H_ACCESS_CONTROL_ALLOW_ORIGIN));
     }
 
     @Test
@@ -124,8 +124,8 @@ public class HeadersAsserterUnitTests {
     public void test1637293294716() {
         Headers headers = Headers.of(H_ACCESS_CONTROL_ALLOW_ORIGIN, EXP_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).accessControlAllowOriginNotPresent().blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getNotPresentAssertMessage(H_ACCESS_CONTROL_ALLOW_ORIGIN, EXP_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getNotPresentAssertMessage(H_ACCESS_CONTROL_ALLOW_ORIGIN, EXP_CONTENT));
     }
 
     @Test
@@ -140,8 +140,8 @@ public class HeadersAsserterUnitTests {
     public void test1637293301265() {
         Headers headers = Headers.of(H_ACCESS_CONTROL_ALLOW_ORIGIN, CONTAINS_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).accessControlAllowOriginIs(EXP_CONTENT).blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getIsAssertMessage(H_ACCESS_CONTROL_ALLOW_ORIGIN, EXP_CONTENT, CONTAINS_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getIsAssertMessage(H_ACCESS_CONTROL_ALLOW_ORIGIN, EXP_CONTENT, CONTAINS_CONTENT));
     }
 
     @Test
@@ -156,8 +156,8 @@ public class HeadersAsserterUnitTests {
     public void test1637293307309() {
         Headers headers = Headers.of(H_ACCESS_CONTROL_ALLOW_ORIGIN, ANY_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).accessControlAllowOriginContains(EXP_CONTENT).blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getContainsAssertMessage(H_ACCESS_CONTROL_ALLOW_ORIGIN, EXP_CONTENT, ANY_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getContainsAssertMessage(H_ACCESS_CONTROL_ALLOW_ORIGIN, EXP_CONTENT, ANY_CONTENT));
     }
 
     @Test
@@ -172,8 +172,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294414396() {
         Headers headers = Headers.of();
         assertThrow(() -> new HeadersAsserter(headers).varyIsPresent().blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getIsPresentAssertMessage(H_VARY));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getIsPresentAssertMessage(H_VARY));
     }
 
     @Test
@@ -188,8 +188,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294420909() {
         Headers headers = Headers.of(H_VARY, EXP_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).varyNotPresent().blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getNotPresentAssertMessage(H_VARY, EXP_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getNotPresentAssertMessage(H_VARY, EXP_CONTENT));
     }
 
     @Test
@@ -204,8 +204,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294426504() {
         Headers headers = Headers.of(H_VARY, ANY_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).varyIs(EXP_CONTENT).blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getIsAssertMessage(H_VARY, EXP_CONTENT, ANY_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getIsAssertMessage(H_VARY, EXP_CONTENT, ANY_CONTENT));
     }
 
     @Test
@@ -220,8 +220,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294433526() {
         Headers headers = Headers.of(H_VARY, ANY_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).varyContains(EXP_CONTENT).blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getContainsAssertMessage(H_VARY, EXP_CONTENT, ANY_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getContainsAssertMessage(H_VARY, EXP_CONTENT, ANY_CONTENT));
     }
 
     @Test
@@ -236,8 +236,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294596253() {
         Headers headers = Headers.of();
         assertThrow(() -> new HeadersAsserter(headers).setCookieIsPresent().blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getIsPresentAssertMessage(H_SET_COOKIE));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getIsPresentAssertMessage(H_SET_COOKIE));
     }
 
     @Test
@@ -252,8 +252,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294601193() {
         Headers headers = Headers.of(H_SET_COOKIE, EXP_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).setCookieNotPresent().blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getNotPresentAssertMessage(H_SET_COOKIE, EXP_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getNotPresentAssertMessage(H_SET_COOKIE, EXP_CONTENT));
     }
 
     @Test
@@ -268,8 +268,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294606667() {
         Headers headers = Headers.of(H_SET_COOKIE, ANY_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).setCookieIs(EXP_CONTENT).blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getIsAssertMessage(H_SET_COOKIE, EXP_CONTENT, ANY_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getIsAssertMessage(H_SET_COOKIE, EXP_CONTENT, ANY_CONTENT));
     }
 
     @Test
@@ -284,8 +284,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294611823() {
         Headers headers = Headers.of(H_SET_COOKIE, ANY_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).setCookieContains(EXP_CONTENT).blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getContainsAssertMessage(H_SET_COOKIE, EXP_CONTENT, ANY_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getContainsAssertMessage(H_SET_COOKIE, EXP_CONTENT, ANY_CONTENT));
     }
 
     @Test
@@ -300,8 +300,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294642598() {
         Headers headers = Headers.of();
         assertThrow(() -> new HeadersAsserter(headers).serverIsPresent().blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getIsPresentAssertMessage(H_SERVER));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getIsPresentAssertMessage(H_SERVER));
     }
 
     @Test
@@ -316,8 +316,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294651757() {
         Headers headers = Headers.of(H_SERVER, EXP_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).serverNotPresent().blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getNotPresentAssertMessage(H_SERVER, EXP_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getNotPresentAssertMessage(H_SERVER, EXP_CONTENT));
     }
 
     @Test
@@ -332,8 +332,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294657617() {
         Headers headers = Headers.of(H_SERVER, ANY_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).serverIs(EXP_CONTENT).blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getIsAssertMessage(H_SERVER, EXP_CONTENT, ANY_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getIsAssertMessage(H_SERVER, EXP_CONTENT, ANY_CONTENT));
     }
 
     @Test
@@ -348,8 +348,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294662497() {
         Headers headers = Headers.of(H_SERVER, ANY_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).serverContains(EXP_CONTENT).blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getContainsAssertMessage(H_SERVER, EXP_CONTENT, ANY_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getContainsAssertMessage(H_SERVER, EXP_CONTENT, ANY_CONTENT));
     }
 
     @Test
@@ -364,8 +364,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294739252() {
         Headers headers = Headers.of();
         assertThrow(() -> new HeadersAsserter(headers).keepAliveIsPresent().blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getIsPresentAssertMessage(H_KEEP_ALIVE));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getIsPresentAssertMessage(H_KEEP_ALIVE));
     }
 
     @Test
@@ -380,8 +380,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294744289() {
         Headers headers = Headers.of(H_KEEP_ALIVE, EXP_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).keepAliveNotPresent().blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getNotPresentAssertMessage(H_KEEP_ALIVE, EXP_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getNotPresentAssertMessage(H_KEEP_ALIVE, EXP_CONTENT));
     }
 
     @Test
@@ -396,8 +396,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294751078() {
         Headers headers = Headers.of(H_KEEP_ALIVE, ANY_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).keepAliveIs(EXP_CONTENT).blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getIsAssertMessage(H_KEEP_ALIVE, EXP_CONTENT, ANY_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getIsAssertMessage(H_KEEP_ALIVE, EXP_CONTENT, ANY_CONTENT));
     }
 
     @Test
@@ -412,8 +412,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294756916() {
         Headers headers = Headers.of(H_KEEP_ALIVE, ANY_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).keepAliveContains(EXP_CONTENT).blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getContainsAssertMessage(H_KEEP_ALIVE, EXP_CONTENT, ANY_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getContainsAssertMessage(H_KEEP_ALIVE, EXP_CONTENT, ANY_CONTENT));
     }
 
     @Test
@@ -428,8 +428,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294812711() {
         Headers headers = Headers.of();
         assertThrow(() -> new HeadersAsserter(headers).connectionIsPresent().blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getIsPresentAssertMessage(H_CONNECTION));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getIsPresentAssertMessage(H_CONNECTION));
     }
 
     @Test
@@ -444,8 +444,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294817842() {
         Headers headers = Headers.of(H_CONNECTION, EXP_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).connectionNotPresent().blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getNotPresentAssertMessage(H_CONNECTION, EXP_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getNotPresentAssertMessage(H_CONNECTION, EXP_CONTENT));
     }
 
     @Test
@@ -460,8 +460,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294823123() {
         Headers headers = Headers.of(H_CONNECTION, ANY_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).connectionIs(EXP_CONTENT).blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getIsAssertMessage(H_CONNECTION, EXP_CONTENT, ANY_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getIsAssertMessage(H_CONNECTION, EXP_CONTENT, ANY_CONTENT));
     }
 
     @Test
@@ -476,8 +476,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294828459() {
         Headers headers = Headers.of(H_CONNECTION, ANY_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).connectionContains(EXP_CONTENT).blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getContainsAssertMessage(H_CONNECTION, EXP_CONTENT, ANY_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getContainsAssertMessage(H_CONNECTION, EXP_CONTENT, ANY_CONTENT));
     }
 
     @Test
@@ -492,8 +492,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294866002() {
         Headers headers = Headers.of();
         assertThrow(() -> new HeadersAsserter(headers).contentEncodingIsPresent().blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getIsPresentAssertMessage(H_CONTENT_ENCODING));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getIsPresentAssertMessage(H_CONTENT_ENCODING));
     }
 
     @Test
@@ -508,8 +508,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294870901() {
         Headers headers = Headers.of(H_CONTENT_ENCODING, EXP_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).contentEncodingNotPresent().blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getNotPresentAssertMessage(H_CONTENT_ENCODING, EXP_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getNotPresentAssertMessage(H_CONTENT_ENCODING, EXP_CONTENT));
     }
 
     @Test
@@ -524,8 +524,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294876577() {
         Headers headers = Headers.of(H_CONTENT_ENCODING, ANY_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).contentEncodingIs(EXP_CONTENT).blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getIsAssertMessage(H_CONTENT_ENCODING, EXP_CONTENT, ANY_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getIsAssertMessage(H_CONTENT_ENCODING, EXP_CONTENT, ANY_CONTENT));
     }
 
     @Test
@@ -540,8 +540,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294920410() {
         Headers headers = Headers.of();
         assertThrow(() -> new HeadersAsserter(headers).transferEncodingIsPresent().blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getIsPresentAssertMessage(H_TRANSFER_ENCODING));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getIsPresentAssertMessage(H_TRANSFER_ENCODING));
     }
 
     @Test
@@ -556,8 +556,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294926127() {
         Headers headers = Headers.of(H_TRANSFER_ENCODING, EXP_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).transferEncodingNotPresent().blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getNotPresentAssertMessage(H_TRANSFER_ENCODING, EXP_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getNotPresentAssertMessage(H_TRANSFER_ENCODING, EXP_CONTENT));
     }
 
     @Test
@@ -572,8 +572,8 @@ public class HeadersAsserterUnitTests {
     public void test1637294930987() {
         Headers headers = Headers.of(H_TRANSFER_ENCODING, ANY_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).transferEncodingIs(EXP_CONTENT).blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getIsAssertMessage(H_TRANSFER_ENCODING, EXP_CONTENT, ANY_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getIsAssertMessage(H_TRANSFER_ENCODING, EXP_CONTENT, ANY_CONTENT));
     }
 
     @Test
@@ -588,8 +588,8 @@ public class HeadersAsserterUnitTests {
     public void test1637295007925() {
         Headers headers = Headers.of();
         assertThrow(() -> new HeadersAsserter(headers).eTagIsPresent().blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getIsPresentAssertMessage(H_ETAG));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getIsPresentAssertMessage(H_ETAG));
     }
 
     @Test
@@ -604,8 +604,8 @@ public class HeadersAsserterUnitTests {
     public void test1637295016346() {
         Headers headers = Headers.of(H_ETAG, EXP_CONTENT);
         assertThrow(() -> new HeadersAsserter(headers).eTagNotPresent().blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getNotPresentAssertMessage(H_ETAG, EXP_CONTENT));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getNotPresentAssertMessage(H_ETAG, EXP_CONTENT));
     }
 
     @Test
@@ -619,8 +619,8 @@ public class HeadersAsserterUnitTests {
     public void test1637301041892() {
         Headers headers = Headers.of("any", "test1637301041892");
         assertThrow(() -> new HeadersAsserter(headers).assertHeaderNotPresent("any").blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getNotPresentAssertMessage("any", "test1637301041892"));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getNotPresentAssertMessage("any", "test1637301041892"));
     }
 
     @Test
@@ -634,8 +634,8 @@ public class HeadersAsserterUnitTests {
     @DisplayName("assertHeaderIsPresent() negative")
     public void test1637301171263() {
         assertThrow(() -> new HeadersAsserter(Headers.of()).assertHeaderIsPresent("any").blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getIsPresentAssertMessage("any"));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getIsPresentAssertMessage("any"));
     }
 
     @Test
@@ -649,8 +649,8 @@ public class HeadersAsserterUnitTests {
     @DisplayName("assertHeaderIs() negative (null)")
     public void test1637301325502() {
         assertThrow(() -> new HeadersAsserter(Headers.of()).assertHeaderIs("any", "test1637301325502").blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getIsAssertMessage("any", "test1637301325502", null));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getIsAssertMessage("any", "test1637301325502", null));
     }
 
     @Test
@@ -658,8 +658,8 @@ public class HeadersAsserterUnitTests {
     public void test1637301328290() {
         Headers headers = Headers.of("any", "test1637301328290");
         assertThrow(() -> new HeadersAsserter(headers).assertHeaderIs("any", "1637301328290").blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getIsAssertMessage("any", "1637301328290", "test1637301328290"));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getIsAssertMessage("any", "1637301328290", "test1637301328290"));
     }
 
     @Test
@@ -673,8 +673,8 @@ public class HeadersAsserterUnitTests {
     @DisplayName("assertHeaderContains() negative (null)")
     public void test1637301577263() {
         assertThrow(() -> new HeadersAsserter(Headers.of()).assertHeaderContains("any", "test1637301577263").blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getContainsAssertMessage("any", "test1637301577263", null));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getContainsAssertMessage("any", "test1637301577263", null));
     }
 
     @Test
@@ -682,8 +682,8 @@ public class HeadersAsserterUnitTests {
     public void test1637301589744() {
         Headers headers = Headers.of("any", "test_1637301589744");
         assertThrow(() -> new HeadersAsserter(headers).assertHeaderContains("any", "test1637301589744").blame())
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs(getContainsAssertMessage("any", "test1637301589744", "test_1637301589744"));
+                .assertClass(AssertionError.class)
+                .assertMessageIs(getContainsAssertMessage("any", "test1637301589744", "test_1637301589744"));
     }
 
     private static final String ERR_MSG_PREFIX = "The response contains the following errors:\nResponse header ";

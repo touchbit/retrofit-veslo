@@ -27,6 +27,10 @@ public class ContentType {
     private final String subtype;
     private final String charset;
 
+    public ContentType() {
+        this(null);
+    }
+
     public ContentType(MediaType mediaType) {
         if (mediaType == null) {
             this.type = null;

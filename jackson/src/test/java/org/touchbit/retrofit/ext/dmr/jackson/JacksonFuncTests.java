@@ -79,7 +79,7 @@ public class JacksonFuncTests {
         MOCK_CLIENT.textPlainAnyBody(200, new AnyBody("".getBytes()))
                 .assertResponse(response -> response
                         .assertHttpStatusCodeIs(200)
-                        .assertSuccessfulBody(body -> assertThat("Success body content", body.toString(), emptyString())));
+                        .assertSuccessfulBody(body -> assertThat("Success body content", body.string(), emptyString())));
     }
 
     @Test
@@ -88,18 +88,18 @@ public class JacksonFuncTests {
         MOCK_CLIENT.textPlainAnyBody(200, new AnyBody("1".getBytes()))
                 .assertResponse(response -> response
                         .assertHttpStatusCodeIs(200)
-                        .assertSuccessfulBody(body -> assertThat("Success body content", body.toString(), is("1"))));
+                        .assertSuccessfulBody(body -> assertThat("Success body content", body.string(), is("1"))));
     }
 
     @Test
     @DisplayName("Exception occurred if getting unprocessed IDualResponse generic type (int)")
     public void test1635888162581() {
         assertThrow(() -> MOCK_CLIENT.unprocessedDTO(200, 100))
-                .assertThrowClassIs(HttpCallException.class)
-                .assertThrowMessageIs("Failed to make API call.")
+                .assertClass(HttpCallException.class)
+                .assertMessageContains("Failed to make API call.")
                 .assertCause(cause -> cause
-                        .assertThrowClassIs(ConvertCallException.class)
-                        .assertThrowMessageContains("Converter not found", "and DTO type java.lang.Integer."));
+                        .assertClass(ConvertCallException.class)
+                        .assertMessageContains("Converter not found", "and DTO type java.lang.Integer."));
     }
 
     @Test

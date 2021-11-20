@@ -28,6 +28,7 @@ import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -85,7 +86,7 @@ public class ExtensionConverterFactory extends Converter.Factory {
         return new Converter<Object, RequestBody>() {
 
             @EverythingIsNonNull
-            public RequestBody convert(Object value) throws IOException {
+            public RequestBody convert(final Object value) throws IOException {
                 final Map<Class<?>, ExtensionConverter<?>> rawConverters = getRawRequestConverters();
                 final ExtensionConverter<?> rawConverter = rawConverters.get(value.getClass());
                 if (rawConverter != null) {
@@ -123,15 +124,20 @@ public class ExtensionConverterFactory extends Converter.Factory {
         return new Converter<ResponseBody, Object>() {
 
             @Override
-            @EverythingIsNonNull
-            public Object convert(final ResponseBody body) throws IOException {
+            @Nullable
+            public Object convert(@Nullable final ResponseBody body) throws IOException {
                 final Map<Class<?>, ExtensionConverter<?>> rawConverters = getRawResponseConverters();
                 final ExtensionConverter<?> rawConverter = rawConverters.get(bodyClass);
                 if (rawConverter != null) {
                     return rawConverter.responseBodyConverter(bodyClass, mA, retrofit).convert(body);
                 }
                 final Map<ContentType, ExtensionConverter<?>> mimeConverters = getMimeResponseConverters();
-                final ContentType contentType = new ContentType(body.contentType());
+                final ContentType contentType;
+                if (body == null) {
+                    contentType = new ContentType();
+                } else {
+                    contentType = new ContentType(body.contentType());
+                }
                 final ExtensionConverter<?> extensionConverter = mimeConverters.get(contentType);
                 if (extensionConverter != null) {
                     return extensionConverter.responseBodyConverter(bodyClass, mA, retrofit).convert(body);

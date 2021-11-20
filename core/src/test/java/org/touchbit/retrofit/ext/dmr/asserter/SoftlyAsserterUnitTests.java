@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package org.touchbit.retrofit.ext.dmr.client.adapter;
+package org.touchbit.retrofit.ext.dmr.asserter;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.touchbit.retrofit.ext.dmr.asserter.SoftlyAsserter;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -44,5 +45,20 @@ public class SoftlyAsserterUnitTests {
         softly.softly(() -> "".getBytes((Charset) null));
         assertThat("ResponseAsserterBase.getErrors() size", softly.getErrors().size(), is(1));
     }
+
+    @Test
+    @DisplayName("#addError(Throwable) and #addErrors(List<Throwable>)")
+    public void test1637387611654() {
+        SoftlyAsserter softly = SoftlyAsserter.get();
+        assertThat("ResponseAsserterBase.getErrors() size", softly.getErrors().size(), is(0));
+        softly.addErrors(new RuntimeException("0"), new RuntimeException("1"));
+        assertThat("ResponseAsserterBase.getErrors() size", softly.getErrors().size(), is(2));
+        List<Throwable> list = new ArrayList<>();
+        list.add(new RuntimeException("2"));
+        list.add(new RuntimeException("3"));
+        softly.addErrors(list);
+        assertThat("ResponseAsserterBase.getErrors() size", softly.getErrors().size(), is(4));
+    }
+
 
 }

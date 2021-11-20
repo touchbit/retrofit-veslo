@@ -25,10 +25,10 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
-import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -43,15 +43,15 @@ public class JacksonConverter<T> implements ExtensionConverter<T> {
 
     @Override
     @EverythingIsNonNull
-    public <M> Converter<M, RequestBody> requestBodyConverter(final Type type,
-                                                              final Annotation[] parameterAnnotations,
-                                                              final Annotation[] methodAnnotations,
-                                                              final Retrofit retrofit) {
-        return new Converter<M, RequestBody>() {
+    public RequestBodyConverter requestBodyConverter(final Type type,
+                                                     final Annotation[] parameterAnnotations,
+                                                     final Annotation[] methodAnnotations,
+                                                     final Retrofit retrofit) {
+        return new RequestBodyConverter() {
 
             @Override
             @EverythingIsNonNull
-            public RequestBody convert(M value) throws IOException {
+            public RequestBody convert(Object value) throws IOException {
                 final ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
                 final ObjectWriter objectWriter = objectMapper.writerFor((Class<?>) type);
                 final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
@@ -63,14 +63,17 @@ public class JacksonConverter<T> implements ExtensionConverter<T> {
 
     @Override
     @EverythingIsNonNull
-    public Converter<ResponseBody, T> responseBodyConverter(final Type type,
-                                                            final Annotation[] methodAnnotations,
-                                                            final Retrofit retrofit) {
-        return new Converter<ResponseBody, T>() {
+    public ResponseBodyConverter<T> responseBodyConverter(final Type type,
+                                                          final Annotation[] methodAnnotations,
+                                                          final Retrofit retrofit) {
+        return new ResponseBodyConverter<T>() {
 
             @Override
-            @EverythingIsNonNull
-            public T convert(ResponseBody value) throws IOException {
+            @Nullable
+            public T convert(@Nullable ResponseBody value) throws IOException {
+                if (value == null || value.contentLength() == 0) {
+                    return null;
+                }
                 final ObjectReader objectReader = new ObjectMapper().readerFor((Class<?>) type);
                 return objectReader.readValue(value.bytes());
             }

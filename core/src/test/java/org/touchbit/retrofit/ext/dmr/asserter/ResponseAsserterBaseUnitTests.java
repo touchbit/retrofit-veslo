@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package org.touchbit.retrofit.ext.dmr.client.adapter;
+package org.touchbit.retrofit.ext.dmr.asserter;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.touchbit.retrofit.ext.dmr.asserter.ResponseAsserter;
-import org.touchbit.retrofit.ext.dmr.asserter.ResponseAsserterBase;
 import org.touchbit.retrofit.ext.dmr.client.response.IDualResponse;
 
 import java.util.function.Consumer;
@@ -38,8 +36,8 @@ public class ResponseAsserterBaseUnitTests {
     @DisplayName("NPE if constructor argument is null")
     public void test1637297423971() {
         assertThrow(() -> getResponseAsserterBase(null))
-                .assertThrowClassIs(NullPointerException.class)
-                .assertThrowMessageIs("Response required");
+                .assertClass(NullPointerException.class)
+                .assertMessageIs("Response required");
     }
 
     @Test
@@ -50,7 +48,7 @@ public class ResponseAsserterBaseUnitTests {
         assertThat("ResponseAsserterBase.getErrors()", responseAsserterBase.getErrors(), notNullValue());
         assertThat("ResponseAsserterBase.getErrors() size", responseAsserterBase.getErrors().size(), is(0));
         final NumberFormatException expected = new NumberFormatException();
-        responseAsserterBase.addError(expected);
+        responseAsserterBase.addErrors(expected);
         assertThat("ResponseAsserterBase.getErrors() size", responseAsserterBase.getErrors().size(), is(1));
     }
 
@@ -60,10 +58,10 @@ public class ResponseAsserterBaseUnitTests {
         final IDualResponse mock = mock(IDualResponse.class);
         final ResponseAsserterBase responseAsserterBase = getResponseAsserterBase(mock);
         final NumberFormatException expected = new NumberFormatException("test1637299122721");
-        responseAsserterBase.addError(expected);
+        responseAsserterBase.addErrors(expected);
         assertThrow(responseAsserterBase::close)
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs("The response contains the following errors:\ntest1637299122721");
+                .assertClass(AssertionError.class)
+                .assertMessageIs("The response contains the following errors:\ntest1637299122721");
     }
 
     @Test

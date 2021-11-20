@@ -22,10 +22,10 @@ import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
-import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -37,15 +37,15 @@ public class FileConverter implements ExtensionConverter<File> {
 
     @Override
     @EverythingIsNonNull
-    public <M> Converter<M, RequestBody> requestBodyConverter(final Type type,
-                                                              final Annotation[] parameterAnnotations,
-                                                              final Annotation[] methodAnnotations,
-                                                              final Retrofit retrofit) {
-        return new Converter<M, RequestBody>() {
+    public RequestBodyConverter requestBodyConverter(final Type type,
+                                                     final Annotation[] parameterAnnotations,
+                                                     final Annotation[] methodAnnotations,
+                                                     final Retrofit retrofit) {
+        return new RequestBodyConverter() {
 
             @Override
             @EverythingIsNonNull
-            public RequestBody convert(M value) throws IOException {
+            public RequestBody convert(Object value) throws IOException {
                 if (value instanceof File) {
                     File file = (File) value;
                     final byte[] data = Files.readAllBytes(file.toPath());
@@ -60,14 +60,17 @@ public class FileConverter implements ExtensionConverter<File> {
 
     @Override
     @EverythingIsNonNull
-    public Converter<ResponseBody, File> responseBodyConverter(final Type type,
-                                                               final Annotation[] methodAnnotations,
-                                                               final Retrofit retrofit) {
-        return new Converter<ResponseBody, File>() {
+    public ResponseBodyConverter<File> responseBodyConverter(final Type type,
+                                                             final Annotation[] methodAnnotations,
+                                                             final Retrofit retrofit) {
+        return new ResponseBodyConverter<File>() {
 
             @Override
-            @EverythingIsNonNull
-            public File convert(ResponseBody value) throws IOException {
+            @Nullable
+            public File convert(@Nullable ResponseBody value) throws IOException {
+                if (value == null || value.contentLength() == 0) {
+                    return null;
+                }
                 final Path tempFile = Files.createTempFile(null, null);
                 return Files.write(tempFile, value.bytes()).toFile();
             }

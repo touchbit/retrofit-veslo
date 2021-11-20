@@ -46,7 +46,7 @@ public class MockInterceptor implements Interceptor {
         final ResponseBody responseBody;
         final Headers headers;
         if (SUCCESS_CODE_NO_CONTENT.toString().equals(code) || ERROR_CODE_NO_CONTENT.toString().equals(code)) {
-            responseBody = ResponseBody.create(null, -1, new Buffer());
+            responseBody = ResponseBody.create(mediaType, 0, new Buffer());
             headers = request.headers();
         } else {
             if (requestBody != null) {

@@ -18,26 +18,33 @@ package org.touchbit.retrofit.ext.dmr.asserter;
 
 import javax.annotation.Nonnull;
 import java.io.Closeable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.StringJoiner;
+import java.util.*;
+import java.util.function.Consumer;
 
 public interface SoftlyAsserter extends Closeable {
 
     @Nonnull
     List<Throwable> getErrors();
 
-    void addError(@Nonnull Throwable throwable);
-
     void addErrors(@Nonnull List<Throwable> throwableList);
 
-    default void softly(@Nonnull ThrowableRunnable throwableRunnable) {
+    default void addErrors(@Nonnull Throwable... throwable) {
+        addErrors(Arrays.asList(throwable));
+    }
+
+    default SoftlyAsserter softly(@Nonnull ThrowableRunnable throwableRunnable) {
         try {
             Objects.requireNonNull(throwableRunnable, "Parameter 'throwableRunnable' is required");
             throwableRunnable.execute();
         } catch (Throwable e) {
-            addError(e);
+            addErrors(e);
+        }
+        return this;
+    }
+
+    static void softlyAsserter(Consumer<SoftlyAsserter> asserterConsumer) {
+        try (final SoftlyAsserter softlyAsserter = get()) {
+            asserterConsumer.accept(softlyAsserter);
         }
     }
 
@@ -63,11 +70,6 @@ public interface SoftlyAsserter extends Closeable {
             @Override
             public List<Throwable> getErrors() {
                 return list;
-            }
-
-            @Override
-            public void addError(@Nonnull Throwable throwable) {
-                list.add(throwable);
             }
 
             @Override

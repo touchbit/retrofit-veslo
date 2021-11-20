@@ -22,10 +22,11 @@ import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
-import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
+import javax.annotation.Nullable;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
@@ -33,15 +34,15 @@ public class StringConverter implements ExtensionConverter<String> {
 
     @Override
     @EverythingIsNonNull
-    public <M> Converter<M, RequestBody> requestBodyConverter(final Type type,
-                                                              final Annotation[] parameterAnnotations,
-                                                              final Annotation[] methodAnnotations,
-                                                              final Retrofit retrofit) {
-        return new Converter<M, RequestBody>() {
+    public RequestBodyConverter requestBodyConverter(final Type type,
+                                                     final Annotation[] parameterAnnotations,
+                                                     final Annotation[] methodAnnotations,
+                                                     final Retrofit retrofit) {
+        return new RequestBodyConverter() {
 
             @Override
             @EverythingIsNonNull
-            public RequestBody convert(M value) {
+            public RequestBody convert(Object value) {
                 if (value instanceof String) {
                     final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
                     return RequestBody.create(mediaType, (String) value);
@@ -55,10 +56,21 @@ public class StringConverter implements ExtensionConverter<String> {
 
     @Override
     @EverythingIsNonNull
-    public Converter<ResponseBody, String> responseBodyConverter(final Type type,
-                                                                 final Annotation[] methodAnnotations,
-                                                                 final Retrofit retrofit) {
-        return ResponseBody::string;
+    public ResponseBodyConverter<String> responseBodyConverter(final Type type,
+                                                               final Annotation[] methodAnnotations,
+                                                               final Retrofit retrofit) {
+        return new ResponseBodyConverter<String>() {
+
+            @Nullable
+            @Override
+            public String convert(@Nullable ResponseBody value) throws IOException {
+                if (value == null || value.contentLength() == 0) {
+                    return null;
+                }
+                return value.string();
+            }
+
+        };
     }
 
 }

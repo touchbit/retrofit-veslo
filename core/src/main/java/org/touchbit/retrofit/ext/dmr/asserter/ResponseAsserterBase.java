@@ -55,11 +55,6 @@ public abstract class ResponseAsserterBase<SUCCESSFUL_DTO, ERROR_DTO, HA> implem
     }
 
     @Override
-    public void addError(@Nonnull Throwable throwable) {
-        errors.add(throwable);
-    }
-
-    @Override
     public void addErrors(@Nonnull List<Throwable> throwableList) {
         errors.addAll(throwableList);
     }

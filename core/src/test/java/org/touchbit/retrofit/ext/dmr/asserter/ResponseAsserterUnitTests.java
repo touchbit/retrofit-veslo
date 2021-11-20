@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package org.touchbit.retrofit.ext.dmr.client.adapter;
+package org.touchbit.retrofit.ext.dmr.asserter;
 
 import okhttp3.Headers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.touchbit.retrofit.ext.dmr.asserter.HeadersAsserter;
-import org.touchbit.retrofit.ext.dmr.asserter.ResponseAsserter;
-import org.touchbit.retrofit.ext.dmr.asserter.SoftlyAsserter;
 import org.touchbit.retrofit.ext.dmr.client.response.IDualResponse;
 
 import static internal.test.utils.ThrowableAsserter.assertThrow;
@@ -39,8 +36,8 @@ public class ResponseAsserterUnitTests {
     @DisplayName("NPE if constructor argument is null ")
     public void test1637375056691() {
         assertThrow(() -> new ResponseAsserter<>(null))
-                .assertThrowClassIs(NullPointerException.class)
-                .assertThrowMessageIs("Response required");
+                .assertClass(NullPointerException.class)
+                .assertMessageIs("Response required");
     }
 
     @Test
@@ -55,10 +52,10 @@ public class ResponseAsserterUnitTests {
     public void test1637375230127() {
         final IDualResponse response = mock(IDualResponse.class);
         final ResponseAsserter responseAsserter = new ResponseAsserter<>(response);
-        responseAsserter.addError(new RuntimeException("test1637375230127"));
+        responseAsserter.addErrors(new RuntimeException("test1637375230127"));
         assertThrow(responseAsserter::close)
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs("The response contains the following errors:\ntest1637375230127");
+                .assertClass(AssertionError.class)
+                .assertMessageIs("The response contains the following errors:\ntest1637375230127");
     }
 
     @Test
@@ -67,7 +64,7 @@ public class ResponseAsserterUnitTests {
         final IDualResponse response = mock(IDualResponse.class);
         final ResponseAsserter responseAsserter = new ResponseAsserter<>(response);
         assertResponseAsserterContainErrors(responseAsserter, 0);
-        responseAsserter.addError(new RuntimeException());
+        responseAsserter.addErrors(new RuntimeException());
         assertResponseAsserterContainErrors(responseAsserter, 1);
     }
 
@@ -85,8 +82,8 @@ public class ResponseAsserterUnitTests {
         final IDualResponse response = mock(IDualResponse.class);
         final ResponseAsserter responseAsserter = new ResponseAsserter<>(response);
         assertThrow(() -> responseAsserter.assertHeaders(null))
-                .assertThrowClassIs(NullPointerException.class)
-                .assertThrowMessageIs("HeadersAsserter consumer required");
+                .assertClass(NullPointerException.class)
+                .assertMessageIs("HeadersAsserter consumer required");
     }
 
     @Test
@@ -130,8 +127,8 @@ public class ResponseAsserterUnitTests {
         when(response.getSuccessfulDTO()).thenReturn(null);
         final ResponseAsserter<Object, Object> asserter = new ResponseAsserter<>(response);
         assertThrow(() -> asserter.assertSuccessfulResponse(200, body -> assertThat("", body, notNullValue())))
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs("The response contains the following errors:\n" +
+                .assertClass(AssertionError.class)
+                .assertMessageIs("The response contains the following errors:\n" +
                         "Received unsuccessful HTTP status code.\n" +
                         "Expected: in range 200..299\n" +
                         "  Actual: was 500\n" +
@@ -161,8 +158,8 @@ public class ResponseAsserterUnitTests {
         when(response.getSuccessfulDTO()).thenReturn(null);
         final ResponseAsserter<Object, Object> asserter = new ResponseAsserter<>(response);
         assertThrow(() -> asserter.assertSuccessfulBody(body -> assertThat("", body, notNullValue())))
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs("The response contains the following errors:\n" +
+                .assertClass(AssertionError.class)
+                .assertMessageIs("The response contains the following errors:\n" +
                         "Received unsuccessful HTTP status code.\n" +
                         "Expected: in range 200..299\n" +
                         "  Actual: was 500\n" +
@@ -231,8 +228,8 @@ public class ResponseAsserterUnitTests {
         when(response.getErrorDTO()).thenReturn(null);
         final ResponseAsserter<Object, Object> asserter = new ResponseAsserter<>(response);
         assertThrow(() -> asserter.assertErrorResponse(500, body -> assertThat("", body, notNullValue())))
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs("The response contains the following errors:\n" +
+                .assertClass(AssertionError.class)
+                .assertMessageIs("The response contains the following errors:\n" +
                         "Received successful HTTP status code.\n" +
                         "Expected: in range 300..599\n" +
                         "  Actual: was 200\n" +
@@ -261,8 +258,8 @@ public class ResponseAsserterUnitTests {
         when(response.getErrorDTO()).thenReturn(null);
         final ResponseAsserter<Object, Object> asserter = new ResponseAsserter<>(response);
         assertThrow(() -> asserter.assertErrorBody(body -> assertThat("", body, notNullValue())))
-                .assertThrowClassIs(AssertionError.class)
-                .assertThrowMessageIs("The response contains the following errors:\n" +
+                .assertClass(AssertionError.class)
+                .assertMessageIs("The response contains the following errors:\n" +
                         "Received successful HTTP status code.\n" +
                         "Expected: in range 300..599\n" +
                         "  Actual: was 200\n" +
