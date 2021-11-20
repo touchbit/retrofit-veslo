@@ -47,6 +47,9 @@ public class AnyBodyConverter implements ExtensionConverter<AnyBody> {
                 if (value instanceof AnyBody) {
                     final AnyBody anyBody = (AnyBody) value;
                     final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
+                    if (anyBody.isNullBody()) {
+                        return RequestBody.create(mediaType, new byte[]{});
+                    }
                     return RequestBody.create(mediaType, anyBody.bytes());
                 }
                 throw new ConverterUnsupportedTypeException(AnyBodyConverter.class, AnyBody.class, value.getClass());

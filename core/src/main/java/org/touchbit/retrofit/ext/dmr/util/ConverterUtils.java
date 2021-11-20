@@ -55,7 +55,7 @@ public class ConverterUtils {
      */
     public static byte[] toPrimitiveByteArray(Byte[] bytes) {
         byte[] primiteveArray = new byte[bytes.length];
-        for(int i = 0; i < bytes.length; i++){
+        for (int i = 0; i < bytes.length; i++) {
             primiteveArray[i] = bytes[i];
         }
         return primiteveArray;
@@ -82,16 +82,18 @@ public class ConverterUtils {
      * @param methodAnnotations - list of request method annotations
      * @return {@link Headers}
      */
-    @EverythingIsNonNull
-    public static Headers getAnnotationHeaders(final Annotation[] methodAnnotations) {
+    @Nonnull
+    public static Headers getAnnotationHeaders(@Nullable final Annotation[] methodAnnotations) {
         Headers.Builder headersBuilder = new Headers.Builder();
-        for (Annotation annotation : methodAnnotations) {
-            if (annotation instanceof retrofit2.http.Headers) {
-                for (String header : ((retrofit2.http.Headers) annotation).value()) {
-                    String[] split = header.split(":");
-                    String name = split[0].trim();
-                    String value = split[1].trim();
-                    headersBuilder.add(name, value);
+        if (methodAnnotations != null) {
+            for (Annotation annotation : methodAnnotations) {
+                if (annotation instanceof retrofit2.http.Headers) {
+                    for (String header : ((retrofit2.http.Headers) annotation).value()) {
+                        String[] split = header.split(":");
+                        String name = split[0].trim();
+                        String value = split[1].trim();
+                        headersBuilder.add(name, value);
+                    }
                 }
             }
         }
