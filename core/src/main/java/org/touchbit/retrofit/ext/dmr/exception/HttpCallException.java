@@ -18,14 +18,6 @@ package org.touchbit.retrofit.ext.dmr.exception;
 
 public class HttpCallException extends RuntimeException {
 
-    public HttpCallException(String message) {
-        super(message);
-    }
-
-    public HttpCallException(Throwable t) {
-        super(t);
-    }
-
     public HttpCallException(String message, Throwable t) {
         super(message, t);
     }

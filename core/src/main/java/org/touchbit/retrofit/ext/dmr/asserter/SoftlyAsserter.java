@@ -16,6 +16,8 @@
 
 package org.touchbit.retrofit.ext.dmr.asserter;
 
+import org.touchbit.retrofit.ext.dmr.util.ThrowableRunnable;
+
 import javax.annotation.Nonnull;
 import java.io.Closeable;
 import java.util.*;

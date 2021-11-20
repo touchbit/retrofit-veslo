@@ -14,25 +14,22 @@
  * limitations under the License.
  */
 
-package org.touchbit.retrofit.ext.dmr.client.converter.ext;
+package org.touchbit.retrofit.ext.dmr.client.converter.defaults;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
-import org.touchbit.retrofit.ext.dmr.client.converter.ExtensionConverter;
-import org.touchbit.retrofit.ext.dmr.client.model.AnyBody;
+import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
-public class AnyBodyConverter implements ExtensionConverter<AnyBody> {
+public class ByteArrayConverter implements ExtensionConverter<Byte[]> {
 
     @Override
     @EverythingIsNonNull
@@ -45,12 +42,12 @@ public class AnyBodyConverter implements ExtensionConverter<AnyBody> {
             @Override
             @EverythingIsNonNull
             public RequestBody convert(Object value) {
-                if (value instanceof AnyBody) {
-                    final AnyBody anyBody = (AnyBody) value;
+                if (value instanceof Byte[]) {
+                    Byte[] bytes = (Byte[]) value;
                     final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
-                    return RequestBody.create(mediaType, anyBody.bytes());
+                    return RequestBody.create(mediaType, ConverterUtils.toPrimitiveByteArray(bytes));
                 }
-                throw new ConverterUnsupportedTypeException(AnyBodyConverter.class, AnyBody.class, value.getClass());
+                throw new ConverterUnsupportedTypeException(ByteArrayConverter.class, Byte[].class, value.getClass());
             }
 
         };
@@ -58,18 +55,22 @@ public class AnyBodyConverter implements ExtensionConverter<AnyBody> {
 
     @Override
     @EverythingIsNonNull
-    public ResponseBodyConverter<AnyBody> responseBodyConverter(final Type type,
-                                                                final Annotation[] methodAnnotations,
-                                                                final Retrofit retrofit) {
-        return new ResponseBodyConverter<AnyBody>() {
+    public ResponseBodyConverter<Byte[]> responseBodyConverter(final Type type,
+                                                               final Annotation[] methodAnnotations,
+                                                               final Retrofit retrofit) {
+        return new ResponseBodyConverter<Byte[]>() {
 
             @Override
-            @Nonnull
-            public AnyBody convert(@Nullable ResponseBody value) throws IOException {
-                return value == null ? new AnyBody((byte[]) null) : new AnyBody(value.bytes());
+            @Nullable
+            public Byte[] convert(@Nullable ResponseBody value) {
+                if (value == null || value.contentLength() == 0) {
+                    return null;
+                }
+                return wrap(() -> ConverterUtils.toObjectByteArray(value.bytes()));
             }
 
         };
+
     }
 
 }

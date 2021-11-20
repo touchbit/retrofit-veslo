@@ -14,37 +14,68 @@
  * limitations under the License.
  */
 
-package org.touchbit.retrofit.ext.dmr.client.converter;
+package org.touchbit.retrofit.ext.dmr.client.converter.api;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
+import org.touchbit.retrofit.ext.dmr.util.ThrowableRunnable;
+import org.touchbit.retrofit.ext.dmr.util.ThrowableSupplier;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 public interface ExtensionConverter<DTO> {
 
+    /**
+     * @param type                 - request method body type.
+     * @param parameterAnnotations - API client called method parameters annotations
+     * @param methodAnnotations    - API client called method annotations
+     * @param retrofit             - see {@link Retrofit}
+     * @return {@link Converter}
+     */
     @EverythingIsNonNull
     RequestBodyConverter requestBodyConverter(Type type,
                                               Annotation[] parameterAnnotations,
                                               Annotation[] methodAnnotations,
                                               Retrofit retrofit);
 
+    /**
+     * @param type              - response body type.
+     * @param methodAnnotations - API client called method annotations
+     * @param retrofit          - see {@link Retrofit}
+     * @return {@link Converter}
+     */
     @EverythingIsNonNull
     ResponseBodyConverter<DTO> responseBodyConverter(Type type,
                                                      Annotation[] methodAnnotations,
                                                      Retrofit retrofit);
 
+    default void wrap(ThrowableRunnable runnable) {
+        try {
+            runnable.execute();
+        } catch (Throwable e) {
+            throw new ConvertCallException("An error occurred while converting. See the reasons below.", e);
+        }
+    }
+
+    default <A> A wrap(ThrowableSupplier<A> supplier) {
+        try {
+            return supplier.execute();
+        } catch (Throwable e) {
+            throw new ConvertCallException("An error occurred while converting. See the reasons below.", e);
+        }
+    }
+
     interface RequestBodyConverter extends Converter<Object, RequestBody> {
 
         @Override
         @EverythingIsNonNull
-        RequestBody convert(Object value) throws IOException;
+        RequestBody convert(Object value);
 
     }
 
@@ -52,7 +83,7 @@ public interface ExtensionConverter<DTO> {
 
         @Override
         @Nullable
-        DTO convert(@Nullable ResponseBody value) throws IOException;
+        DTO convert(@Nullable ResponseBody value);
 
     }
 

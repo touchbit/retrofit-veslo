@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-package org.touchbit.retrofit.ext.dmr.client.converter.ext;
+package org.touchbit.retrofit.ext.dmr.client.converter.defaults;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
-import org.touchbit.retrofit.ext.dmr.client.converter.ExtensionConverter;
-import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
+import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
+import org.touchbit.retrofit.ext.dmr.client.model.ResourceFile;
+import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
-import javax.annotation.Nullable;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
-public class ByteArrayConverter implements ExtensionConverter<Byte[]> {
+public class ResourceFileConverter implements ExtensionConverter<ResourceFile> {
 
     @Override
     @EverythingIsNonNull
@@ -43,12 +41,13 @@ public class ByteArrayConverter implements ExtensionConverter<Byte[]> {
             @Override
             @EverythingIsNonNull
             public RequestBody convert(Object value) {
-                if (value instanceof Byte[]) {
-                    Byte[] bytes = (Byte[]) value;
+                if (value instanceof ResourceFile) {
+                    ResourceFile resourceFile = (ResourceFile) value;
                     final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
-                    return RequestBody.create(mediaType, ConverterUtils.toPrimitiveByteArray(bytes));
+                    return wrap(() -> RequestBody.create(mediaType, resourceFile.getBytes()));
                 }
-                throw new ConverterUnsupportedTypeException(ByteArrayConverter.class, Byte[].class, value.getClass());
+                throw new ConvertCallException("Unsupported type. " +
+                        "Expected: " + ResourceFile.class + ". Received: " + value.getClass());
             }
 
         };
@@ -56,22 +55,13 @@ public class ByteArrayConverter implements ExtensionConverter<Byte[]> {
 
     @Override
     @EverythingIsNonNull
-    public ResponseBodyConverter<Byte[]> responseBodyConverter(final Type type,
-                                                               final Annotation[] methodAnnotations,
-                                                               final Retrofit retrofit) {
-        return new ResponseBodyConverter<Byte[]>() {
-
-            @Override
-            @Nullable
-            public Byte[] convert(@Nullable ResponseBody value) throws IOException {
-                if (value == null || value.contentLength() == 0) {
-                    return null;
-                }
-                return ConverterUtils.toObjectByteArray(value.bytes());
-            }
-
+    public ResponseBodyConverter<ResourceFile> responseBodyConverter(final Type type,
+                                                                     final Annotation[] methodAnnotations,
+                                                                     final Retrofit retrofit) {
+        return value -> {
+            throw new ConvertCallException("It is forbidden to use the " + ResourceFile.class +
+                    " model in a response body.");
         };
-
     }
 
 }

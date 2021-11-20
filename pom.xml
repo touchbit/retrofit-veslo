@@ -121,6 +121,7 @@
                 <version>1.0.0</version>
                 <scope>compile</scope>
             </dependency>
+            <!-- project test dependencies -->
             <dependency>
                 <groupId>org.touchbit.retrofit.ext</groupId>
                 <artifactId>interal-test-module</artifactId>
@@ -145,24 +146,26 @@
                 <groupId>com.squareup.retrofit2</groupId>
                 <artifactId>retrofit</artifactId>
                 <version>${retrofit2.version}</version>
-                <scope>provided</scope>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.squareup.retrofit2</groupId>
                 <artifactId>converter-jackson</artifactId>
                 <version>${retrofit2.version}</version>
-                <scope>provided</scope>
+                <scope>compile</scope>
             </dependency>
-            <!-- Jakarta Bean Validation -->
+            <!-- Bean Validation -->
             <dependency>
                 <groupId>org.glassfish</groupId>
                 <artifactId>jakarta.el</artifactId>
                 <version>4.0.2</version>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
                 <version>7.0.1.Final</version>
+                <scope>compile</scope>
             </dependency>
             <!-- test scope dependencies -->
             <dependency>
@@ -190,7 +193,6 @@
                 <scope>test</scope>
             </dependency>
         </dependencies>
-
     </dependencyManagement>
 
     <build>

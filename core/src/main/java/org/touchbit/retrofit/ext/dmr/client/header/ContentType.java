@@ -58,6 +58,13 @@ public class ContentType {
         this.charset = charset == null ? null : charset.toLowerCase();
     }
 
+    public MediaType getMediaType() {
+        if (type == null || subtype == null) {
+            return null;
+        }
+        return MediaType.get(toString());
+    }
+
     public String getType() {
         return type;
     }

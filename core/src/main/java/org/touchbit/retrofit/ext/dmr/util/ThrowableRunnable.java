@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.touchbit.retrofit.ext.dmr.asserter;
+package org.touchbit.retrofit.ext.dmr.util;
 
 @FunctionalInterface
 public interface ThrowableRunnable {

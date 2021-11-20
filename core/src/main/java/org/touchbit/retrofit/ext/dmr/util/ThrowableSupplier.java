@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package org.touchbit.retrofit.ext.dmr.exception;
+package org.touchbit.retrofit.ext.dmr.util;
 
-public class ConvertCallException extends RuntimeException {
+@FunctionalInterface
+public interface ThrowableSupplier<R> {
 
-    public ConvertCallException(String message, Throwable t) {
-        super(message, t);
-    }
-
-    public ConvertCallException(String message) {
-        super(message);
-    }
+    R execute() throws Throwable;
 
 }

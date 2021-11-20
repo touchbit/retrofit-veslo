@@ -95,4 +95,17 @@ public class AnyBody implements IAnyBody {
         return new String(bodyData);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AnyBody anyBody = (AnyBody) o;
+        return Arrays.equals(bodyData, anyBody.bodyData);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(bodyData);
+    }
+
 }

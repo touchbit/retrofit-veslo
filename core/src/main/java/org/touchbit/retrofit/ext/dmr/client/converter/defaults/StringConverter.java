@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package org.touchbit.retrofit.ext.dmr.client.converter.ext;
+package org.touchbit.retrofit.ext.dmr.client.converter.defaults;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
-import org.touchbit.retrofit.ext.dmr.client.converter.ExtensionConverter;
-import org.touchbit.retrofit.ext.dmr.client.model.ResourceFile;
+import okhttp3.ResponseBody;
+import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
-import java.io.IOException;
+import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
-public class ResourceFileConverter implements ExtensionConverter<ResourceFile> {
+public class StringConverter implements ExtensionConverter<String> {
 
     @Override
     @EverythingIsNonNull
@@ -41,14 +41,13 @@ public class ResourceFileConverter implements ExtensionConverter<ResourceFile> {
 
             @Override
             @EverythingIsNonNull
-            public RequestBody convert(Object value) throws IOException {
-                if (value instanceof ResourceFile) {
-                    ResourceFile resourceFile = (ResourceFile) value;
+            public RequestBody convert(Object value) {
+                if (value instanceof String) {
                     final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
-                    return RequestBody.create(mediaType, resourceFile.getBytes());
+                    return RequestBody.create(mediaType, (String) value);
                 }
                 throw new ConvertCallException("Unsupported type. " +
-                        "Expected: " + ResourceFile.class + ". Received: " + value.getClass());
+                        "Expected: " + String.class + ". Received: " + value.getClass());
             }
 
         };
@@ -56,12 +55,20 @@ public class ResourceFileConverter implements ExtensionConverter<ResourceFile> {
 
     @Override
     @EverythingIsNonNull
-    public ResponseBodyConverter<ResourceFile> responseBodyConverter(final Type type,
-                                                                     final Annotation[] methodAnnotations,
-                                                                     final Retrofit retrofit) {
-        return value -> {
-            throw new ConvertCallException("It is forbidden to use the " + ResourceFile.class +
-                    " model in a response body.");
+    public ResponseBodyConverter<String> responseBodyConverter(final Type type,
+                                                               final Annotation[] methodAnnotations,
+                                                               final Retrofit retrofit) {
+        return new ResponseBodyConverter<String>() {
+
+            @Nullable
+            @Override
+            public String convert(@Nullable ResponseBody value) {
+                if (value == null || value.contentLength() == 0) {
+                    return null;
+                }
+                return wrap(value::string);
+            }
+
         };
     }
 

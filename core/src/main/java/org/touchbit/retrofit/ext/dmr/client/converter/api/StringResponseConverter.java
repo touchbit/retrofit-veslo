@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package org.touchbit.retrofit.ext.dmr.exception;
+package org.touchbit.retrofit.ext.dmr.client.converter.api;
 
-public class ConvertCallException extends RuntimeException {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    public ConvertCallException(String message, Throwable t) {
-        super(message, t);
-    }
-
-    public ConvertCallException(String message) {
-        super(message);
-    }
-
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD})
+public @interface StringResponseConverter {
 }

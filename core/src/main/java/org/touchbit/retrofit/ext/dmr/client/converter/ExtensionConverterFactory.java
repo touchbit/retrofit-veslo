@@ -18,7 +18,9 @@ package org.touchbit.retrofit.ext.dmr.client.converter;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
-import org.touchbit.retrofit.ext.dmr.client.converter.ext.*;
+import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
+import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter.ResponseBodyConverter;
+import org.touchbit.retrofit.ext.dmr.client.converter.defaults.*;
 import org.touchbit.retrofit.ext.dmr.client.header.ContentType;
 import org.touchbit.retrofit.ext.dmr.client.model.AnyBody;
 import org.touchbit.retrofit.ext.dmr.client.model.ResourceFile;
@@ -28,9 +30,9 @@ import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -39,6 +41,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 
+import static org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter.RequestBodyConverter;
 import static org.touchbit.retrofit.ext.dmr.client.header.ContentTypeConstants.*;
 import static org.touchbit.retrofit.ext.dmr.util.ConverterUtils.isIDualResponse;
 
@@ -61,14 +64,14 @@ public class ExtensionConverterFactory extends Converter.Factory {
         addRawRequestConverter(fileConverter, File.class);
         addRawRequestConverter(resourceFileConverter, ResourceFile.class);
         // mime request
-        addMimeRequestConverter(stringConverter, TEXT_PLAIN, TEXT_HTML);
+        addMimeRequestConverter(stringConverter, TEXT_PLAIN, TEXT_PLAIN_UTF8, TEXT_HTML, TEXT_HTML_UTF8);
         // raw response
         addRawResponseConverter(anyBodyConverter, AnyBody.class);
-        addRawResponseConverter(byteArrayConverter, File.class);
-        addRawResponseConverter(fileConverter, Byte[].class);
+        addRawResponseConverter(fileConverter, File.class);
+        addRawResponseConverter(byteArrayConverter, Byte[].class);
         // mime response
         addMimeResponseConverter(stringConverter,
-                TEXT_PLAIN, TEXT_PLAIN_UTF8, TEXT_HTML_UTF8, APP_FORM_URLENCODED, APP_FORM_URLENCODED_UTF8);
+                TEXT_PLAIN, TEXT_PLAIN_UTF8, TEXT_HTML, TEXT_HTML_UTF8, APP_FORM_URLENCODED, APP_FORM_URLENCODED_UTF8);
     }
 
     /**
@@ -79,14 +82,14 @@ public class ExtensionConverterFactory extends Converter.Factory {
      * @return {@link Converter}
      */
     @EverythingIsNonNull
-    public Converter<?, RequestBody> requestBodyConverter(final Type type,
-                                                          final Annotation[] pA,
-                                                          final Annotation[] mA,
-                                                          final Retrofit retrofit) {
-        return new Converter<Object, RequestBody>() {
+    public RequestBodyConverter requestBodyConverter(final Type type,
+                                                     final Annotation[] pA,
+                                                     final Annotation[] mA,
+                                                     final Retrofit retrofit) {
+        return new RequestBodyConverter() {
 
             @EverythingIsNonNull
-            public RequestBody convert(final Object value) throws IOException {
+            public RequestBody convert(final Object value) {
                 final Map<Class<?>, ExtensionConverter<?>> rawConverters = getRawRequestConverters();
                 final ExtensionConverter<?> rawConverter = rawConverters.get(value.getClass());
                 if (rawConverter != null) {
@@ -110,9 +113,9 @@ public class ExtensionConverterFactory extends Converter.Factory {
      * @return {@link Converter}
      */
     @EverythingIsNonNull
-    public Converter<ResponseBody, ?> responseBodyConverter(final Type type,
-                                                            final Annotation[] mA,
-                                                            final Retrofit retrofit) {
+    public ResponseBodyConverter<?> responseBodyConverter(final Type type,
+                                                          final Annotation[] mA,
+                                                          final Retrofit retrofit) {
         final Type bodyType;
         if (isIDualResponse(type)) {
             bodyType = getParameterUpperBound(0, (ParameterizedType) type);
@@ -121,23 +124,21 @@ public class ExtensionConverterFactory extends Converter.Factory {
         }
         final Class<?> bodyClass = getRawType(bodyType);
 
-        return new Converter<ResponseBody, Object>() {
+        return new ResponseBodyConverter<Object>() {
 
             @Override
             @Nullable
-            public Object convert(@Nullable final ResponseBody body) throws IOException {
+            public Object convert(@Nullable final ResponseBody body) {
                 final Map<Class<?>, ExtensionConverter<?>> rawConverters = getRawResponseConverters();
                 final ExtensionConverter<?> rawConverter = rawConverters.get(bodyClass);
                 if (rawConverter != null) {
                     return rawConverter.responseBodyConverter(bodyClass, mA, retrofit).convert(body);
                 }
                 final Map<ContentType, ExtensionConverter<?>> mimeConverters = getMimeResponseConverters();
-                final ContentType contentType;
                 if (body == null) {
-                    contentType = new ContentType();
-                } else {
-                    contentType = new ContentType(body.contentType());
+                    return null;
                 }
+                final ContentType contentType = new ContentType(body.contentType());
                 final ExtensionConverter<?> extensionConverter = mimeConverters.get(contentType);
                 if (extensionConverter != null) {
                     return extensionConverter.responseBodyConverter(bodyClass, mA, retrofit).convert(body);
@@ -166,47 +167,59 @@ public class ExtensionConverterFactory extends Converter.Factory {
                 + mimeSJ + "\n");
     }
 
+    @Nonnull
     public Map<Class<?>, ExtensionConverter<?>> getRawRequestConverters() {
         return rawRequestConverters;
     }
 
-    public Map<ContentType, ExtensionConverter<?>> getMimeRequestConverters() {
-        return mimeRequestConverters;
-    }
-
+    @EverythingIsNonNull
     public void addRawRequestConverter(ExtensionConverter<?> converter, Class<?>... rawClasses) {
+        Objects.requireNonNull(converter, "Parameter 'converter' cannot be null.");
         for (Class<?> rawClass : rawClasses) {
+            Objects.requireNonNull(rawClass, "Parameter 'rawClass' cannot be null.");
             getRawRequestConverters().put(rawClass, converter);
         }
     }
 
+    @Nonnull
+    public Map<ContentType, ExtensionConverter<?>> getMimeRequestConverters() {
+        return mimeRequestConverters;
+    }
+
+    @EverythingIsNonNull
     public void addMimeRequestConverter(ExtensionConverter<?> converter, ContentType... contentTypes) {
+        Objects.requireNonNull(converter, "Parameter 'converter' cannot be null.");
         for (ContentType contentType : contentTypes) {
+            Objects.requireNonNull(contentType, "Parameter 'contentType' cannot be null.");
             getMimeRequestConverters().put(contentType, converter);
         }
     }
 
-
+    @Nonnull
     public Map<ContentType, ExtensionConverter<?>> getMimeResponseConverters() {
         return mimeResponseConverters;
     }
 
+    @EverythingIsNonNull
     public void addMimeResponseConverter(ExtensionConverter<?> converter, ContentType... contentTypes) {
-        Objects.requireNonNull(converter);
+        Objects.requireNonNull(converter, "Parameter 'converter' cannot be null.");
         for (ContentType contentType : contentTypes) {
-            Objects.requireNonNull(contentType);
+            Objects.requireNonNull(contentType, "Parameter 'contentType' cannot be null.");
             mimeResponseConverters.put(contentType, converter);
         }
     }
 
+    @Nonnull
     public Map<Class<?>, ExtensionConverter<?>> getRawResponseConverters() {
         return rawResponseConverters;
     }
 
-    public void addRawResponseConverter(ExtensionConverter<?> converter, Class<?>... bodyClass) {
-        for (Class<?> aClass : bodyClass) {
-            Objects.requireNonNull(aClass);
-            rawResponseConverters.put(aClass, converter);
+    @EverythingIsNonNull
+    public void addRawResponseConverter(ExtensionConverter<?> converter, Class<?>... bodyClasses) {
+        Objects.requireNonNull(converter, "Parameter 'converter' cannot be null.");
+        for (Class<?> bodyClass : bodyClasses) {
+            Objects.requireNonNull(bodyClass, "Parameter 'bodyClass' cannot be null.");
+            rawResponseConverters.put(bodyClass, converter);
         }
     }
 

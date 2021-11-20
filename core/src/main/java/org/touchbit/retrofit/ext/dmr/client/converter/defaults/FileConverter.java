@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.touchbit.retrofit.ext.dmr.client.converter.ext;
+package org.touchbit.retrofit.ext.dmr.client.converter.defaults;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
-import org.touchbit.retrofit.ext.dmr.client.converter.ExtensionConverter;
+import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
 import retrofit2.Retrofit;
@@ -27,7 +27,6 @@ import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
@@ -45,10 +44,10 @@ public class FileConverter implements ExtensionConverter<File> {
 
             @Override
             @EverythingIsNonNull
-            public RequestBody convert(Object value) throws IOException {
+            public RequestBody convert(Object value) {
                 if (value instanceof File) {
                     File file = (File) value;
-                    final byte[] data = Files.readAllBytes(file.toPath());
+                    final byte[] data = wrap(() -> Files.readAllBytes(file.toPath()));
                     final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
                     return RequestBody.create(mediaType, data);
                 }
@@ -67,12 +66,12 @@ public class FileConverter implements ExtensionConverter<File> {
 
             @Override
             @Nullable
-            public File convert(@Nullable ResponseBody value) throws IOException {
+            public File convert(@Nullable ResponseBody value) {
                 if (value == null || value.contentLength() == 0) {
                     return null;
                 }
-                final Path tempFile = Files.createTempFile(null, null);
-                return Files.write(tempFile, value.bytes()).toFile();
+                final Path tempFile = wrap(() -> Files.createTempFile(null, null));
+                return wrap(() -> Files.write(tempFile, value.bytes()).toFile());
             }
 
         };

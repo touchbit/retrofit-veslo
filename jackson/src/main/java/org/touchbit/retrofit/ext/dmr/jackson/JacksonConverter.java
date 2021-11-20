@@ -23,13 +23,12 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
-import org.touchbit.retrofit.ext.dmr.client.converter.ExtensionConverter;
+import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
@@ -51,11 +50,11 @@ public class JacksonConverter<T> implements ExtensionConverter<T> {
 
             @Override
             @EverythingIsNonNull
-            public RequestBody convert(Object value) throws IOException {
+            public RequestBody convert(Object value) {
                 final ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
                 final ObjectWriter objectWriter = objectMapper.writerFor((Class<?>) type);
                 final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
-                return RequestBody.create(mediaType, objectWriter.writeValueAsBytes(value));
+                return wrap(() -> RequestBody.create(mediaType, objectWriter.writeValueAsBytes(value)));
             }
 
         };
@@ -70,12 +69,12 @@ public class JacksonConverter<T> implements ExtensionConverter<T> {
 
             @Override
             @Nullable
-            public T convert(@Nullable ResponseBody value) throws IOException {
+            public T convert(@Nullable ResponseBody value) {
                 if (value == null || value.contentLength() == 0) {
                     return null;
                 }
                 final ObjectReader objectReader = new ObjectMapper().readerFor((Class<?>) type);
-                return objectReader.readValue(value.bytes());
+                return wrap(() -> objectReader.readValue(value.bytes()));
             }
 
         };
