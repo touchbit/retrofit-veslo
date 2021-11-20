@@ -1,1 +1,1 @@
-# retrofit-double-model-response-extension
+# Retrofit dual response extension
