@@ -30,6 +30,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.Objects;
 
 public class AnyBodyConverter implements ExtensionConverter<AnyBody> {
 
@@ -43,16 +44,17 @@ public class AnyBodyConverter implements ExtensionConverter<AnyBody> {
 
             @Override
             @EverythingIsNonNull
-            public RequestBody convert(Object value) {
-                if (value instanceof AnyBody) {
-                    final AnyBody anyBody = (AnyBody) value;
+            public RequestBody convert(Object body) {
+                Objects.requireNonNull(body, "Parameter 'body' required");
+                if (body instanceof AnyBody) {
+                    final AnyBody anyBody = (AnyBody) body;
                     final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
                     if (anyBody.isNullBody()) {
                         return RequestBody.create(mediaType, new byte[]{});
                     }
                     return RequestBody.create(mediaType, anyBody.bytes());
                 }
-                throw new ConverterUnsupportedTypeException(AnyBodyConverter.class, AnyBody.class, value.getClass());
+                throw new ConverterUnsupportedTypeException(AnyBodyConverter.class, AnyBody.class, body.getClass());
             }
 
         };

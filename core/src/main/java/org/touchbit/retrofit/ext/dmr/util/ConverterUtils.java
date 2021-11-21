@@ -40,6 +40,14 @@ public class ConverterUtils {
     }
 
     /**
+     * @param data - {@link String}
+     * @return {@link Byte[]}
+     */
+    public static Byte[] toObjectByteArray(String data) {
+        return toObjectByteArray(data.getBytes());
+    }
+
+    /**
      * @param bytes - byte[]
      * @return {@link Byte[]}
      */

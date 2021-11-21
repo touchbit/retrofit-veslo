@@ -16,10 +16,11 @@
 
 package org.touchbit.retrofit.ext.dmr.client.converter;
 
+import internal.test.utils.OkHttpUtils;
+import internal.test.utils.RetrofitUtils;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
-import okio.Buffer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,7 +34,6 @@ import org.touchbit.retrofit.ext.dmr.client.model.ResourceFile;
 import org.touchbit.retrofit.ext.dmr.client.response.DualResponse;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
-import retrofit2.http.Headers;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
@@ -95,7 +95,7 @@ public class ExtensionConverterFactoryUnitTests {
                 .convert(body);
         assertThat("RequestBody", requestBody, notNullValue());
         assertThat("RequestBody.contentType()", requestBody.contentType(), is(expMT));
-        assertThat("RequestBody.toString()", bodyToString(requestBody), is(body));
+        assertThat("RequestBody.toString()", OkHttpUtils.requestBodyToString(requestBody), is(body));
     }
 
     private static Stream<Arguments> testProvider1637422599548() {
@@ -115,7 +115,7 @@ public class ExtensionConverterFactoryUnitTests {
                 .requestBodyConverter(AnyBody.class, new Annotation[]{}, new Annotation[]{}, null)
                 .convert(expected);
         assertThat("RequestBody", requestBody, notNullValue());
-        assertThat("RequestBody.toString()", bodyToString(requestBody), is("test1637428451229"));
+        assertThat("RequestBody.toString()", OkHttpUtils.requestBodyToString(requestBody), is("test1637428451229"));
     }
 
     @Test
@@ -126,7 +126,7 @@ public class ExtensionConverterFactoryUnitTests {
                 .requestBodyConverter(AnyBody.class, new Annotation[]{}, new Annotation[]{}, null)
                 .convert(expected);
         assertThat("RequestBody", requestBody, notNullValue());
-        assertThat("RequestBody.toString()", bodyToString(requestBody), is("test1637428566604"));
+        assertThat("RequestBody.toString()", OkHttpUtils.requestBodyToString(requestBody), is("test1637428566604"));
     }
 
     @Test
@@ -137,7 +137,7 @@ public class ExtensionConverterFactoryUnitTests {
                 .requestBodyConverter(AnyBody.class, new Annotation[]{}, new Annotation[]{}, null)
                 .convert(file);
         assertThat("RequestBody", requestBody, notNullValue());
-        assertThat("RequestBody.toString()", bodyToString(requestBody), is("test1637428660061"));
+        assertThat("RequestBody.toString()", OkHttpUtils.requestBodyToString(requestBody), is("test1637428660061"));
     }
 
     @Test
@@ -148,7 +148,7 @@ public class ExtensionConverterFactoryUnitTests {
                 .requestBodyConverter(AnyBody.class, new Annotation[]{}, new Annotation[]{}, null)
                 .convert(file);
         assertThat("RequestBody", requestBody, notNullValue());
-        assertThat("RequestBody.toString()", bodyToString(requestBody), is("test1637428785169"));
+        assertThat("RequestBody.toString()", OkHttpUtils.requestBodyToString(requestBody), is("test1637428785169"));
     }
 
     @Test
@@ -351,32 +351,12 @@ public class ExtensionConverterFactoryUnitTests {
                 .assertMessageIs("Parameter 'contentType' cannot be null.");
     }
 
-    private String bodyToString(RequestBody requestBody) {
-        try {
-            final Buffer buffer = new Buffer();
-            requestBody.writeTo(buffer);
-            return buffer.readUtf8();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static Annotation[] getContentTypeHeaderAnnotations(ContentType contentType) {
-        return getContentTypeHeaderAnnotations(contentType.toString());
+    private static Annotation[] getContentTypeHeaderAnnotations(ContentType value) {
+        return getContentTypeHeaderAnnotations(value.toString());
     }
 
     private static Annotation[] getContentTypeHeaderAnnotations(String value) {
-        return new Annotation[]{
-                new Headers() {
-                    public Class<? extends Annotation> annotationType() {
-                        return Headers.class;
-                    }
-
-                    public String[] value() {
-                        return new String[]{"Content-Type: " + value};
-                    }
-                }
-        };
+        return RetrofitUtils.getCallMethodAnnotations("Content-Type: " + value);
     }
 
 }

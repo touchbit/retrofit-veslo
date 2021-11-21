@@ -28,6 +28,7 @@ import retrofit2.internal.EverythingIsNonNull;
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.Objects;
 
 public class ByteArrayConverter implements ExtensionConverter<Byte[]> {
 
@@ -41,13 +42,14 @@ public class ByteArrayConverter implements ExtensionConverter<Byte[]> {
 
             @Override
             @EverythingIsNonNull
-            public RequestBody convert(Object value) {
-                if (value instanceof Byte[]) {
-                    Byte[] bytes = (Byte[]) value;
+            public RequestBody convert(Object body) {
+                Objects.requireNonNull(body, "Parameter 'body' required");
+                if (body instanceof Byte[]) {
+                    Byte[] bytes = (Byte[]) body;
                     final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
                     return RequestBody.create(mediaType, ConverterUtils.toPrimitiveByteArray(bytes));
                 }
-                throw new ConverterUnsupportedTypeException(ByteArrayConverter.class, Byte[].class, value.getClass());
+                throw new ConverterUnsupportedTypeException(ByteArrayConverter.class, Byte[].class, body.getClass());
             }
 
         };

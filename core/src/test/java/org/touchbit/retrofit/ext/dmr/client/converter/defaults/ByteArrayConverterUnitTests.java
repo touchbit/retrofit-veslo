@@ -21,48 +21,36 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.touchbit.retrofit.ext.dmr.client.model.AnyBody;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
+import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
 
 import static internal.test.utils.ThrowableAsserter.assertThrow;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("ConstantConditions")
-@DisplayName("AnyBodyConverter tests")
-public class AnyBodyConverterUnitTests {
+@DisplayName("ByteArrayConverter tests")
+public class ByteArrayConverterUnitTests {
 
     @Test
-    @DisplayName("Successful conversion AnyBody->RequestBody if body instanceof AnyBody.class")
-    public void test1637432781973() {
-        final AnyBody expected = new AnyBody("test1637432781973");
-        final RequestBody requestBody = new AnyBodyConverter()
+    @DisplayName("Successful conversion Byte[]->RequestBody if body instanceof Byte.class")
+    public void test1637463917948() {
+        final String expected = "test1637463917948";
+        final Byte[] body = ConverterUtils.toObjectByteArray(expected);
+        final RequestBody requestBody = new ByteArrayConverter()
                 .requestBodyConverter(null, null, null, null)
-                .convert(expected);
+                .convert(body);
         assertThat("RequestBody", requestBody, notNullValue());
         final String actual = OkHttpUtils.requestBodyToString(requestBody);
-        assertThat("Body", actual, is(expected.string()));
+        assertThat("Body", actual, is(expected));
     }
 
     @Test
-    @DisplayName("Successful conversion AnyBody->RequestBody if body == AnyBody(null)")
-    public void test1637433657612() {
-        final AnyBody expected = new AnyBody((byte[]) null);
-        final RequestBody requestBody = new AnyBodyConverter()
-                .requestBodyConverter(null, null, null, null)
-                .convert(expected);
-        assertThat("RequestBody", requestBody, notNullValue());
-        final String actual = OkHttpUtils.requestBodyToString(requestBody);
-        assertThat("Body", actual, is(""));
-    }
-
-    @Test
-    @DisplayName("Error converting AnyBody->RequestBody if body == null")
+    @DisplayName("Error converting Byte[]->RequestBody if body == null")
     public void test1637463921852() {
-        final Runnable runnable = () -> new AnyBodyConverter()
+        final Runnable runnable = () -> new ByteArrayConverter()
                 .requestBodyConverter(null, null, null, null)
                 .convert(null);
         assertThrow(runnable).assertClass(NullPointerException.class).assertMessageIs("Parameter 'body' required");
@@ -70,33 +58,46 @@ public class AnyBodyConverterUnitTests {
 
     @Test
     @DisplayName("Error converting Object->RequestBody")
-    public void test1637433815174() {
-        final Runnable runnable = () -> new AnyBodyConverter()
+    public void test1637463925672() {
+        final Runnable runnable = () -> new ByteArrayConverter()
                 .requestBodyConverter(null, null, null, null)
                 .convert(new Object());
         assertThrow(runnable).assertClass(ConverterUnsupportedTypeException.class);
     }
 
     @Test
-    @DisplayName("Successful conversion ResponseBody->AnyBody if body present")
-    public void test1637433847494() throws Exception {
+    @DisplayName("Successful conversion ResponseBody->AnyBody if content length == 0 (return null)")
+    public void test1637463929423() throws Exception {
+        final String expected = "test1637463929423";
         final ResponseBody responseBody = mock(ResponseBody.class);
-        AnyBody expected = new AnyBody("test1637433847494");
-        when(responseBody.bytes()).thenReturn(expected.bytes());
-        final AnyBody anyBody = new AnyBodyConverter()
+        when(responseBody.bytes()).thenReturn(expected.getBytes());
+        final Byte[] result = new ByteArrayConverter()
                 .responseBodyConverter(null, null, null)
                 .convert(responseBody);
-        assertThat("Body", anyBody, is(expected));
+        assertThat("Body", result, nullValue());
+    }
+
+    @Test
+    @DisplayName("Successful conversion ResponseBody->AnyBody if content length > 0 (return byte array)")
+    public void test1637465032249() throws Exception {
+        final String expected = "test1637465032249";
+        final Byte[] body = ConverterUtils.toObjectByteArray(expected);
+        final ResponseBody responseBody = mock(ResponseBody.class);
+        when(responseBody.bytes()).thenReturn(expected.getBytes());
+        when(responseBody.contentLength()).thenReturn(Long.valueOf(expected.length()));
+        final Byte[] result = new ByteArrayConverter()
+                .responseBodyConverter(null, null, null)
+                .convert(responseBody);
+        assertThat("Body", result, is(body));
     }
 
     @Test
     @DisplayName("Successful conversion ResponseBody->AnyBody if body == null")
-    public void test1637434016563() {
-        AnyBody expected = new AnyBody((byte[]) null);
-        final AnyBody anyBody = new AnyBodyConverter()
+    public void test1637463932624() {
+        final Byte[] body = new ByteArrayConverter()
                 .responseBodyConverter(null, null, null)
                 .convert(null);
-        assertThat("Body", anyBody, is(expected));
+        assertThat("Body", body, nullValue());
     }
 
 }
