@@ -51,7 +51,7 @@ public class ThrowableAsserter {
             constructor.setAccessible(true);
             try {
                 constructor.newInstance();
-                throw new AssertionError("The function call completed without any exceptions being thrown.");
+                throw new AssertionError("The function call completed without UtilityClassException being thrown.");
             } catch (Exception e) {
                 if (e.getCause() == null) {
                     throw new AssertionError("Unexpected exception", e);

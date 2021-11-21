@@ -18,6 +18,7 @@ package org.touchbit.retrofit.ext.dmr.client.header;
 
 import okhttp3.MediaType;
 
+import javax.annotation.Nullable;
 import java.nio.charset.Charset;
 import java.util.Objects;
 
@@ -27,11 +28,35 @@ public class ContentType {
     private final String subtype;
     private final String charset;
 
-    public ContentType() {
-        this(null);
+    public ContentType(String type, String subtype) {
+        this(type, subtype, null);
     }
 
-    public ContentType(MediaType mediaType) {
+    public ContentType(String type, String subtype, String charset) {
+        if ((type != null && subtype == null) || (type == null && subtype != null)){
+            throw new IllegalArgumentException("Type and subtype can only be null at the same time");
+        }
+        if (type != null && type.trim().isEmpty()) {
+            throw new IllegalArgumentException("Parameter 'type' cannot be blank.");
+        }
+        if (subtype != null && subtype.trim().isEmpty()) {
+            throw new IllegalArgumentException("Parameter 'subtype' cannot be blank.");
+        }
+        if (charset != null && charset.trim().isEmpty()) {
+            throw new IllegalArgumentException("Parameter 'charset' cannot be blank.");
+        }
+        if (type == null) {
+            this.type = null;
+            this.subtype = null;
+            this.charset = null;
+        } else {
+            this.type = type.toLowerCase();
+            this.subtype = subtype.toLowerCase();
+            this.charset = charset == null ? null : charset.toLowerCase();
+        }
+    }
+
+    public ContentType(@Nullable MediaType mediaType) {
         if (mediaType == null) {
             this.type = null;
             this.subtype = null;
@@ -48,18 +73,9 @@ public class ContentType {
         }
     }
 
-    public ContentType(String type, String subtype) {
-        this(type, subtype, null);
-    }
-
-    public ContentType(String type, String subtype, String charset) {
-        this.type = type == null ? null : type.toLowerCase();
-        this.subtype = subtype == null ? null : subtype.toLowerCase();
-        this.charset = charset == null ? null : charset.toLowerCase();
-    }
-
+    @Nullable
     public MediaType getMediaType() {
-        if (type == null || subtype == null) {
+        if (isNull()) {
             return null;
         }
         return MediaType.get(toString());
@@ -77,6 +93,10 @@ public class ContentType {
         return charset;
     }
 
+    public boolean isNull() {
+        return type == null;
+    }
+
     @Override
     public int hashCode() {
         return toString().hashCode();
@@ -84,6 +104,9 @@ public class ContentType {
 
     @Override
     public String toString() {
+        if (isNull()) {
+            return "null";
+        }
         String charset = (getCharset() == null ? "" : "; charset=" + getCharset());
         return (getType() + "/" + getSubtype() + charset);
     }
@@ -91,7 +114,7 @@ public class ContentType {
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
-            return this.getType() == null && this.getSubtype() == null && this.getCharset() == null;
+            return isNull();
         }
         if (obj instanceof ContentType) {
             ContentType contentType = (ContentType) obj;
