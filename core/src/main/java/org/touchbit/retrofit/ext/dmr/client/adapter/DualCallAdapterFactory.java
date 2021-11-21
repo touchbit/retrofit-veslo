@@ -65,7 +65,7 @@ public class DualCallAdapterFactory extends CallAdapter.Factory {
         return new CallAdapter<Object, IDualResponse<?, ?>>() {
 
             @Override
-            public ParameterizedType responseType() {
+            public Type responseType() {
                 return type;
             }
 

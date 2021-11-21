@@ -39,8 +39,8 @@ public interface SoftlyAsserter extends Closeable {
 
     @EverythingIsNonNull
     default SoftlyAsserter softly(@Nonnull ThrowableRunnable throwableRunnable) {
+        Objects.requireNonNull(throwableRunnable, "Parameter 'throwableRunnable' is required");
         try {
-            Objects.requireNonNull(throwableRunnable, "Parameter 'throwableRunnable' is required");
             throwableRunnable.execute();
         } catch (Throwable e) {
             addErrors(e);
@@ -50,6 +50,7 @@ public interface SoftlyAsserter extends Closeable {
 
     @EverythingIsNonNull
     static void softlyAsserter(Consumer<SoftlyAsserter> asserterConsumer) {
+        Objects.requireNonNull(asserterConsumer, "Parameter 'asserterConsumer' required");
         try (final SoftlyAsserter softlyAsserter = get()) {
             asserterConsumer.accept(softlyAsserter);
         }
@@ -64,7 +65,8 @@ public interface SoftlyAsserter extends Closeable {
                 stringJoiner.add(error.getMessage());
             }
             errors.clear();
-            final String header = "The response contains the following errors:\n";
+            final String header = "Collected the following errors:\n\n";
+            // Cleaning up redundant header (nested asserts)
             final String result = stringJoiner.toString().replaceAll(header, "");
             throw new AssertionError(header + result);
         }

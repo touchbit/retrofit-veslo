@@ -55,7 +55,7 @@ public class ResponseAsserterUnitTests {
         responseAsserter.addErrors(new RuntimeException("test1637375230127"));
         assertThrow(responseAsserter::close)
                 .assertClass(AssertionError.class)
-                .assertMessageIs("The response contains the following errors:\ntest1637375230127");
+                .assertMessageIs("Collected the following errors:\n\ntest1637375230127");
     }
 
     @Test
@@ -128,7 +128,7 @@ public class ResponseAsserterUnitTests {
         final ResponseAsserter<Object, Object> asserter = new ResponseAsserter<>(response);
         assertThrow(() -> asserter.assertSuccessfulResponse(200, body -> assertThat("", body, notNullValue())))
                 .assertClass(AssertionError.class)
-                .assertMessageIs("The response contains the following errors:\n" +
+                .assertMessageIs("Collected the following errors:\n\n" +
                         "Received unsuccessful HTTP status code.\n" +
                         "Expected: in range 200..299\n" +
                         "  Actual: was 500\n" +
@@ -159,7 +159,7 @@ public class ResponseAsserterUnitTests {
         final ResponseAsserter<Object, Object> asserter = new ResponseAsserter<>(response);
         assertThrow(() -> asserter.assertSuccessfulBody(body -> assertThat("", body, notNullValue())))
                 .assertClass(AssertionError.class)
-                .assertMessageIs("The response contains the following errors:\n" +
+                .assertMessageIs("Collected the following errors:\n\n" +
                         "Received unsuccessful HTTP status code.\n" +
                         "Expected: in range 200..299\n" +
                         "  Actual: was 500\n" +
@@ -229,7 +229,7 @@ public class ResponseAsserterUnitTests {
         final ResponseAsserter<Object, Object> asserter = new ResponseAsserter<>(response);
         assertThrow(() -> asserter.assertErrorResponse(500, body -> assertThat("", body, notNullValue())))
                 .assertClass(AssertionError.class)
-                .assertMessageIs("The response contains the following errors:\n" +
+                .assertMessageIs("Collected the following errors:\n\n" +
                         "Received successful HTTP status code.\n" +
                         "Expected: in range 300..599\n" +
                         "  Actual: was 200\n" +
@@ -259,7 +259,7 @@ public class ResponseAsserterUnitTests {
         final ResponseAsserter<Object, Object> asserter = new ResponseAsserter<>(response);
         assertThrow(() -> asserter.assertErrorBody(body -> assertThat("", body, notNullValue())))
                 .assertClass(AssertionError.class)
-                .assertMessageIs("The response contains the following errors:\n" +
+                .assertMessageIs("Collected the following errors:\n\n" +
                         "Received successful HTTP status code.\n" +
                         "Expected: in range 300..599\n" +
                         "  Actual: was 200\n" +

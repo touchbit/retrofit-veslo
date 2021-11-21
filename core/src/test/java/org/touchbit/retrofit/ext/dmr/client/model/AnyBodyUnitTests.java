@@ -201,7 +201,7 @@ public class AnyBodyUnitTests {
         assertThrow(() -> new AnyBody(EMPTY_BODY_BYTES).assertStringBodyContains("test1637481450008"))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("" +
-                        "The response contains the following errors:\n" +
+                        "Collected the following errors:\n\n" +
                         "Response body\n" +
                         "Expected: contains 'test1637481450008'\n" +
                         "     but: does not contain\n");
@@ -213,7 +213,7 @@ public class AnyBodyUnitTests {
         assertThrow(() -> new AnyBody("test1637481553477").assertStringBodyContains("TEST1637481553477"))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("" +
-                        "The response contains the following errors:\n" +
+                        "Collected the following errors:\n\n" +
                         "Response body\n" +
                         "Expected: contains 'TEST1637481553477'\n" +
                         "     but: does not contain\n");
@@ -254,7 +254,7 @@ public class AnyBodyUnitTests {
         assertThrow(() -> new AnyBody(EMPTY_BODY_BYTES).assertStringBodyContainsIgnoreCase("test1637482421528"))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("" +
-                        "The response contains the following errors:\n" +
+                        "Collected the following errors:\n\n" +
                         "Response body\n" +
                         "Expected: contains 'test1637482421528' (ignore case)\n" +
                         "     but: does not contain\n");

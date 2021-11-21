@@ -23,6 +23,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import static internal.test.utils.ThrowableAsserter.assertThrow;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -60,5 +61,56 @@ public class SoftlyAsserterUnitTests {
         assertThat("ResponseAsserterBase.getErrors() size", softly.getErrors().size(), is(4));
     }
 
+    @Test
+    @DisplayName("#softlyAsserter() NPE if asserterConsumer = null")
+    public void test1637484774676() {
+        assertThrow(() -> SoftlyAsserter.softlyAsserter(null))
+                .assertClass(NullPointerException.class)
+                .assertMessageIs("Parameter 'asserterConsumer' required");
+    }
+
+    @Test
+    @DisplayName("#softlyAsserter() assertion call (positive)")
+    public void test1637484858588() {
+        assertThrow(() -> SoftlyAsserter.softlyAsserter(asserter -> asserter.softly(() -> assertThat("", 1, is(1)))));
+    }
+
+    @Test
+    @DisplayName("#softlyAsserter() assertion call (positive)")
+    public void test1637484897013() {
+        assertThrow(() -> SoftlyAsserter.softlyAsserter(asserter -> asserter
+                .softly(() -> assertThat("test1637484897013", 1, is(2)))))
+                .assertClass(AssertionError.class)
+                .assertMessageIs("" +
+                        "Collected the following errors:\n\n" +
+                        "test1637484897013\n" +
+                        "Expected: is <2>\n" +
+                        "     but: was <1>");
+    }
+
+    @Test
+    @DisplayName("#close() Cleaning up redundant SoftlyAsserter error header")
+    public void test1637485265947() {
+        String errMsg = "Collected the following errors:\n\n" +
+                "test1637485265947\n" +
+                "Expected: is <2>\n" +
+                "     but: was <1>";
+        assertThrow(() -> {
+            try (final SoftlyAsserter softlyAsserter = SoftlyAsserter.get()) {
+                softlyAsserter.addErrors(new AssertionError(errMsg));
+                softlyAsserter.addErrors(new AssertionError(errMsg));
+            }})
+                .assertClass(AssertionError.class)
+                .assertMessageIs("Collected the following errors:\n" +
+                        "\n" +
+                        "test1637485265947\n" +
+                        "Expected: is <2>\n" +
+                        "     but: was <1>\n" +
+                        "\n" +
+                        "test1637485265947\n" +
+                        "Expected: is <2>\n" +
+                        "     but: was <1>");
+
+    }
 
 }

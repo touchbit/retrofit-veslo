@@ -56,7 +56,7 @@ public class BeanValidationTests {
                 .assertResponse(response -> response.assertSuccessfulBody(UserDTO::assertConsistency)))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("" +
-                        "The response contains the following errors:\n" +
+                        "Collected the following errors:\n\n" +
                         "Model property: UserDTO.firstName\n" +
                         "Expected: size must be between 1 and 10\n" +
                         "  Actual: " + uuid + "\n");
@@ -73,7 +73,7 @@ public class BeanValidationTests {
         assertThrow(runnable)
                 .assertClass(AssertionError.class)
                 .assertMessageIs("" +
-                        "The response contains the following errors:\n" +
+                        "Collected the following errors:\n\n" +
                         "Model property: UserDTO.passport.number\n" +
                         "Expected: must match \"^[0-9]{6}$\"\n" +
                         "  Actual: " + uuid + "\n");

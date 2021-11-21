@@ -686,7 +686,7 @@ public class HeadersAsserterUnitTests {
                 .assertMessageIs(getContainsAssertMessage("any", "test1637301589744", "test_1637301589744"));
     }
 
-    private static final String ERR_MSG_PREFIX = "The response contains the following errors:\nResponse header ";
+    private static final String ERR_MSG_PREFIX = "Collected the following errors:\n\nResponse header ";
 
     private String getIsAssertMessage(String header, String exp, String act) {
         return ERR_MSG_PREFIX + "'" + header + "'\nExpected: is '" + exp + "'\n  Actual: " + act;

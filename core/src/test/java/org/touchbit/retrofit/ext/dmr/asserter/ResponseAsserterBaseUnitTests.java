@@ -62,7 +62,7 @@ public class ResponseAsserterBaseUnitTests {
         responseAsserterBase.addErrors(expected);
         assertThrow(responseAsserterBase::close)
                 .assertClass(AssertionError.class)
-                .assertMessageIs("The response contains the following errors:\ntest1637299122721");
+                .assertMessageIs("Collected the following errors:\n\ntest1637299122721");
     }
 
     @Test
