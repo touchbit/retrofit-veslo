@@ -64,10 +64,10 @@ public interface SoftlyAsserter extends Closeable {
             for (Throwable error : errors) {
                 stringJoiner.add(error.getMessage());
             }
-            errors.clear();
             final String header = "Collected the following errors:\n\n";
             // Cleaning up redundant header (nested asserts)
             final String result = stringJoiner.toString().replaceAll(header, "");
+            errors.clear();
             throw new AssertionError(header + result);
         }
     }

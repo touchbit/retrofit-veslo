@@ -23,6 +23,8 @@ import org.junit.jupiter.api.Test;
 import java.util.UUID;
 
 import static internal.test.utils.ThrowableAsserter.assertThrow;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.touchbit.retrofit.ext.dmr.asserter.HeadersAsserter.*;
 
 @DisplayName("HeadersAsserter class tests")
@@ -684,6 +686,16 @@ public class HeadersAsserterUnitTests {
         assertThrow(() -> new HeadersAsserter(headers).assertHeaderContains("any", "test1637301589744").blame())
                 .assertClass(AssertionError.class)
                 .assertMessageIs(getContainsAssertMessage("any", "test1637301589744", "test_1637301589744"));
+    }
+
+    @Test
+    @DisplayName("#addErrors() and #getErrors()")
+    public void test1637494229934() {
+        Headers headers = Headers.of("any", "test1637494229934");
+        final HeadersAsserter headersAsserter = new HeadersAsserter(headers);
+        assertThat("", headersAsserter.getErrors().size(), is(0));
+        headersAsserter.addErrors(new AssertionError());
+        assertThat("", headersAsserter.getErrors().size(), is(1));
     }
 
     private static final String ERR_MSG_PREFIX = "Collected the following errors:\n\nResponse header ";

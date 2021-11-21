@@ -348,10 +348,20 @@ public class ResponseAsserterUnitTests {
     }
 
     @Test
-    @DisplayName("#assertHttpStatusMessageIs() negative")
+    @DisplayName("#assertHttpStatusMessageIs() negative (null)")
     public void test1637385286986() {
         final IDualResponse<Object, Object> response = mock(IDualResponse.class);
         when(response.getHttpStatusMessage()).thenReturn(null);
+        final ResponseAsserter<Object, Object> asserter = new ResponseAsserter<>(response);
+        asserter.assertHttpStatusMessageIs("OK");
+        assertResponseAsserterContainErrors(asserter, 1);
+    }
+
+    @Test
+    @DisplayName("#assertHttpStatusMessageIs() negative (different)")
+    public void test1637494008811() {
+        final IDualResponse<Object, Object> response = mock(IDualResponse.class);
+        when(response.getHttpStatusMessage()).thenReturn("FAIL");
         final ResponseAsserter<Object, Object> asserter = new ResponseAsserter<>(response);
         asserter.assertHttpStatusMessageIs("OK");
         assertResponseAsserterContainErrors(asserter, 1);

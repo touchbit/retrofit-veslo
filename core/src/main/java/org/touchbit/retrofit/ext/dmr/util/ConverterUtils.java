@@ -20,6 +20,7 @@ import okhttp3.Headers;
 import okhttp3.MediaType;
 import org.touchbit.retrofit.ext.dmr.client.header.ContentType;
 import org.touchbit.retrofit.ext.dmr.client.response.IDualResponse;
+import org.touchbit.retrofit.ext.dmr.exception.UtilityClassException;
 import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nonnull;
@@ -28,6 +29,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Created by Oleg Shaburov on 08.11.2021
@@ -36,14 +38,16 @@ import java.util.Arrays;
 public class ConverterUtils {
 
     private ConverterUtils() {
-        throw new UnsupportedOperationException("Utility class. Instantiation is prohibited.");
+        throw new UtilityClassException();
     }
 
     /**
      * @param data - {@link String}
      * @return {@link Byte[]}
      */
+    @EverythingIsNonNull
     public static Byte[] toObjectByteArray(String data) {
+        Objects.requireNonNull(data, "Parameter 'data' cannot be null.");
         return toObjectByteArray(data.getBytes());
     }
 
@@ -51,7 +55,9 @@ public class ConverterUtils {
      * @param bytes - byte[]
      * @return {@link Byte[]}
      */
+    @EverythingIsNonNull
     public static Byte[] toObjectByteArray(byte[] bytes) {
+        Objects.requireNonNull(bytes, "Parameter 'bytes' cannot be null.");
         Byte[] result = new Byte[bytes.length];
         Arrays.setAll(result, n -> bytes[n]);
         return result;
@@ -61,12 +67,14 @@ public class ConverterUtils {
      * @param bytes - {@link Byte[]}
      * @return byte[]
      */
+    @EverythingIsNonNull
     public static byte[] toPrimitiveByteArray(Byte[] bytes) {
-        byte[] primiteveArray = new byte[bytes.length];
+        Objects.requireNonNull(bytes, "Parameter 'bytes' cannot be null.");
+        byte[] primitiveArray = new byte[bytes.length];
         for (int i = 0; i < bytes.length; i++) {
-            primiteveArray[i] = bytes[i];
+            primitiveArray[i] = bytes[i];
         }
-        return primiteveArray;
+        return primitiveArray;
     }
 
     /**
@@ -75,13 +83,9 @@ public class ConverterUtils {
      */
     @EverythingIsNonNull
     public static boolean isIDualResponse(final Type type) {
+        Objects.requireNonNull(type, "Parameter 'type' cannot be null.");
         return type instanceof ParameterizedType &&
                 IDualResponse.class.isAssignableFrom((Class<?>) ((ParameterizedType) type).getRawType());
-    }
-
-    public static ContentType getContentType(@Nonnull final Annotation[] methodAnnotations) {
-        final MediaType mediaType = getMediaType(methodAnnotations);
-        return new ContentType(mediaType);
     }
 
     /**
@@ -98,6 +102,13 @@ public class ConverterUtils {
                 if (annotation instanceof retrofit2.http.Headers) {
                     for (String header : ((retrofit2.http.Headers) annotation).value()) {
                         String[] split = header.split(":");
+                        if (split.length != 2) {
+                            throw new IllegalArgumentException("Invalid header value.\n" +
+                                    "Annotation: " + retrofit2.http.Headers.class + "\n" +
+                                    "Header: " + header + "\n" +
+                                    "Expected format: Header-Name: value; parameter-name=value\n" +
+                                    "Example: Content-Type: text/xml; charset=utf-8");
+                        }
                         String name = split[0].trim();
                         String value = split[1].trim();
                         headersBuilder.add(name, value);
@@ -122,6 +133,12 @@ public class ConverterUtils {
             return null;
         }
         return MediaType.parse(contentType);
+    }
+
+    @Nonnull
+    public static ContentType getContentType(@Nonnull final Annotation[] methodAnnotations) {
+        final MediaType mediaType = getMediaType(methodAnnotations);
+        return new ContentType(mediaType);
     }
 
 }

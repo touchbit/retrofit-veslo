@@ -426,7 +426,11 @@ public class DualCallAdapterFactoryUnitTests {
     @Test
     @DisplayName("Successfully getting an empty EndpointInfo message if the EndpointInfo annotation not present")
     public void test1634561408528() {
-        Annotation[] annotations = new Annotation[]{};
+        Annotation[] annotations = new Annotation[]{new Test(){
+            public Class<? extends Annotation> annotationType() {
+                return Test.class;
+            }
+        }};
         String endpointInfo = DEFAULT_FACTORY.getEndpointInfo(annotations);
         assertThat("EndpointInfo", endpointInfo, emptyString());
     }
