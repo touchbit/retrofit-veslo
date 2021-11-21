@@ -20,7 +20,7 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
-import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
+import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
@@ -28,6 +28,7 @@ import retrofit2.internal.EverythingIsNonNull;
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.Objects;
 
 public class StringConverter implements ExtensionConverter<String> {
 
@@ -42,12 +43,12 @@ public class StringConverter implements ExtensionConverter<String> {
             @Override
             @EverythingIsNonNull
             public RequestBody convert(Object body) {
+                Objects.requireNonNull(body, "Parameter 'body' required");
                 if (body instanceof String) {
                     final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
                     return RequestBody.create(mediaType, (String) body);
                 }
-                throw new ConvertCallException("Unsupported type. " +
-                        "Expected: " + String.class + ". Received: " + body.getClass());
+                throw new ConverterUnsupportedTypeException(StringConverter.class, String.class, body.getClass());
             }
 
         };
@@ -66,7 +67,7 @@ public class StringConverter implements ExtensionConverter<String> {
                 if (body == null || body.contentLength() == 0) {
                     return null;
                 }
-                return wrap(body::string);
+                return wrap(() -> new String(body.bytes()));
             }
 
         };
