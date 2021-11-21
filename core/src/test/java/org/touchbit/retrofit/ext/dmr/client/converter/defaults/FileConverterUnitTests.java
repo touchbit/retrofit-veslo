@@ -17,6 +17,7 @@
 package org.touchbit.retrofit.ext.dmr.client.converter.defaults;
 
 import internal.test.utils.OkHttpUtils;
+import internal.test.utils.ThrowableRunnable;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
@@ -52,7 +53,7 @@ public class FileConverterUnitTests {
     @Test
     @DisplayName("Error converting File->RequestBody if body == null")
     public void test1637467411821() {
-        final Runnable runnable = () -> new FileConverter()
+        final ThrowableRunnable runnable = () -> new FileConverter()
                 .requestBodyConverter(null, null, null, null)
                 .convert(null);
         assertThrow(runnable).assertClass(NullPointerException.class).assertMessageIs("Parameter 'body' required");
@@ -61,7 +62,7 @@ public class FileConverterUnitTests {
     @Test
     @DisplayName("Error converting Object->RequestBody")
     public void test1637467415631() {
-        final Runnable runnable = () -> new FileConverter()
+        final ThrowableRunnable runnable = () -> new FileConverter()
                 .requestBodyConverter(null, null, null, null)
                 .convert(new Object());
         assertThrow(runnable).assertClass(ConverterUnsupportedTypeException.class);

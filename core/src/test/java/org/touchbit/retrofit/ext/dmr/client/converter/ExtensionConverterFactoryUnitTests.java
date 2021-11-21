@@ -18,6 +18,7 @@ package org.touchbit.retrofit.ext.dmr.client.converter;
 
 import internal.test.utils.OkHttpUtils;
 import internal.test.utils.RetrofitUtils;
+import internal.test.utils.ThrowableRunnable;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -154,7 +155,7 @@ public class ExtensionConverterFactoryUnitTests {
     @Test
     @DisplayName("ConvertCallException at converting String.class to RequestBody by type (raw)")
     public void test1637430252094() {
-        final Runnable runnable = () -> new ExtensionConverterFactory()
+        final ThrowableRunnable runnable = () -> new ExtensionConverterFactory()
                 .requestBodyConverter(String.class, new Annotation[]{}, new Annotation[]{}, null)
                 .convert("test1637430252094");
         assertThrow(runnable)
@@ -240,7 +241,7 @@ public class ExtensionConverterFactoryUnitTests {
     @Test
     @DisplayName("ConvertCallException at converting ResponseBody to ResourceFile.class (raw)")
     public void test1637429829752() {
-        final Runnable runnable = () -> new ExtensionConverterFactory()
+        final ThrowableRunnable runnable = () -> new ExtensionConverterFactory()
                 .responseBodyConverter(ResourceFile.class, new Annotation[]{}, null)
                 .convert(ResponseBody.create(null, "test1637429829752"));
         assertThrow(runnable)
@@ -251,7 +252,7 @@ public class ExtensionConverterFactoryUnitTests {
     @Test
     @DisplayName("ConvertCallException at converting ResponseBody to String.class (raw)")
     public void test1637430137761() {
-        final Runnable runnable = () -> new ExtensionConverterFactory()
+        final ThrowableRunnable runnable = () -> new ExtensionConverterFactory()
                 .responseBodyConverter(String.class, new Annotation[]{}, null)
                 .convert(ResponseBody.create(null, "test1637430137761"));
         assertThrow(runnable)

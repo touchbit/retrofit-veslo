@@ -17,6 +17,7 @@
 package org.touchbit.retrofit.ext.dmr.jsr;
 
 import internal.test.utils.TestClient;
+import internal.test.utils.ThrowableRunnable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.client.adapter.DualCallAdapterFactory;
@@ -65,9 +66,9 @@ public class BeanValidationTests {
     @Test
     @DisplayName("If contract is violated, bean validation error is expected (UserDTO.UserPassport)")
     public void test1636922771607() {
-        String uuid = UUID.randomUUID().toString();
-        UserDTO user = genUserDTO().passport(p -> p.number(uuid));
-        Runnable runnable = () -> MOCK_CLIENT.getUser(200, user).assertResponse(response -> response
+        final String uuid = UUID.randomUUID().toString();
+        final UserDTO user = genUserDTO().passport(p -> p.number(uuid));
+        final ThrowableRunnable runnable = () -> MOCK_CLIENT.getUser(200, user).assertResponse(response -> response
                 .assertHttpStatusCodeIs(200)
                 .assertSuccessfulBody(UserDTO::assertConsistency));
         assertThrow(runnable)

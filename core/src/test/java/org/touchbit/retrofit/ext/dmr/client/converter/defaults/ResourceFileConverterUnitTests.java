@@ -17,6 +17,7 @@
 package org.touchbit.retrofit.ext.dmr.client.converter.defaults;
 
 import internal.test.utils.OkHttpUtils;
+import internal.test.utils.ThrowableRunnable;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
@@ -52,7 +53,7 @@ public class ResourceFileConverterUnitTests {
     @Test
     @DisplayName("Error converting ResourceFile->RequestBody if body == null")
     public void test1637468949268() {
-        final Runnable runnable = () -> new ResourceFileConverter()
+        final ThrowableRunnable runnable = () -> new ResourceFileConverter()
                 .requestBodyConverter(null, null, null, null)
                 .convert(null);
         assertThrow(runnable).assertClass(NullPointerException.class).assertMessageIs("Parameter 'body' required");
@@ -61,7 +62,7 @@ public class ResourceFileConverterUnitTests {
     @Test
     @DisplayName("Error converting Object->RequestBody")
     public void test1637468952767() {
-        final Runnable runnable = () -> new ResourceFileConverter()
+        final ThrowableRunnable runnable = () -> new ResourceFileConverter()
                 .requestBodyConverter(null, null, null, null)
                 .convert(new Object());
         assertThrow(runnable).assertClass(ConverterUnsupportedTypeException.class);
@@ -73,7 +74,7 @@ public class ResourceFileConverterUnitTests {
         final String expected = "test1637463929423";
         final ResponseBody responseBody = mock(ResponseBody.class);
         when(responseBody.bytes()).thenReturn(expected.getBytes());
-        final Runnable runnable = () -> new ResourceFileConverter()
+        final ThrowableRunnable runnable = () -> new ResourceFileConverter()
                 .responseBodyConverter(null, null, null)
                 .convert(null);
         assertThrow(runnable)

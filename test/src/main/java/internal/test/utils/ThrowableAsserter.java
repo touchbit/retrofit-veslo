@@ -30,9 +30,9 @@ public class ThrowableAsserter {
     private final Throwable throwable;
     private final String throwableInfo;
 
-    public ThrowableAsserter(Runnable runnable) {
+    public ThrowableAsserter(ThrowableRunnable runnable) {
         try {
-            runnable.run();
+            runnable.execute();
             throw new AssertionError("The function call completed without any exceptions being thrown.");
         } catch (Throwable t) {
             throwable = t;
@@ -65,11 +65,11 @@ public class ThrowableAsserter {
         }
     }
 
-    public static ThrowableAsserter assertThrow(Runnable runnable, Class<?> throwableClass, String message) {
+    public static ThrowableAsserter assertThrow(ThrowableRunnable runnable, Class<?> throwableClass, String message) {
         return assertThrow(runnable).assertClass(throwableClass).assertMessageIs(message);
     }
 
-    public static ThrowableAsserter assertThrow(Runnable runnable) {
+    public static ThrowableAsserter assertThrow(ThrowableRunnable runnable) {
         return new ThrowableAsserter(runnable);
     }
 

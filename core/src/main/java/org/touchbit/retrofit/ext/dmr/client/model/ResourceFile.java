@@ -18,6 +18,7 @@ package org.touchbit.retrofit.ext.dmr.client.model;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.MissingResourceException;
 
 /**
@@ -35,10 +36,10 @@ public class ResourceFile {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public byte[] getBytes() throws IOException {
-        try (final InputStream stream = getClassLoader().getResourceAsStream(resourceRelativePath)) {
+        final String path = getResourceRelativePath();
+        try (final InputStream stream = getClassLoader().getResourceAsStream(path)) {
             if (stream == null) {
-                throw new MissingResourceException("The resource can not be found: "
-                        + resourceRelativePath, resourceRelativePath, "");
+                throw new MissingResourceException("Resource not exists: " + path, "", "");
             }
             byte[] result = new byte[stream.available()];
             stream.read(result);
@@ -46,13 +47,18 @@ public class ResourceFile {
         }
     }
 
+    public String getResourceRelativePath() {
+        return resourceRelativePath;
+    }
+
     protected ClassLoader getClassLoader() {
         return Thread.currentThread().getContextClassLoader();
     }
 
     protected void requireExists(String path) {
-        if (getClassLoader().getResource(path) == null) {
-            throw new MissingResourceException("The resource can not be found: " + path, path, "");
+        final URL resource = getClassLoader().getResource(path);
+        if (resource == null) {
+            throw new MissingResourceException("Resource not exists: " + path, "", "");
         }
     }
 
