@@ -17,6 +17,7 @@
 package org.touchbit.retrofit.ext.dmr.asserter;
 
 import org.touchbit.retrofit.ext.dmr.client.response.IDualResponse;
+import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nonnull;
 import java.io.Closeable;
@@ -41,6 +42,7 @@ public abstract class ResponseAsserterBase<SUCCESSFUL_DTO, ERROR_DTO, HA> implem
         this.response = response;
     }
 
+    @EverythingIsNonNull
     public abstract ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO> assertHeaders(Consumer<HA> consumer);
 
     @Nonnull
@@ -48,13 +50,14 @@ public abstract class ResponseAsserterBase<SUCCESSFUL_DTO, ERROR_DTO, HA> implem
         return response;
     }
 
-    @Nonnull
     @Override
+    @EverythingIsNonNull
     public List<Throwable> getErrors() {
         return errors;
     }
 
     @Override
+    @EverythingIsNonNull
     public void addErrors(@Nonnull List<Throwable> throwableList) {
         errors.addAll(throwableList);
     }

@@ -17,6 +17,7 @@
 package org.touchbit.retrofit.ext.dmr.asserter;
 
 import org.touchbit.retrofit.ext.dmr.util.ThrowableRunnable;
+import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nonnull;
 import java.io.Closeable;
@@ -25,15 +26,18 @@ import java.util.function.Consumer;
 
 public interface SoftlyAsserter extends Closeable {
 
-    @Nonnull
+    @EverythingIsNonNull
     List<Throwable> getErrors();
 
+    @EverythingIsNonNull
     void addErrors(@Nonnull List<Throwable> throwableList);
 
+    @EverythingIsNonNull
     default void addErrors(@Nonnull Throwable... throwable) {
         addErrors(Arrays.asList(throwable));
     }
 
+    @EverythingIsNonNull
     default SoftlyAsserter softly(@Nonnull ThrowableRunnable throwableRunnable) {
         try {
             Objects.requireNonNull(throwableRunnable, "Parameter 'throwableRunnable' is required");
@@ -44,6 +48,7 @@ public interface SoftlyAsserter extends Closeable {
         return this;
     }
 
+    @EverythingIsNonNull
     static void softlyAsserter(Consumer<SoftlyAsserter> asserterConsumer) {
         try (final SoftlyAsserter softlyAsserter = get()) {
             asserterConsumer.accept(softlyAsserter);
@@ -54,12 +59,14 @@ public interface SoftlyAsserter extends Closeable {
     default void close() {
         final List<Throwable> errors = getErrors();
         if (!errors.isEmpty()) {
-            StringJoiner result = new StringJoiner("\n\n", "The response contains the following errors:\n", "");
+            StringJoiner stringJoiner = new StringJoiner("\n\n", "", "");
             for (Throwable error : errors) {
-                result.add(error.getMessage());
+                stringJoiner.add(error.getMessage());
             }
             errors.clear();
-            throw new AssertionError(result);
+            final String header = "The response contains the following errors:\n";
+            final String result = stringJoiner.toString().replaceAll(header, "");
+            throw new AssertionError(header + result);
         }
     }
 
@@ -68,13 +75,14 @@ public interface SoftlyAsserter extends Closeable {
 
             private final List<Throwable> list = new ArrayList<>();
 
-            @Nonnull
             @Override
+            @EverythingIsNonNull
             public List<Throwable> getErrors() {
                 return list;
             }
 
             @Override
+            @EverythingIsNonNull
             public void addErrors(@Nonnull List<Throwable> throwableList) {
                 list.addAll(throwableList);
             }

@@ -19,6 +19,7 @@ package org.touchbit.retrofit.ext.dmr.asserter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.client.response.IDualResponse;
+import retrofit2.internal.EverythingIsNonNull;
 
 import java.util.function.Consumer;
 
@@ -82,6 +83,7 @@ public class ResponseAsserterBaseUnitTests {
     private <S, E, A, M extends IDualResponse<S, E>> ResponseAsserterBase<S, E, A> getResponseAsserterBase(M o) {
         return new ResponseAsserterBase<S, E, A>(o) {
             @Override
+            @EverythingIsNonNull
             public ResponseAsserter<S, E> assertHeaders(Consumer<A> consumer) {
                 return null;
             }

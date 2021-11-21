@@ -17,11 +17,11 @@
 package org.touchbit.retrofit.ext.dmr.asserter;
 
 import okhttp3.Headers;
+import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
 
 /**
  * A class with built-in soft checks for standard response headers.
@@ -30,7 +30,7 @@ import java.util.StringJoiner;
  * shaburov.o.a@gmail.com
  */
 @SuppressWarnings({"UnusedReturnValue", "unused"})
-public class HeadersAsserter {
+public class HeadersAsserter implements SoftlyAsserter {
 
     public static final String H_ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
     public static final String H_CONNECTION = "Connection";
@@ -232,19 +232,20 @@ public class HeadersAsserter {
         return this;
     }
 
+    @Nonnull
+    @Override
     public List<Throwable> getErrors() {
         return this.errors;
     }
 
+    @Override
+    @EverythingIsNonNull
+    public void addErrors(@Nonnull List<Throwable> throwableList) {
+        this.errors.addAll(throwableList);
+    }
+
     public HeadersAsserter blame() {
-        final List<Throwable> errors = getErrors();
-        if (!errors.isEmpty()) {
-            final StringJoiner result = new StringJoiner("\n\n", "The response contains the following errors:\n", "");
-            for (Throwable error : errors) {
-                result.add(error.getMessage());
-            }
-            throw new AssertionError(result);
-        }
+        close();
         return this;
     }
 

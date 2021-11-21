@@ -18,6 +18,7 @@ package org.touchbit.retrofit.ext.dmr.asserter;
 
 import okhttp3.Headers;
 import org.touchbit.retrofit.ext.dmr.client.response.IDualResponse;
+import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -32,6 +33,7 @@ public class ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO>
     }
 
     @Override
+    @EverythingIsNonNull
     public ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO> assertHeaders(Consumer<HeadersAsserter> consumer) {
         Objects.requireNonNull(consumer, "HeadersAsserter consumer required");
         final Headers headers = getResponse().getHeaders();
