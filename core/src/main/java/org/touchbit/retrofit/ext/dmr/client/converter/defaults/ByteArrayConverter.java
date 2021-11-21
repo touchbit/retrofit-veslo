@@ -64,11 +64,11 @@ public class ByteArrayConverter implements ExtensionConverter<Byte[]> {
 
             @Override
             @Nullable
-            public Byte[] convert(@Nullable ResponseBody value) {
-                if (value == null || value.contentLength() == 0) {
+            public Byte[] convert(@Nullable ResponseBody body) {
+                if (body == null || body.contentLength() == 0) {
                     return null;
                 }
-                return wrap(() -> ConverterUtils.toObjectByteArray(value.bytes()));
+                return wrap(() -> ConverterUtils.toObjectByteArray(body.bytes()));
             }
 
         };

@@ -75,7 +75,7 @@ public interface ExtensionConverter<DTO> {
 
         @Override
         @EverythingIsNonNull
-        RequestBody convert(Object value);
+        RequestBody convert(Object body);
 
     }
 
@@ -83,7 +83,7 @@ public interface ExtensionConverter<DTO> {
 
         @Override
         @Nullable
-        DTO convert(@Nullable ResponseBody value);
+        DTO convert(@Nullable ResponseBody body);
 
     }
 

@@ -68,12 +68,12 @@ public class FileConverter implements ExtensionConverter<File> {
 
             @Override
             @Nullable
-            public File convert(@Nullable ResponseBody value) {
-                if (value == null || value.contentLength() == 0) {
+            public File convert(@Nullable ResponseBody body) {
+                if (body == null || body.contentLength() == 0) {
                     return null;
                 }
                 final Path tempFile = wrap(() -> Files.createTempFile(null, null));
-                return wrap(() -> Files.write(tempFile, value.bytes()).toFile());
+                return wrap(() -> Files.write(tempFile, body.bytes()).toFile());
             }
 
         };

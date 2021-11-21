@@ -41,13 +41,13 @@ public class StringConverter implements ExtensionConverter<String> {
 
             @Override
             @EverythingIsNonNull
-            public RequestBody convert(Object value) {
-                if (value instanceof String) {
+            public RequestBody convert(Object body) {
+                if (body instanceof String) {
                     final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
-                    return RequestBody.create(mediaType, (String) value);
+                    return RequestBody.create(mediaType, (String) body);
                 }
                 throw new ConvertCallException("Unsupported type. " +
-                        "Expected: " + String.class + ". Received: " + value.getClass());
+                        "Expected: " + String.class + ". Received: " + body.getClass());
             }
 
         };
@@ -62,11 +62,11 @@ public class StringConverter implements ExtensionConverter<String> {
 
             @Nullable
             @Override
-            public String convert(@Nullable ResponseBody value) {
-                if (value == null || value.contentLength() == 0) {
+            public String convert(@Nullable ResponseBody body) {
+                if (body == null || body.contentLength() == 0) {
                     return null;
                 }
-                return wrap(value::string);
+                return wrap(body::string);
             }
 
         };

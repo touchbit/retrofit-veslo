@@ -50,11 +50,11 @@ public class JacksonConverter<T> implements ExtensionConverter<T> {
 
             @Override
             @EverythingIsNonNull
-            public RequestBody convert(Object value) {
+            public RequestBody convert(Object body) {
                 final ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
                 final ObjectWriter objectWriter = objectMapper.writerFor((Class<?>) type);
                 final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
-                return wrap(() -> RequestBody.create(mediaType, objectWriter.writeValueAsBytes(value)));
+                return wrap(() -> RequestBody.create(mediaType, objectWriter.writeValueAsBytes(body)));
             }
 
         };
@@ -69,12 +69,12 @@ public class JacksonConverter<T> implements ExtensionConverter<T> {
 
             @Override
             @Nullable
-            public T convert(@Nullable ResponseBody value) {
-                if (value == null || value.contentLength() == 0) {
+            public T convert(@Nullable ResponseBody body) {
+                if (body == null || body.contentLength() == 0) {
                     return null;
                 }
                 final ObjectReader objectReader = new ObjectMapper().readerFor((Class<?>) type);
-                return wrap(() -> objectReader.readValue(value.bytes()));
+                return wrap(() -> objectReader.readValue(body.bytes()));
             }
 
         };

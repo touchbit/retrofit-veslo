@@ -69,8 +69,8 @@ public class AnyBodyConverter implements ExtensionConverter<AnyBody> {
 
             @Override
             @Nonnull
-            public AnyBody convert(@Nullable ResponseBody value) {
-                return wrap(() -> value == null ? new AnyBody((byte[]) null) : new AnyBody(value.bytes()));
+            public AnyBody convert(@Nullable ResponseBody body) {
+                return wrap(() -> body == null ? new AnyBody((byte[]) null) : new AnyBody(body.bytes()));
             }
 
         };

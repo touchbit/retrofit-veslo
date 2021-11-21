@@ -89,19 +89,19 @@ public class ExtensionConverterFactory extends Converter.Factory {
         return new RequestBodyConverter() {
 
             @EverythingIsNonNull
-            public RequestBody convert(final Object value) {
+            public RequestBody convert(final Object body) {
                 final Map<Class<?>, ExtensionConverter<?>> rawConverters = getRawRequestConverters();
-                final ExtensionConverter<?> rawConverter = rawConverters.get(value.getClass());
+                final ExtensionConverter<?> rawConverter = rawConverters.get(body.getClass());
                 if (rawConverter != null) {
-                    return rawConverter.requestBodyConverter(type, pA, mA, retrofit).convert(value);
+                    return rawConverter.requestBodyConverter(type, pA, mA, retrofit).convert(body);
                 }
                 final ContentType contentType = ConverterUtils.getContentType(mA);
                 final Map<ContentType, ExtensionConverter<?>> mimeConverters = getMimeRequestConverters();
                 final ExtensionConverter<?> mimeConverter = mimeConverters.get(contentType);
                 if (mimeConverter != null) {
-                    return mimeConverter.requestBodyConverter(type, pA, mA, retrofit).convert(value);
+                    return mimeConverter.requestBodyConverter(type, pA, mA, retrofit).convert(body);
                 }
-                throw newNotFoundConverterException("request", contentType, value.getClass(), rawConverters, mimeConverters);
+                throw newNotFoundConverterException("request", contentType, body.getClass(), rawConverters, mimeConverters);
             }
         };
     }

@@ -25,7 +25,7 @@ import java.util.Arrays;
  * Created by Oleg Shaburov on 08.11.2021
  * shaburov.o.a@gmail.com
  */
-public class AnyBody implements IAnyBody {
+public class AnyBody {
 
     private final byte[] bodyData;
 

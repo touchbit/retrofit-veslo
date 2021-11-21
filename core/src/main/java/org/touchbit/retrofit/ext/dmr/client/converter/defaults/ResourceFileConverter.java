@@ -21,12 +21,14 @@ import okhttp3.RequestBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.client.model.ResourceFile;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
+import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.Objects;
 
 public class ResourceFileConverter implements ExtensionConverter<ResourceFile> {
 
@@ -40,14 +42,15 @@ public class ResourceFileConverter implements ExtensionConverter<ResourceFile> {
 
             @Override
             @EverythingIsNonNull
-            public RequestBody convert(Object value) {
-                if (value instanceof ResourceFile) {
-                    ResourceFile resourceFile = (ResourceFile) value;
+            public RequestBody convert(Object body) {
+                Objects.requireNonNull(body, "Parameter 'body' required");
+                if (body instanceof ResourceFile) {
+                    ResourceFile resourceFile = (ResourceFile) body;
                     final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
                     return wrap(() -> RequestBody.create(mediaType, resourceFile.getBytes()));
                 }
-                throw new ConvertCallException("Unsupported type. " +
-                        "Expected: " + ResourceFile.class + ". Received: " + value.getClass());
+                final Class<?> bodyClass = body.getClass();
+                throw new ConverterUnsupportedTypeException(ResourceFileConverter.class, ResourceFile.class, bodyClass);
             }
 
         };
