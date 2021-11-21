@@ -22,7 +22,9 @@ import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
-import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
+
+import java.io.File;
+import java.nio.file.Files;
 
 import static internal.test.utils.ThrowableAsserter.assertThrow;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -31,15 +33,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("ConstantConditions")
-@DisplayName("ByteArrayConverter tests")
-public class ByteArrayConverterUnitTests {
+@DisplayName("FileConverter tests")
+public class FileConverterUnitTests {
 
     @Test
-    @DisplayName("Successful conversion Byte[]->RequestBody if body instanceof Byte.class")
-    public void test1637463917948() {
-        final String expected = "test1637463917948";
-        final Byte[] body = ConverterUtils.toObjectByteArray(expected);
-        final RequestBody requestBody = new ByteArrayConverter()
+    @DisplayName("Successful conversion File->RequestBody if body instanceof File.class")
+    public void test1637467409145() {
+        final String expected = "test1637466272864";
+        final File body = new File("src/test/resources/test/data/test1637466272864.txt");
+        final RequestBody requestBody = new FileConverter()
                 .requestBodyConverter(null, null, null, null)
                 .convert(body);
         assertThat("RequestBody", requestBody, notNullValue());
@@ -48,9 +50,9 @@ public class ByteArrayConverterUnitTests {
     }
 
     @Test
-    @DisplayName("Error converting Byte[]->RequestBody if body == null")
-    public void test1637463921852() {
-        final Runnable runnable = () -> new ByteArrayConverter()
+    @DisplayName("Error converting File->RequestBody if body == null")
+    public void test1637467411821() {
+        final Runnable runnable = () -> new FileConverter()
                 .requestBodyConverter(null, null, null, null)
                 .convert(null);
         assertThrow(runnable).assertClass(NullPointerException.class).assertMessageIs("Parameter 'body' required");
@@ -58,43 +60,43 @@ public class ByteArrayConverterUnitTests {
 
     @Test
     @DisplayName("Error converting Object->RequestBody")
-    public void test1637463925672() {
-        final Runnable runnable = () -> new ByteArrayConverter()
+    public void test1637467415631() {
+        final Runnable runnable = () -> new FileConverter()
                 .requestBodyConverter(null, null, null, null)
                 .convert(new Object());
         assertThrow(runnable).assertClass(ConverterUnsupportedTypeException.class);
     }
 
     @Test
-    @DisplayName("Successful conversion ResponseBody->Byte[] if content length == 0 (return null)")
-    public void test1637463929423() throws Exception {
+    @DisplayName("Successful conversion ResponseBody->File if content length == 0 (return null)")
+    public void test1637467418220() throws Exception {
         final String expected = "test1637463929423";
         final ResponseBody responseBody = mock(ResponseBody.class);
         when(responseBody.bytes()).thenReturn(expected.getBytes());
-        final Byte[] result = new ByteArrayConverter()
+        final File result = new FileConverter()
                 .responseBodyConverter(null, null, null)
                 .convert(responseBody);
         assertThat("Body", result, nullValue());
     }
 
     @Test
-    @DisplayName("Successful conversion ResponseBody->Byte[] if content length > 0 (return byte array)")
-    public void test1637465032249() throws Exception {
-        final String expected = "test1637465032249";
-        final Byte[] body = ConverterUtils.toObjectByteArray(expected);
+    @DisplayName("Successful conversion ResponseBody->File if content length > 0 (return File)")
+    public void test1637467421357() throws Exception {
+        final String expected = "test1637466286230";
         final ResponseBody responseBody = mock(ResponseBody.class);
         when(responseBody.bytes()).thenReturn(expected.getBytes());
         when(responseBody.contentLength()).thenReturn(Long.valueOf(expected.length()));
-        final Byte[] result = new ByteArrayConverter()
+        final File result = new FileConverter()
                 .responseBodyConverter(null, null, null)
                 .convert(responseBody);
-        assertThat("Body", result, is(body));
+        final byte[] resultData = Files.readAllBytes(result.toPath());
+        assertThat("Body", resultData, is("test1637466286230".getBytes()));
     }
 
     @Test
-    @DisplayName("Successful conversion ResponseBody->Byte[] if body == null (return null)")
-    public void test1637463932624() {
-        final Byte[] body = new ByteArrayConverter()
+    @DisplayName("Successful conversion ResponseBody->File if body == null (return null)")
+    public void test1637467424106() {
+        final File body = new FileConverter()
                 .responseBodyConverter(null, null, null)
                 .convert(null);
         assertThat("Body", body, nullValue());

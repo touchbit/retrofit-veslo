@@ -31,6 +31,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 public class FileConverter implements ExtensionConverter<File> {
 
@@ -44,14 +45,15 @@ public class FileConverter implements ExtensionConverter<File> {
 
             @Override
             @EverythingIsNonNull
-            public RequestBody convert(Object value) {
-                if (value instanceof File) {
-                    File file = (File) value;
+            public RequestBody convert(Object body) {
+                Objects.requireNonNull(body, "Parameter 'body' required");
+                if (body instanceof File) {
+                    File file = (File) body;
                     final byte[] data = wrap(() -> Files.readAllBytes(file.toPath()));
                     final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
                     return RequestBody.create(mediaType, data);
                 }
-                throw new ConverterUnsupportedTypeException(FileConverter.class, File.class, value.getClass());
+                throw new ConverterUnsupportedTypeException(FileConverter.class, File.class, body.getClass());
             }
 
         };

@@ -78,7 +78,7 @@ public class AnyBodyConverterUnitTests {
     }
 
     @Test
-    @DisplayName("Successful conversion ResponseBody->AnyBody if body present")
+    @DisplayName("Successful conversion ResponseBody->AnyBody if body present (return AnyBody)")
     public void test1637433847494() throws Exception {
         final ResponseBody responseBody = mock(ResponseBody.class);
         AnyBody expected = new AnyBody("test1637433847494");
@@ -90,7 +90,7 @@ public class AnyBodyConverterUnitTests {
     }
 
     @Test
-    @DisplayName("Successful conversion ResponseBody->AnyBody if body == null")
+    @DisplayName("Successful conversion ResponseBody->AnyBody if body == null (return AnyBody)")
     public void test1637434016563() {
         AnyBody expected = new AnyBody((byte[]) null);
         final AnyBody anyBody = new AnyBodyConverter()
