@@ -40,6 +40,11 @@ public class ThrowableAsserter {
         }
     }
 
+    public ThrowableAsserter(Throwable throwable, String throwableInfo) {
+        this.throwable = throwable;
+        this.throwableInfo = throwableInfo;
+    }
+
     public static void assertUtilityClassException(Class<?> aClass) {
         for (Constructor<?> constructor : aClass.getDeclaredConstructors()) {
             final int modifiers = constructor.getModifiers();
@@ -97,11 +102,6 @@ public class ThrowableAsserter {
             }
         }
         return result;
-    }
-
-    public ThrowableAsserter(Throwable throwable, String throwableInfo) {
-        this.throwable = throwable;
-        this.throwableInfo = throwableInfo;
     }
 
     public ThrowableAsserter assertMessageIs(String expected) {

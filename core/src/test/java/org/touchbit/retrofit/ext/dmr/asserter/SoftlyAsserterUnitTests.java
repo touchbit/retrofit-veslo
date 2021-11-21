@@ -99,7 +99,8 @@ public class SoftlyAsserterUnitTests {
             try (final SoftlyAsserter softlyAsserter = SoftlyAsserter.get()) {
                 softlyAsserter.addErrors(new AssertionError(errMsg));
                 softlyAsserter.addErrors(new AssertionError(errMsg));
-            }})
+            }
+        })
                 .assertClass(AssertionError.class)
                 .assertMessageIs("Collected the following errors:\n" +
                         "\n" +

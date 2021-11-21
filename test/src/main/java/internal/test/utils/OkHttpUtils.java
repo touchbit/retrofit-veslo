@@ -21,6 +21,9 @@ import okio.Buffer;
 
 public class OkHttpUtils {
 
+    private OkHttpUtils() {
+    }
+
     public static String requestBodyToString(RequestBody requestBody) {
         try {
             final Buffer buffer = new Buffer();
@@ -30,7 +33,5 @@ public class OkHttpUtils {
             throw new RuntimeException(e);
         }
     }
-
-    private OkHttpUtils() {}
 
 }

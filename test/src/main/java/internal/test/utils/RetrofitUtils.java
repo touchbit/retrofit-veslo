@@ -26,6 +26,9 @@ import java.util.UUID;
 
 public class RetrofitUtils {
 
+    private RetrofitUtils() {
+    }
+
     public static Annotation[] getCallMethodAnnotations(final String... headers) {
         List<Annotation> result = new ArrayList<>();
         result.add(getHeadersAnnotation(headers));
@@ -55,9 +58,6 @@ public class RetrofitUtils {
                 return url;
             }
         };
-    }
-
-    private RetrofitUtils() {
     }
 
 }

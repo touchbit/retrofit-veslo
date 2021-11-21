@@ -60,9 +60,6 @@ public class DualCallAdapterFactoryUnitTests {
             .baseUrl("http://localhost")
             .build();
     private static final Annotation[] AA = new Annotation[]{};
-    private static final String TYPE_ERR_MSG = "" +
-            "API methods must return an implementation class " +
-            "of interface org.touchbit.retrofit.ext.dmr.client.response.IDualResponse";
 
     @Test
     @DisplayName("#get() successful receipt of IDualResponse CallAdapter")
@@ -97,7 +94,7 @@ public class DualCallAdapterFactoryUnitTests {
     @Test
     @DisplayName("#getIDualResponse() Parameter 'call' cannot be null.")
     public void test1637408763989() {
-        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(null, STR_C, STR_C, INFO,  AA, R))
+        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(null, STR_C, STR_C, INFO, AA, R))
                 .assertClass(NullPointerException.class)
                 .assertMessageContains("Parameter 'call' cannot be null.");
     }
@@ -106,7 +103,7 @@ public class DualCallAdapterFactoryUnitTests {
     @DisplayName("#getIDualResponse() Parameter 'successType' cannot be null.")
     public void test1637408774271() {
         final Call call = getCall(200, "");
-        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, null, STR_C, INFO,  AA, R))
+        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, null, STR_C, INFO, AA, R))
                 .assertClass(NullPointerException.class)
                 .assertMessageContains("Parameter 'successType' cannot be null.");
     }
@@ -115,7 +112,7 @@ public class DualCallAdapterFactoryUnitTests {
     @DisplayName("#getIDualResponse() Parameter 'errorType' cannot be null.")
     public void test1637408780676() {
         final Call call = getCall(200, "");
-        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STR_C, null, INFO,  AA, R))
+        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STR_C, null, INFO, AA, R))
                 .assertClass(NullPointerException.class)
                 .assertMessageContains("Parameter 'errorType' cannot be null.");
     }
@@ -124,7 +121,7 @@ public class DualCallAdapterFactoryUnitTests {
     @DisplayName("#getIDualResponse() Parameter 'endpointInfo' cannot be null.")
     public void test1637408788466() {
         final Call call = getCall(200, "");
-        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STR_C, STR_C, null,  AA, R))
+        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STR_C, STR_C, null, AA, R))
                 .assertClass(NullPointerException.class)
                 .assertMessageContains("Parameter 'endpointInfo' cannot be null.");
     }
@@ -133,7 +130,7 @@ public class DualCallAdapterFactoryUnitTests {
     @DisplayName("#getIDualResponse() Parameter 'methodAnnotations' cannot be null.")
     public void test1637408795159() {
         final Call call = getCall(200, "");
-        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STR_C, STR_C, INFO,  null, R))
+        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STR_C, STR_C, INFO, null, R))
                 .assertClass(NullPointerException.class)
                 .assertMessageContains("Parameter 'methodAnnotations' cannot be null.");
     }
@@ -142,7 +139,7 @@ public class DualCallAdapterFactoryUnitTests {
     @DisplayName("#getIDualResponse() Parameter 'retrofit' cannot be null.")
     public void test1637408802911() {
         final Call call = getCall(200, "");
-        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STR_C, STR_C, INFO,  AA, null))
+        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STR_C, STR_C, INFO, AA, null))
                 .assertClass(NullPointerException.class)
                 .assertMessageContains("Parameter 'retrofit' cannot be null.");
     }
@@ -426,7 +423,7 @@ public class DualCallAdapterFactoryUnitTests {
     @Test
     @DisplayName("Successfully getting an empty EndpointInfo message if the EndpointInfo annotation not present")
     public void test1634561408528() {
-        Annotation[] annotations = new Annotation[]{new Test(){
+        Annotation[] annotations = new Annotation[]{new Test() {
             public Class<? extends Annotation> annotationType() {
                 return Test.class;
             }

@@ -33,7 +33,7 @@ public class ContentType {
     }
 
     public ContentType(String type, String subtype, String charset) {
-        if ((type != null && subtype == null) || (type == null && subtype != null)){
+        if ((type != null && subtype == null) || (type == null && subtype != null)) {
             throw new IllegalArgumentException("Type and subtype can only be null at the same time");
         }
         if (type != null && type.trim().isEmpty()) {

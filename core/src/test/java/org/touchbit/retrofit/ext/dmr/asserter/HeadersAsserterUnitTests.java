@@ -33,6 +33,7 @@ public class HeadersAsserterUnitTests {
     private static final String ANY_CONTENT = UUID.randomUUID().toString();
     private static final String EXP_CONTENT = UUID.randomUUID().toString();
     private static final String CONTAINS_CONTENT = EXP_CONTENT + ANY_CONTENT;
+    private static final String ERR_MSG_PREFIX = "Collected the following errors:\n\nResponse header ";
 
     @Test
     @DisplayName("contentTypeIsPresent() positive")
@@ -697,8 +698,6 @@ public class HeadersAsserterUnitTests {
         headersAsserter.addErrors(new AssertionError());
         assertThat("", headersAsserter.getErrors().size(), is(1));
     }
-
-    private static final String ERR_MSG_PREFIX = "Collected the following errors:\n\nResponse header ";
 
     private String getIsAssertMessage(String header, String exp, String act) {
         return ERR_MSG_PREFIX + "'" + header + "'\nExpected: is '" + exp + "'\n  Actual: " + act;

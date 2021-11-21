@@ -54,6 +54,34 @@ import static org.touchbit.retrofit.ext.dmr.client.header.ContentTypeConstants.*
 @DisplayName("ExtensionConverterFactory tests")
 public class ExtensionConverterFactoryUnitTests {
 
+    private static Stream<Arguments> testProvider1637422599548() {
+        return Stream.of(
+                Arguments.of(String.class, TEXT_PLAIN.toString(), randomUUID().toString(), TEXT_PLAIN_UTF8.getMediaType()),
+                Arguments.of(String.class, TEXT_PLAIN_UTF8.toString(), randomUUID().toString(), TEXT_PLAIN_UTF8.getMediaType()),
+                Arguments.of(String.class, TEXT_HTML.toString(), randomUUID().toString(), TEXT_HTML_UTF8.getMediaType()),
+                Arguments.of(String.class, TEXT_HTML_UTF8.toString(), randomUUID().toString(), TEXT_HTML_UTF8.getMediaType())
+        );
+    }
+
+    private static Stream<Arguments> testProvider1637426286255() {
+        return Stream.of(
+                Arguments.of(String.class, TEXT_PLAIN, randomUUID().toString()),
+                Arguments.of(String.class, TEXT_PLAIN_UTF8, randomUUID().toString()),
+                Arguments.of(String.class, TEXT_HTML, randomUUID().toString()),
+                Arguments.of(String.class, TEXT_HTML_UTF8, randomUUID().toString()),
+                Arguments.of(String.class, APP_FORM_URLENCODED, randomUUID().toString()),
+                Arguments.of(String.class, APP_FORM_URLENCODED_UTF8, randomUUID().toString())
+        );
+    }
+
+    private static Annotation[] getContentTypeHeaderAnnotations(ContentType value) {
+        return getContentTypeHeaderAnnotations(value.toString());
+    }
+
+    private static Annotation[] getContentTypeHeaderAnnotations(String value) {
+        return RetrofitUtils.getCallMethodAnnotations("Content-Type: " + value);
+    }
+
     @Test
     @DisplayName("Default converters initialization")
     public void test1637421751464() {
@@ -97,15 +125,6 @@ public class ExtensionConverterFactoryUnitTests {
         assertThat("RequestBody", requestBody, notNullValue());
         assertThat("RequestBody.contentType()", requestBody.contentType(), is(expMT));
         assertThat("RequestBody.toString()", OkHttpUtils.requestBodyToString(requestBody), is(body));
-    }
-
-    private static Stream<Arguments> testProvider1637422599548() {
-        return Stream.of(
-                Arguments.of(String.class, TEXT_PLAIN.toString(), randomUUID().toString(), TEXT_PLAIN_UTF8.getMediaType()),
-                Arguments.of(String.class, TEXT_PLAIN_UTF8.toString(), randomUUID().toString(), TEXT_PLAIN_UTF8.getMediaType()),
-                Arguments.of(String.class, TEXT_HTML.toString(), randomUUID().toString(), TEXT_HTML_UTF8.getMediaType()),
-                Arguments.of(String.class, TEXT_HTML_UTF8.toString(), randomUUID().toString(), TEXT_HTML_UTF8.getMediaType())
-        );
     }
 
     @Test
@@ -171,17 +190,6 @@ public class ExtensionConverterFactoryUnitTests {
                 .responseBodyConverter(type, getContentTypeHeaderAnnotations(contentType), null)
                 .convert(ResponseBody.create(contentType.getMediaType(), body));
         assertThat("ResponseBody", dto, is(body));
-    }
-
-    private static Stream<Arguments> testProvider1637426286255() {
-        return Stream.of(
-                Arguments.of(String.class, TEXT_PLAIN, randomUUID().toString()),
-                Arguments.of(String.class, TEXT_PLAIN_UTF8, randomUUID().toString()),
-                Arguments.of(String.class, TEXT_HTML, randomUUID().toString()),
-                Arguments.of(String.class, TEXT_HTML_UTF8, randomUUID().toString()),
-                Arguments.of(String.class, APP_FORM_URLENCODED, randomUUID().toString()),
-                Arguments.of(String.class, APP_FORM_URLENCODED_UTF8, randomUUID().toString())
-        );
     }
 
     @Test
@@ -350,14 +358,6 @@ public class ExtensionConverterFactoryUnitTests {
         assertThrow(() -> new ExtensionConverterFactory().addMimeResponseConverter(new StringConverter(), new ContentType[]{null}))
                 .assertClass(NullPointerException.class)
                 .assertMessageIs("Parameter 'contentType' cannot be null.");
-    }
-
-    private static Annotation[] getContentTypeHeaderAnnotations(ContentType value) {
-        return getContentTypeHeaderAnnotations(value.toString());
-    }
-
-    private static Annotation[] getContentTypeHeaderAnnotations(String value) {
-        return RetrofitUtils.getCallMethodAnnotations("Content-Type: " + value);
     }
 
 }

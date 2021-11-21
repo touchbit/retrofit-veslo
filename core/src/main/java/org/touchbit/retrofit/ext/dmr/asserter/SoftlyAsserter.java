@@ -27,6 +27,33 @@ import java.util.function.Consumer;
 public interface SoftlyAsserter extends Closeable {
 
     @EverythingIsNonNull
+    static void softlyAsserter(Consumer<SoftlyAsserter> asserterConsumer) {
+        Objects.requireNonNull(asserterConsumer, "Parameter 'asserterConsumer' required");
+        try (final SoftlyAsserter softlyAsserter = get()) {
+            asserterConsumer.accept(softlyAsserter);
+        }
+    }
+
+    static SoftlyAsserter get() {
+        return new SoftlyAsserter() {
+
+            private final List<Throwable> list = new ArrayList<>();
+
+            @Override
+            @EverythingIsNonNull
+            public List<Throwable> getErrors() {
+                return list;
+            }
+
+            @Override
+            @EverythingIsNonNull
+            public void addErrors(@Nonnull List<Throwable> throwableList) {
+                list.addAll(throwableList);
+            }
+        };
+    }
+
+    @EverythingIsNonNull
     List<Throwable> getErrors();
 
     @EverythingIsNonNull
@@ -48,14 +75,6 @@ public interface SoftlyAsserter extends Closeable {
         return this;
     }
 
-    @EverythingIsNonNull
-    static void softlyAsserter(Consumer<SoftlyAsserter> asserterConsumer) {
-        Objects.requireNonNull(asserterConsumer, "Parameter 'asserterConsumer' required");
-        try (final SoftlyAsserter softlyAsserter = get()) {
-            asserterConsumer.accept(softlyAsserter);
-        }
-    }
-
     @Override
     default void close() {
         final List<Throwable> errors = getErrors();
@@ -70,25 +89,6 @@ public interface SoftlyAsserter extends Closeable {
             errors.clear();
             throw new AssertionError(header + result);
         }
-    }
-
-    static SoftlyAsserter get() {
-        return new SoftlyAsserter() {
-
-            private final List<Throwable> list = new ArrayList<>();
-
-            @Override
-            @EverythingIsNonNull
-            public List<Throwable> getErrors() {
-                return list;
-            }
-
-            @Override
-            @EverythingIsNonNull
-            public void addErrors(@Nonnull List<Throwable> throwableList) {
-                list.addAll(throwableList);
-            }
-        };
     }
 
 }

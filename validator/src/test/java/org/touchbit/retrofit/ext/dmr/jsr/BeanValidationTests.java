@@ -35,12 +35,21 @@ import static org.hamcrest.Matchers.notNullValue;
 
 public class BeanValidationTests {
 
+    protected static final JakartaMockClient MOCK_CLIENT = TestClient
+            .build(JakartaMockClient.class, new DualCallAdapterFactory(), new JacksonDualConverterFactory());
+
     static {
         Locale.setDefault(Locale.ENGLISH);
     }
 
-    protected static final JakartaMockClient MOCK_CLIENT = TestClient
-            .build(JakartaMockClient.class, new DualCallAdapterFactory(), new JacksonDualConverterFactory());
+    private static UserDTO genUserDTO() {
+        return new UserDTO()
+                .firstName("FirstName")
+                .lastName("LastName")
+                .passport(new UserPassport()
+                        .series("1234")
+                        .number("123456"));
+    }
 
     @Test
     @DisplayName("Successfully fetching the DTO of the model if no validation errors occurred.")
@@ -78,15 +87,6 @@ public class BeanValidationTests {
                         "Model property: UserDTO.passport.number\n" +
                         "Expected: must match \"^[0-9]{6}$\"\n" +
                         "  Actual: " + uuid + "\n");
-    }
-
-    private static UserDTO genUserDTO() {
-        return new UserDTO()
-                .firstName("FirstName")
-                .lastName("LastName")
-                .passport(new UserPassport()
-                        .series("1234")
-                        .number("123456"));
     }
 
 }

@@ -38,7 +38,8 @@ public class DualResponseBaseUnitTests {
         final Response<String> response = mock(Response.class);
         final Annotation[] annotations = new Annotation[]{};
         DualResponseBase<String, String> responseBase =
-                new DualResponseBase<String, String>(request, response, "test1637490320687", "info", annotations) {};
+                new DualResponseBase<String, String>(request, response, "test1637490320687", "info", annotations) {
+                };
         assertThat("", responseBase.getRawRequest(), is(request));
         assertThat("", responseBase.getResponse(), is(response));
         assertThat("", responseBase.getErrorDTO(), is("test1637490320687"));

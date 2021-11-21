@@ -39,6 +39,7 @@ public interface BeanValidation<DTO> {
     /**
      * Method provides an easy way of ensuring that the properties of your JavaBean(s)
      * have the right values in them (compliance to the specification/contract).
+     *
      * @return {@link DTO} model
      */
     @SuppressWarnings("unchecked")
