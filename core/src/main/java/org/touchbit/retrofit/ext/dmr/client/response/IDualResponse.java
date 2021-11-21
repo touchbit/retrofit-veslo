@@ -33,6 +33,7 @@ import java.lang.annotation.Annotation;
  * Created by Oleg Shaburov on 03.11.2021
  * shaburov.o.a@gmail.com
  */
+@SuppressWarnings("unused")
 public interface IDualResponse<SUCCESSFUL_DTO, ERROR_DTO> {
 
     /**
