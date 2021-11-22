@@ -25,6 +25,7 @@ import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -41,10 +42,14 @@ public class StringConverter implements ExtensionConverter<String> {
         return new RequestBodyConverter() {
 
             @Override
-            @EverythingIsNonNull
-            public RequestBody convert(Object body) {
+            @Nullable
+            public RequestBody convert(@Nonnull Object body) {
                 Objects.requireNonNull(body, "Parameter 'body' required");
                 if (body instanceof String) {
+                    String data = (String) body;
+                    if (BODY_NULL_VALUE.equals(data)) {
+                        return null;
+                    }
                     final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
                     return RequestBody.create(mediaType, (String) body);
                 }

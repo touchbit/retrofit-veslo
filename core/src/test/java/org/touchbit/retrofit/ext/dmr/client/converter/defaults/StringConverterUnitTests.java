@@ -29,6 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter.BODY_NULL_VALUE;
 
 @SuppressWarnings("ConstantConditions")
 @DisplayName("StringConverter tests")
@@ -44,6 +45,15 @@ public class StringConverterUnitTests {
         assertThat("RequestBody", requestBody, notNullValue());
         final String actual = OkHttpUtils.requestBodyToString(requestBody);
         assertThat("Body", actual, is(expected));
+    }
+
+    @Test
+    @DisplayName("Successful conversion String->RequestBody if body = BODY_NULL_VALUE (return null)")
+    public void test1637554969694() {
+        final RequestBody requestBody = new StringConverter()
+                .requestBodyConverter(null, null, null, null)
+                .convert(BODY_NULL_VALUE);
+        assertThat("Body", requestBody, nullValue());
     }
 
     @Test
