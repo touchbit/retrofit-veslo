@@ -25,11 +25,14 @@ import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 public interface ExtensionConverter<DTO> {
+
+    String BODY_NULL_VALUE = "BODY_NULL_VALUE";
 
     /**
      * @param type                 - request method body type.
@@ -74,8 +77,8 @@ public interface ExtensionConverter<DTO> {
     interface RequestBodyConverter extends Converter<Object, RequestBody> {
 
         @Override
-        @EverythingIsNonNull
-        RequestBody convert(Object body);
+        @Nullable
+        RequestBody convert(@Nonnull Object body);
 
     }
 
