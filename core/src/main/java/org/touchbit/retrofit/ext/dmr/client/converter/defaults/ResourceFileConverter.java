@@ -45,9 +45,9 @@ public class ResourceFileConverter implements ExtensionConverter<ResourceFile> {
             public RequestBody convert(Object body) {
                 Objects.requireNonNull(body, "Parameter 'body' required");
                 if (body instanceof ResourceFile) {
-                    ResourceFile resourceFile = (ResourceFile) body;
+                    final ResourceFile resourceFile = (ResourceFile) body;
                     final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
-                    return wrap(() -> RequestBody.create(mediaType, resourceFile.getBytes()));
+                    return RequestBody.create(mediaType, resourceFile.getBytes());
                 }
                 final Class<?> bodyClass = body.getClass();
                 throw new ConverterUnsupportedTypeException(ResourceFileConverter.class, ResourceFile.class, bodyClass);

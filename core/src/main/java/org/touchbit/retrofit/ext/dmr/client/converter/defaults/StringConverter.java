@@ -64,7 +64,7 @@ public class StringConverter implements ExtensionConverter<String> {
             @Nullable
             @Override
             public String convert(@Nullable ResponseBody body) {
-                if (body == null || body.contentLength() == 0) {
+                if (body == null) {
                     return null;
                 }
                 return wrap(() -> new String(body.bytes()));

@@ -65,15 +65,16 @@ public class StringConverterUnitTests {
     }
 
     @Test
-    @DisplayName("Successful conversion ResponseBody->String if content length == 0 (return null)")
+    @DisplayName("Successful conversion ResponseBody->String if content length == 0 (return String)")
     public void test1637469456722() throws Exception {
         final String expected = "test1637469456722";
         final ResponseBody responseBody = mock(ResponseBody.class);
         when(responseBody.bytes()).thenReturn(expected.getBytes());
+        when(responseBody.contentLength()).thenReturn(0L);
         final String result = new StringConverter()
                 .responseBodyConverter(null, null, null)
                 .convert(responseBody);
-        assertThat("Body", result, nullValue());
+        assertThat("Body", result, is("test1637469456722"));
     }
 
     @Test

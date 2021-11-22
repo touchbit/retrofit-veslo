@@ -67,19 +67,19 @@ public class ByteArrayConverterUnitTests {
     }
 
     @Test
-    @DisplayName("Successful conversion ResponseBody->Byte[] if content length == 0 (return null)")
+    @DisplayName("Successful conversion ResponseBody->Byte[] if content length == 0 then return empty byte array")
     public void test1637463929423() throws Exception {
-        final String expected = "test1637463929423";
         final ResponseBody responseBody = mock(ResponseBody.class);
-        when(responseBody.bytes()).thenReturn(expected.getBytes());
+        when(responseBody.bytes()).thenReturn("".getBytes());
+        when(responseBody.contentLength()).thenReturn(0L);
         final Byte[] result = new ByteArrayConverter()
                 .responseBodyConverter(null, null, null)
                 .convert(responseBody);
-        assertThat("Body", result, nullValue());
+        assertThat("Body", result, is(new Byte[]{}));
     }
 
     @Test
-    @DisplayName("Successful conversion ResponseBody->Byte[] if content length > 0 (return byte array)")
+    @DisplayName("Successful conversion ResponseBody->Byte[] if content length > 0 then return byte array")
     public void test1637465032249() throws Exception {
         final String expected = "test1637465032249";
         final Byte[] body = ConverterUtils.toObjectByteArray(expected);
@@ -93,7 +93,7 @@ public class ByteArrayConverterUnitTests {
     }
 
     @Test
-    @DisplayName("Successful conversion ResponseBody->Byte[] if body == null (return null)")
+    @DisplayName("Successful conversion ResponseBody->Byte[] if body == null then return null")
     public void test1637463932624() {
         final Byte[] body = new ByteArrayConverter()
                 .responseBodyConverter(null, null, null)

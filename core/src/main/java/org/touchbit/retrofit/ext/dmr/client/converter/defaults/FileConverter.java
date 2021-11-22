@@ -20,6 +20,7 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
+import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
 import retrofit2.Retrofit;
@@ -49,6 +50,12 @@ public class FileConverter implements ExtensionConverter<File> {
                 Objects.requireNonNull(body, "Parameter 'body' required");
                 if (body instanceof File) {
                     File file = (File) body;
+                    if (!file.exists()) {
+                        throw new ConvertCallException("Request body file not exists: " + file);
+                    }
+                    if (!file.isFile()) {
+                        throw new ConvertCallException("Request body file is not a readable file: " + file);
+                    }
                     final byte[] data = wrap(() -> Files.readAllBytes(file.toPath()));
                     final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
                     return RequestBody.create(mediaType, data);
@@ -69,7 +76,7 @@ public class FileConverter implements ExtensionConverter<File> {
             @Override
             @Nullable
             public File convert(@Nullable ResponseBody body) {
-                if (body == null || body.contentLength() == 0) {
+                if (body == null) {
                     return null;
                 }
                 final Path tempFile = wrap(() -> Files.createTempFile(null, null));

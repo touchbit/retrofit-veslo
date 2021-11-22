@@ -65,7 +65,7 @@ public class ByteArrayConverter implements ExtensionConverter<Byte[]> {
             @Override
             @Nullable
             public Byte[] convert(@Nullable ResponseBody body) {
-                if (body == null || body.contentLength() == 0) {
+                if (body == null) {
                     return null;
                 }
                 return wrap(() -> ConverterUtils.toObjectByteArray(body.bytes()));

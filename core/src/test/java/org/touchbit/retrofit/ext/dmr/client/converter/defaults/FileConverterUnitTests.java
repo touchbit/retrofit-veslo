@@ -22,6 +22,7 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 
 import java.io.File;
@@ -38,7 +39,7 @@ import static org.mockito.Mockito.when;
 public class FileConverterUnitTests {
 
     @Test
-    @DisplayName("Successful conversion File->RequestBody if body instanceof File.class")
+    @DisplayName("Successful conversion File->RequestBody if body instanceof File.class (exists)")
     public void test1637467409145() {
         final String expected = "test1637466272864";
         final File body = new File("src/test/resources/test/data/test1637466272864.txt");
@@ -56,7 +57,31 @@ public class FileConverterUnitTests {
         final ThrowableRunnable runnable = () -> new FileConverter()
                 .requestBodyConverter(null, null, null, null)
                 .convert(null);
-        assertThrow(runnable).assertClass(NullPointerException.class).assertMessageIs("Parameter 'body' required");
+        assertThrow(runnable)
+                .assertClass(NullPointerException.class)
+                .assertMessageIs("Parameter 'body' required");
+    }
+
+    @Test
+    @DisplayName("Error converting File->RequestBody if file not exists")
+    public void test1637544911671() {
+        final ThrowableRunnable runnable = () -> new FileConverter()
+                .requestBodyConverter(null, null, null, null)
+                .convert(new File("src/test1637544911671"));
+        assertThrow(runnable)
+                .assertClass(ConvertCallException.class)
+                .assertMessageIs("Request body file not exists: src/test1637544911671");
+    }
+
+    @Test
+    @DisplayName("Error converting File->RequestBody if file is a directory")
+    public void test1637545072281() {
+        final ThrowableRunnable runnable = () -> new FileConverter()
+                .requestBodyConverter(null, null, null, null)
+                .convert(new File("src"));
+        assertThrow(runnable)
+                .assertClass(ConvertCallException.class)
+                .assertMessageIs("Request body file is not a readable file: src");
     }
 
     @Test
@@ -69,21 +94,22 @@ public class FileConverterUnitTests {
     }
 
     @Test
-    @DisplayName("Successful conversion ResponseBody->File if content length == 0 (return null)")
+    @DisplayName("Successful conversion ResponseBody->File if content length == 0 (return File)")
     public void test1637467418220() throws Exception {
-        final String expected = "test1637463929423";
+        final String expected = "test1637467418220";
         final ResponseBody responseBody = mock(ResponseBody.class);
         when(responseBody.bytes()).thenReturn(expected.getBytes());
         final File result = new FileConverter()
                 .responseBodyConverter(null, null, null)
                 .convert(responseBody);
-        assertThat("Body", result, nullValue());
+        final byte[] resultData = Files.readAllBytes(result.toPath());
+        assertThat("Body", resultData, is("test1637467418220".getBytes()));
     }
 
     @Test
     @DisplayName("Successful conversion ResponseBody->File if content length > 0 (return File)")
     public void test1637467421357() throws Exception {
-        final String expected = "test1637466286230";
+        final String expected = "test1637467421357";
         final ResponseBody responseBody = mock(ResponseBody.class);
         when(responseBody.bytes()).thenReturn(expected.getBytes());
         when(responseBody.contentLength()).thenReturn(Long.valueOf(expected.length()));
@@ -91,7 +117,7 @@ public class FileConverterUnitTests {
                 .responseBodyConverter(null, null, null)
                 .convert(responseBody);
         final byte[] resultData = Files.readAllBytes(result.toPath());
-        assertThat("Body", resultData, is("test1637466286230".getBytes()));
+        assertThat("Body", resultData, is("test1637467421357".getBytes()));
     }
 
     @Test

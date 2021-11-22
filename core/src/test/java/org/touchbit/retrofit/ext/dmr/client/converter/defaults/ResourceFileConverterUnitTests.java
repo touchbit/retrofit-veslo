@@ -38,7 +38,7 @@ import static org.mockito.Mockito.when;
 public class ResourceFileConverterUnitTests {
 
     @Test
-    @DisplayName("Successful conversion ResourceFile->RequestBody if body instanceof File.class")
+    @DisplayName("Successful conversion ResourceFile->RequestBody if body instanceof ResourceFile.class (exists)")
     public void test1637468946514() {
         final String expected = "test1637468946514";
         final ResourceFile body = new ResourceFile("test/data/test1637468946514.txt");
