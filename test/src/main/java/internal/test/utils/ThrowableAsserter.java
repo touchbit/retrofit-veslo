@@ -117,13 +117,17 @@ public class ThrowableAsserter {
                         "Expected: message contains '" + expStr + "'\n" +
                         "  Actual: " + actStr);
             }
-            return this;
         }
-        return assertIs("Throwable message by:", Throwable::getMessage, expectedStrings);
+        return this;
     }
 
     public ThrowableAsserter assertClass(Class<?> expected) {
         return assertIs("Throwable class by:", Throwable::getClass, expected);
+    }
+
+    public ThrowableAsserter assertNPE(String parameter) {
+        return assertClass(NullPointerException.class)
+                .assertMessageIs("Parameter '" + parameter + "' is required and cannot be null.");
     }
 
     public ThrowableAsserter assertCause(Function<ThrowableAsserter, ThrowableAsserter> function) {

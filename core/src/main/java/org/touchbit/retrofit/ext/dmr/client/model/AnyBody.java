@@ -17,10 +17,10 @@
 package org.touchbit.retrofit.ext.dmr.client.model;
 
 import org.touchbit.retrofit.ext.dmr.asserter.SoftlyAsserter;
+import org.touchbit.retrofit.ext.dmr.util.Utils;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * Universal DTO model with built-in checks and helper methods.
@@ -82,11 +82,11 @@ public class AnyBody {
     }
 
     public AnyBody assertStringBodyContains(String... expectedStrings) {
-        Objects.requireNonNull(expectedStrings, "Parameter 'expectedStrings' required");
+        Utils.parameterRequireNonNull(expectedStrings, "expectedStrings");
         assertBodyIsNotNull();
         try (final SoftlyAsserter softlyAsserter = SoftlyAsserter.get()) {
             for (String expected : expectedStrings) {
-                Objects.requireNonNull(expectedStrings, "Parameter 'expected' required");
+                Utils.parameterRequireNonNull(expectedStrings, "expectedStrings");
                 //noinspection ConstantConditions -> assertBodyIsNotNull()
                 if (!string().contains(expected)) {
                     softlyAsserter.softly(() -> {
@@ -101,11 +101,11 @@ public class AnyBody {
     }
 
     public AnyBody assertStringBodyContainsIgnoreCase(String... expectedStrings) {
-        Objects.requireNonNull(expectedStrings, "Parameter 'expectedStrings' required");
+        Utils.parameterRequireNonNull(expectedStrings, "expectedStrings");
         assertBodyIsNotNull();
         try (final SoftlyAsserter softlyAsserter = SoftlyAsserter.get()) {
             for (String expected : expectedStrings) {
-                Objects.requireNonNull(expectedStrings, "Parameter 'expected' required");
+                Utils.parameterRequireNonNull(expectedStrings, "expectedStrings");
                 //noinspection ConstantConditions -> assertBodyIsNotNull()
                 if (!string().toLowerCase().contains(expected.toLowerCase())) {
                     softlyAsserter.softly(() -> {
@@ -120,7 +120,7 @@ public class AnyBody {
     }
 
     public AnyBody assertStringBodyIs(String expected) {
-        Objects.requireNonNull(expected, "Parameter 'expected' required");
+        Utils.parameterRequireNonNull(expected, "expected");
         assertBodyIsNotNull();
         if (!expected.equals(string())) {
             throw new AssertionError("" +
@@ -132,7 +132,7 @@ public class AnyBody {
     }
 
     public AnyBody assertStringBodyIsIgnoreCase(String expected) {
-        Objects.requireNonNull(expected, "Parameter 'expected' required");
+        Utils.parameterRequireNonNull(expected, "expected");
         assertBodyIsNotNull();
         if (!expected.equalsIgnoreCase(string())) {
             throw new AssertionError("" +

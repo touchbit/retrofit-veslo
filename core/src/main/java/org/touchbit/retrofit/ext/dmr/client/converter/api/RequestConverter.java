@@ -21,7 +21,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+@SuppressWarnings("rawtypes")
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-public @interface StringResponseConverter {
+public @interface RequestConverter {
+
+    Class<?>[] bodyClass() default {};
+
+    Class<? extends ExtensionConverter> converter();
+
 }

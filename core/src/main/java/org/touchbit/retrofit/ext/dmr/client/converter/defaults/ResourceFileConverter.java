@@ -23,12 +23,12 @@ import org.touchbit.retrofit.ext.dmr.client.model.ResourceFile;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
+import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.Objects;
 
 public class ResourceFileConverter implements ExtensionConverter<ResourceFile> {
 
@@ -43,7 +43,7 @@ public class ResourceFileConverter implements ExtensionConverter<ResourceFile> {
             @Override
             @EverythingIsNonNull
             public RequestBody convert(Object body) {
-                Objects.requireNonNull(body, "Parameter 'body' required");
+                Utils.parameterRequireNonNull(body, "body");
                 if (body instanceof ResourceFile) {
                     final ResourceFile resourceFile = (ResourceFile) body;
                     final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);

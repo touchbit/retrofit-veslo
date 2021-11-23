@@ -19,11 +19,11 @@ package org.touchbit.retrofit.ext.dmr.client.adapter;
 import okhttp3.Request;
 import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.EndpointInfo;
-import org.touchbit.retrofit.ext.dmr.client.IDualResponseConsumer;
 import org.touchbit.retrofit.ext.dmr.client.model.AnyBody;
 import org.touchbit.retrofit.ext.dmr.client.response.DualResponse;
 import org.touchbit.retrofit.ext.dmr.client.response.IDualResponse;
 import org.touchbit.retrofit.ext.dmr.exception.HttpCallException;
+import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Call;
 import retrofit2.CallAdapter;
 import retrofit2.Response;
@@ -35,8 +35,6 @@ import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Objects;
-import java.util.StringJoiner;
 
 public class DualCallAdapterFactory extends CallAdapter.Factory {
 
@@ -112,12 +110,12 @@ public class DualCallAdapterFactory extends CallAdapter.Factory {
                                                 @Nonnull final String endpointInfo,
                                                 @Nonnull final Annotation[] methodAnnotations,
                                                 @Nonnull final Retrofit retrofit) {
-        Objects.requireNonNull(call, "Parameter 'call' cannot be null.");
-        Objects.requireNonNull(successType, "Parameter 'successType' cannot be null.");
-        Objects.requireNonNull(errorType, "Parameter 'errorType' cannot be null.");
-        Objects.requireNonNull(endpointInfo, "Parameter 'endpointInfo' cannot be null.");
-        Objects.requireNonNull(methodAnnotations, "Parameter 'methodAnnotations' cannot be null.");
-        Objects.requireNonNull(retrofit, "Parameter 'retrofit' cannot be null.");
+        Utils.parameterRequireNonNull(call, "call");
+        Utils.parameterRequireNonNull(successType, "successType");
+        Utils.parameterRequireNonNull(errorType, "errorType");
+        Utils.parameterRequireNonNull(endpointInfo, "endpointInfo");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
 
         final Response<Object> response = getRetrofitResponse(call, successType, methodAnnotations);
         final Object errorDTO = getErrorDTO(response, errorType, methodAnnotations, retrofit);
@@ -129,19 +127,15 @@ public class DualCallAdapterFactory extends CallAdapter.Factory {
     public Response<Object> getRetrofitResponse(final Call<Object> call,
                                                 final Class<?> successType,
                                                 final Annotation[] methodAnnotations) {
-        Objects.requireNonNull(call, "Parameter 'call' cannot be null.");
-        Objects.requireNonNull(successType, "Parameter 'successType' cannot be null.");
-        Objects.requireNonNull(methodAnnotations, "Parameter 'methodAnnotations' cannot be null.");
+        Utils.parameterRequireNonNull(call, "call");
+        Utils.parameterRequireNonNull(successType, "successType");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
 
         final Response<Object> response;
         try {
             response = call.execute();
         } catch (Exception e) {
-            StringJoiner sj = new StringJoiner("\n * ", "List of annotations of the method:\n * ", "");
-            for (Annotation methodAnnotation : methodAnnotations) {
-                sj.add(methodAnnotation.toString());
-            }
-            throw new HttpCallException("Failed to make API call.\n" + e.getMessage() + "\n" + sj, e);
+            throw new HttpCallException("Failed to make API call.\n" + e.getMessage() + "\n", e);
         }
         if (response.isSuccessful() && response.body() == null && successType.equals(AnyBody.class)) {
             return Response.success(new AnyBody((byte[]) null), response.raw());
@@ -150,17 +144,16 @@ public class DualCallAdapterFactory extends CallAdapter.Factory {
     }
 
     @Nullable
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "ConstantConditions"})
     public <DTO> DTO getErrorDTO(@Nonnull final Response<Object> response,
                                  @Nonnull final Class<DTO> errorType,
                                  @Nonnull final Annotation[] methodAnnotations,
                                  @Nonnull final Retrofit retrofit) {
-        ResponseBody responseErrorBody = response.errorBody();
-        if (responseErrorBody != null || AnyBody.class.equals(errorType)) {
+        ResponseBody nullableResponseErrorBody = response.errorBody();
+        if (nullableResponseErrorBody != null || AnyBody.class.equals(errorType)) {
             try {
-                //responseErrorBody could be null. NPE does not arise. Suppress inspection.
-                //noinspection ConstantConditions
-                return (DTO) retrofit.responseBodyConverter(errorType, methodAnnotations).convert(responseErrorBody);
+                return (DTO) retrofit.responseBodyConverter(errorType, methodAnnotations)
+                        .convert(nullableResponseErrorBody);
             } catch (Exception e) {
                 throw new HttpCallException("Failed to convert error body.", e);
             }

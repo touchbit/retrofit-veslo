@@ -56,7 +56,7 @@ public class ResourceFileConverterUnitTests {
         final ThrowableRunnable runnable = () -> new ResourceFileConverter()
                 .requestBodyConverter(null, null, null, null)
                 .convert(null);
-        assertThrow(runnable).assertClass(NullPointerException.class).assertMessageIs("Parameter 'body' required");
+        assertThrow(runnable).assertNPE("body");
     }
 
     @Test

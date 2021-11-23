@@ -22,13 +22,13 @@ import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
+import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.Objects;
 
 public class ByteArrayConverter implements ExtensionConverter<Byte[]> {
 
@@ -43,11 +43,11 @@ public class ByteArrayConverter implements ExtensionConverter<Byte[]> {
             @Override
             @EverythingIsNonNull
             public RequestBody convert(Object body) {
-                Objects.requireNonNull(body, "Parameter 'body' required");
+                Utils.parameterRequireNonNull(body, "body");
                 if (body instanceof Byte[]) {
                     Byte[] bytes = (Byte[]) body;
                     final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
-                    return RequestBody.create(mediaType, ConverterUtils.toPrimitiveByteArray(bytes));
+                    return RequestBody.create(mediaType, Utils.toPrimitiveByteArray(bytes));
                 }
                 throw new ConverterUnsupportedTypeException(ByteArrayConverter.class, Byte[].class, body.getClass());
             }
@@ -68,7 +68,7 @@ public class ByteArrayConverter implements ExtensionConverter<Byte[]> {
                 if (body == null) {
                     return null;
                 }
-                return wrap(() -> ConverterUtils.toObjectByteArray(body.bytes()));
+                return wrap(() -> Utils.toObjectByteArray(body.bytes()));
             }
 
         };

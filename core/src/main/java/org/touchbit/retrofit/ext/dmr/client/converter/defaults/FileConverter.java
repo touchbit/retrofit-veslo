@@ -23,6 +23,7 @@ import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
+import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
@@ -32,7 +33,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 
 public class FileConverter implements ExtensionConverter<File> {
 
@@ -47,7 +47,7 @@ public class FileConverter implements ExtensionConverter<File> {
             @Override
             @EverythingIsNonNull
             public RequestBody convert(Object body) {
-                Objects.requireNonNull(body, "Parameter 'body' required");
+                Utils.parameterRequireNonNull(body, "body");
                 if (body instanceof File) {
                     File file = (File) body;
                     if (!file.exists()) {

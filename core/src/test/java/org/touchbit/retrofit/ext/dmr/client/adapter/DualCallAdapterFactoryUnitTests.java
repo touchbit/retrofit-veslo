@@ -24,13 +24,12 @@ import org.touchbit.retrofit.ext.dmr.client.converter.ExtensionConverterFactory;
 import org.touchbit.retrofit.ext.dmr.client.model.AnyBody;
 import org.touchbit.retrofit.ext.dmr.client.response.DualResponse;
 import org.touchbit.retrofit.ext.dmr.client.response.IDualResponse;
-import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
+import org.touchbit.retrofit.ext.dmr.exception.ConverterNotFoundException;
 import org.touchbit.retrofit.ext.dmr.exception.HttpCallException;
 import retrofit2.Call;
 import retrofit2.CallAdapter;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.http.POST;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
@@ -94,36 +93,28 @@ public class DualCallAdapterFactoryUnitTests {
     @Test
     @DisplayName("#getIDualResponse() Parameter 'call' cannot be null.")
     public void test1637408763989() {
-        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(null, STR_C, STR_C, INFO, AA, R))
-                .assertClass(NullPointerException.class)
-                .assertMessageContains("Parameter 'call' cannot be null.");
+        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(null, STR_C, STR_C, INFO, AA, R)).assertNPE("call");
     }
 
     @Test
     @DisplayName("#getIDualResponse() Parameter 'successType' cannot be null.")
     public void test1637408774271() {
         final Call call = getCall(200, "");
-        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, null, STR_C, INFO, AA, R))
-                .assertClass(NullPointerException.class)
-                .assertMessageContains("Parameter 'successType' cannot be null.");
+        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, null, STR_C, INFO, AA, R)).assertNPE("successType");
     }
 
     @Test
     @DisplayName("#getIDualResponse() Parameter 'errorType' cannot be null.")
     public void test1637408780676() {
         final Call call = getCall(200, "");
-        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STR_C, null, INFO, AA, R))
-                .assertClass(NullPointerException.class)
-                .assertMessageContains("Parameter 'errorType' cannot be null.");
+        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STR_C, null, INFO, AA, R)).assertNPE("errorType");
     }
 
     @Test
     @DisplayName("#getIDualResponse() Parameter 'endpointInfo' cannot be null.")
     public void test1637408788466() {
         final Call call = getCall(200, "");
-        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STR_C, STR_C, null, AA, R))
-                .assertClass(NullPointerException.class)
-                .assertMessageContains("Parameter 'endpointInfo' cannot be null.");
+        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STR_C, STR_C, null, AA, R)).assertNPE("endpointInfo");
     }
 
     @Test
@@ -131,17 +122,14 @@ public class DualCallAdapterFactoryUnitTests {
     public void test1637408795159() {
         final Call call = getCall(200, "");
         assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STR_C, STR_C, INFO, null, R))
-                .assertClass(NullPointerException.class)
-                .assertMessageContains("Parameter 'methodAnnotations' cannot be null.");
+                .assertNPE("methodAnnotations");
     }
 
     @Test
     @DisplayName("#getIDualResponse() Parameter 'retrofit' cannot be null.")
     public void test1637408802911() {
         final Call call = getCall(200, "");
-        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STR_C, STR_C, INFO, AA, null))
-                .assertClass(NullPointerException.class)
-                .assertMessageContains("Parameter 'retrofit' cannot be null.");
+        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STR_C, STR_C, INFO, AA, null)).assertNPE("retrofit");
     }
 
     @Test
@@ -299,18 +287,9 @@ public class DualCallAdapterFactoryUnitTests {
     public void test1637407697386() throws Exception {
         final Call call = getCall(200, "");
         when(call.execute()).thenThrow(new RuntimeException("test1637407697386"));
-        Annotation[] annotations = new Annotation[]{new POST() {
-            public Class<? extends Annotation> annotationType() {
-                return POST.class;
-            }
-
-            public String value() {
-                return "/api/test1637407697386/";
-            }
-        }};
-        assertThrow(() -> DEFAULT_FACTORY.getRetrofitResponse(call, STR_C, annotations))
+        assertThrow(() -> DEFAULT_FACTORY.getRetrofitResponse(call, STR_C, new Annotation[]{}))
                 .assertClass(HttpCallException.class)
-                .assertMessageContains("Failed to make API call", "/api/test1637407697386/")
+                .assertMessageContains("Failed to make API call")
                 .assertCause(cause -> cause
                         .assertClass(RuntimeException.class)
                         .assertMessageIs("test1637407697386"));
@@ -319,27 +298,21 @@ public class DualCallAdapterFactoryUnitTests {
     @Test
     @DisplayName("#getRetrofitResponse() Parameter 'call' cannot be null.")
     public void test1637408261853() {
-        assertThrow(() -> DEFAULT_FACTORY.getRetrofitResponse(null, STR_C, AA))
-                .assertClass(NullPointerException.class)
-                .assertMessageContains("Parameter 'call' cannot be null.");
+        assertThrow(() -> DEFAULT_FACTORY.getRetrofitResponse(null, STR_C, AA)).assertNPE("call");
     }
 
     @Test
     @DisplayName("#getRetrofitResponse() Parameter 'successType' cannot be null.")
     public void test1637408308179() {
         final Call call = getCall(200, "");
-        assertThrow(() -> DEFAULT_FACTORY.getRetrofitResponse(call, null, AA))
-                .assertClass(NullPointerException.class)
-                .assertMessageContains("Parameter 'successType' cannot be null.");
+        assertThrow(() -> DEFAULT_FACTORY.getRetrofitResponse(call, null, AA)).assertNPE("successType");
     }
 
     @Test
     @DisplayName("#getRetrofitResponse() Parameter 'methodAnnotations' cannot be null.")
     public void test1637408311262() {
         final Call call = getCall(200, "");
-        assertThrow(() -> DEFAULT_FACTORY.getRetrofitResponse(call, STR_C, null))
-                .assertClass(NullPointerException.class)
-                .assertMessageContains("Parameter 'methodAnnotations' cannot be null.");
+        assertThrow(() -> DEFAULT_FACTORY.getRetrofitResponse(call, STR_C, null)).assertNPE("methodAnnotations");
     }
 
     @Test
@@ -391,7 +364,7 @@ public class DualCallAdapterFactoryUnitTests {
                 .assertClass(HttpCallException.class)
                 .assertMessageIs("Failed to convert error body.")
                 .assertCause(cause1 -> cause1
-                        .assertClass(ConvertCallException.class)
+                        .assertClass(ConverterNotFoundException.class)
                         .assertMessageContains("Converter not found", "DTO type: class java.lang.Object"));
     }
 

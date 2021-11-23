@@ -18,10 +18,10 @@ package org.touchbit.retrofit.ext.dmr.asserter;
 
 import okhttp3.Headers;
 import org.touchbit.retrofit.ext.dmr.client.response.IDualResponse;
+import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nonnull;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 @SuppressWarnings("UnusedReturnValue")
@@ -35,7 +35,7 @@ public class ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO>
     @Override
     @EverythingIsNonNull
     public ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO> assertHeaders(Consumer<HeadersAsserter> consumer) {
-        Objects.requireNonNull(consumer, "HeadersAsserter consumer required");
+        Utils.parameterRequireNonNull(consumer, "consumer");
         final Headers headers = getResponse().getHeaders();
         final HeadersAsserter headersAsserter = new HeadersAsserter(headers);
         consumer.accept(headersAsserter);
@@ -49,11 +49,7 @@ public class ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO>
     }
 
     public ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO> assertSuccessfulBody(Consumer<SUCCESSFUL_DTO> consumer) {
-        final SUCCESSFUL_DTO successfulDTO = assertIsSuccessfulResponse()
-                .assertSuccessfulDtoNotNull()
-                .blame()
-                .getResponse()
-                .getSuccessfulDTO();
+        final SUCCESSFUL_DTO successfulDTO = assertSuccessfulDtoNotNull().blame().getResponse().getSuccessfulDTO();
         softly(() -> consumer.accept(successfulDTO));
         return this;
     }
@@ -69,7 +65,9 @@ public class ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO>
 
     public ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO> assertSuccessfulDtoNotNull() {
         if (getResponse().getSuccessfulDTO() == null) {
-            addErrors(new AssertionError("Can't get a successful DTO model. Response body is null."));
+            addErrors(new AssertionError("Received a successful body\n" +
+                    "Expected: true\n" +
+                    "  Actual: false"));
         }
         return this;
     }
@@ -80,11 +78,7 @@ public class ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO>
     }
 
     public ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO> assertErrorBody(Consumer<ERROR_DTO> consumer) {
-        final ERROR_DTO errorDTO = assertIsErrorResponse()
-                .assertErrorDtoNotNull()
-                .blame()
-                .getResponse()
-                .getErrorDTO();
+        final ERROR_DTO errorDTO = assertErrorDtoNotNull().blame().getResponse().getErrorDTO();
         softly(() -> consumer.accept(errorDTO));
         return this;
     }
@@ -100,7 +94,9 @@ public class ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO>
 
     public ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO> assertErrorDtoNotNull() {
         if (getResponse().getErrorDTO() == null) {
-            addErrors(new AssertionError("Can't get a error DTO model. Response body is null."));
+            addErrors(new AssertionError("Error body received\n" +
+                    "Expected: true\n" +
+                    "  Actual: false"));
         }
         return this;
     }

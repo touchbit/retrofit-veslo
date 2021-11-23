@@ -64,9 +64,7 @@ public class SoftlyAsserterUnitTests {
     @Test
     @DisplayName("#softlyAsserter() NPE if asserterConsumer = null")
     public void test1637484774676() {
-        assertThrow(() -> SoftlyAsserter.softlyAsserter(null))
-                .assertClass(NullPointerException.class)
-                .assertMessageIs("Parameter 'asserterConsumer' required");
+        assertThrow(() -> SoftlyAsserter.softlyAsserter(null)).assertNPE("asserterConsumer");
     }
 
     @Test

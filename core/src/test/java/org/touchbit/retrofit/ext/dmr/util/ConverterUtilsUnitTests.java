@@ -47,31 +47,6 @@ public class ConverterUtilsUnitTests {
     }
 
     @Test
-    @DisplayName("#toObjectByteArray() & #toPrimitiveByteArray() positive")
-    public void test1637491140861() {
-        String expected = "test1637491140861";
-        byte[] expectedBytes = "test1637491140861".getBytes();
-        final Byte[] objBytes = ConverterUtils.toObjectByteArray(expected);
-        assertThat("", objBytes, is(expectedBytes));
-        assertThat("", ConverterUtils.toObjectByteArray(expectedBytes), is(expectedBytes));
-        assertThat("", ConverterUtils.toPrimitiveByteArray(objBytes), is(expectedBytes));
-    }
-
-    @Test
-    @DisplayName("#toObjectByteArray() & #toPrimitiveByteArray() negative")
-    public void test1637491405685() {
-        assertThrow(() -> ConverterUtils.toObjectByteArray((String) null))
-                .assertClass(NullPointerException.class)
-                .assertMessageIs("Parameter 'data' cannot be null.");
-        assertThrow(() -> ConverterUtils.toObjectByteArray((byte[]) null))
-                .assertClass(NullPointerException.class)
-                .assertMessageIs("Parameter 'bytes' cannot be null.");
-        assertThrow(() -> ConverterUtils.toPrimitiveByteArray(null))
-                .assertClass(NullPointerException.class)
-                .assertMessageIs("Parameter 'bytes' cannot be null.");
-    }
-
-    @Test
     @DisplayName("#isIDualResponse() & #toPrimitiveByteArray() positive")
     public void test1637491661197() {
         final ParameterizedType parameterizedType = mock(ParameterizedType.class);
@@ -88,9 +63,7 @@ public class ConverterUtilsUnitTests {
     @Test
     @DisplayName("#isIDualResponse() & #toPrimitiveByteArray() negative")
     public void test1637491666552() {
-        assertThrow(() -> ConverterUtils.isIDualResponse(null))
-                .assertClass(NullPointerException.class)
-                .assertMessageIs("Parameter 'type' cannot be null.");
+        assertThrow(() -> ConverterUtils.isIDualResponse(null)).assertNPE("type");
     }
 
     @Test

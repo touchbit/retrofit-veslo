@@ -17,18 +17,22 @@
 package org.touchbit.retrofit.ext.dmr.asserter;
 
 import org.touchbit.retrofit.ext.dmr.util.ThrowableRunnable;
+import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nonnull;
 import java.io.Closeable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.StringJoiner;
 import java.util.function.Consumer;
 
 public interface SoftlyAsserter extends Closeable {
 
     @EverythingIsNonNull
     static void softlyAsserter(Consumer<SoftlyAsserter> asserterConsumer) {
-        Objects.requireNonNull(asserterConsumer, "Parameter 'asserterConsumer' required");
+        Utils.parameterRequireNonNull(asserterConsumer, "asserterConsumer");
         try (final SoftlyAsserter softlyAsserter = get()) {
             asserterConsumer.accept(softlyAsserter);
         }
@@ -66,7 +70,7 @@ public interface SoftlyAsserter extends Closeable {
 
     @EverythingIsNonNull
     default SoftlyAsserter softly(@Nonnull ThrowableRunnable throwableRunnable) {
-        Objects.requireNonNull(throwableRunnable, "Parameter 'throwableRunnable' is required");
+        Utils.parameterRequireNonNull(throwableRunnable, "throwableRunnable");
         try {
             throwableRunnable.execute();
         } catch (Throwable e) {

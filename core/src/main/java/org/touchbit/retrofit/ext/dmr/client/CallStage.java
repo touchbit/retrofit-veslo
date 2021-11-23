@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package org.touchbit.retrofit.ext.dmr.client.converter.api;
+package org.touchbit.retrofit.ext.dmr.client;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public enum CallStage {
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
-public @interface StringRequestConverter {
+    REQUEST,
+    RESPONSE,
+
 }

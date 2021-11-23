@@ -173,9 +173,7 @@ public class JacksonUnitTests {
     @Test
     @DisplayName("Throw an exception if parameter 'body'=null")
     public void test1637550512653() {
-        assertThrow(() -> REQUEST_CONVERTER.convert(null))
-                .assertClass(NullPointerException.class)
-                .assertMessageIs("Parameter 'body' required");
+        assertThrow(() -> REQUEST_CONVERTER.convert(null)).assertNPE("body");
     }
 
     @Test

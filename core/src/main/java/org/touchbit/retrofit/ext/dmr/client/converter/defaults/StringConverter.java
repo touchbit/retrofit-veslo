@@ -22,6 +22,7 @@ import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
+import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
@@ -29,7 +30,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.Objects;
 
 public class StringConverter implements ExtensionConverter<String> {
 
@@ -44,7 +44,7 @@ public class StringConverter implements ExtensionConverter<String> {
             @Override
             @Nullable
             public RequestBody convert(@Nonnull Object body) {
-                Objects.requireNonNull(body, "Parameter 'body' required");
+                Utils.parameterRequireNonNull(body, "body");
                 if (body instanceof String) {
                     String data = (String) body;
                     if (BODY_NULL_VALUE.equals(data)) {

@@ -23,7 +23,7 @@ import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
-import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
+import org.touchbit.retrofit.ext.dmr.util.Utils;
 
 import static internal.test.utils.ThrowableAsserter.assertThrow;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -39,7 +39,7 @@ public class ByteArrayConverterUnitTests {
     @DisplayName("Successful conversion Byte[]->RequestBody if body instanceof Byte.class")
     public void test1637463917948() {
         final String expected = "test1637463917948";
-        final Byte[] body = ConverterUtils.toObjectByteArray(expected);
+        final Byte[] body = Utils.toObjectByteArray(expected);
         final RequestBody requestBody = new ByteArrayConverter()
                 .requestBodyConverter(null, null, null, null)
                 .convert(body);
@@ -54,7 +54,7 @@ public class ByteArrayConverterUnitTests {
         final ThrowableRunnable runnable = () -> new ByteArrayConverter()
                 .requestBodyConverter(null, null, null, null)
                 .convert(null);
-        assertThrow(runnable).assertClass(NullPointerException.class).assertMessageIs("Parameter 'body' required");
+        assertThrow(runnable).assertNPE("body");
     }
 
     @Test
@@ -82,7 +82,7 @@ public class ByteArrayConverterUnitTests {
     @DisplayName("Successful conversion ResponseBody->Byte[] if content length > 0 then return byte array")
     public void test1637465032249() throws Exception {
         final String expected = "test1637465032249";
-        final Byte[] body = ConverterUtils.toObjectByteArray(expected);
+        final Byte[] body = Utils.toObjectByteArray(expected);
         final ResponseBody responseBody = mock(ResponseBody.class);
         when(responseBody.bytes()).thenReturn(expected.getBytes());
         when(responseBody.contentLength()).thenReturn(Long.valueOf(expected.length()));

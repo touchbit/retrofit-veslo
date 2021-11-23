@@ -66,7 +66,7 @@ public class AnyBodyConverterUnitTests {
         final ThrowableRunnable runnable = () -> new AnyBodyConverter()
                 .requestBodyConverter(null, null, null, null)
                 .convert(null);
-        assertThrow(runnable).assertClass(NullPointerException.class).assertMessageIs("Parameter 'body' required");
+        assertThrow(runnable).assertNPE("body");
     }
 
     @Test

@@ -28,8 +28,6 @@ import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * Created by Oleg Shaburov on 08.11.2021
@@ -42,48 +40,12 @@ public class ConverterUtils {
     }
 
     /**
-     * @param data - {@link String}
-     * @return {@link Byte[]}
-     */
-    @EverythingIsNonNull
-    public static Byte[] toObjectByteArray(String data) {
-        Objects.requireNonNull(data, "Parameter 'data' cannot be null.");
-        return toObjectByteArray(data.getBytes());
-    }
-
-    /**
-     * @param bytes - byte[]
-     * @return {@link Byte[]}
-     */
-    @EverythingIsNonNull
-    public static Byte[] toObjectByteArray(byte[] bytes) {
-        Objects.requireNonNull(bytes, "Parameter 'bytes' cannot be null.");
-        Byte[] result = new Byte[bytes.length];
-        Arrays.setAll(result, n -> bytes[n]);
-        return result;
-    }
-
-    /**
-     * @param bytes - {@link Byte[]}
-     * @return byte[]
-     */
-    @EverythingIsNonNull
-    public static byte[] toPrimitiveByteArray(Byte[] bytes) {
-        Objects.requireNonNull(bytes, "Parameter 'bytes' cannot be null.");
-        byte[] primitiveArray = new byte[bytes.length];
-        for (int i = 0; i < bytes.length; i++) {
-            primitiveArray[i] = bytes[i];
-        }
-        return primitiveArray;
-    }
-
-    /**
      * @param type - model type
      * @return true if {@param type} is implements the interface {@link IDualResponse}
      */
     @EverythingIsNonNull
     public static boolean isIDualResponse(final Type type) {
-        Objects.requireNonNull(type, "Parameter 'type' cannot be null.");
+        Utils.parameterRequireNonNull(type, "type");
         return type instanceof ParameterizedType &&
                 IDualResponse.class.isAssignableFrom((Class<?>) ((ParameterizedType) type).getRawType());
     }
@@ -97,23 +59,20 @@ public class ConverterUtils {
     @Nonnull
     public static Headers getAnnotationHeaders(@Nullable final Annotation[] methodAnnotations) {
         Headers.Builder headersBuilder = new Headers.Builder();
-        if (methodAnnotations != null) {
-            for (Annotation annotation : methodAnnotations) {
-                if (annotation instanceof retrofit2.http.Headers) {
-                    for (String header : ((retrofit2.http.Headers) annotation).value()) {
-                        String[] split = header.split(":");
-                        if (split.length != 2) {
-                            throw new IllegalArgumentException("Invalid header value.\n" +
-                                    "Annotation: " + retrofit2.http.Headers.class + "\n" +
-                                    "Header: " + header + "\n" +
-                                    "Expected format: Header-Name: value; parameter-name=value\n" +
-                                    "Example: Content-Type: text/xml; charset=utf-8");
-                        }
-                        String name = split[0].trim();
-                        String value = split[1].trim();
-                        headersBuilder.add(name, value);
-                    }
+        final retrofit2.http.Headers aHeaders = Utils.getAnnotation(methodAnnotations, retrofit2.http.Headers.class);
+        if (aHeaders != null) {
+            for (String header : aHeaders.value()) {
+                String[] split = header.split(":");
+                if (split.length != 2) {
+                    throw new IllegalArgumentException("Invalid header value.\n" +
+                            "Annotation: " + retrofit2.http.Headers.class + "\n" +
+                            "Header: " + header + "\n" +
+                            "Expected format: Header-Name: value; parameter-name=value\n" +
+                            "Example: Content-Type: text/xml; charset=utf-8");
                 }
+                String name = split[0].trim();
+                String value = split[1].trim();
+                headersBuilder.add(name, value);
             }
         }
         return headersBuilder.build();
@@ -126,7 +85,7 @@ public class ConverterUtils {
      * @return {@link MediaType} or null
      */
     @Nullable
-    public static MediaType getMediaType(@Nonnull final Annotation[] methodAnnotations) {
+    public static MediaType getMediaType(@Nullable final Annotation[] methodAnnotations) {
         Headers headers = getAnnotationHeaders(methodAnnotations);
         String contentType = headers.get("Content-Type");
         if (contentType == null) {
@@ -136,7 +95,7 @@ public class ConverterUtils {
     }
 
     @Nonnull
-    public static ContentType getContentType(@Nonnull final Annotation[] methodAnnotations) {
+    public static ContentType getContentType(@Nullable final Annotation[] methodAnnotations) {
         final MediaType mediaType = getMediaType(methodAnnotations);
         return new ContentType(mediaType);
     }

@@ -36,9 +36,7 @@ public class ResponseAsserterBaseUnitTests {
     @Test
     @DisplayName("NPE if constructor argument is null")
     public void test1637297423971() {
-        assertThrow(() -> getResponseAsserterBase(null))
-                .assertClass(NullPointerException.class)
-                .assertMessageIs("Response required");
+        assertThrow(() -> getResponseAsserterBase(null)).assertNPE("response");
     }
 
     @Test

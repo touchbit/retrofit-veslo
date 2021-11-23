@@ -35,9 +35,7 @@ public class ResponseAsserterUnitTests {
     @Test
     @DisplayName("NPE if constructor argument is null ")
     public void test1637375056691() {
-        assertThrow(() -> new ResponseAsserter<>(null))
-                .assertClass(NullPointerException.class)
-                .assertMessageIs("Response required");
+        assertThrow(() -> new ResponseAsserter<>(null)).assertNPE("response");
     }
 
     @Test
@@ -81,9 +79,7 @@ public class ResponseAsserterUnitTests {
     public void test1637375747466() {
         final IDualResponse response = mock(IDualResponse.class);
         final ResponseAsserter responseAsserter = new ResponseAsserter<>(response);
-        assertThrow(() -> responseAsserter.assertHeaders(null))
-                .assertClass(NullPointerException.class)
-                .assertMessageIs("HeadersAsserter consumer required");
+        assertThrow(() -> responseAsserter.assertHeaders(null)).assertNPE("consumer");
     }
 
     @Test
@@ -129,13 +125,10 @@ public class ResponseAsserterUnitTests {
         assertThrow(() -> asserter.assertSuccessfulResponse(200, body -> assertThat("", body, notNullValue())))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("Collected the following errors:\n\n" +
-                        "Received unsuccessful HTTP status code.\n" +
-                        "Expected: in range 200..299\n" +
-                        "  Actual: was 500\n" +
-                        "\n" +
-                        "Can't get a successful DTO model. Response body is null.");
+                        "Received a successful body\n" +
+                        "Expected: true\n" +
+                        "  Actual: false");
     }
-
 
     @Test
     @DisplayName("#assertSuccessfulBody(Consumer) positive")
@@ -160,11 +153,9 @@ public class ResponseAsserterUnitTests {
         assertThrow(() -> asserter.assertSuccessfulBody(body -> assertThat("", body, notNullValue())))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("Collected the following errors:\n\n" +
-                        "Received unsuccessful HTTP status code.\n" +
-                        "Expected: in range 200..299\n" +
-                        "  Actual: was 500\n" +
-                        "\n" +
-                        "Can't get a successful DTO model. Response body is null.");
+                        "Received a successful body\n" +
+                        "Expected: true\n" +
+                        "  Actual: false");
     }
 
     @Test
@@ -230,11 +221,9 @@ public class ResponseAsserterUnitTests {
         assertThrow(() -> asserter.assertErrorResponse(500, body -> assertThat("", body, notNullValue())))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("Collected the following errors:\n\n" +
-                        "Received successful HTTP status code.\n" +
-                        "Expected: in range 300..599\n" +
-                        "  Actual: was 200\n" +
-                        "\n" +
-                        "Can't get a error DTO model. Response body is null.");
+                        "Error body received\n" +
+                        "Expected: true\n" +
+                        "  Actual: false");
     }
 
     @Test
@@ -260,11 +249,9 @@ public class ResponseAsserterUnitTests {
         assertThrow(() -> asserter.assertErrorBody(body -> assertThat("", body, notNullValue())))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("Collected the following errors:\n\n" +
-                        "Received successful HTTP status code.\n" +
-                        "Expected: in range 300..599\n" +
-                        "  Actual: was 200\n" +
-                        "\n" +
-                        "Can't get a error DTO model. Response body is null.");
+                        "Error body received\n" +
+                        "Expected: true\n" +
+                        "  Actual: false");
     }
 
     @Test

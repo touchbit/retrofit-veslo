@@ -17,13 +17,13 @@
 package org.touchbit.retrofit.ext.dmr.asserter;
 
 import org.touchbit.retrofit.ext.dmr.client.response.IDualResponse;
+import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nonnull;
 import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -38,7 +38,7 @@ public abstract class ResponseAsserterBase<SUCCESSFUL_DTO, ERROR_DTO, HA> implem
     private final List<Throwable> errors = new ArrayList<>();
 
     public ResponseAsserterBase(@Nonnull IDualResponse<SUCCESSFUL_DTO, ERROR_DTO> response) {
-        Objects.requireNonNull(response, "Response required");
+        Utils.parameterRequireNonNull(response, "response");
         this.response = response;
     }
 

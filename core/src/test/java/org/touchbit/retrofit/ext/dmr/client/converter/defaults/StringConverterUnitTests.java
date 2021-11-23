@@ -62,7 +62,7 @@ public class StringConverterUnitTests {
         final ThrowableRunnable runnable = () -> new StringConverter()
                 .requestBodyConverter(null, null, null, null)
                 .convert(null);
-        assertThrow(runnable).assertClass(NullPointerException.class).assertMessageIs("Parameter 'body' required");
+        assertThrow(runnable).assertNPE("body");
     }
 
     @Test

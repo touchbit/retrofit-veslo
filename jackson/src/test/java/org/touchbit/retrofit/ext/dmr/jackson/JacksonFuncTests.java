@@ -21,7 +21,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.client.adapter.DualCallAdapterFactory;
 import org.touchbit.retrofit.ext.dmr.client.model.AnyBody;
-import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
+import org.touchbit.retrofit.ext.dmr.exception.ConverterNotFoundException;
 import org.touchbit.retrofit.ext.dmr.exception.HttpCallException;
 import org.touchbit.retrofit.ext.dmr.jackson.cli.MockClient;
 import org.touchbit.retrofit.ext.dmr.jackson.cli.model.UserDTO;
@@ -98,8 +98,12 @@ public class JacksonFuncTests {
                 .assertClass(HttpCallException.class)
                 .assertMessageContains("Failed to make API call.")
                 .assertCause(cause -> cause
-                        .assertClass(ConvertCallException.class)
-                        .assertMessageContains("Converter not found", "and DTO type java.lang.Integer."));
+                        .assertClass(ConverterNotFoundException.class)
+                        .assertMessageContains(
+                                "Converter not found\n",
+                                "Call stage: REQUEST\n",
+                                "Content-Type: null\n",
+                                "DTO type: class java.lang.Integer\n"));
     }
 
     @Test

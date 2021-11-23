@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package org.touchbit.retrofit.ext.dmr.client;
+package org.touchbit.retrofit.ext.dmr.client.converter.api;
 
-import okhttp3.Request;
-import retrofit2.Response;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.lang.annotation.Annotation;
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD})
+public @interface Converters {
 
-@FunctionalInterface
-public interface IDualResponseConsumer<R> {
+    ResponseConverter[] response() default {};
 
-    R accept(Request request,
-             Response<Object> response,
-             Object errorDto,
-             String endpointInfo,
-             Annotation[] callAnnotations);
+    RequestConverter[] request() default {};
 
 }

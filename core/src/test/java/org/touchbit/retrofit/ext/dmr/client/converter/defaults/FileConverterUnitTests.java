@@ -57,9 +57,7 @@ public class FileConverterUnitTests {
         final ThrowableRunnable runnable = () -> new FileConverter()
                 .requestBodyConverter(null, null, null, null)
                 .convert(null);
-        assertThrow(runnable)
-                .assertClass(NullPointerException.class)
-                .assertMessageIs("Parameter 'body' required");
+        assertThrow(runnable).assertNPE("body");
     }
 
     @Test
