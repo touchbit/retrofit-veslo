@@ -21,7 +21,7 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
-import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
+import org.touchbit.retrofit.ext.dmr.util.ConvertUtils;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
@@ -50,7 +50,7 @@ public class StringConverter implements ExtensionConverter<String> {
                     if (BODY_NULL_VALUE.equals(data)) {
                         return null;
                     }
-                    final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
+                    final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
                     return RequestBody.create(mediaType, (String) body);
                 }
                 throw new ConverterUnsupportedTypeException(StringConverter.class, String.class, body.getClass());

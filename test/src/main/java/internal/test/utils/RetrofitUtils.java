@@ -16,6 +16,7 @@
 
 package internal.test.utils;
 
+import retrofit2.Retrofit;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
@@ -27,6 +28,12 @@ import java.util.UUID;
 public class RetrofitUtils {
 
     private RetrofitUtils() {
+    }
+
+    public static Retrofit retrofit() {
+        return new Retrofit.Builder()
+                .baseUrl("http://localhost")
+                .build();
     }
 
     public static Annotation[] getCallMethodAnnotations(final String... headers) {

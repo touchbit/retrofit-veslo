@@ -24,7 +24,7 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
-import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
+import org.touchbit.retrofit.ext.dmr.util.ConvertUtils;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
@@ -59,7 +59,7 @@ public class JacksonConverter<T> implements ExtensionConverter<T> {
                 Utils.parameterRequireNonNull(body, "body");
                 final ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
                 final ObjectWriter objectWriter = objectMapper.writerFor((Class<?>) type);
-                final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
+                final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
                 try {
                     if (BODY_NULL_VALUE.equals(body)) {
                         return null;

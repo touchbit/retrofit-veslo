@@ -18,6 +18,7 @@ package org.touchbit.retrofit.ext.dmr.util;
 
 import okhttp3.Headers;
 import okhttp3.MediaType;
+import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.header.ContentType;
 import org.touchbit.retrofit.ext.dmr.client.response.IDualResponse;
 import org.touchbit.retrofit.ext.dmr.exception.UtilityClassException;
@@ -33,9 +34,9 @@ import java.lang.reflect.Type;
  * Created by Oleg Shaburov on 08.11.2021
  * shaburov.o.a@gmail.com
  */
-public class ConverterUtils {
+public class ConvertUtils {
 
-    private ConverterUtils() {
+    private ConvertUtils() {
         throw new UtilityClassException();
     }
 
@@ -98,6 +99,14 @@ public class ConverterUtils {
     public static ContentType getContentType(@Nullable final Annotation[] methodAnnotations) {
         final MediaType mediaType = getMediaType(methodAnnotations);
         return new ContentType(mediaType);
+    }
+
+    @Nonnull
+    public static ContentType getContentType(@Nullable final ResponseBody responseBody) {
+        if (responseBody == null) {
+            return new ContentType(null);
+        }
+        return new ContentType(responseBody.contentType());
     }
 
 }

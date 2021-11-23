@@ -74,16 +74,34 @@ public interface ExtensionConverter<DTO> {
         }
     }
 
+    /**
+     * Convert objects to and from their representation in HTTP.
+     */
     interface RequestBodyConverter extends Converter<Object, RequestBody> {
 
+        /**
+         * Converting DTO model to their HTTP {@link RequestBody} representation
+         *
+         * @param body - DTO model
+         * @return HTTP {@link RequestBody}
+         */
         @Override
         @Nullable
         RequestBody convert(@Nonnull Object body);
 
     }
 
+    /**
+     * Convert objects to and from their representation in HTTP.
+     */
     interface ResponseBodyConverter<DTO> extends Converter<ResponseBody, DTO> {
 
+        /**
+         * Converting HTTP {@link ResponseBody} to their {@link DTO} model representation
+         *
+         * @param body - HTTP {@link ResponseBody}
+         * @return {@link DTO} model representation
+         */
         @Override
         @Nullable
         DTO convert(@Nullable ResponseBody body);

@@ -80,4 +80,8 @@ public interface MockClient {
     DualResponse<Byte[], Byte[]> applicationJsonByteArray(@Query("status") int status,
                                                           @Body Object responseBody);
 
+@EndpointInfo("Get user by id")
+@Headers("Content-Type: application/json")
+@GET("/api/mock/application/json/absent")
+DualResponse<UserDTO, ErrorDTO> getUser(@Query("id") String id);
 }

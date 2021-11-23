@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 public @interface ResponseConverter {
 
-    Class<?>[] bodyClass() default {};
+    Class<?>[] bodyClasses() default {};
 
     Class<? extends ExtensionConverter> converter();
 

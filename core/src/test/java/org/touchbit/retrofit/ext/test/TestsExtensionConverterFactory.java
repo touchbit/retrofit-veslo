@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package org.touchbit.retrofit.ext.dmr.client.converter.api;
+package org.touchbit.retrofit.ext.test;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.touchbit.retrofit.ext.dmr.client.converter.ExtensionConverterFactory;
 
-@SuppressWarnings("rawtypes")
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
-public @interface RequestConverter {
+@SuppressWarnings("ALL")
+public class TestsExtensionConverterFactory extends ExtensionConverterFactory {
 
-    Class<?>[] bodyClasses() default {};
-
-    Class<? extends ExtensionConverter> converter();
+    public TestsExtensionConverterFactory() {
+        super();
+        addPackageRequestConverter(new PackConverter(), "org.touchbit.retrofit.ext.test.model.pack");
+        addPackageResponseConverter(new PackConverter(), "org.touchbit.retrofit.ext.test.model.pack");
+    }
 
 }

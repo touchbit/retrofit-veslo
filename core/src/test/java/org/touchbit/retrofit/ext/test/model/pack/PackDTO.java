@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.touchbit.retrofit.ext.test.model;
+package org.touchbit.retrofit.ext.test.model.pack;
 
 import java.util.Arrays;
 
-public class RawDTO {
+public class PackDTO {
 
     private final byte[] data;
 
-    public RawDTO(String data) {
+    public PackDTO(String data) {
         if (data == null) {
             this.data = null;
         } else {
@@ -30,7 +30,7 @@ public class RawDTO {
         }
     }
 
-    public RawDTO(byte[] data) {
+    public PackDTO(byte[] data) {
         this.data = data;
     }
 
@@ -42,7 +42,7 @@ public class RawDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RawDTO testDTO = (RawDTO) o;
+        PackDTO testDTO = (PackDTO) o;
         return Arrays.equals(data, testDTO.data);
     }
 

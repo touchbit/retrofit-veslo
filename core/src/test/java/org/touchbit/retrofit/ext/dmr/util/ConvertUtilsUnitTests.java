@@ -18,6 +18,7 @@ package org.touchbit.retrofit.ext.dmr.util;
 
 import okhttp3.Headers;
 import okhttp3.MediaType;
+import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.client.header.ContentType;
@@ -38,12 +39,12 @@ import static org.mockito.Mockito.when;
 
 @SuppressWarnings("ALL")
 @DisplayName("ConverterUtils tests")
-public class ConverterUtilsUnitTests {
+public class ConvertUtilsUnitTests {
 
     @Test
     @DisplayName("Is util class")
     public void test1637491041193() {
-        assertUtilityClassException(ConverterUtils.class);
+        assertUtilityClassException(ConvertUtils.class);
     }
 
     @Test
@@ -51,25 +52,25 @@ public class ConverterUtilsUnitTests {
     public void test1637491661197() {
         final ParameterizedType parameterizedType = mock(ParameterizedType.class);
         when(parameterizedType.getRawType()).thenReturn(Objects.class);
-        assertThat("", ConverterUtils.isIDualResponse(IDualResponse.class), is(false));
-        assertThat("", ConverterUtils.isIDualResponse(parameterizedType), is(false));
+        assertThat("", ConvertUtils.isIDualResponse(IDualResponse.class), is(false));
+        assertThat("", ConvertUtils.isIDualResponse(parameterizedType), is(false));
 
         final DualResponse dualResponse = new DualResponse(null, null, null, null, null);
         when(parameterizedType.getRawType()).thenReturn(dualResponse.getClass());
-        assertThat("", ConverterUtils.isIDualResponse(parameterizedType), is(true));
-        assertThat("", ConverterUtils.isIDualResponse(dualResponse.getClass().getGenericSuperclass()), is(true));
+        assertThat("", ConvertUtils.isIDualResponse(parameterizedType), is(true));
+        assertThat("", ConvertUtils.isIDualResponse(dualResponse.getClass().getGenericSuperclass()), is(true));
     }
 
     @Test
     @DisplayName("#isIDualResponse() & #toPrimitiveByteArray() negative")
     public void test1637491666552() {
-        assertThrow(() -> ConverterUtils.isIDualResponse(null)).assertNPE("type");
+        assertThrow(() -> ConvertUtils.isIDualResponse(null)).assertNPE("type");
     }
 
     @Test
     @DisplayName("#getAnnotationHeaders() if parameter 'methodAnnotations' = null -> return empty Headers")
     public void test1637492306442() {
-        final Headers act = ConverterUtils.getAnnotationHeaders(null);
+        final Headers act = ConvertUtils.getAnnotationHeaders(null);
         assertThat("", act, notNullValue());
         assertThat("", act.size(), is(0));
     }
@@ -77,7 +78,7 @@ public class ConverterUtilsUnitTests {
     @Test
     @DisplayName("#getAnnotationHeaders() if parameter 'methodAnnotations' = [] -> return empty Headers")
     public void test1637492444059() {
-        final Headers act = ConverterUtils.getAnnotationHeaders(new Annotation[]{});
+        final Headers act = ConvertUtils.getAnnotationHeaders(new Annotation[]{});
         assertThat("", act, notNullValue());
         assertThat("", act.size(), is(0));
     }
@@ -86,7 +87,7 @@ public class ConverterUtilsUnitTests {
     @DisplayName("#getAnnotationHeaders() if retrofit2.http.Headers is empty -> return empty Headers")
     public void test1637492513743() {
         final Annotation[] callMethodAnnotations = getCallMethodAnnotations();
-        final Headers act = ConverterUtils.getAnnotationHeaders(callMethodAnnotations);
+        final Headers act = ConvertUtils.getAnnotationHeaders(callMethodAnnotations);
         assertThat("", act, notNullValue());
         assertThat("", act.size(), is(0));
     }
@@ -95,7 +96,7 @@ public class ConverterUtilsUnitTests {
     @DisplayName("#getAnnotationHeaders() if retrofit2.http.Headers has header -> return empty Headers")
     public void test1637492653253() {
         final Annotation[] callMethodAnnotations = getCallMethodAnnotations("Test: test1637492653253");
-        final Headers act = ConverterUtils.getAnnotationHeaders(callMethodAnnotations);
+        final Headers act = ConvertUtils.getAnnotationHeaders(callMethodAnnotations);
         assertThat("", act, notNullValue());
         assertThat("", act.size(), is(1));
         assertThat("", act.get("Test"), is("test1637492653253"));
@@ -105,7 +106,7 @@ public class ConverterUtilsUnitTests {
     @DisplayName("#getAnnotationHeaders() error if invalid header value")
     public void test1637493139344() {
         final Annotation[] callMethodAnnotations = getCallMethodAnnotations("Test-test1637492653253");
-        assertThrow(() -> ConverterUtils.getAnnotationHeaders(callMethodAnnotations))
+        assertThrow(() -> ConvertUtils.getAnnotationHeaders(callMethodAnnotations))
                 .assertClass(IllegalArgumentException.class)
                 .assertMessageIs("" +
                         "Invalid header value.\n" +
@@ -118,7 +119,7 @@ public class ConverterUtilsUnitTests {
     @Test
     @DisplayName("#getMediaType() if parameter 'methodAnnotations' = null -> return null")
     public void test1637493393399() {
-        final MediaType mediaType = ConverterUtils.getMediaType(null);
+        final MediaType mediaType = ConvertUtils.getMediaType(null);
         assertThat("", mediaType, nullValue());
     }
 
@@ -126,7 +127,7 @@ public class ConverterUtilsUnitTests {
     @DisplayName("#getMediaType() if retrofit2.http.Headers is empty -> return null")
     public void test1637493411431() {
         final Annotation[] callMethodAnnotations = getCallMethodAnnotations();
-        final MediaType mediaType = ConverterUtils.getMediaType(callMethodAnnotations);
+        final MediaType mediaType = ConvertUtils.getMediaType(callMethodAnnotations);
         assertThat("", mediaType, nullValue());
     }
 
@@ -134,14 +135,21 @@ public class ConverterUtilsUnitTests {
     @DisplayName("#getMediaType() if retrofit2.http.Headers has Content-Type -> return MediaType obj")
     public void test1637493421423() {
         final Annotation[] callMethodAnnotations = getCallMethodAnnotations("Content-Type: text/xml");
-        final MediaType mediaType = ConverterUtils.getMediaType(callMethodAnnotations);
+        final MediaType mediaType = ConvertUtils.getMediaType(callMethodAnnotations);
         assertThat("", mediaType, is(MediaType.get("text/xml")));
     }
 
     @Test
     @DisplayName("#getContentType() if parameter 'methodAnnotations' = null -> return ContentType obj")
     public void test1637493703838() {
-        final ContentType contentType = ConverterUtils.getContentType(null);
+        final ContentType contentType = ConvertUtils.getContentType((Annotation[]) null);
+        assertThat("", contentType, notNullValue());
+    }
+
+    @Test
+    @DisplayName("#getContentType() if parameter 'responseBody' = null -> return ContentType obj")
+    public void test1637680819362() {
+        final ContentType contentType = ConvertUtils.getContentType((ResponseBody) null);
         assertThat("", contentType, notNullValue());
     }
 

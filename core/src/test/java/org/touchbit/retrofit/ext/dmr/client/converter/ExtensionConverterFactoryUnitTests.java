@@ -42,10 +42,13 @@ import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterNotFoundException;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
 import org.touchbit.retrofit.ext.test.PrivateConverter;
-import org.touchbit.retrofit.ext.test.PublicExtensionConverterFactory;
 import org.touchbit.retrofit.ext.test.TestConverter;
+import org.touchbit.retrofit.ext.test.TestsExtensionConverterFactory;
 import org.touchbit.retrofit.ext.test.model.RawDTO;
+import org.touchbit.retrofit.ext.test.model.pack.PackDTO;
+import org.touchbit.retrofit.ext.test.model.pack.nested.NestedPackDTO;
 import retrofit2.Converter;
+import retrofit2.Retrofit;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -69,7 +72,9 @@ import static org.touchbit.retrofit.ext.dmr.client.header.ContentTypeConstants.*
 @DisplayName("ExtensionConverterFactory tests")
 public class ExtensionConverterFactoryUnitTests {
 
-    private static final PublicExtensionConverterFactory FACTORY = new PublicExtensionConverterFactory();
+    private static final TestsExtensionConverterFactory FACTORY = new TestsExtensionConverterFactory();
+    private static final Retrofit RTF = RetrofitUtils.retrofit();
+    private static final Class<Object> OBJ_C = Object.class;
 
     private static Stream<Arguments> testProvider1637422599548() {
         return Stream.of(
@@ -129,7 +134,7 @@ public class ExtensionConverterFactoryUnitTests {
     @MethodSource("testProvider1637422599548")
     public void test1637422599548(Class<String> type, String cT, Object body, MediaType expMT) {
         final RequestBody requestBody = new ExtensionConverterFactory()
-                .requestBodyConverter(type, new Annotation[]{}, getContentTypeHeaderAnnotations(cT), null)
+                .requestBodyConverter(type, new Annotation[]{}, getContentTypeHeaderAnnotations(cT), RTF)
                 .convert(body);
         assertThat("RequestBody", requestBody, notNullValue());
         assertThat("RequestBody.contentType()", requestBody.contentType(), is(expMT));
@@ -184,11 +189,41 @@ public class ExtensionConverterFactoryUnitTests {
     @DisplayName("ConvertCallException at converting String.class to RequestBody by type (raw)")
     public void test1637430252094() {
         final ThrowableRunnable runnable = () -> new ExtensionConverterFactory()
-                .requestBodyConverter(String.class, new Annotation[]{}, new Annotation[]{}, null)
+                .requestBodyConverter(String.class, new Annotation[]{}, new Annotation[]{}, RTF)
                 .convert("test1637430252094");
         assertThrow(runnable)
                 .assertClass(ConverterNotFoundException.class)
                 .assertMessageContains("Converter not found");
+    }
+
+    @Test
+    @DisplayName("Successfully converting RawDTO->RequestBody using RequestConverter annotation with RawDTO.class")
+    public void test1637670751294() {
+        final RequestConverter requestConverter = getRequestConverter(TestConverter.class, RawDTO.class);
+        final RequestBody dto = new ExtensionConverterFactory()
+                .requestBodyConverter(RawDTO.class, array(), array(requestConverter), null)
+                .convert(new RawDTO("test1637670751294"));
+        assertThat("RequestBody", dto, notNullValue());
+        assertThat("RequestBody.toString()", OkHttpUtils.requestBodyToString(dto), is("test1637670751294"));
+    }
+
+    @Test
+    @DisplayName("Successfully converting AnyBody->RequestBody using RequestConverter annotation with RawDTO.class")
+    public void test1637670825343() {
+        final ResponseConverter responseConverter = getResponseConverter(TestConverter.class, RawDTO.class);
+        final RequestBody dto = FACTORY.requestBodyConverter(AnyBody.class, array(), array(responseConverter), RTF)
+                .convert(new AnyBody("test1637641171302"));
+        assertThat("RequestBody", dto, notNullValue());
+        assertThat("RequestBody.toString()", OkHttpUtils.requestBodyToString(dto), is("test1637641171302"));
+    }
+
+    @Test
+    @DisplayName("Successfully converting PackDTO->RequestBody using package converter")
+    public void test1637687959905() {
+        final RequestBody dto = FACTORY.requestBodyConverter(AnyBody.class, array(), array(), RTF)
+                .convert(new PackDTO("test1637687959905"));
+        assertThat("RequestBody", dto, notNullValue());
+        assertThat("RequestBody.toString()", OkHttpUtils.requestBodyToString(dto), is("test1637687959905"));
     }
 
     @DisplayName("Successfully converting ResponseBody to String.class by Content-Type header (mime)")
@@ -196,7 +231,7 @@ public class ExtensionConverterFactoryUnitTests {
     @MethodSource("testProvider1637426286255")
     public void test1637426286255(Class<String> type, ContentType contentType, String body) {
         final Object dto = new ExtensionConverterFactory()
-                .responseBodyConverter(type, getContentTypeHeaderAnnotations(contentType), null)
+                .responseBodyConverter(type, getContentTypeHeaderAnnotations(contentType), RTF)
                 .convert(ResponseBody.create(contentType.getMediaType(), body));
         assertThat("ResponseBody", dto, is(body));
     }
@@ -207,18 +242,18 @@ public class ExtensionConverterFactoryUnitTests {
         DualResponse<String, String> response = new DualResponse<>(null, null, null, null, null);
         final Type type = response.getClass().getGenericSuperclass();
         final Object dto = new ExtensionConverterFactory()
-                .responseBodyConverter(type, getContentTypeHeaderAnnotations(TEXT_PLAIN), null)
+                .responseBodyConverter(type, getContentTypeHeaderAnnotations(TEXT_PLAIN), RTF)
                 .convert(ResponseBody.create(TEXT_PLAIN.getMediaType(), "test1637431635085"));
         assertThat("ResponseBody", dto, is("test1637431635085"));
     }
 
     @Test
-    @DisplayName("Successfully converting ResponseBody to String.class (mime) if body == null (expected null)")
+    @DisplayName("ConvertCallException at converting ResponseBody to String.class if body == null and CT=NULL")
     public void test1637431342933() {
-        final Object dto = new ExtensionConverterFactory()
-                .responseBodyConverter(String.class, getContentTypeHeaderAnnotations(NULL), null)
+        final ThrowableRunnable runnable = () -> new ExtensionConverterFactory()
+                .responseBodyConverter(String.class, getContentTypeHeaderAnnotations(NULL), RTF)
                 .convert(null);
-        assertThat("ResponseBody", dto, nullValue());
+        assertThrow(runnable).assertClass(ConverterNotFoundException.class);
     }
 
     @Test
@@ -259,7 +294,7 @@ public class ExtensionConverterFactoryUnitTests {
     @DisplayName("ConvertCallException at converting ResponseBody to ResourceFile.class (raw)")
     public void test1637429829752() {
         final ThrowableRunnable runnable = () -> new ExtensionConverterFactory()
-                .responseBodyConverter(ResourceFile.class, new Annotation[]{}, null)
+                .responseBodyConverter(ResourceFile.class, new Annotation[]{}, RTF)
                 .convert(ResponseBody.create(null, "test1637429829752"));
         assertThrow(runnable)
                 .assertClass(ConverterNotFoundException.class)
@@ -270,7 +305,7 @@ public class ExtensionConverterFactoryUnitTests {
     @DisplayName("ConvertCallException at converting ResponseBody to String.class (raw)")
     public void test1637430137761() {
         final ThrowableRunnable runnable = () -> new ExtensionConverterFactory()
-                .responseBodyConverter(String.class, new Annotation[]{}, null)
+                .responseBodyConverter(String.class, new Annotation[]{}, RTF)
                 .convert(ResponseBody.create(null, "test1637430137761"));
         assertThrow(runnable)
                 .assertClass(ConverterNotFoundException.class)
@@ -328,29 +363,18 @@ public class ExtensionConverterFactoryUnitTests {
     }
 
     @Test
-    @DisplayName("Successfully converting RawDTO->RequestBody using RequestConverter annotation with RawDTO.class")
-    public void test1637670751294() {
-        final RequestConverter requestConverter = getRequestConverter(TestConverter.class, RawDTO.class);
-        final RequestBody dto = new ExtensionConverterFactory()
-                .requestBodyConverter(RawDTO.class, array(), array(requestConverter), null)
-                .convert(new RawDTO("test1637670751294"));
-        assertThat("ResponseBody", dto, notNullValue());
-    }
-
-    @Test
-    @DisplayName("Successfully converting AnyBody->RequestBody using RequestConverter annotation with RawDTO.class")
-    public void test1637670825343() {
-        final ResponseConverter responseConverter = getResponseConverter(TestConverter.class, RawDTO.class);
-        final RequestBody dto = new ExtensionConverterFactory()
-                .requestBodyConverter(AnyBody.class, array(), array(responseConverter), null)
-                .convert(new AnyBody("test1637641171302"));
-        assertThat("ResponseBody", dto, notNullValue());
+    @DisplayName("Successfully converting ResponseBody->PackDTO using package converter")
+    public void test1637679684417() {
+        PackDTO expected = new PackDTO("test1637679684417");
+        final Object dto = FACTORY.responseBodyConverter(PackDTO.class, array(), RTF)
+                .convert(ResponseBody.create(null, expected.data()));
+        assertThat("PackDTO", dto, is(expected));
     }
 
     @Test
     @DisplayName("#addRawRequestConverter() NPE for the 'converter' parameter.")
     public void test1637431872063() {
-        assertThrow(() -> new ExtensionConverterFactory().addRawRequestConverter(null, Object.class))
+        assertThrow(() -> new ExtensionConverterFactory().addRawRequestConverter(null, OBJ_C))
                 .assertNPE("converter");
     }
 
@@ -378,7 +402,7 @@ public class ExtensionConverterFactoryUnitTests {
     @Test
     @DisplayName("#addRawResponseConverter() NPE for the 'converter' parameter.")
     public void test1637432305518() {
-        assertThrow(() -> new ExtensionConverterFactory().addRawResponseConverter(null, Object.class))
+        assertThrow(() -> new ExtensionConverterFactory().addRawResponseConverter(null, OBJ_C))
                 .assertNPE("converter");
     }
 
@@ -456,15 +480,14 @@ public class ExtensionConverterFactoryUnitTests {
     @DisplayName("#getExtensionConverter() return null if converted classes incompatible")
     public void test1637648901620() {
         final ResponseConverter responseConverter = getResponseConverter(TestConverter.class, RawDTO.class);
-        final ExtensionConverter<?> converter = FACTORY
-                .getExtensionConverter(responseConverter, Object.class);
+        final ExtensionConverter<?> converter = FACTORY.getExtensionConverter(responseConverter, OBJ_C);
         assertThat("TestConverter", converter, nullValue());
     }
 
     @Test
     @DisplayName("#getExtensionConverter() ConvertCallException being throw if converter=null")
     public void test1637649395407() {
-        assertThrow(() -> FACTORY.getExtensionConverter(null, Object.class)).assertNPE("annotation");
+        assertThrow(() -> FACTORY.getExtensionConverter(null, OBJ_C)).assertNPE("annotation");
     }
 
     @Test
@@ -482,7 +505,7 @@ public class ExtensionConverterFactoryUnitTests {
                 return Nullable.class;
             }
         };
-        assertThrow(() -> FACTORY.getExtensionConverter(nullable, Object.class))
+        assertThrow(() -> FACTORY.getExtensionConverter(nullable, OBJ_C))
                 .assertClass(ConvertCallException.class)
                 .assertMessageIs("Received an unsupported annotation type: " + nullable.getClass());
     }
@@ -528,7 +551,7 @@ public class ExtensionConverterFactoryUnitTests {
     public void test1637641699864() {
         final Converters converters = getConverters(new ResponseConverter[]{}, new RequestConverter[]{});
         final Converter<ResponseBody, ?> responseConverterFromAnnotation = FACTORY
-                .getResponseConverterFromAnnotation(Object.class, new Annotation[]{converters}, null);
+                .getResponseConverterFromAnnotation(OBJ_C, array(converters), null);
         assertThat("Converter", responseConverterFromAnnotation, nullValue());
     }
 
@@ -541,7 +564,7 @@ public class ExtensionConverterFactoryUnitTests {
         };
         final Converters converters = getConverters(responseConverters, new RequestConverter[]{});
         final Converter<ResponseBody, ?> converter = FACTORY
-                .getResponseConverterFromAnnotation(RawDTO.class, new Annotation[]{converters}, null);
+                .getResponseConverterFromAnnotation(RawDTO.class, array(converters), null);
         assertThat("Converter", converter, isA(ResponseBodyConverter.class));
     }
 
@@ -563,7 +586,7 @@ public class ExtensionConverterFactoryUnitTests {
             "return null if annotations not present")
     public void test1637661882814() {
         final Converter<ResponseBody, ?> responseConverterFromAnnotation = FACTORY
-                .getResponseConverterFromAnnotation(Object.class, new Annotation[]{}, null);
+                .getResponseConverterFromAnnotation(OBJ_C, array(), null);
         assertThat("Converter", responseConverterFromAnnotation, nullValue());
     }
 
@@ -574,7 +597,7 @@ public class ExtensionConverterFactoryUnitTests {
         final Converters converters = getConverters(new ResponseConverter[]{}, new RequestConverter[]{});
         final ResponseConverter responseConverter = getResponseConverter(TestConverter.class);
         final Annotation[] annotations = {converters, responseConverter};
-        assertThrow(() -> FACTORY.getResponseConverterFromAnnotation(Object.class, annotations, null))
+        assertThrow(() -> FACTORY.getResponseConverterFromAnnotation(OBJ_C, annotations, null))
                 .assertClass(ConvertCallException.class)
                 .assertMessageIs("API method contains concurrent annotations.\n" +
                         "Use only one of:\n" +
@@ -744,12 +767,16 @@ public class ExtensionConverterFactoryUnitTests {
     @DisplayName("#getSupportedConvertersInfo() all Converters types present (RESPONSE)")
     public void test1637663823967() {
         final ResponseConverter responseConverter = getResponseConverter(TestConverter.class, RawDTO.class);
-        final String info = new PublicExtensionConverterFactory()
+        final String info = new TestsExtensionConverterFactory()
                 .getSupportedConvertersInfo(RESPONSE, array(responseConverter));
         assertThat("", info, is("SUPPORTED RESPONSE CONVERTERS:\n" +
                 "Annotated converters:\n" +
                 "org.touchbit.retrofit.ext.test.TestConverter\n" +
                 "    org.touchbit.retrofit.ext.test.model.RawDTO\n" +
+                "\n" +
+                "Package converters:\n" +
+                "org.touchbit.retrofit.ext.test.PackConverter\n" +
+                "    org.touchbit.retrofit.ext.test.model.pack.*\n" +
                 "\n" +
                 "Raw converters:\n" +
                 "org.touchbit.retrofit.ext.dmr.client.converter.defaults.AnyBodyConverter\n" +
@@ -772,14 +799,18 @@ public class ExtensionConverterFactoryUnitTests {
     @Test
     @DisplayName("#getSupportedConvertersInfo() all Converters types present (REQUEST)")
     public void test1637664434980() {
-        final RequestConverter requestConverter = getRequestConverter(TestConverter.class, RawDTO.class, Object.class);
-        final String info = new PublicExtensionConverterFactory()
+        final RequestConverter requestConverter = getRequestConverter(TestConverter.class, RawDTO.class, OBJ_C);
+        final String info = new TestsExtensionConverterFactory()
                 .getSupportedConvertersInfo(REQUEST, array(requestConverter));
         assertThat("", info, is("SUPPORTED REQUEST CONVERTERS:\n" +
                 "Annotated converters:\n" +
                 "org.touchbit.retrofit.ext.test.TestConverter\n" +
                 "    java.lang.Object\n" +
                 "    org.touchbit.retrofit.ext.test.model.RawDTO\n" +
+                "\n" +
+                "Package converters:\n" +
+                "org.touchbit.retrofit.ext.test.PackConverter\n" +
+                "    org.touchbit.retrofit.ext.test.model.pack.*\n" +
                 "\n" +
                 "Raw converters:\n" +
                 "org.touchbit.retrofit.ext.dmr.client.converter.defaults.AnyBodyConverter\n" +
@@ -802,7 +833,9 @@ public class ExtensionConverterFactoryUnitTests {
     @Test
     @DisplayName("#getSupportedConvertersInfo() Converters not present (REQUEST)")
     public void test1637665351779() {
-        final PublicExtensionConverterFactory factory = new PublicExtensionConverterFactory();
+        final TestsExtensionConverterFactory factory = new TestsExtensionConverterFactory();
+        factory.getPackageRequestConverters().clear();
+        factory.getPackageResponseConverters().clear();
         factory.getRawRequestConverters().clear();
         factory.getRawResponseConverters().clear();
         factory.getMimeRequestConverters().clear();
@@ -810,6 +843,8 @@ public class ExtensionConverterFactoryUnitTests {
         final String info = factory.getSupportedConvertersInfo(REQUEST, array());
         assertThat("", info, is("SUPPORTED REQUEST CONVERTERS:\n" +
                 "Annotated converters: <absent>\n" +
+                "\n" +
+                "Package converters: <absent>\n" +
                 "\n" +
                 "Raw converters: <absent>\n" +
                 "\n" +
@@ -819,7 +854,9 @@ public class ExtensionConverterFactoryUnitTests {
     @Test
     @DisplayName("#getSupportedConvertersInfo() Converters not present (RESPONSE)")
     public void test1637665499864() {
-        final PublicExtensionConverterFactory factory = new PublicExtensionConverterFactory();
+        final TestsExtensionConverterFactory factory = new TestsExtensionConverterFactory();
+        factory.getPackageRequestConverters().clear();
+        factory.getPackageResponseConverters().clear();
         factory.getRawRequestConverters().clear();
         factory.getRawResponseConverters().clear();
         factory.getMimeRequestConverters().clear();
@@ -827,6 +864,8 @@ public class ExtensionConverterFactoryUnitTests {
         final String info = factory.getSupportedConvertersInfo(RESPONSE, array());
         assertThat("", info, is("SUPPORTED RESPONSE CONVERTERS:\n" +
                 "Annotated converters: <absent>\n" +
+                "\n" +
+                "Package converters: <absent>\n" +
                 "\n" +
                 "Raw converters: <absent>\n" +
                 "\n" +
@@ -878,7 +917,7 @@ public class ExtensionConverterFactoryUnitTests {
     public void test1637670150695() {
         final Converters converters = getConverters(new ResponseConverter[]{}, new RequestConverter[]{});
         final RequestBodyConverter requestConverterFromAnnotation = FACTORY
-                .getRequestConverterFromAnnotation(Object.class, array(), array(converters), null);
+                .getRequestConverterFromAnnotation(OBJ_C, array(), array(converters), null);
         assertThat("Converter", requestConverterFromAnnotation, nullValue());
     }
 
@@ -911,12 +950,107 @@ public class ExtensionConverterFactoryUnitTests {
         final Converters converters = getConverters(new ResponseConverter[]{}, new RequestConverter[]{});
         final RequestConverter requestConverter = getRequestConverter(TestConverter.class);
         final Annotation[] annotations = {converters, requestConverter};
-        assertThrow(() -> FACTORY.getRequestConverterFromAnnotation(Object.class, array(), annotations, null))
+        assertThrow(() -> FACTORY.getRequestConverterFromAnnotation(OBJ_C, array(), annotations, null))
                 .assertClass(ConvertCallException.class)
                 .assertMessageIs("API method contains concurrent annotations.\n" +
                         "Use only one of:\n" +
                         " * interface org.touchbit.retrofit.ext.dmr.client.converter.api.RequestConverter\n" +
                         " * interface org.touchbit.retrofit.ext.dmr.client.converter.api.Converters");
+    }
+
+    @Test
+    @DisplayName("#addPackageRequestConverter() Exception thrown if invalid package name")
+    public void test1637674138465() {
+        assertThrow(() -> FACTORY.addPackageRequestConverter(new TestConverter(), "test1637674138465;"))
+                .assertClass(IllegalArgumentException.class)
+                .assertMessageIs("Invalid package name: test1637674138465;");
+    }
+
+    @Test
+    @DisplayName("#addPackageResponseConverter() Exception thrown if invalid package name")
+    public void test1637674262502() {
+        assertThrow(() -> FACTORY.addPackageResponseConverter(new TestConverter(), "test1637674262502;"))
+                .assertClass(IllegalArgumentException.class)
+                .assertMessageIs("Invalid package name: test1637674262502;");
+    }
+
+    @Test
+    @DisplayName("#getPackageResponseConverter() Exception thrown if bodyClass = null")
+    public void test1637678506954() {
+        assertThrow(() -> FACTORY.getPackageResponseConverter(null, array(), RTF)).assertNPE("bodyClass");
+    }
+
+    @Test
+    @DisplayName("#getPackageResponseConverter() Exception thrown if methodAnnotations = null")
+    public void test1637678754965() {
+        assertThrow(() -> FACTORY.getPackageResponseConverter(OBJ_C, null, RTF)).assertNPE("methodAnnotations");
+    }
+
+    @Test
+    @DisplayName("#getPackageResponseConverter() Exception thrown if retrofit = null")
+    public void test1637678781984() {
+        assertThrow(() -> FACTORY.getPackageResponseConverter(OBJ_C, array(), null)).assertNPE("retrofit");
+    }
+
+    @Test
+    @DisplayName("#getPackageResponseConverter() if used package model return converter")
+    public void test1637678810491() {
+        final Converter<ResponseBody, ?> converter = FACTORY.getPackageResponseConverter(PackDTO.class, array(), RTF);
+        assertThat("", converter, notNullValue());
+        assertThat("", converter, isA(ResponseBodyConverter.class));
+    }
+
+    @Test
+    @DisplayName("#getPackageResponseConverter() if the model is out of the package return null")
+    public void test1637679190494() {
+        final Converter<ResponseBody, ?> converter = FACTORY
+                .getPackageResponseConverter(NestedPackDTO.class, array(), RTF);
+        assertThat("", converter, nullValue());
+    }
+
+    @Test
+    @DisplayName("#getPackageRequestConverter() Exception thrown if bodyClass = null")
+    public void test1637687324412() {
+        assertThrow(() -> FACTORY.getPackageRequestConverter(null, array(), array(), RTF))
+                .assertNPE("bodyClass");
+    }
+
+    @Test
+    @DisplayName("#getPackageRequestConverter() Exception thrown if parameterAnnotations = null")
+    public void test1637687524356() {
+        assertThrow(() -> FACTORY.getPackageRequestConverter(OBJ_C, null, array(), RTF))
+                .assertNPE("parameterAnnotations");
+    }
+
+    @Test
+    @DisplayName("#getPackageRequestConverter() Exception thrown if methodAnnotations = null")
+    public void test1637687530741() {
+        assertThrow(() -> FACTORY.getPackageRequestConverter(OBJ_C, array(), null, RTF))
+                .assertNPE("methodAnnotations");
+    }
+
+    @Test
+    @DisplayName("#getPackageRequestConverter() Exception thrown if retrofit = null")
+    public void test1637687537421() {
+        assertThrow(() -> FACTORY.getPackageRequestConverter(OBJ_C, array(), array(), null))
+                .assertNPE("retrofit");
+    }
+
+    @Test
+    @DisplayName("#getPackageRequestConverter() get converter by supported package model")
+    public void test1637687600834() {
+        final RequestBodyConverter converter = FACTORY
+                .getPackageRequestConverter(PackDTO.class, array(), array(), RTF);
+        assertThat("", converter, notNullValue());
+    }
+
+    @Test
+    @DisplayName("#getPackageRequestConverter() get converter by unsupported package model")
+    public void test1637687751629() {
+        final RequestBodyConverter converter = FACTORY
+                .getPackageRequestConverter(NestedPackDTO.class, array(), array(), RTF);
+        assertThat("", converter, nullValue());
+
     }
 
     @SafeVarargs
@@ -955,7 +1089,7 @@ public class ExtensionConverterFactoryUnitTests {
             }
 
             @Override
-            public Class<?>[] bodyClass() {
+            public Class<?>[] bodyClasses() {
                 return classes;
             }
 
@@ -976,7 +1110,7 @@ public class ExtensionConverterFactoryUnitTests {
             }
 
             @Override
-            public Class<?>[] bodyClass() {
+            public Class<?>[] bodyClasses() {
                 return classes;
             }
 

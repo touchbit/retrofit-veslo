@@ -22,7 +22,7 @@ import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
-import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
+import org.touchbit.retrofit.ext.dmr.util.ConvertUtils;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
@@ -57,7 +57,7 @@ public class FileConverter implements ExtensionConverter<File> {
                         throw new ConvertCallException("Request body file is not a readable file: " + file);
                     }
                     final byte[] data = wrap(() -> Files.readAllBytes(file.toPath()));
-                    final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
+                    final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
                     return RequestBody.create(mediaType, data);
                 }
                 throw new ConverterUnsupportedTypeException(FileConverter.class, File.class, body.getClass());

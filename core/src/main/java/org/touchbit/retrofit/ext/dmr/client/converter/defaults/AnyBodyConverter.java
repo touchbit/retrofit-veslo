@@ -22,7 +22,7 @@ import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.client.model.AnyBody;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
-import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
+import org.touchbit.retrofit.ext.dmr.util.ConvertUtils;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
@@ -48,7 +48,7 @@ public class AnyBodyConverter implements ExtensionConverter<AnyBody> {
                 Utils.parameterRequireNonNull(body, "body");
                 if (body instanceof AnyBody) {
                     final AnyBody anyBody = (AnyBody) body;
-                    final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
+                    final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
                     if (anyBody.isNullBody()) {
                         return RequestBody.create(mediaType, new byte[]{});
                     }

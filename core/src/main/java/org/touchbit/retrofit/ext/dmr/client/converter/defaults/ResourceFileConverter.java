@@ -22,7 +22,7 @@ import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.client.model.ResourceFile;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
-import org.touchbit.retrofit.ext.dmr.util.ConverterUtils;
+import org.touchbit.retrofit.ext.dmr.util.ConvertUtils;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
@@ -46,7 +46,7 @@ public class ResourceFileConverter implements ExtensionConverter<ResourceFile> {
                 Utils.parameterRequireNonNull(body, "body");
                 if (body instanceof ResourceFile) {
                     final ResourceFile resourceFile = (ResourceFile) body;
-                    final MediaType mediaType = ConverterUtils.getMediaType(methodAnnotations);
+                    final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
                     return RequestBody.create(mediaType, resourceFile.getBytes());
                 }
                 final Class<?> bodyClass = body.getClass();
