@@ -1,3 +1,4 @@
+.git
 .mtj.tmp/
 target/
 *.class
@@ -24,5 +25,6 @@ hs_err_pid*
 /.idea/dataSources.local.xml
 # other
 /.idea/dictionaries/
+/.idea/inspectionProfiles/
 /.idea/uiDesigner.xml
 /.idea/jarRepositories.xml

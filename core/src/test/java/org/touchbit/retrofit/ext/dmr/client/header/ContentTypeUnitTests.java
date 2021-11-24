@@ -20,8 +20,8 @@ import okhttp3.MediaType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static internal.test.utils.ThrowableAsserter.assertThrow;
-import static internal.test.utils.ThrowableAsserter.assertUtilityClassException;
+import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
+import static internal.test.utils.asserter.ThrowableAsserter.assertUtilityClassException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 

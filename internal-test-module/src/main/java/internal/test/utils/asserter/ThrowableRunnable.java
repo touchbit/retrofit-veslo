@@ -14,24 +14,11 @@
  * limitations under the License.
  */
 
-package internal.test.utils;
+package internal.test.utils.asserter;
 
-import okhttp3.RequestBody;
-import okio.Buffer;
+@FunctionalInterface
+public interface ThrowableRunnable {
 
-public class OkHttpUtils {
-
-    private OkHttpUtils() {
-    }
-
-    public static String requestBodyToString(RequestBody requestBody) {
-        try {
-            final Buffer buffer = new Buffer();
-            requestBody.writeTo(buffer);
-            return buffer.readUtf8();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+    void execute() throws Throwable;
 
 }

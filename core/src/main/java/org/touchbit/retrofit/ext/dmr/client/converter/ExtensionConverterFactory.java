@@ -18,7 +18,7 @@ package org.touchbit.retrofit.ext.dmr.client.converter;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
-import org.touchbit.retrofit.ext.dmr.client.CallStage;
+import org.touchbit.retrofit.ext.dmr.client.TransportEvent;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.Converters;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter.ResponseBodyConverter;
@@ -44,8 +44,8 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.touchbit.retrofit.ext.dmr.client.CallStage.REQUEST;
-import static org.touchbit.retrofit.ext.dmr.client.CallStage.RESPONSE;
+import static org.touchbit.retrofit.ext.dmr.client.TransportEvent.REQUEST;
+import static org.touchbit.retrofit.ext.dmr.client.TransportEvent.RESPONSE;
 import static org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter.RequestBodyConverter;
 import static org.touchbit.retrofit.ext.dmr.client.header.ContentTypeConstants.*;
 import static org.touchbit.retrofit.ext.dmr.util.ConvertUtils.isIDualResponse;
@@ -442,7 +442,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      * and if there is a match, new instance of A.converter() will be returned otherwise null.
      *
      * @param annotation - {@link ResponseConverter} or {@link RequestConverter} annotation
-     * @param bodyClass - model class
+     * @param bodyClass  - model class
      * @return {@link ExtensionConverter} or null
      * @throws ConvertCallException if {@param annotation} differs from {@link ResponseConverter} or {@link RequestConverter}
      */
@@ -701,20 +701,20 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     }
 
     /**
-     * @param callStage - {@link CallStage}
-     * @param mA        - API client called method annotations
+     * @param transportEvent - {@link TransportEvent}
+     * @param mA             - API client called method annotations
      * @return information on the factory-supported converters for the specified call stage
      */
     @Nonnull
     @SuppressWarnings("DuplicatedCode")
-    protected String getSupportedConvertersInfo(@Nonnull final CallStage callStage,
+    protected String getSupportedConvertersInfo(@Nonnull final TransportEvent transportEvent,
                                                 @Nullable final Annotation[] mA) {
-        Utils.parameterRequireNonNull(callStage, "callStage");
+        Utils.parameterRequireNonNull(transportEvent, "transportEvent");
         final Map<String, Class<?>> annotated;
         final Map<Class<?>, ExtensionConverter<?>> raw;
         final Map<ContentType, ExtensionConverter<?>> mime;
         final Map<String, ExtensionConverter<?>> pack;
-        if (callStage == REQUEST) {
+        if (transportEvent == REQUEST) {
             annotated = getAnnotatedRequestConverters(mA);
             raw = getRawRequestConverters();
             mime = getMimeRequestConverters();
@@ -755,7 +755,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
         mimeSummary.forEach((converter, contentTypes) -> mimeSJ.add(converter + contentTypes.stream()
                 .map(contentType -> "\n    " + contentType + "")
                 .collect(Collectors.joining())));
-        return "SUPPORTED " + callStage + " CONVERTERS:\n" + annSJ + "\n\n" + packSJ + "\n\n" + rawSJ + "\n\n" + mimeSJ;
+        return "SUPPORTED " + transportEvent + " CONVERTERS:\n" + annSJ + "\n\n" + packSJ + "\n\n" + rawSJ + "\n\n" + mimeSJ;
     }
 
     /**

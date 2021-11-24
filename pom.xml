@@ -17,10 +17,11 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>all</module>
         <module>core</module>
         <module>jackson</module>
         <module>validator</module>
-        <module>test</module>
+        <module>internal-test-module</module>
     </modules>
 
     <licenses>
@@ -78,6 +79,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <junit.jupiter.version>5.8.1</junit.jupiter.version>
         <retrofit2.version>2.9.0</retrofit2.version>
+        <slf4j.version>1.7.32</slf4j.version>
     </properties>
 
     <dependencies>
@@ -105,26 +107,26 @@
             <!-- project dependencies -->
             <dependency>
                 <groupId>org.touchbit.retrofit.ext</groupId>
-                <artifactId>core-dual-response</artifactId>
+                <artifactId>dual-response-core</artifactId>
                 <version>1.0.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.touchbit.retrofit.ext</groupId>
-                <artifactId>jackson-dual-response</artifactId>
+                <artifactId>dual-response-jackson</artifactId>
                 <version>1.0.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.touchbit.retrofit.ext</groupId>
-                <artifactId>bean-validator</artifactId>
+                <artifactId>dual-response-bean-validator</artifactId>
                 <version>1.0.0</version>
                 <scope>compile</scope>
             </dependency>
             <!-- project test dependencies -->
             <dependency>
                 <groupId>org.touchbit.retrofit.ext</groupId>
-                <artifactId>interal-test-module</artifactId>
+                <artifactId>internal-test-module</artifactId>
                 <version>1.0.0</version>
                 <scope>test</scope>
             </dependency>
@@ -148,12 +150,6 @@
                 <version>${retrofit2.version}</version>
                 <scope>compile</scope>
             </dependency>
-            <dependency>
-                <groupId>com.squareup.retrofit2</groupId>
-                <artifactId>converter-jackson</artifactId>
-                <version>${retrofit2.version}</version>
-                <scope>compile</scope>
-            </dependency>
             <!-- Bean Validation -->
             <dependency>
                 <groupId>org.glassfish</groupId>
@@ -166,6 +162,19 @@
                 <artifactId>hibernate-validator</artifactId>
                 <version>7.0.1.Final</version>
                 <scope>compile</scope>
+            </dependency>
+            <!-- Jackson -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.10.1</version>
+                <scope>compile</scope>
+            </dependency>
+            <!-- Logging -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
             </dependency>
             <!-- test scope dependencies -->
             <dependency>
@@ -206,6 +215,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -269,28 +282,16 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-report-plugin</artifactId>
+                    <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.0.0-M5</version>
                     <configuration>
-                        <linkXRef>false</linkXRef>
+                        <forkNode implementation="org.apache.maven.plugin.surefire.extensions.SurefireForkNodeFactory"/>
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.22.2</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.junit.platform</groupId>
-                            <artifactId>junit-platform-surefire-provider</artifactId>
-                            <version>1.3.2</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.junit.jupiter</groupId>
-                            <artifactId>junit-jupiter-engine</artifactId>
-                            <version>${junit.jupiter.version}</version>
-                        </dependency>
-                    </dependencies>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>3.0.0-M5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

@@ -18,7 +18,7 @@ package org.touchbit.retrofit.ext.dmr.client.converter;
 
 import internal.test.utils.OkHttpUtils;
 import internal.test.utils.RetrofitUtils;
-import internal.test.utils.ThrowableRunnable;
+import internal.test.utils.asserter.ThrowableRunnable;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -59,13 +59,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import static internal.test.utils.ThrowableAsserter.assertThrow;
+import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
 import static java.util.UUID.randomUUID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.touchbit.retrofit.ext.dmr.asserter.SoftlyAsserter.softlyAsserter;
-import static org.touchbit.retrofit.ext.dmr.client.CallStage.REQUEST;
-import static org.touchbit.retrofit.ext.dmr.client.CallStage.RESPONSE;
+import static org.touchbit.retrofit.ext.dmr.client.TransportEvent.REQUEST;
+import static org.touchbit.retrofit.ext.dmr.client.TransportEvent.RESPONSE;
 import static org.touchbit.retrofit.ext.dmr.client.header.ContentTypeConstants.*;
 
 @SuppressWarnings({"ConstantConditions", "rawtypes", "SameParameterValue"})
@@ -451,9 +451,9 @@ public class ExtensionConverterFactoryUnitTests {
                         "See details below.")
                 .assertCause(cause -> cause
                         .assertClass(IllegalAccessException.class)
-                        .assertMessageIs("" +
-                                "class org.touchbit.retrofit.ext.dmr.client.converter.ExtensionConverterFactory " +
-                                "cannot access a member of class org.touchbit.retrofit.ext.test.PrivateConverter " +
+                        .assertMessageContains(
+                                "org.touchbit.retrofit.ext.dmr.client.converter.ExtensionConverterFactory ",
+                                "not access a member of class org.touchbit.retrofit.ext.test.PrivateConverter",
                                 "with modifiers \"private\"")
                 );
     }
@@ -875,7 +875,7 @@ public class ExtensionConverterFactoryUnitTests {
     @Test
     @DisplayName("#getSupportedConvertersInfo() IllegalArgumentException if callStage unsupported")
     public void test1637665542849() {
-        assertThrow(() -> FACTORY.getSupportedConvertersInfo(null, array())).assertNPE("callStage");
+        assertThrow(() -> FACTORY.getSupportedConvertersInfo(null, array())).assertNPE("transportEvent");
     }
 
     @Test

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package internal.test.utils;
+package internal.test.utils.asserter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;

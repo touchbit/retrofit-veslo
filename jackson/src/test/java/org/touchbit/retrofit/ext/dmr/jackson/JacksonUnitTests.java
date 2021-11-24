@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static internal.test.utils.ThrowableAsserter.assertThrow;
+import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
 import static okhttp3.ResponseBody.create;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;

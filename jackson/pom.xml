@@ -10,22 +10,22 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>jackson-dual-response</artifactId>
+    <artifactId>dual-response-jackson</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
             <groupId>org.touchbit.retrofit.ext</groupId>
-            <artifactId>core-dual-response</artifactId>
+            <artifactId>dual-response-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.squareup.retrofit2</groupId>
-            <artifactId>converter-jackson</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
         <dependency>
             <groupId>org.touchbit.retrofit.ext</groupId>
-            <artifactId>interal-test-module</artifactId>
+            <artifactId>internal-test-module</artifactId>
         </dependency>
     </dependencies>
 

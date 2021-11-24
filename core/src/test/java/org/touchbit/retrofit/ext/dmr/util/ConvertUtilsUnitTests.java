@@ -30,8 +30,8 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Objects;
 
 import static internal.test.utils.RetrofitUtils.getCallMethodAnnotations;
-import static internal.test.utils.ThrowableAsserter.assertThrow;
-import static internal.test.utils.ThrowableAsserter.assertUtilityClassException;
+import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
+import static internal.test.utils.asserter.ThrowableAsserter.assertUtilityClassException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;

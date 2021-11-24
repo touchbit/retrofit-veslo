@@ -17,7 +17,7 @@
 package org.touchbit.retrofit.ext.dmr.client.converter.defaults;
 
 import internal.test.utils.OkHttpUtils;
-import internal.test.utils.ThrowableRunnable;
+import internal.test.utils.asserter.ThrowableRunnable;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +26,7 @@ import org.touchbit.retrofit.ext.dmr.client.model.ResourceFile;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 
-import static internal.test.utils.ThrowableAsserter.assertThrow;
+import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;

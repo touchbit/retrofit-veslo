@@ -10,7 +10,7 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>bean-validator</artifactId>
+    <artifactId>dual-response-bean-validator</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
@@ -27,12 +27,12 @@
         <!-- Test scope -->
         <dependency>
             <groupId>org.touchbit.retrofit.ext</groupId>
-            <artifactId>jackson-dual-response</artifactId>
+            <artifactId>dual-response-jackson</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.touchbit.retrofit.ext</groupId>
-            <artifactId>interal-test-module</artifactId>
+            <artifactId>internal-test-module</artifactId>
         </dependency>
     </dependencies>
 

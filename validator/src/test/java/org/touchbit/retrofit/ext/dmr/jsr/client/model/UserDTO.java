@@ -17,7 +17,7 @@
 package org.touchbit.retrofit.ext.dmr.jsr.client.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import internal.test.utils.AdditionalProperties;
+import internal.test.utils.model.AdditionalProperties;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

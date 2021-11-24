@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package internal.test.utils;
+package internal.test.utils.client;
 
 import okhttp3.*;
 import okio.Buffer;

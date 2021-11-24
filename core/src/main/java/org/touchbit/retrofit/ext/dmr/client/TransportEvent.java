@@ -16,7 +16,7 @@
 
 package org.touchbit.retrofit.ext.dmr.client;
 
-public enum CallStage {
+public enum TransportEvent {
 
     REQUEST,
     RESPONSE,

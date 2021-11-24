@@ -16,8 +16,8 @@
 
 package org.touchbit.retrofit.ext.dmr.jsr;
 
-import internal.test.utils.TestClient;
-import internal.test.utils.ThrowableRunnable;
+import internal.test.utils.asserter.ThrowableRunnable;
+import internal.test.utils.client.TestClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.client.adapter.DualCallAdapterFactory;
@@ -29,7 +29,7 @@ import org.touchbit.retrofit.ext.dmr.jsr.client.model.UserPassport;
 import java.util.Locale;
 import java.util.UUID;
 
-import static internal.test.utils.ThrowableAsserter.assertThrow;
+import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 

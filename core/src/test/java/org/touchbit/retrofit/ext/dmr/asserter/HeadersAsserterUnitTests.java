@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-import static internal.test.utils.ThrowableAsserter.assertThrow;
+import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.touchbit.retrofit.ext.dmr.asserter.HeadersAsserter.*;

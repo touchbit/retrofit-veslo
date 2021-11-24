@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package internal.test.utils;
+package org.touchbit.retrofit.ext.dmr.client.inteceptor;
 
-@FunctionalInterface
-public interface ThrowableRunnable {
-
-    void execute() throws Throwable;
+/**
+ * The interface is used in the {@link CompositeInterceptor}
+ * to indirectly handle/modify chains, requests, responses, and exceptions.
+ * <p>
+ * Created by Oleg Shaburov on 24.11.2021
+ * shaburov.o.a@gmail.com
+ */
+public interface InterceptAction extends RequestInterceptAction, ResponseInterceptAction {
 
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package internal.test.utils;
+package internal.test.utils.model;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;

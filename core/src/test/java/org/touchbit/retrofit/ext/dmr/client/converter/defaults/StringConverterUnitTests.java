@@ -17,14 +17,14 @@
 package org.touchbit.retrofit.ext.dmr.client.converter.defaults;
 
 import internal.test.utils.OkHttpUtils;
-import internal.test.utils.ThrowableRunnable;
+import internal.test.utils.asserter.ThrowableRunnable;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 
-import static internal.test.utils.ThrowableAsserter.assertThrow;
+import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;

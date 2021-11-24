@@ -23,7 +23,7 @@ import org.touchbit.retrofit.ext.dmr.exception.ResourceFileException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static internal.test.utils.ThrowableAsserter.assertThrow;
+import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;

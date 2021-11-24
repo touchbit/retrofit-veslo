@@ -16,7 +16,7 @@
 
 package org.touchbit.retrofit.ext.dmr.jackson;
 
-import internal.test.utils.TestClient;
+import internal.test.utils.client.TestClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.client.adapter.DualCallAdapterFactory;
@@ -26,8 +26,8 @@ import org.touchbit.retrofit.ext.dmr.exception.HttpCallException;
 import org.touchbit.retrofit.ext.dmr.jackson.cli.MockClient;
 import org.touchbit.retrofit.ext.dmr.jackson.cli.model.UserDTO;
 
-import static internal.test.utils.MockInterceptor.SUCCESS_CODE_NO_CONTENT;
-import static internal.test.utils.ThrowableAsserter.assertThrow;
+import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
+import static internal.test.utils.client.MockInterceptor.SUCCESS_CODE_NO_CONTENT;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -101,7 +101,7 @@ public class JacksonFuncTests {
                         .assertClass(ConverterNotFoundException.class)
                         .assertMessageContains(
                                 "Converter not found\n",
-                                "Call stage: REQUEST\n",
+                                "Transport event: REQUEST\n",
                                 "Content-Type: null\n",
                                 "DTO type: class java.lang.Integer\n"));
     }

@@ -4,17 +4,12 @@ b:
 i:
 	mvn clean install
 
-r:
-	mvn clean surefire-report:report
-	open ./core/target/site/jacoco/index.html
-	open ./jackson/target/site/jacoco/index.html
-	open ./validator/target/site/jacoco/index.html
-
 t:
 	mvn clean test
-	open ./core/target/site/jacoco/index.html
-	open ./jackson/target/site/jacoco/index.html
-	open ./validator/target/site/jacoco/index.html
+	open ./all/target/site/jacoco-aggregate/index.html
 
 d:
 	mvn clean deploy
+
+bd:
+	docker build --no-cache -t retrofit-dual-response-extension .

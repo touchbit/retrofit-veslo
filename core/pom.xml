@@ -10,7 +10,7 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>core-dual-response</artifactId>
+    <artifactId>dual-response-core</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
@@ -25,7 +25,11 @@
         </dependency>
         <dependency>
             <groupId>org.touchbit.retrofit.ext</groupId>
-            <artifactId>interal-test-module</artifactId>
+            <artifactId>internal-test-module</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
     </dependencies>
 

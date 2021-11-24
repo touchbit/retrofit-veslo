@@ -16,7 +16,11 @@
 
 package org.touchbit.retrofit.ext.dmr.client.adapter;
 
-import okhttp3.*;
+import internal.test.utils.OkHttpUtils;
+import okhttp3.MediaType;
+import okhttp3.Protocol;
+import okhttp3.Request;
+import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.client.EndpointInfo;
@@ -36,12 +40,12 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 
-import static internal.test.utils.ThrowableAsserter.assertThrow;
+import static internal.test.utils.OkHttpUtils.getRequest;
+import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.touchbit.retrofit.ext.dmr.asserter.HeadersAsserter.H_CONTENT_TYPE;
 import static org.touchbit.retrofit.ext.dmr.asserter.SoftlyAsserter.softlyAsserter;
 
 @SuppressWarnings({"rawtypes", "InstantiatingObjectToGetClassObject", "unchecked", "ConstantConditions"})
@@ -244,7 +248,7 @@ public class DualCallAdapterFactoryUnitTests {
     @Test
     @DisplayName("#getRetrofitResponse() get response for AnyBody.class if response body is null")
     public void test1637406461653() {
-        final Request request = getRequest();
+        final Request request = OkHttpUtils.getRequest();
         final okhttp3.Response rawResponseBody = mock(okhttp3.Response.class);
         when(rawResponseBody.isSuccessful()).thenReturn(true);
         when(rawResponseBody.code()).thenReturn(200);
@@ -449,16 +453,6 @@ public class DualCallAdapterFactoryUnitTests {
                 .build();
         return Response.error(rawResponseBody, rawResponse);
     }
-
-    private Request getRequest() {
-        final RequestBody requestBody = RequestBody.create(MediaType.get("application/json"), "{}".getBytes());
-        return new Request.Builder()
-                .addHeader(H_CONTENT_TYPE, "application/json")
-                .post(requestBody)
-                .url("http://localhost")
-                .build();
-    }
-
 
     private EndpointInfo getEndpointInfo(final String message) {
         return new EndpointInfo() {

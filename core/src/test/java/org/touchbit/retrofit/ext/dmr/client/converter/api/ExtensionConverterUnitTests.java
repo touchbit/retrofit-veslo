@@ -27,7 +27,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 
-import static internal.test.utils.ThrowableAsserter.assertThrow;
+import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -49,9 +49,7 @@ public class ExtensionConverterUnitTests {
         assertThrow(() -> getExtensionConverter().wrap(() -> Arrays.sort((byte[]) null)))
                 .assertClass(ConvertCallException.class)
                 .assertMessageIs("An error occurred while converting. See the reasons below.")
-                .assertCause(cause -> cause
-                        .assertClass(NullPointerException.class)
-                        .assertMessageIs("Cannot read the array length because \"a\" is null"));
+                .assertCause(cause -> cause.assertClass(NullPointerException.class));
     }
 
     @Test
