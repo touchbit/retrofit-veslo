@@ -98,9 +98,9 @@ public class OkhttpUtils {
                 + ' ' + response.request().url();
         resultMessage.add(startMessage);
         if (response.headers().toMultimap().isEmpty()) {
-            resultMessage.add("Request headers: (absent)");
+            resultMessage.add("Response headers: (absent)");
         } else {
-            resultMessage.add("Request headers:");
+            resultMessage.add("Response headers:");
             resultMessage.add("  " + response.headers().toString().trim().replaceAll("\n", "\n  "));
         }
         if (!hasResponseBody || !HttpHeaders.hasBody(response)) {
@@ -180,7 +180,7 @@ public class OkhttpUtils {
         }
     }
 
-    /**
+    /**§
      * @param headers - okhttp headers multimap
      * @return true if 'Content-Encoding' header is present and has no 'identity' or 'gzip' value
      */

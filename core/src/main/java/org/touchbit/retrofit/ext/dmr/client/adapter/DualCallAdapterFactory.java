@@ -18,6 +18,8 @@ package org.touchbit.retrofit.ext.dmr.client.adapter;
 
 import okhttp3.Request;
 import okhttp3.ResponseBody;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.touchbit.retrofit.ext.dmr.client.EndpointInfo;
 import org.touchbit.retrofit.ext.dmr.client.model.AnyBody;
 import org.touchbit.retrofit.ext.dmr.client.response.DualResponse;
@@ -39,13 +41,25 @@ import java.lang.reflect.Type;
 public class DualCallAdapterFactory extends CallAdapter.Factory {
 
     private final IDualResponseConsumer<IDualResponse<?, ?>> dualResponseConsumer;
+    private final Logger logger;
 
     public DualCallAdapterFactory() {
-        this(DualResponse::new);
+        this(LoggerFactory.getLogger(DualCallAdapterFactory.class), DualResponse::new);
     }
 
     public DualCallAdapterFactory(IDualResponseConsumer<IDualResponse<?, ?>> dualResponseConsumer) {
+        this(LoggerFactory.getLogger(DualCallAdapterFactory.class), dualResponseConsumer);
+    }
+
+    public DualCallAdapterFactory(Logger logger) {
+        this(logger, DualResponse::new);
+    }
+
+    public DualCallAdapterFactory(Logger logger, IDualResponseConsumer<IDualResponse<?, ?>> dualResponseConsumer) {
+        Utils.parameterRequireNonNull(logger, "logger");
+        Utils.parameterRequireNonNull(dualResponseConsumer, "dualResponseConsumer");
         this.dualResponseConsumer = dualResponseConsumer;
+        this.logger = logger;
     }
 
     @Override
@@ -54,22 +68,52 @@ public class DualCallAdapterFactory extends CallAdapter.Factory {
     public CallAdapter<Object, IDualResponse<?, ?>> get(final Type rawType,
                                                         final Annotation[] methodAnnotations,
                                                         final Retrofit retrofit) {
-
         final ParameterizedType type = getParameterizedType(rawType);
         final String endpointInfo = getEndpointInfo(methodAnnotations);
         final Class successType = getRawType(getParameterUpperBound(0, type));
         final Class errorType = getRawType(getParameterUpperBound(1, type));
+        return getCallAdapter(type, successType, errorType, endpointInfo, methodAnnotations, retrofit);
+    }
 
+    /**
+     * Method for getting an instance of the {@link CallAdapter} class
+     *
+     * @param type - called method return type
+     * @param successType - success DTO class
+     * @param errorType - error DTO class
+     * @param endpointInfo - called method description
+     * @param methodAnnotations - list of annotations for the called API method
+     * @param retrofit - HTTP client
+     * @return instance of {@link CallAdapter}
+     */
+    @EverythingIsNonNull
+    public CallAdapter<Object, IDualResponse<?, ?>> getCallAdapter(final ParameterizedType type,
+                                                                   final Class<?> successType,
+                                                                   final Class<?> errorType,
+                                                                   final String endpointInfo,
+                                                                   final Annotation[] methodAnnotations,
+                                                                   final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(successType, "successType");
+        Utils.parameterRequireNonNull(errorType, "errorType");
+        Utils.parameterRequireNonNull(endpointInfo, "endpointInfo");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new CallAdapter<Object, IDualResponse<?, ?>>() {
 
             @Override
+            @Nonnull
             public Type responseType() {
                 return type;
             }
 
             @Override
+            @EverythingIsNonNull
             public IDualResponse<?, ?> adapt(Call<Object> call) {
-                return getIDualResponse(call, successType, errorType, endpointInfo, methodAnnotations, retrofit);
+                String finalInfo = !endpointInfo.trim().isEmpty() ? endpointInfo :
+                        call.request().method() + " " + call.request().url();
+                logger.info("API call: " + finalInfo);
+                return getIDualResponse(call, successType, errorType, finalInfo, methodAnnotations, retrofit);
             }
 
         };
@@ -116,7 +160,6 @@ public class DualCallAdapterFactory extends CallAdapter.Factory {
         Utils.parameterRequireNonNull(endpointInfo, "endpointInfo");
         Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
         Utils.parameterRequireNonNull(retrofit, "retrofit");
-
         final Response<Object> response = getRetrofitResponse(call, successType, methodAnnotations);
         final Object errorDTO = getErrorDTO(response, errorType, methodAnnotations, retrofit);
         final Request request = call.request();
@@ -167,16 +210,11 @@ public class DualCallAdapterFactory extends CallAdapter.Factory {
      */
     @EverythingIsNonNull
     public String getEndpointInfo(Annotation[] methodAnnotations) {
-        EndpointInfo endpointInfo = null;
-        for (Annotation annotation : methodAnnotations) {
-            if (annotation instanceof EndpointInfo) {
-                endpointInfo = (EndpointInfo) annotation;
-            }
+        final EndpointInfo endpointInfo = Utils.getAnnotation(methodAnnotations, EndpointInfo.class);
+        if (endpointInfo == null || endpointInfo.value() == null) {
+            return "";
         }
-        if (endpointInfo != null && endpointInfo.value() != null) {
-            return endpointInfo.value().trim();
-        }
-        return "";
+        return endpointInfo.value().trim();
     }
 
 }

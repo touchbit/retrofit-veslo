@@ -11,6 +11,7 @@
         <module name="dual-response-jackson" />
         <module name="dual-response-all" />
         <module name="internal-test-module" />
+        <module name="dual-response-allure" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

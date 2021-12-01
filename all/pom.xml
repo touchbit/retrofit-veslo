@@ -29,7 +29,12 @@
         </dependency>
         <dependency>
             <groupId>org.touchbit.retrofit.ext</groupId>
+            <artifactId>dual-response-allure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.touchbit.retrofit.ext</groupId>
             <artifactId>internal-test-module</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

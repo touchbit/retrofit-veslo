@@ -21,6 +21,7 @@
         <module>core</module>
         <module>jackson</module>
         <module>validator</module>
+        <module>allure</module>
         <module>internal-test-module</module>
     </modules>
 
@@ -123,6 +124,12 @@
                 <version>1.0.0</version>
                 <scope>compile</scope>
             </dependency>
+            <dependency>
+                <groupId>org.touchbit.retrofit.ext</groupId>
+                <artifactId>dual-response-allure</artifactId>
+                <version>1.0.0</version>
+                <scope>compile</scope>
+            </dependency>
             <!-- project test dependencies -->
             <dependency>
                 <groupId>org.touchbit.retrofit.ext</groupId>
@@ -175,6 +182,14 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <!-- Reporting -->
+            <dependency>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-java-commons</artifactId>
+                <version>2.16.1</version>
+                <scope>compile</scope>
             </dependency>
             <!-- test scope dependencies -->
             <dependency>

@@ -74,7 +74,7 @@ public class LoggingActionUnitTests {
         assertThat("logEvent.getThrowable()", logEvent.getThrowable(), nullValue());
         assertThat("logEvent.getMessage()", logEvent.getMessage(), is("" +
                 "Response: 200 TEST http://localhost/\n" +
-                "Request headers:\n" +
+                "Response headers:\n" +
                 "  Content-Type: text/plain\n" +
                 "  X-Request-ID: generated\n" +
                 "Response body: (9-byte body)\n" +

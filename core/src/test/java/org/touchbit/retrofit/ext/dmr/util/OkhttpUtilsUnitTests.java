@@ -171,7 +171,7 @@ public class OkhttpUtilsUnitTests {
         final String result = OkhttpUtils.responseToString(response);
         assertThat("", result, is("" +
                 "Response: 0 http://localhost/\n" +
-                "Request headers: (absent)\n" +
+                "Response headers: (absent)\n" +
                 "Response body: (absent)\n"));
     }
 
@@ -189,7 +189,7 @@ public class OkhttpUtilsUnitTests {
         final String result = OkhttpUtils.responseToString(response);
         assertThat("", result, is("" +
                 "Response: 0 http://localhost/\n" +
-                "Request headers: (absent)\n" +
+                "Response headers: (absent)\n" +
                 "Response body: (absent)\n"));
     }
 
@@ -208,7 +208,7 @@ public class OkhttpUtilsUnitTests {
         final String result = OkhttpUtils.responseToString(response);
         assertThat("", result, is("" +
                 "Response: 200 OK http://localhost/\n" +
-                "Request headers: (absent)\n" +
+                "Response headers: (absent)\n" +
                 "Response body: (17-byte body)\n" +
                 "  test1637768109234\n"));
     }
@@ -228,7 +228,7 @@ public class OkhttpUtilsUnitTests {
         final String result = OkhttpUtils.responseToString(response);
         assertThat("", result, is("" +
                 "Response: 200 OK http://localhost/\n" +
-                "Request headers: (absent)\n" +
+                "Response headers: (absent)\n" +
                 "Response body: (0-byte body)\n"));
     }
 
@@ -247,7 +247,7 @@ public class OkhttpUtilsUnitTests {
         final String result = OkhttpUtils.responseToString(response);
         assertThat("", result, is("" +
                 "Response: 200 OK http://localhost/\n" +
-                "Request headers:\n" +
+                "Response headers:\n" +
                 "  Content-type: application/octet-stream\n" +
                 "Response body: (binary 1-byte body omitted)\n"));
     }
@@ -271,7 +271,7 @@ public class OkhttpUtilsUnitTests {
         final String result = OkhttpUtils.responseToString(response);
         assertThat("", result, is("" +
                 "Response: 200 OK http://localhost/\n" +
-                "Request headers:\n" +
+                "Response headers:\n" +
                 "  Content-Encoding: unknown\n" +
                 "Response body: (encoded body omitted)\n"));
     }
@@ -296,7 +296,7 @@ public class OkhttpUtilsUnitTests {
         final String result = OkhttpUtils.responseToString(response);
         assertThat("", result, is("" +
                 "Response: 200 OK http://localhost/\n" +
-                "Request headers:\n" +
+                "Response headers:\n" +
                 "  Content-Encoding: gzip\n" +
                 "Response body: (17-byte body)\n" +
                 "  test1637770825775\n"));
