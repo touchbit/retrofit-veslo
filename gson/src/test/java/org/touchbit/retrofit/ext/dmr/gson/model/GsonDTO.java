@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package org.touchbit.retrofit.ext.dmr.jackson.cli.model;
+package org.touchbit.retrofit.ext.dmr.gson.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.Expose;
 
-public class ErrorDTO {
+public class GsonDTO {
 
-    @JsonProperty("code")
+    @Expose
     private int code;
-
-    @JsonProperty("message")
+    @Expose
     private String message;
 
     public int getCode() {
         return code;
     }
 
-    public ErrorDTO setCode(int code) {
+    public GsonDTO setCode(int code) {
         this.code = code;
         return this;
     }
@@ -39,7 +38,7 @@ public class ErrorDTO {
         return message;
     }
 
-    public ErrorDTO setMessage(String message) {
+    public GsonDTO setMessage(String message) {
         this.message = message;
         return this;
     }

@@ -23,8 +23,8 @@ import org.touchbit.retrofit.ext.dmr.client.adapter.DualCallAdapterFactory;
 import org.touchbit.retrofit.ext.dmr.client.model.AnyBody;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterNotFoundException;
 import org.touchbit.retrofit.ext.dmr.exception.HttpCallException;
-import org.touchbit.retrofit.ext.dmr.jackson.cli.MockClient;
-import org.touchbit.retrofit.ext.dmr.jackson.cli.model.UserDTO;
+import org.touchbit.retrofit.ext.dmr.jackson.client.MockClient;
+import org.touchbit.retrofit.ext.dmr.jackson.client.model.UserDTO;
 
 import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
 import static internal.test.utils.client.MockInterceptor.SUCCESS_CODE_NO_CONTENT;

@@ -28,7 +28,7 @@ import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter.Req
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter.ResponseBodyConverter;
 import org.touchbit.retrofit.ext.dmr.client.header.ContentType;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
-import org.touchbit.retrofit.ext.dmr.jackson.cli.model.ErrorDTO;
+import org.touchbit.retrofit.ext.dmr.jackson.client.model.ErrorDTO;
 
 import java.io.IOException;
 import java.util.ArrayList;

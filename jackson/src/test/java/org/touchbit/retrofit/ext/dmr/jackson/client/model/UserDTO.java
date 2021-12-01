@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.touchbit.retrofit.ext.dmr.jackson.cli.model;
+package org.touchbit.retrofit.ext.dmr.jackson.client.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

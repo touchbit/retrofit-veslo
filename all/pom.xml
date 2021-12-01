@@ -25,6 +25,10 @@
         </dependency>
         <dependency>
             <groupId>org.touchbit.retrofit.ext</groupId>
+            <artifactId>dual-response-gson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.touchbit.retrofit.ext</groupId>
             <artifactId>dual-response-bean-validator</artifactId>
         </dependency>
         <dependency>

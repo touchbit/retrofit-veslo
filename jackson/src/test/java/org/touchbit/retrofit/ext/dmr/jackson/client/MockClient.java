@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.touchbit.retrofit.ext.dmr.jackson.cli;
+package org.touchbit.retrofit.ext.dmr.jackson.client;
 
 import org.touchbit.retrofit.ext.dmr.client.EndpointInfo;
 import org.touchbit.retrofit.ext.dmr.client.model.AnyBody;
 import org.touchbit.retrofit.ext.dmr.client.response.DualResponse;
-import org.touchbit.retrofit.ext.dmr.jackson.cli.model.ErrorDTO;
-import org.touchbit.retrofit.ext.dmr.jackson.cli.model.UserDTO;
+import org.touchbit.retrofit.ext.dmr.jackson.client.model.ErrorDTO;
+import org.touchbit.retrofit.ext.dmr.jackson.client.model.UserDTO;
 import retrofit2.http.*;
 
 import java.util.Map;

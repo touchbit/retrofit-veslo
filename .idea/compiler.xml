@@ -7,11 +7,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="dual-response-core" />
+        <module name="internal-test-module" />
+        <module name="dual-response-allure" />
+        <module name="dual-response-gson" />
         <module name="dual-response-bean-validator" />
         <module name="dual-response-jackson" />
         <module name="dual-response-all" />
-        <module name="internal-test-module" />
-        <module name="dual-response-allure" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
