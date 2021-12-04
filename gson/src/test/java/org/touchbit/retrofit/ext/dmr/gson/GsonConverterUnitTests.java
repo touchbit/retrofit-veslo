@@ -28,6 +28,7 @@ import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.gson.model.GsonDTO;
 import retrofit2.Retrofit;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +53,7 @@ public class GsonConverterUnitTests {
 
     @Test
     @DisplayName("Gson RequestBodyConverter.convert() successful convert DTO")
-    public void test1638367311822() {
+    public void test1638367311822() throws IOException {
         GsonDTO dto = new GsonDTO().setCode(123).setMessage("test1638367311822");
         final RequestBody requestBody = getRequestConverter(dto).convert(dto);
         final String result = OkHttpUtils.requestBodyToString(requestBody);
@@ -61,7 +62,7 @@ public class GsonConverterUnitTests {
 
     @Test
     @DisplayName("Gson RequestBodyConverter.convert() successful convert Map")
-    public void test1638367516788() {
+    public void test1638367516788() throws IOException {
         Map<String, Object> dto = new HashMap<>();
         dto.put("method", "test1638367516788");
         final RequestBody requestBody = getRequestConverter(dto).convert(dto);
@@ -71,7 +72,7 @@ public class GsonConverterUnitTests {
 
     @Test
     @DisplayName("Gson RequestBodyConverter.convert() successful convert List")
-    public void test1638367557865() {
+    public void test1638367557865() throws IOException {
         Map<String, Object> inner = new HashMap<>();
         inner.put("method", "test1638367557865");
         List<Object> dto = new ArrayList<>();
@@ -83,7 +84,7 @@ public class GsonConverterUnitTests {
 
     @Test
     @DisplayName("Gson RequestBodyConverter.convert() successful convert String")
-    public void test1638367611927() {
+    public void test1638367611927() throws IOException {
         String dto = "test1638367611927";
         final RequestBody requestBody = getRequestConverter(dto).convert(dto);
         final String result = OkHttpUtils.requestBodyToString(requestBody);
@@ -92,7 +93,7 @@ public class GsonConverterUnitTests {
 
     @Test
     @DisplayName("Gson RequestBodyConverter.convert() successful convert Integer")
-    public void test1638367652783() {
+    public void test1638367652783() throws IOException {
         int dto = 1;
         final RequestBody requestBody = getRequestConverter(dto).convert(dto);
         final String result = OkHttpUtils.requestBodyToString(requestBody);
@@ -101,7 +102,7 @@ public class GsonConverterUnitTests {
 
     @Test
     @DisplayName("Gson RequestBodyConverter.convert() successful convert Double")
-    public void test1638367676089() {
+    public void test1638367676089() throws IOException {
         double dto = 16.3;
         final RequestBody requestBody = getRequestConverter(dto).convert(dto);
         final String result = OkHttpUtils.requestBodyToString(requestBody);
@@ -110,7 +111,7 @@ public class GsonConverterUnitTests {
 
     @Test
     @DisplayName("Gson RequestBodyConverter.convert() successful convert Boolean")
-    public void test1638367739982() {
+    public void test1638367739982() throws IOException {
         boolean dto = true;
         final RequestBody requestBody = getRequestConverter(dto).convert(dto);
         final String result = OkHttpUtils.requestBodyToString(requestBody);
@@ -119,7 +120,7 @@ public class GsonConverterUnitTests {
 
     @Test
     @DisplayName("Gson RequestBodyConverter.convert() successful convert null (JSON_NULL_VALUE)")
-    public void test1638367750517() {
+    public void test1638367750517() throws IOException {
         final RequestBody requestBody = getRequestConverter(Object.class).convert(JSON_NULL_VALUE);
         final String result = OkHttpUtils.requestBodyToString(requestBody);
         assertThat("null json", result, is("null"));
@@ -127,14 +128,14 @@ public class GsonConverterUnitTests {
 
     @Test
     @DisplayName("Gson RequestBodyConverter.convert() successful convert null (BODY_NULL_VALUE)")
-    public void test1638367806660() {
+    public void test1638367806660() throws IOException {
         final RequestBody requestBody = getRequestConverter(Object.class).convert(BODY_NULL_VALUE);
         assertThat("RequestBody", requestBody, nullValue());
     }
 
     @Test
     @DisplayName("Gson RequestBodyConverter.convert() successful convert Object.class")
-    public void test1638368042229() {
+    public void test1638368042229() throws IOException {
         final RequestBody requestBody = getRequestConverter(Object.class).convert(new Object());
         final String result = OkHttpUtils.requestBodyToString(requestBody);
         assertThat("Any json", result, is("{}"));
@@ -159,7 +160,7 @@ public class GsonConverterUnitTests {
 
     @Test
     @DisplayName("Gson ResponseBodyConverter.convert() successful convert to DTO")
-    public void test1638368396682() {
+    public void test1638368396682() throws IOException {
         final ResponseBody body = ResponseBody.create(null, "{\"code\":100,\"message\":\"test1638368396682\"}");
         final GsonDTO actual = getResponseConverter(GsonDTO.class).convert(body);
         assertThat("GsonDTO", actual, notNullValue());
@@ -169,7 +170,7 @@ public class GsonConverterUnitTests {
 
     @Test
     @DisplayName("Gson ResponseBodyConverter.convert() successful convert to Map")
-    public void test1638368400272() {
+    public void test1638368400272() throws IOException {
         final ResponseBody body = ResponseBody.create(null, "{\"code\":100,\"message\":\"test1638368400272\"}");
         final Map<String, Object> actual = getResponseConverter(Map.class).convert(body);
         assertThat("Map", actual, notNullValue());
@@ -179,7 +180,7 @@ public class GsonConverterUnitTests {
 
     @Test
     @DisplayName("Gson ResponseBodyConverter.convert() successful convert to List")
-    public void test1638368990181() {
+    public void test1638368990181() throws IOException {
         final ResponseBody body = ResponseBody.create(null, "[{\"code\":100,\"message\":\"test1638368990181\"}]");
         final List<Map<String, Object>> actual = getResponseConverter(List.class).convert(body);
         assertThat("List", actual, notNullValue());
@@ -191,7 +192,7 @@ public class GsonConverterUnitTests {
 
     @Test
     @DisplayName("Gson ResponseBodyConverter.convert() successful convert to String")
-    public void test1638368986867() {
+    public void test1638368986867() throws IOException {
         final ResponseBody body = ResponseBody.create(null, "\"test1638368986867\"");
         final String actual = getResponseConverter(String.class).convert(body);
         assertThat("String", actual, is("test1638368986867"));
@@ -199,7 +200,7 @@ public class GsonConverterUnitTests {
 
     @Test
     @DisplayName("Gson ResponseBodyConverter.convert() successful convert to Integer")
-    public void test1638369009642() {
+    public void test1638369009642() throws IOException {
         final ResponseBody body = ResponseBody.create(null, "111");
         final Integer actual = getResponseConverter(Integer.class).convert(body);
         assertThat("Integer", actual, is(111));
@@ -207,7 +208,7 @@ public class GsonConverterUnitTests {
 
     @Test
     @DisplayName("Gson ResponseBodyConverter.convert() successful convert to Double")
-    public void test1638369044760() {
+    public void test1638369044760() throws IOException {
         final ResponseBody body = ResponseBody.create(null, "111.11");
         final Double actual = getResponseConverter(Double.class).convert(body);
         assertThat("Double", actual, is(111.11));
@@ -215,7 +216,7 @@ public class GsonConverterUnitTests {
 
     @Test
     @DisplayName("Gson ResponseBodyConverter.convert() successful convert to boolean (false)")
-    public void test1638369063840() {
+    public void test1638369063840() throws IOException {
         final ResponseBody body = ResponseBody.create(null, "false");
         final boolean actual = getResponseConverter(boolean.class).convert(body);
         assertThat("boolean", actual, is(false));
@@ -223,7 +224,7 @@ public class GsonConverterUnitTests {
 
     @Test
     @DisplayName("Gson ResponseBodyConverter.convert() successful convert to boolean (false (0))")
-    public void test1638369932639() {
+    public void test1638369932639() throws IOException {
         final ResponseBody body = ResponseBody.create(null, "0");
         final boolean actual = getResponseConverter(boolean.class).convert(body);
         assertThat("boolean", actual, is(false));
@@ -231,7 +232,7 @@ public class GsonConverterUnitTests {
 
     @Test
     @DisplayName("Gson ResponseBodyConverter.convert() successful convert to Boolean (false (0))")
-    public void test1638369938517() {
+    public void test1638369938517() throws IOException {
         final ResponseBody body = ResponseBody.create(null, "0");
         final boolean actual = getResponseConverter(Boolean.class).convert(body);
         assertThat("boolean", actual, is(false));
@@ -239,14 +240,14 @@ public class GsonConverterUnitTests {
 
     @Test
     @DisplayName("Gson ResponseBodyConverter.convert() successful convert to null (ResponseBody = null)")
-    public void test1638370879760() {
+    public void test1638370879760() throws IOException {
         final GsonDTO actual = getResponseConverter(GsonDTO.class).convert(null);
         assertThat("ErrorDTO", actual, nullValue());
     }
 
     @Test
     @DisplayName("Gson ResponseBodyConverter.convert() successful convert to null (content length = 0)")
-    public void test1638370075297() {
+    public void test1638370075297() throws IOException {
         final ResponseBody body = ResponseBody.create(null, "");
         final GsonDTO actual = getResponseConverter(GsonDTO.class).convert(body);
         assertThat("ErrorDTO", actual, nullValue());

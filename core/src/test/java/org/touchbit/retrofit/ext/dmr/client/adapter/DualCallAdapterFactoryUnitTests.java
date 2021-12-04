@@ -25,7 +25,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.client.EndpointInfo;
 import org.touchbit.retrofit.ext.dmr.client.converter.ExtensionConverterFactory;
-import org.touchbit.retrofit.ext.dmr.client.model.AnyBody;
+import org.touchbit.retrofit.ext.dmr.client.model.RawBody;
 import org.touchbit.retrofit.ext.dmr.client.response.DualResponse;
 import org.touchbit.retrofit.ext.dmr.client.response.IDualResponse;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterNotFoundException;
@@ -55,7 +55,7 @@ public class DualCallAdapterFactoryUnitTests {
     private static final DualCallAdapterFactory DEFAULT_FACTORY = new DualCallAdapterFactory();
     private static final Class<?> OBJ_C = Object.class;
     private static final Class<?> STR_C = String.class;
-    private static final Class<?> AB_C = AnyBody.class;
+    private static final Class<?> AB_C = RawBody.class;
     private static final String INFO = "endpointInfo";
     private static final Retrofit R = new Retrofit.Builder()
             .addCallAdapterFactory(DEFAULT_FACTORY)
@@ -219,8 +219,8 @@ public class DualCallAdapterFactoryUnitTests {
     @Test
     @DisplayName("#getRetrofitResponse() get response for AnyBody.class if successful status code")
     public void test1637406208214() {
-        final Call call = getCall(200, new AnyBody("test1637406208214"));
-        final Response<AnyBody> response = DEFAULT_FACTORY.getRetrofitResponse(call, AB_C, AA);
+        final Call call = getCall(200, new RawBody("test1637406208214"));
+        final Response<RawBody> response = DEFAULT_FACTORY.getRetrofitResponse(call, AB_C, AA);
         softlyAsserter(asserter -> asserter
                 .softly(() -> assertThat("isSuccessful()", response.isSuccessful(), is(true)))
                 .softly(() -> assertThat("body()", response.body(), notNullValue()))
@@ -235,7 +235,7 @@ public class DualCallAdapterFactoryUnitTests {
     @DisplayName("#getRetrofitResponse() get response for AnyBody.class if error status code")
     public void test1637406211648() {
         final Call call = getCall(400, "test1637406211648");
-        final Response<AnyBody> response = DEFAULT_FACTORY.getRetrofitResponse(call, AB_C, AA);
+        final Response<RawBody> response = DEFAULT_FACTORY.getRetrofitResponse(call, AB_C, AA);
         softlyAsserter(asserter -> asserter
                 .softly(() -> assertThat("isSuccessful()", response.isSuccessful(), is(false)))
                 .softly(() -> assertThat("body()", response.body(), nullValue()))
@@ -257,7 +257,7 @@ public class DualCallAdapterFactoryUnitTests {
         when(mResponse.isSuccessful()).thenReturn(true);
         when(mResponse.body()).thenReturn(null);
         final Call call = getCall(request, mResponse);
-        final Response<AnyBody> response = DEFAULT_FACTORY.getRetrofitResponse(call, AB_C, AA);
+        final Response<RawBody> response = DEFAULT_FACTORY.getRetrofitResponse(call, AB_C, AA);
         softlyAsserter(asserter -> asserter
                 .softly(() -> assertThat("isSuccessful()", response.isSuccessful(), is(true)))
                 .softly(() -> assertThat("body()", response.body(), notNullValue()))
@@ -323,7 +323,7 @@ public class DualCallAdapterFactoryUnitTests {
     @DisplayName("#getErrorDTO() - return AnyBody if DTO = AnyBody and body != empty string")
     public void test1637391749128() {
         final Response response = getResponse(500, "test1637391749128");
-        final AnyBody errorDTO = DEFAULT_FACTORY.getErrorDTO(response, AnyBody.class, AA, R);
+        final RawBody errorDTO = DEFAULT_FACTORY.getErrorDTO(response, RawBody.class, AA, R);
         softlyAsserter(asserter -> asserter
                 .softly(() -> assertThat("AnyBody", errorDTO, notNullValue()))
                 .softly(() -> assertThat("AnyBody", errorDTO.string(), is("test1637391749128")))
@@ -334,7 +334,7 @@ public class DualCallAdapterFactoryUnitTests {
     @DisplayName("#getErrorDTO() - return AnyBody if DTO = AnyBody and body = empty string")
     public void test1637402270673() {
         final Response response = getResponse(500, "");
-        final AnyBody errorDTO = DEFAULT_FACTORY.getErrorDTO(response, AnyBody.class, AA, R);
+        final RawBody errorDTO = DEFAULT_FACTORY.getErrorDTO(response, RawBody.class, AA, R);
         softlyAsserter(asserter -> asserter
                 .softly(() -> assertThat("AnyBody", errorDTO, notNullValue()))
                 .softly(() -> assertThat("AnyBody", errorDTO.string(), is("")))
@@ -345,7 +345,7 @@ public class DualCallAdapterFactoryUnitTests {
     @DisplayName("#getErrorDTO() - return AnyBody if DTO = AnyBody and body = null")
     public void test1637393560766() {
         final Response response = getResponse(200, null);
-        final AnyBody errorDTO = DEFAULT_FACTORY.getErrorDTO(response, AnyBody.class, AA, R);
+        final RawBody errorDTO = DEFAULT_FACTORY.getErrorDTO(response, RawBody.class, AA, R);
         softlyAsserter(asserter -> asserter
                 .softly(() -> assertThat("AnyBody", errorDTO, notNullValue()))
                 .softly(() -> assertThat("AnyBody", errorDTO.bytes(), nullValue()))

@@ -17,61 +17,15 @@
 package org.touchbit.retrofit.ext.dmr.client.converter.api;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
-import org.touchbit.retrofit.ext.dmr.util.ThrowableSupplier;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.Arrays;
-
-import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 
 @SuppressWarnings({"rawtypes"})
 @DisplayName("ExtensionConverter tests")
 public class ExtensionConverterUnitTests {
-
-    @Test
-    @DisplayName("#wrap(ThrowableRunnable) positive")
-    @SuppressWarnings("RedundantOperationOnEmptyContainer")
-    public void test1637470086630() {
-        getExtensionConverter().wrap(() -> Arrays.sort(new String[]{}));
-    }
-
-    @Test
-    @DisplayName("#wrap(ThrowableRunnable) negative")
-    @SuppressWarnings("ConstantConditions")
-    public void test1637470359360() {
-        assertThrow(() -> getExtensionConverter().wrap(() -> Arrays.sort((byte[]) null)))
-                .assertClass(ConvertCallException.class)
-                .assertMessageIs("An error occurred while converting. See the reasons below.")
-                .assertCause(cause -> cause.assertClass(NullPointerException.class));
-    }
-
-    @Test
-    @DisplayName("#wrap(ThrowableSupplier) positive")
-    @SuppressWarnings("unchecked")
-    public void test1637470477629() {
-        String data = "test1637470477629";
-        final Object result = getExtensionConverter().wrap((ThrowableSupplier) data::toLowerCase);
-        assertThat("", result, is(data));
-    }
-
-    @Test
-    @DisplayName("#wrap(ThrowableSupplier) negative")
-    @SuppressWarnings({"unchecked"})
-    public void test1637470484396() {
-        assertThrow(() -> getExtensionConverter().wrap(() -> Integer.parseInt("test1637470484396")))
-                .assertClass(ConvertCallException.class)
-                .assertMessageIs("An error occurred while converting. See the reasons below.")
-                .assertCause(cause -> cause
-                        .assertClass(NumberFormatException.class)
-                        .assertMessageIs("For input string: \"test1637470484396\""));
-    }
 
     private ExtensionConverter getExtensionConverter() {
         return new ExtensionConverter() {

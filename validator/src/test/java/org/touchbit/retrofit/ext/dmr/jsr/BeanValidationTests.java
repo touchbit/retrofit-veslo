@@ -17,7 +17,7 @@
 package org.touchbit.retrofit.ext.dmr.jsr;
 
 import internal.test.utils.asserter.ThrowableRunnable;
-import internal.test.utils.client.TestClient;
+import internal.test.utils.client.TestClientBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.client.adapter.DualCallAdapterFactory;
@@ -35,7 +35,7 @@ import static org.hamcrest.Matchers.notNullValue;
 
 public class BeanValidationTests {
 
-    protected static final JakartaMockClient MOCK_CLIENT = TestClient
+    protected static final JakartaMockClient MOCK_CLIENT = TestClientBuilder
             .build(JakartaMockClient.class, new DualCallAdapterFactory(), new JacksonDualConverterFactory());
 
     static {

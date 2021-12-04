@@ -21,7 +21,7 @@ import okhttp3.ResponseBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.touchbit.retrofit.ext.dmr.client.EndpointInfo;
-import org.touchbit.retrofit.ext.dmr.client.model.AnyBody;
+import org.touchbit.retrofit.ext.dmr.client.model.RawBody;
 import org.touchbit.retrofit.ext.dmr.client.response.DualResponse;
 import org.touchbit.retrofit.ext.dmr.client.response.IDualResponse;
 import org.touchbit.retrofit.ext.dmr.exception.HttpCallException;
@@ -78,12 +78,12 @@ public class DualCallAdapterFactory extends CallAdapter.Factory {
     /**
      * Method for getting an instance of the {@link CallAdapter} class
      *
-     * @param type - called method return type
-     * @param successType - success DTO class
-     * @param errorType - error DTO class
-     * @param endpointInfo - called method description
+     * @param type              - called method return type
+     * @param successType       - success DTO class
+     * @param errorType         - error DTO class
+     * @param endpointInfo      - called method description
      * @param methodAnnotations - list of annotations for the called API method
-     * @param retrofit - HTTP client
+     * @param retrofit          - HTTP client
      * @return instance of {@link CallAdapter}
      */
     @EverythingIsNonNull
@@ -110,8 +110,12 @@ public class DualCallAdapterFactory extends CallAdapter.Factory {
             @Override
             @EverythingIsNonNull
             public IDualResponse<?, ?> adapt(Call<Object> call) {
-                String finalInfo = !endpointInfo.trim().isEmpty() ? endpointInfo :
-                        call.request().method() + " " + call.request().url();
+                final String finalInfo;
+                if (endpointInfo.trim().isEmpty()) {
+                    finalInfo = call.request().method() + " " + call.request().url();
+                } else {
+                    finalInfo = endpointInfo;
+                }
                 logger.info("API call: " + finalInfo);
                 return getIDualResponse(call, successType, errorType, finalInfo, methodAnnotations, retrofit);
             }
@@ -180,8 +184,8 @@ public class DualCallAdapterFactory extends CallAdapter.Factory {
         } catch (Exception e) {
             throw new HttpCallException("Failed to make API call.\n" + e.getMessage() + "\n", e);
         }
-        if (response.isSuccessful() && response.body() == null && successType.equals(AnyBody.class)) {
-            return Response.success(new AnyBody((byte[]) null), response.raw());
+        if (response.isSuccessful() && response.body() == null && successType.equals(RawBody.class)) {
+            return Response.success(new RawBody((byte[]) null), response.raw());
         }
         return response;
     }
@@ -193,7 +197,7 @@ public class DualCallAdapterFactory extends CallAdapter.Factory {
                                  @Nonnull final Annotation[] methodAnnotations,
                                  @Nonnull final Retrofit retrofit) {
         ResponseBody nullableResponseErrorBody = response.errorBody();
-        if (nullableResponseErrorBody != null || AnyBody.class.equals(errorType)) {
+        if (nullableResponseErrorBody != null || RawBody.class.equals(errorType)) {
             try {
                 return (DTO) retrofit.responseBodyConverter(errorType, methodAnnotations)
                         .convert(nullableResponseErrorBody);

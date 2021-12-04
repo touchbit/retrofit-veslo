@@ -49,7 +49,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 /**
  * Copied and modifying
  * Source: https://github.com/allure-framework/allure-java
- *
  * @author ehborisov
  * Copyright 2019 Qameta Software OÜ
  * Licensed under the Apache License, Version 2.0;

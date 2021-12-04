@@ -16,11 +16,11 @@
 
 package org.touchbit.retrofit.ext.dmr.jackson;
 
-import internal.test.utils.client.TestClient;
+import internal.test.utils.client.TestClientBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.client.adapter.DualCallAdapterFactory;
-import org.touchbit.retrofit.ext.dmr.client.model.AnyBody;
+import org.touchbit.retrofit.ext.dmr.client.model.RawBody;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterNotFoundException;
 import org.touchbit.retrofit.ext.dmr.exception.HttpCallException;
 import org.touchbit.retrofit.ext.dmr.jackson.client.MockClient;
@@ -34,7 +34,7 @@ import static org.hamcrest.Matchers.*;
 @DisplayName("Jackson converter functional tests")
 public class JacksonFuncTests {
 
-    protected static final MockClient MOCK_CLIENT = TestClient
+    protected static final MockClient MOCK_CLIENT = TestClientBuilder
             .build(MockClient.class, new DualCallAdapterFactory(), new JacksonDualConverterFactory());
 
     @Test
@@ -76,7 +76,7 @@ public class JacksonFuncTests {
     @Test
     @DisplayName("Validate success text/plain AnyBody DTO with success HTTP status code and empty body")
     public void test1635885848809() {
-        MOCK_CLIENT.textPlainAnyBody(200, new AnyBody("".getBytes()))
+        MOCK_CLIENT.textPlainAnyBody(200, new RawBody("".getBytes()))
                 .assertResponse(response -> response
                         .assertHttpStatusCodeIs(200)
                         .assertSuccessfulBody(body -> assertThat("Success body content", body.string(), emptyString())));
@@ -85,7 +85,7 @@ public class JacksonFuncTests {
     @Test
     @DisplayName("Validate success text/plain AnyBody DTO with success HTTP status code and filled body")
     public void test1635886715203() {
-        MOCK_CLIENT.textPlainAnyBody(200, new AnyBody("1".getBytes()))
+        MOCK_CLIENT.textPlainAnyBody(200, new RawBody("1".getBytes()))
                 .assertResponse(response -> response
                         .assertHttpStatusCodeIs(200)
                         .assertSuccessfulBody(body -> assertThat("Success body content", body.string(), is("1"))));

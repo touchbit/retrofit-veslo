@@ -29,22 +29,22 @@ import java.util.Arrays;
  * shaburov.o.a@gmail.com
  */
 @SuppressWarnings("UnusedReturnValue")
-public class AnyBody {
+public class RawBody {
 
     private final byte[] bodyData;
 
     /**
      * @param data - byte body
      */
-    public AnyBody(@Nullable byte[] data) {
+    public RawBody(@Nullable byte[] data) {
         this.bodyData = data;
     }
 
-    public AnyBody(String string) {
+    public RawBody(String string) {
         this(string == null ? null : string.getBytes());
     }
 
-    public AnyBody assertBodyIsNotNull() {
+    public RawBody assertBodyIsNotNull() {
         if (isNullBody()) {
             throw new AssertionError("Response body\n" +
                     "Expected: is byte array\n" +
@@ -53,7 +53,7 @@ public class AnyBody {
         return this;
     }
 
-    public AnyBody assertBodyIsNull() {
+    public RawBody assertBodyIsNull() {
         if (!isNullBody()) {
             throw new AssertionError("Response body\n" +
                     "Expected: is null\n" +
@@ -62,7 +62,7 @@ public class AnyBody {
         return this;
     }
 
-    public AnyBody assertBodyIsNotEmpty() {
+    public RawBody assertBodyIsNotEmpty() {
         if (isNullBody() || isEmptyBody()) {
             throw new AssertionError("Response body\n" +
                     "Expected: is not empty byte array\n" +
@@ -71,7 +71,7 @@ public class AnyBody {
         return this;
     }
 
-    public AnyBody assertBodyIsEmpty() {
+    public RawBody assertBodyIsEmpty() {
         assertBodyIsNotNull();
         if (!isEmptyBody()) {
             throw new AssertionError("Response body\n" +
@@ -81,7 +81,7 @@ public class AnyBody {
         return this;
     }
 
-    public AnyBody assertStringBodyContains(String... expectedStrings) {
+    public RawBody assertStringBodyContains(String... expectedStrings) {
         Utils.parameterRequireNonNull(expectedStrings, "expectedStrings");
         assertBodyIsNotNull();
         try (final SoftlyAsserter softlyAsserter = SoftlyAsserter.get()) {
@@ -100,7 +100,7 @@ public class AnyBody {
         return this;
     }
 
-    public AnyBody assertStringBodyContainsIgnoreCase(String... expectedStrings) {
+    public RawBody assertStringBodyContainsIgnoreCase(String... expectedStrings) {
         Utils.parameterRequireNonNull(expectedStrings, "expectedStrings");
         assertBodyIsNotNull();
         try (final SoftlyAsserter softlyAsserter = SoftlyAsserter.get()) {
@@ -119,7 +119,7 @@ public class AnyBody {
         return this;
     }
 
-    public AnyBody assertStringBodyIs(String expected) {
+    public RawBody assertStringBodyIs(String expected) {
         Utils.parameterRequireNonNull(expected, "expected");
         assertBodyIsNotNull();
         if (!expected.equals(string())) {
@@ -131,7 +131,7 @@ public class AnyBody {
         return this;
     }
 
-    public AnyBody assertStringBodyIsIgnoreCase(String expected) {
+    public RawBody assertStringBodyIsIgnoreCase(String expected) {
         Utils.parameterRequireNonNull(expected, "expected");
         assertBodyIsNotNull();
         if (!expected.equalsIgnoreCase(string())) {
@@ -172,8 +172,8 @@ public class AnyBody {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        AnyBody anyBody = (AnyBody) o;
-        return Arrays.equals(bodyData, anyBody.bodyData);
+        RawBody rawBody = (RawBody) o;
+        return Arrays.equals(bodyData, rawBody.bodyData);
     }
 
     @Override

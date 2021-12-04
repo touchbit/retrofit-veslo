@@ -26,6 +26,7 @@ import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 
 import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
@@ -40,7 +41,7 @@ public class FileConverterUnitTests {
 
     @Test
     @DisplayName("Successful conversion File->RequestBody if body instanceof File.class (exists)")
-    public void test1637467409145() {
+    public void test1637467409145() throws IOException {
         final String expected = "test1637466272864";
         final File body = new File("src/test/resources/test/data/test1637466272864.txt");
         final RequestBody requestBody = new FileConverter()
@@ -120,7 +121,7 @@ public class FileConverterUnitTests {
 
     @Test
     @DisplayName("Successful conversion ResponseBody->File if body == null (return null)")
-    public void test1637467424106() {
+    public void test1637467424106() throws IOException {
         final File body = new FileConverter()
                 .responseBodyConverter(null, null, null)
                 .convert(null);

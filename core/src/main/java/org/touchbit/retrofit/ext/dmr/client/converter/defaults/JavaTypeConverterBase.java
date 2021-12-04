@@ -18,11 +18,10 @@ package org.touchbit.retrofit.ext.dmr.client.converter.defaults;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
-import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.util.ConvertUtils;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
+import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
@@ -31,51 +30,61 @@ import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
-public class StringConverter implements ExtensionConverter<String> {
+/**
+ * Base class for converting Java types
+ * <p>
+ * Created by Oleg Shaburov on 05.12.2021
+ * shaburov.o.a@gmail.com
+ */
+@SuppressWarnings("rawtypes")
+public abstract class JavaTypeConverterBase implements ExtensionConverter {
 
+    /**
+     * @param type                 - request method body type.
+     * @param parameterAnnotations - API client called method parameters annotations
+     * @param methodAnnotations    - API client called method annotations
+     * @param retrofit             - see {@link Retrofit}
+     * @return {@link Converter}
+     */
     @Override
     @EverythingIsNonNull
     public RequestBodyConverter requestBodyConverter(final Type type,
                                                      final Annotation[] parameterAnnotations,
                                                      final Annotation[] methodAnnotations,
                                                      final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(parameterAnnotations, "parameterAnnotations");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new RequestBodyConverter() {
 
+            /**
+             * Converts java object to string for {@link RequestBody}
+             *
+             * @param body -
+             * @return HTTP {@link RequestBody} or null if {@link ExtensionConverter#BODY_NULL_VALUE} present
+             */
             @Override
             @Nullable
             public RequestBody convert(@Nonnull Object body) {
                 Utils.parameterRequireNonNull(body, "body");
-                if (body instanceof String) {
-                    String data = (String) body;
-                    if (BODY_NULL_VALUE.equals(data)) {
-                        return null;
-                    }
-                    final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
-                    return RequestBody.create(mediaType, (String) body);
-                }
-                throw new ConverterUnsupportedTypeException(StringConverter.class, String.class, body.getClass());
-            }
-
-        };
-    }
-
-    @Override
-    @EverythingIsNonNull
-    public ResponseBodyConverter<String> responseBodyConverter(final Type type,
-                                                               final Annotation[] methodAnnotations,
-                                                               final Retrofit retrofit) {
-        return new ResponseBodyConverter<String>() {
-
-            @Nullable
-            @Override
-            public String convert(@Nullable ResponseBody body) {
-                if (body == null) {
+                final String stringBody = String.valueOf(body);
+                if (BODY_NULL_VALUE.equals(stringBody)) {
                     return null;
                 }
-                return wrap(() -> new String(body.bytes()));
+                final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
+                return RequestBody.create(mediaType, stringBody);
             }
-
         };
+
+    }
+
+    protected String getTypeName(Type type) {
+        if (type instanceof Class && ((Class<?>) type).isArray()) {
+            return type.toString().replace("[L", "").replace(";", "[]");
+        } else {
+            return type.toString();
+        }
     }
 
 }

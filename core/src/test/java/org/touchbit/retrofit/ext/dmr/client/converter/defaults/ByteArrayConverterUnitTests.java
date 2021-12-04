@@ -25,6 +25,8 @@ import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
 
+import java.io.IOException;
+
 import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -37,7 +39,7 @@ public class ByteArrayConverterUnitTests {
 
     @Test
     @DisplayName("Successful conversion Byte[]->RequestBody if body instanceof Byte.class")
-    public void test1637463917948() {
+    public void test1637463917948() throws IOException {
         final String expected = "test1637463917948";
         final Byte[] body = Utils.toObjectByteArray(expected);
         final RequestBody requestBody = new ByteArrayConverter()
@@ -94,7 +96,7 @@ public class ByteArrayConverterUnitTests {
 
     @Test
     @DisplayName("Successful conversion ResponseBody->Byte[] if body == null then return null")
-    public void test1637463932624() {
+    public void test1637463932624() throws IOException {
         final Byte[] body = new ByteArrayConverter()
                 .responseBodyConverter(null, null, null)
                 .convert(null);

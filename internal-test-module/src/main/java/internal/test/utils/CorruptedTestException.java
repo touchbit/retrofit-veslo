@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-package org.touchbit.retrofit.ext.test;
+package internal.test.utils;
 
-import org.touchbit.retrofit.ext.dmr.client.converter.ExtensionConverterFactory;
+public class CorruptedTestException extends RuntimeException {
 
-import static org.touchbit.retrofit.ext.dmr.client.header.ContentTypeConstants.TEXT_PLAIN;
+    public CorruptedTestException() {
+        super();
+    }
 
-@SuppressWarnings("ALL")
-public class TestsExtensionConverterFactory extends ExtensionConverterFactory {
+    public CorruptedTestException(String message) {
+        super(message);
+    }
 
-    public TestsExtensionConverterFactory() {
-        addMimeRequestConverter(new TestConverter(), TEXT_PLAIN);
-        addMimeResponseConverter(new TestConverter(), TEXT_PLAIN);
+    public CorruptedTestException(String message, Throwable throwable) {
+        super(message, throwable);
+    }
+
+    public CorruptedTestException(Throwable throwable) {
+        super(throwable);
     }
 
 }

@@ -29,12 +29,15 @@ import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class FileConverter implements ExtensionConverter<File> {
+
+    public static final FileConverter INSTANCE = new FileConverter();
 
     @Override
     @EverythingIsNonNull
@@ -46,7 +49,7 @@ public class FileConverter implements ExtensionConverter<File> {
 
             @Override
             @EverythingIsNonNull
-            public RequestBody convert(Object body) {
+            public RequestBody convert(Object body) throws IOException {
                 Utils.parameterRequireNonNull(body, "body");
                 if (body instanceof File) {
                     File file = (File) body;
@@ -56,7 +59,7 @@ public class FileConverter implements ExtensionConverter<File> {
                     if (!file.isFile()) {
                         throw new ConvertCallException("Request body file is not a readable file: " + file);
                     }
-                    final byte[] data = wrap(() -> Files.readAllBytes(file.toPath()));
+                    final byte[] data = Files.readAllBytes(file.toPath());
                     final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
                     return RequestBody.create(mediaType, data);
                 }
@@ -75,12 +78,12 @@ public class FileConverter implements ExtensionConverter<File> {
 
             @Override
             @Nullable
-            public File convert(@Nullable ResponseBody body) {
+            public File convert(@Nullable ResponseBody body) throws IOException {
                 if (body == null) {
                     return null;
                 }
-                final Path tempFile = wrap(() -> Files.createTempFile(null, null));
-                return wrap(() -> Files.write(tempFile, body.bytes()).toFile());
+                final Path tempFile = Files.createTempFile(null, null);
+                return Files.write(tempFile, body.bytes()).toFile();
             }
 
         };

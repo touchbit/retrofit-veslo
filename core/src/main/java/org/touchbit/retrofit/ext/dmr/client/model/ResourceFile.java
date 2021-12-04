@@ -50,6 +50,10 @@ public class ResourceFile {
         }
     }
 
+    public String getString() {
+        return new String(getBytes());
+    }
+
     public String getResourceRelativePath() {
         return resourceRelativePath;
     }

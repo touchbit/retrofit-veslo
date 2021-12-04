@@ -17,7 +17,7 @@
 package org.touchbit.retrofit.ext.dmr.jsr.client;
 
 import org.touchbit.retrofit.ext.dmr.client.EndpointInfo;
-import org.touchbit.retrofit.ext.dmr.client.model.AnyBody;
+import org.touchbit.retrofit.ext.dmr.client.model.RawBody;
 import org.touchbit.retrofit.ext.dmr.client.response.DualResponse;
 import org.touchbit.retrofit.ext.dmr.jsr.client.model.UserDTO;
 import retrofit2.http.Body;
@@ -30,7 +30,7 @@ public interface JakartaMockClient {
     @POST("/api/mock/application/json")
     @Headers("Content-Type: application/json")
     @EndpointInfo("Processing two models into a JSON string")
-    DualResponse<UserDTO, AnyBody> getUser(@Query("status") int status,
+    DualResponse<UserDTO, RawBody> getUser(@Query("status") int status,
                                            @Body Object responseBody);
 
 }

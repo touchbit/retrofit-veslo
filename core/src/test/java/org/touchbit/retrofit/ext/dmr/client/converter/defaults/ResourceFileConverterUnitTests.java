@@ -26,6 +26,8 @@ import org.touchbit.retrofit.ext.dmr.client.model.ResourceFile;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 
+import java.io.IOException;
+
 import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -39,7 +41,7 @@ public class ResourceFileConverterUnitTests {
 
     @Test
     @DisplayName("Successful conversion ResourceFile->RequestBody if body instanceof ResourceFile.class (exists)")
-    public void test1637468946514() {
+    public void test1637468946514() throws IOException {
         final String expected = "test1637468946514";
         final ResourceFile body = new ResourceFile("test/data/test1637468946514.txt");
         final RequestBody requestBody = new ResourceFileConverter()

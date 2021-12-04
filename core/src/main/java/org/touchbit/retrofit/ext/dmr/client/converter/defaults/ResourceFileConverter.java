@@ -32,6 +32,8 @@ import java.lang.reflect.Type;
 
 public class ResourceFileConverter implements ExtensionConverter<ResourceFile> {
 
+    public static final ResourceFileConverter INSTANCE = new ResourceFileConverter();
+
     @Override
     @EverythingIsNonNull
     public RequestBodyConverter requestBodyConverter(final Type type,

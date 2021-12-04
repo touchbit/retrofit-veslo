@@ -17,7 +17,7 @@
 package org.touchbit.retrofit.ext.dmr.jackson.client;
 
 import org.touchbit.retrofit.ext.dmr.client.EndpointInfo;
-import org.touchbit.retrofit.ext.dmr.client.model.AnyBody;
+import org.touchbit.retrofit.ext.dmr.client.model.RawBody;
 import org.touchbit.retrofit.ext.dmr.client.response.DualResponse;
 import org.touchbit.retrofit.ext.dmr.jackson.client.model.ErrorDTO;
 import org.touchbit.retrofit.ext.dmr.jackson.client.model.UserDTO;
@@ -25,6 +25,7 @@ import retrofit2.http.*;
 
 import java.util.Map;
 
+@SuppressWarnings("UnusedReturnValue")
 public interface MockClient {
 
     @POST("/api/mock/unprocessed/dto")
@@ -53,13 +54,13 @@ public interface MockClient {
     @POST("/api/mock/text/plain/absent")
     @Headers("Content-Type: text/plain")
     @EndpointInfo("Processing two models into a string")
-    DualResponse<AnyBody, AnyBody> textPlainAnyBody(@Query("status") int status,
+    DualResponse<RawBody, RawBody> textPlainAnyBody(@Query("status") int status,
                                                     @Body Object responseBody);
 
     @POST("/api/mock/application/json/absent")
     @Headers("Content-Type: application/json")
     @EndpointInfo("Processing two models into a JSON string")
-    DualResponse<AnyBody, AnyBody> applicationJsonAnyBody(@Query("status") int status,
+    DualResponse<RawBody, RawBody> applicationJsonAnyBody(@Query("status") int status,
                                                           @Body Object responseBody);
 
     @POST("/api/mock/application/json/absent")

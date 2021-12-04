@@ -25,7 +25,7 @@ import static org.hamcrest.Matchers.*;
 
 @SuppressWarnings({"EqualsWithItself", "ConstantConditions", "StringOperationCanBeSimplified", "EqualsBetweenInconvertibleTypes"})
 @DisplayName("AnyBody model tests")
-public class AnyBodyUnitTests {
+public class RawBodyUnitTests {
 
     private static final String BLANK_BODY_STRING = "   ";
     private static final byte[] BLANK_BODY_BYTES = BLANK_BODY_STRING.getBytes();
@@ -35,7 +35,7 @@ public class AnyBodyUnitTests {
     @Test
     @DisplayName("Successfully instantiating AnyBody class if data is empty string")
     public void test1635619789030() {
-        AnyBody dto = new AnyBody(EMPTY_BODY_STRING);
+        RawBody dto = new RawBody(EMPTY_BODY_STRING);
         assertThat("AnyBody.getBody()", dto.bytes(), is(EMPTY_BODY_BYTES));
         assertThat("AnyBody.getBody()", dto.string(), is(EMPTY_BODY_STRING));
         assertThat("AnyBody.isEmptyBody()", dto.isEmptyBody(), is(true));
@@ -46,7 +46,7 @@ public class AnyBodyUnitTests {
     @Test
     @DisplayName("Successfully instantiating AnyBody class if data is blank string")
     public void test1635620281699() {
-        AnyBody dto = new AnyBody(BLANK_BODY_STRING);
+        RawBody dto = new RawBody(BLANK_BODY_STRING);
         assertThat("AnyBody.getBody()", dto.bytes(), is(BLANK_BODY_BYTES));
         assertThat("AnyBody.getBody()", dto.string(), is(BLANK_BODY_STRING));
         assertThat("AnyBody.isEmptyBody()", dto.isEmptyBody(), is(false));
@@ -57,7 +57,7 @@ public class AnyBodyUnitTests {
     @Test
     @DisplayName("Successfully instantiating AnyBody class if data is null string")
     public void test1635886245565() {
-        AnyBody dto = new AnyBody((String) null);
+        RawBody dto = new RawBody((String) null);
         assertThat("AnyBody.getBody()", dto.bytes(), nullValue());
         assertThat("AnyBody.getBody()", dto.string(), nullValue());
         assertThat("AnyBody.isEmptyBody()", dto.isEmptyBody(), is(true));
@@ -68,7 +68,7 @@ public class AnyBodyUnitTests {
     @Test
     @DisplayName("Successfully instantiating AnyBody class if data is null byte array")
     public void test1637479501031() {
-        AnyBody dto = new AnyBody((byte[]) null);
+        RawBody dto = new RawBody((byte[]) null);
         assertThat("AnyBody.getBody()", dto.bytes(), nullValue());
         assertThat("AnyBody.getBody()", dto.string(), nullValue());
         assertThat("AnyBody.isEmptyBody()", dto.isEmptyBody(), is(true));
@@ -79,7 +79,7 @@ public class AnyBodyUnitTests {
     @Test
     @DisplayName("assertBodyIsEmpty(): An error occurs if the body is blank")
     public void test1635886327262() {
-        assertThrow(() -> new AnyBody(BLANK_BODY_BYTES).assertBodyIsEmpty())
+        assertThrow(() -> new RawBody(BLANK_BODY_BYTES).assertBodyIsEmpty())
                 .assertClass(AssertionError.class)
                 .assertMessageIs("" +
                         "Response body\n" +
@@ -90,19 +90,19 @@ public class AnyBodyUnitTests {
     @Test
     @DisplayName("assertBodyIsEmpty(): no error if body = <empty string>")
     public void test1637479578838() {
-        new AnyBody(EMPTY_BODY_STRING).assertBodyIsEmpty();
+        new RawBody(EMPTY_BODY_STRING).assertBodyIsEmpty();
     }
 
     @Test
     @DisplayName("assertBodyIsEmpty(): no error if body = <empty byte array>")
     public void test1637479640678() {
-        new AnyBody(EMPTY_BODY_BYTES).assertBodyIsEmpty();
+        new RawBody(EMPTY_BODY_BYTES).assertBodyIsEmpty();
     }
 
     @Test
     @DisplayName("assertBodyIsNotEmpty(): An error occurs if the body is empty")
     public void test1637479897397() {
-        assertThrow(() -> new AnyBody(EMPTY_BODY_BYTES).assertBodyIsNotEmpty())
+        assertThrow(() -> new RawBody(EMPTY_BODY_BYTES).assertBodyIsNotEmpty())
                 .assertClass(AssertionError.class)
                 .assertMessageIs("" +
                         "Response body\n" +
@@ -113,7 +113,7 @@ public class AnyBodyUnitTests {
     @Test
     @DisplayName("assertBodyIsNotEmpty(): An error occurs if the body is null")
     public void test1637480057727() {
-        assertThrow(() -> new AnyBody((byte[]) null).assertBodyIsNotEmpty())
+        assertThrow(() -> new RawBody((byte[]) null).assertBodyIsNotEmpty())
                 .assertClass(AssertionError.class)
                 .assertMessageIs("" +
                         "Response body\n" +
@@ -124,19 +124,19 @@ public class AnyBodyUnitTests {
     @Test
     @DisplayName("assertBodyIsNotEmpty(): no error if body = <not blank string>")
     public void test1637479938602() {
-        new AnyBody("test1637479938602").assertBodyIsNotEmpty();
+        new RawBody("test1637479938602").assertBodyIsNotEmpty();
     }
 
     @Test
     @DisplayName("assertBodyIsNotEmpty(): no error if body = <not empty byte array>")
     public void test1635887040120() {
-        new AnyBody("test1635887040120".getBytes()).assertBodyIsNotEmpty();
+        new RawBody("test1635887040120".getBytes()).assertBodyIsNotEmpty();
     }
 
     @Test
     @DisplayName("assertBodyIsNotNull(): An error occurs if the body is null")
     public void test1637480200215() {
-        assertThrow(() -> new AnyBody((byte[]) null).assertBodyIsNotNull())
+        assertThrow(() -> new RawBody((byte[]) null).assertBodyIsNotNull())
                 .assertClass(AssertionError.class)
                 .assertMessageIs("" +
                         "Response body\n" +
@@ -147,19 +147,19 @@ public class AnyBodyUnitTests {
     @Test
     @DisplayName("assertBodyIsNotEmpty(): no error if body = <blank string>")
     public void test1637480323225() {
-        new AnyBody(BLANK_BODY_STRING).assertBodyIsNotNull();
+        new RawBody(BLANK_BODY_STRING).assertBodyIsNotNull();
     }
 
     @Test
     @DisplayName("assertBodyIsNotEmpty(): no error if body = <empty string>")
     public void test1637480336285() {
-        new AnyBody(EMPTY_BODY_BYTES).assertBodyIsNotNull();
+        new RawBody(EMPTY_BODY_BYTES).assertBodyIsNotNull();
     }
 
     @Test
     @DisplayName("assertBodyIsNull(): An error occurs if the body is empty string")
     public void test1637480386236() {
-        assertThrow(() -> new AnyBody(EMPTY_BODY_STRING).assertBodyIsNull())
+        assertThrow(() -> new RawBody(EMPTY_BODY_STRING).assertBodyIsNull())
                 .assertClass(AssertionError.class)
                 .assertMessageIs("" +
                         "Response body\n" +
@@ -170,7 +170,7 @@ public class AnyBodyUnitTests {
     @Test
     @DisplayName("assertBodyIsNull(): An error occurs if the body is blank string")
     public void test1637480417679() {
-        assertThrow(() -> new AnyBody(BLANK_BODY_STRING).assertBodyIsNull())
+        assertThrow(() -> new RawBody(BLANK_BODY_STRING).assertBodyIsNull())
                 .assertClass(AssertionError.class)
                 .assertMessageIs("" +
                         "Response body\n" +
@@ -181,13 +181,13 @@ public class AnyBodyUnitTests {
     @Test
     @DisplayName("assertBodyIsNull(): no error if body = null")
     public void test1637480509582() {
-        new AnyBody((byte[]) null).assertBodyIsNull();
+        new RawBody((byte[]) null).assertBodyIsNull();
     }
 
     @Test
     @DisplayName("assertBodyContainsStrings(): An error occurs if the body is null")
     public void test1637481386260() {
-        assertThrow(() -> new AnyBody((byte[]) null).assertStringBodyContains("test1637481386260"))
+        assertThrow(() -> new RawBody((byte[]) null).assertStringBodyContains("test1637481386260"))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("" +
                         "Response body\n" +
@@ -198,7 +198,7 @@ public class AnyBodyUnitTests {
     @Test
     @DisplayName("assertBodyContainsStrings(): An error occurs if the body is empty")
     public void test1637481450008() {
-        assertThrow(() -> new AnyBody(EMPTY_BODY_BYTES).assertStringBodyContains("test1637481450008"))
+        assertThrow(() -> new RawBody(EMPTY_BODY_BYTES).assertStringBodyContains("test1637481450008"))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("" +
                         "Collected the following errors:\n\n" +
@@ -210,7 +210,7 @@ public class AnyBodyUnitTests {
     @Test
     @DisplayName("assertBodyContainsStrings(): An error occurs if expected value in another case")
     public void test1637481553477() {
-        assertThrow(() -> new AnyBody("test1637481553477").assertStringBodyContains("TEST1637481553477"))
+        assertThrow(() -> new RawBody("test1637481553477").assertStringBodyContains("TEST1637481553477"))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("" +
                         "Collected the following errors:\n\n" +
@@ -222,25 +222,25 @@ public class AnyBodyUnitTests {
     @Test
     @DisplayName("assertBodyContainsStrings(): no error if full match")
     public void test1637481630982() {
-        new AnyBody("test1637481630982").assertStringBodyContains("test1637481630982");
+        new RawBody("test1637481630982").assertStringBodyContains("test1637481630982");
     }
 
     @Test
     @DisplayName("assertBodyContainsStrings(): no error if partial match")
     public void test1637481653432() {
-        new AnyBody("test1637481653432").assertStringBodyContains("1637481653432");
+        new RawBody("test1637481653432").assertStringBodyContains("1637481653432");
     }
 
     @Test
     @DisplayName("assertBodyContainsStrings(): several expected values")
     public void test1637481806904() {
-        new AnyBody("test1637481806904").assertStringBodyContains("test", "1637481806904");
+        new RawBody("test1637481806904").assertStringBodyContains("test", "1637481806904");
     }
 
     @Test
     @DisplayName("assertBodyContainsIgnoreCaseStrings(): An error occurs if the body is null")
     public void test1637482417487() {
-        assertThrow(() -> new AnyBody((byte[]) null).assertStringBodyContainsIgnoreCase("test1637482417487"))
+        assertThrow(() -> new RawBody((byte[]) null).assertStringBodyContainsIgnoreCase("test1637482417487"))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("" +
                         "Response body\n" +
@@ -251,7 +251,7 @@ public class AnyBodyUnitTests {
     @Test
     @DisplayName("assertBodyContainsIgnoreCaseStrings(): An error occurs if the body is empty")
     public void test1637482421528() {
-        assertThrow(() -> new AnyBody(EMPTY_BODY_BYTES).assertStringBodyContainsIgnoreCase("test1637482421528"))
+        assertThrow(() -> new RawBody(EMPTY_BODY_BYTES).assertStringBodyContainsIgnoreCase("test1637482421528"))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("" +
                         "Collected the following errors:\n\n" +
@@ -263,31 +263,31 @@ public class AnyBodyUnitTests {
     @Test
     @DisplayName("assertBodyContainsIgnoreCaseStrings(): no error if different case")
     public void test1637482424480() {
-        new AnyBody("test1637482424480").assertStringBodyContainsIgnoreCase("TEST1637482424480");
+        new RawBody("test1637482424480").assertStringBodyContainsIgnoreCase("TEST1637482424480");
     }
 
     @Test
     @DisplayName("assertBodyContainsIgnoreCaseStrings(): no error if full match")
     public void test1637482427644() {
-        new AnyBody("test1637482427644").assertStringBodyContainsIgnoreCase("test1637482427644");
+        new RawBody("test1637482427644").assertStringBodyContainsIgnoreCase("test1637482427644");
     }
 
     @Test
     @DisplayName("assertBodyContainsIgnoreCaseStrings(): no error if partial match")
     public void test1637482430003() {
-        new AnyBody("test1637482430003").assertStringBodyContainsIgnoreCase("1637482430003");
+        new RawBody("test1637482430003").assertStringBodyContainsIgnoreCase("1637482430003");
     }
 
     @Test
     @DisplayName("assertBodyContainsIgnoreCaseStrings(): several expected values")
     public void test1637482432552() {
-        new AnyBody("test1637482432552").assertStringBodyContainsIgnoreCase("test", "1637482432552");
+        new RawBody("test1637482432552").assertStringBodyContainsIgnoreCase("test", "1637482432552");
     }
 
     @Test
     @DisplayName("assertStringBodyIs(): An error occurs if the body is null")
     public void test1637483049766() {
-        assertThrow(() -> new AnyBody((byte[]) null).assertStringBodyIs("test1637483049766"))
+        assertThrow(() -> new RawBody((byte[]) null).assertStringBodyIs("test1637483049766"))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("Response body\n" +
                         "Expected: is byte array\n" +
@@ -297,7 +297,7 @@ public class AnyBodyUnitTests {
     @Test
     @DisplayName("assertStringBodyIs(): An error occurs if different case")
     public void test1637483021598() {
-        assertThrow(() -> new AnyBody("test1637483021598").assertStringBodyIs("TEST1637483021598"))
+        assertThrow(() -> new RawBody("test1637483021598").assertStringBodyIs("TEST1637483021598"))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("Response body\n" +
                         "Expected: 'TEST1637483021598'\n" +
@@ -307,13 +307,13 @@ public class AnyBodyUnitTests {
     @Test
     @DisplayName("assertStringBodyIs(): no error if full match")
     public void test1637483157892() {
-        new AnyBody("test1637483157892").assertStringBodyIs("test1637483157892");
+        new RawBody("test1637483157892").assertStringBodyIs("test1637483157892");
     }
 
     @Test
     @DisplayName("assertStringBodyIsIgnoreCase(): An error occurs if the body is null")
     public void test1637483228563() {
-        assertThrow(() -> new AnyBody((byte[]) null).assertStringBodyIsIgnoreCase("test1637483049766"))
+        assertThrow(() -> new RawBody((byte[]) null).assertStringBodyIsIgnoreCase("test1637483049766"))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("Response body\n" +
                         "Expected: is byte array\n" +
@@ -323,7 +323,7 @@ public class AnyBodyUnitTests {
     @Test
     @DisplayName("assertStringBodyIsIgnoreCase(): An error occurs if no match")
     public void test1637483306882() {
-        assertThrow(() -> new AnyBody("test1637483306882").assertStringBodyIsIgnoreCase("test"))
+        assertThrow(() -> new RawBody("test1637483306882").assertStringBodyIsIgnoreCase("test"))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("Response body\n" +
                         "Expected: 'test' (ignore case)\n" +
@@ -333,49 +333,49 @@ public class AnyBodyUnitTests {
     @Test
     @DisplayName("assertStringBodyIsIgnoreCase(): no error if different case")
     public void test1637483230878() {
-        new AnyBody("test1637483230878").assertStringBodyIsIgnoreCase("TEST1637483230878");
+        new RawBody("test1637483230878").assertStringBodyIsIgnoreCase("TEST1637483230878");
     }
 
     @Test
     @DisplayName("assertStringBodyIsIgnoreCase(): no error if full match")
     public void test1637483233620() {
-        new AnyBody("test1637483233620").assertStringBodyIsIgnoreCase("test1637483233620");
+        new RawBody("test1637483233620").assertStringBodyIsIgnoreCase("test1637483233620");
     }
 
     @Test
     @DisplayName("equals() = true if same objects")
     public void test1637483554877() {
-        final AnyBody anyBody = new AnyBody("test1637483554877");
-        assertThat("", anyBody.equals(anyBody), is(true));
+        final RawBody rawBody = new RawBody("test1637483554877");
+        assertThat("", rawBody.equals(rawBody), is(true));
     }
 
     @Test
     @DisplayName("equals() = true if null (body and compared object)")
     public void test1637483617976() {
-        final AnyBody anyBody = new AnyBody((byte[]) null);
-        assertThat("", anyBody.equals(null), is(true));
+        final RawBody rawBody = new RawBody((byte[]) null);
+        assertThat("", rawBody.equals(null), is(true));
     }
 
     @Test
     @DisplayName("equals() = false if compared object != AnyBody")
     public void test1637483724496() {
-        final AnyBody anyBody = new AnyBody("");
-        assertThat("", anyBody.equals(new String()), is(false));
+        final RawBody rawBody = new RawBody("");
+        assertThat("", rawBody.equals(new String()), is(false));
     }
 
     @Test
     @DisplayName("equals() = false if compared object = null")
     public void test1637483797632() {
-        final AnyBody anyBody = new AnyBody("");
-        assertThat("", anyBody.equals(null), is(false));
+        final RawBody rawBody = new RawBody("");
+        assertThat("", rawBody.equals(null), is(false));
     }
 
     @Test
     @DisplayName("equals() = true if same data (body and compared object)")
     public void test1637483839968() {
-        final AnyBody anyBody1 = new AnyBody("test1637483839968");
-        final AnyBody anyBody2 = new AnyBody("test1637483839968");
-        assertThat("", anyBody1.equals(anyBody2), is(true));
+        final RawBody rawBody1 = new RawBody("test1637483839968");
+        final RawBody rawBody2 = new RawBody("test1637483839968");
+        assertThat("", rawBody1.equals(rawBody2), is(true));
     }
 
 }

@@ -18,15 +18,13 @@ package org.touchbit.retrofit.ext.dmr.client.converter.api;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
-import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
-import org.touchbit.retrofit.ext.dmr.util.ThrowableRunnable;
-import org.touchbit.retrofit.ext.dmr.util.ThrowableSupplier;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
@@ -54,25 +52,9 @@ public interface ExtensionConverter<DTO> {
      * @return {@link Converter}
      */
     @EverythingIsNonNull
-    ResponseBodyConverter<DTO> responseBodyConverter(Type type,
-                                                     Annotation[] methodAnnotations,
-                                                     Retrofit retrofit);
-
-    default void wrap(ThrowableRunnable runnable) {
-        try {
-            runnable.execute();
-        } catch (Throwable e) {
-            throw new ConvertCallException("An error occurred while converting. See the reasons below.", e);
-        }
-    }
-
-    default <A> A wrap(ThrowableSupplier<A> supplier) {
-        try {
-            return supplier.execute();
-        } catch (Throwable e) {
-            throw new ConvertCallException("An error occurred while converting. See the reasons below.", e);
-        }
-    }
+    ResponseBodyConverter<DTO> responseBodyConverter(final Type type,
+                                                     final Annotation[] methodAnnotations,
+                                                     final Retrofit retrofit);
 
     /**
      * Convert objects to and from their representation in HTTP.
@@ -87,7 +69,7 @@ public interface ExtensionConverter<DTO> {
          */
         @Override
         @Nullable
-        RequestBody convert(@Nonnull Object body);
+        RequestBody convert(@Nonnull Object body) throws IOException;
 
     }
 
@@ -104,7 +86,7 @@ public interface ExtensionConverter<DTO> {
          */
         @Override
         @Nullable
-        DTO convert(@Nullable ResponseBody body);
+        DTO convert(@Nullable ResponseBody body) throws IOException;
 
     }
 

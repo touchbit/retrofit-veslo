@@ -81,7 +81,7 @@ public class JacksonUnitTests {
 
     @Test
     @DisplayName("Jackson RequestBodyConverter.convert() successful convert DTO")
-    public void test1637548419338() {
+    public void test1637548419338() throws IOException {
         ErrorDTO errorDTO = new ErrorDTO().setCode(100).setMessage("test1637548419338");
         final RequestBody requestBody = REQUEST_CONVERTER.convert(errorDTO);
         final String result = OkHttpUtils.requestBodyToString(requestBody);
@@ -90,7 +90,7 @@ public class JacksonUnitTests {
 
     @Test
     @DisplayName("Jackson RequestBodyConverter.convert() successful convert Map")
-    public void test1637548760804() {
+    public void test1637548760804() throws IOException {
         Map<String, Object> body = new HashMap<>();
         body.put("method", "test1637548760804");
         final RequestBody requestBody = REQUEST_CONVERTER.convert(body);
@@ -100,7 +100,7 @@ public class JacksonUnitTests {
 
     @Test
     @DisplayName("Jackson RequestBodyConverter.convert() successful convert List")
-    public void test1637548951112() {
+    public void test1637548951112() throws IOException {
         Map<String, Object> inner = new HashMap<>();
         inner.put("method", "test1637548951112");
         List<Object> body = new ArrayList<>();
@@ -112,7 +112,7 @@ public class JacksonUnitTests {
 
     @Test
     @DisplayName("Jackson RequestBodyConverter.convert() successful convert String")
-    public void test1637549076590() {
+    public void test1637549076590() throws IOException {
         final RequestBody requestBody = REQUEST_CONVERTER.convert("test1637549076590");
         final String result = OkHttpUtils.requestBodyToString(requestBody);
         assertThat("String json", result, is("\"test1637549076590\""));
@@ -120,7 +120,7 @@ public class JacksonUnitTests {
 
     @Test
     @DisplayName("Jackson RequestBodyConverter.convert() successful convert Integer")
-    public void test1637549114760() {
+    public void test1637549114760() throws IOException {
         final RequestBody requestBody = REQUEST_CONVERTER.convert(1);
         final String result = OkHttpUtils.requestBodyToString(requestBody);
         assertThat("Integer json", result, is("1"));
@@ -128,7 +128,7 @@ public class JacksonUnitTests {
 
     @Test
     @DisplayName("Jackson RequestBodyConverter.convert() successful convert Double")
-    public void test1637549157310() {
+    public void test1637549157310() throws IOException {
         final RequestBody requestBody = REQUEST_CONVERTER.convert(16.3);
         final String result = OkHttpUtils.requestBodyToString(requestBody);
         assertThat("Double json", result, is("16.3"));
@@ -136,7 +136,7 @@ public class JacksonUnitTests {
 
     @Test
     @DisplayName("Jackson RequestBodyConverter.convert() successful convert Boolean")
-    public void test1637549208269() {
+    public void test1637549208269() throws IOException {
         final RequestBody requestBody = REQUEST_CONVERTER.convert(true);
         final String result = OkHttpUtils.requestBodyToString(requestBody);
         assertThat("Boolean json", result, is("true"));
@@ -144,7 +144,7 @@ public class JacksonUnitTests {
 
     @Test
     @DisplayName("Jackson RequestBodyConverter.convert() successful convert null (JSON_NULL_VALUE)")
-    public void test1637549282466() {
+    public void test1637549282466() throws IOException {
         final RequestBody requestBody = REQUEST_CONVERTER.convert(JSON_NULL_VALUE);
         final String result = OkHttpUtils.requestBodyToString(requestBody);
         assertThat("null json", result, is("null"));
@@ -152,7 +152,7 @@ public class JacksonUnitTests {
 
     @Test
     @DisplayName("Jackson RequestBodyConverter.convert() successful convert null (BODY_NULL_VALUE)")
-    public void test1637551063508() {
+    public void test1637551063508() throws IOException {
         final RequestBody requestBody = REQUEST_CONVERTER.convert(BODY_NULL_VALUE);
         assertThat("RequestBody", requestBody, nullValue());
     }
@@ -178,7 +178,7 @@ public class JacksonUnitTests {
 
     @Test
     @DisplayName("Jackson ResponseBodyConverter.convert() successful convert to DTO")
-    public void test1637551944533() {
+    public void test1637551944533() throws IOException {
         final ResponseBody body = create(null, "{\n  \"code\" : 100,\n  \"message\" : \"test1637551944533\"\n}");
         final ErrorDTO actual = responseBodyConverter(ErrorDTO.class).convert(body);
         assertThat("ErrorDTO", actual, notNullValue());
@@ -188,7 +188,7 @@ public class JacksonUnitTests {
 
     @Test
     @DisplayName("Jackson ResponseBodyConverter.convert() successful convert to Map")
-    public void test1637552426833() {
+    public void test1637552426833() throws IOException {
         final ResponseBody body = create(null, "{\n  \"code\" : 100,\n  \"message\" : \"test1637552426833\"\n}");
         final Map<String, Object> actual = responseBodyConverter(Map.class).convert(body);
         assertThat("Map", actual, notNullValue());
@@ -198,7 +198,7 @@ public class JacksonUnitTests {
 
     @Test
     @DisplayName("Jackson ResponseBodyConverter.convert() successful convert to List")
-    public void test1637552486160() {
+    public void test1637552486160() throws IOException {
         final ResponseBody body = create(null, "[{\n  \"code\" : 100,\n  \"message\" : \"test1637552486160\"\n}]");
         final List<Map<String, Object>> actual = responseBodyConverter(List.class).convert(body);
         assertThat("List", actual, notNullValue());
@@ -210,7 +210,7 @@ public class JacksonUnitTests {
 
     @Test
     @DisplayName("Jackson ResponseBodyConverter.convert() successful convert to String")
-    public void test1637552604106() {
+    public void test1637552604106() throws IOException {
         final ResponseBody body = create(null, "\"test1637552604106\"");
         final String actual = responseBodyConverter(String.class).convert(body);
         assertThat("String", actual, is("test1637552604106"));
@@ -218,7 +218,7 @@ public class JacksonUnitTests {
 
     @Test
     @DisplayName("Jackson ResponseBodyConverter.convert() successful convert to Integer")
-    public void test1637552610914() {
+    public void test1637552610914() throws IOException {
         final ResponseBody body = create(null, "111");
         final Integer actual = responseBodyConverter(Integer.class).convert(body);
         assertThat("Integer", actual, is(111));
@@ -226,7 +226,7 @@ public class JacksonUnitTests {
 
     @Test
     @DisplayName("Jackson ResponseBodyConverter.convert() successful convert to Double")
-    public void test1637552620768() {
+    public void test1637552620768() throws IOException {
         final ResponseBody body = create(null, "111.11");
         final Double actual = responseBodyConverter(Double.class).convert(body);
         assertThat("Double", actual, is(111.11));
@@ -234,7 +234,7 @@ public class JacksonUnitTests {
 
     @Test
     @DisplayName("Jackson ResponseBodyConverter.convert() successful convert to boolean (false)")
-    public void test1637552783259() {
+    public void test1637552783259() throws IOException {
         final ResponseBody body = create(null, "false");
         final boolean actual = responseBodyConverter(boolean.class).convert(body);
         assertThat("boolean", actual, is(false));
@@ -242,7 +242,7 @@ public class JacksonUnitTests {
 
     @Test
     @DisplayName("Jackson ResponseBodyConverter.convert() successful convert to boolean (false (0))")
-    public void test1637552834115() {
+    public void test1637552834115() throws IOException {
         final ResponseBody body = create(null, "0");
         final boolean actual = responseBodyConverter(boolean.class).convert(body);
         assertThat("boolean", actual, is(false));
@@ -250,14 +250,14 @@ public class JacksonUnitTests {
 
     @Test
     @DisplayName("Jackson ResponseBodyConverter.convert() successful convert to null (ResponseBody = null)")
-    public void test1637552975505() {
+    public void test1637552975505() throws IOException {
         final ErrorDTO actual = responseBodyConverter(ErrorDTO.class).convert(null);
         assertThat("ErrorDTO", actual, nullValue());
     }
 
     @Test
     @DisplayName("Jackson ResponseBodyConverter.convert() successful convert to null (content length = 0)")
-    public void test1637553021315() {
+    public void test1637553021315() throws IOException {
         final ResponseBody body = create(null, "");
         final ErrorDTO actual = responseBodyConverter(ErrorDTO.class).convert(body);
         assertThat("ErrorDTO", actual, nullValue());

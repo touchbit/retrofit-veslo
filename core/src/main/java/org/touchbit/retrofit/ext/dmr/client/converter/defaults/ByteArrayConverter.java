@@ -27,10 +27,13 @@ import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 public class ByteArrayConverter implements ExtensionConverter<Byte[]> {
+
+    public static final ByteArrayConverter INSTANCE = new ByteArrayConverter();
 
     @Override
     @EverythingIsNonNull
@@ -64,11 +67,11 @@ public class ByteArrayConverter implements ExtensionConverter<Byte[]> {
 
             @Override
             @Nullable
-            public Byte[] convert(@Nullable ResponseBody body) {
+            public Byte[] convert(@Nullable ResponseBody body) throws IOException {
                 if (body == null) {
                     return null;
                 }
-                return wrap(() -> Utils.toObjectByteArray(body.bytes()));
+                return Utils.toObjectByteArray(body.bytes());
             }
 
         };
