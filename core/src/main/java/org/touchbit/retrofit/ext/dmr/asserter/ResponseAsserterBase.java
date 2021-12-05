@@ -32,21 +32,21 @@ import java.util.function.Consumer;
  * Created by Oleg Shaburov on 19.11.2021
  * shaburov.o.a@gmail.com
  */
-public abstract class ResponseAsserterBase<SUCCESSFUL_DTO, ERROR_DTO, HA> implements Closeable, SoftlyAsserter {
+public abstract class ResponseAsserterBase<SUC_DTO, ERR_DTO, HA> implements Closeable, SoftlyAsserter {
 
-    private final IDualResponse<SUCCESSFUL_DTO, ERROR_DTO> response;
+    private final IDualResponse<SUC_DTO, ERR_DTO> response;
     private final List<Throwable> errors = new ArrayList<>();
 
-    public ResponseAsserterBase(@Nonnull IDualResponse<SUCCESSFUL_DTO, ERROR_DTO> response) {
+    public ResponseAsserterBase(@Nonnull IDualResponse<SUC_DTO, ERR_DTO> response) {
         Utils.parameterRequireNonNull(response, "response");
         this.response = response;
     }
 
     @EverythingIsNonNull
-    public abstract ResponseAsserter<SUCCESSFUL_DTO, ERROR_DTO> assertHeaders(Consumer<HA> consumer);
+    public abstract ResponseAsserter<SUC_DTO, ERR_DTO> assertHeaders(Consumer<HA> consumer);
 
     @Nonnull
-    public IDualResponse<SUCCESSFUL_DTO, ERROR_DTO> getResponse() {
+    public IDualResponse<SUC_DTO, ERR_DTO> getResponse() {
         return response;
     }
 

@@ -33,6 +33,10 @@ public class RawBody {
 
     private final byte[] bodyData;
 
+    public RawBody() {
+        this((byte[]) null);
+    }
+
     /**
      * @param data - byte body
      */
@@ -42,6 +46,14 @@ public class RawBody {
 
     public RawBody(String string) {
         this(string == null ? null : string.getBytes());
+    }
+
+    public static RawBody nullable() {
+        return new RawBody((byte[]) null);
+    }
+
+    public static RawBody empty() {
+        return new RawBody(new byte[]{});
     }
 
     public RawBody assertBodyIsNotNull() {
@@ -161,6 +173,11 @@ public class RawBody {
             return null;
         }
         return new String(bodyData);
+    }
+
+    @Override
+    public String toString() {
+        return "RawBody{bodyData=" + Arrays.toString(bodyData) + '}';
     }
 
     @Override

@@ -20,17 +20,19 @@ import org.touchbit.retrofit.ext.dmr.client.TransportEvent;
 import org.touchbit.retrofit.ext.dmr.client.header.ContentType;
 import retrofit2.internal.EverythingIsNonNull;
 
+import java.lang.reflect.Type;
+
 public class ConverterNotFoundException extends RuntimeException {
 
     @EverythingIsNonNull
     public ConverterNotFoundException(final TransportEvent transportEvent,
                                       final ContentType contentType,
-                                      final Class<?> bodyClass,
+                                      final Type bodyType,
                                       final String converterInfo) {
         super("Converter not found\n" +
                 "Transport event: " + transportEvent + "\n" +
                 "Content-Type: " + contentType + "\n" +
-                "DTO type: " + bodyClass + "\n\n" +
+                "DTO type: " + bodyType + "\n\n" +
                 converterInfo);
     }
 

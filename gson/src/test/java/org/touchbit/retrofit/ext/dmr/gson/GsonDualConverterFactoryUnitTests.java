@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.client.header.ContentType;
 
+import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -32,7 +33,7 @@ public class GsonDualConverterFactoryUnitTests {
 
     @Test
     @DisplayName("JacksonDualConverterFactory constructor")
-    public void test1637547165245() {
+    public void test1639065946429() {
         final GsonDualConverterFactory jacksonDualConverterFactory = new GsonDualConverterFactory();
         final Map<ContentType, ? extends ExtensionConverter<?>> mimeRequestConverters =
                 jacksonDualConverterFactory.getMimeRequestConverters().entrySet().stream()
@@ -44,12 +45,12 @@ public class GsonDualConverterFactoryUnitTests {
                         .filter(e -> e.getValue() instanceof GsonConverter)
                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         assertThat("MIME response converters", mimeResponseConverters.size(), is(4));
-        final Map<? extends Class<?>, ? extends ExtensionConverter<?>> rawRequestConverters =
+        final Map<? extends Type, ? extends ExtensionConverter<?>> rawRequestConverters =
                 jacksonDualConverterFactory.getRawRequestConverters().entrySet().stream()
                         .filter(e -> e.getValue() instanceof GsonConverter)
                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         assertThat("Raw request converters", rawRequestConverters.size(), is(0));
-        final Map<? extends Class<?>, ? extends ExtensionConverter<?>> rawResponseConverters =
+        final Map<? extends Type, ? extends ExtensionConverter<?>> rawResponseConverters =
                 jacksonDualConverterFactory.getRawResponseConverters().entrySet().stream()
                         .filter(e -> e.getValue() instanceof GsonConverter)
                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));

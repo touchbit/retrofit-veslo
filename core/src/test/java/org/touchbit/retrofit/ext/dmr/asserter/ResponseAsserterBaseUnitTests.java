@@ -35,13 +35,13 @@ public class ResponseAsserterBaseUnitTests {
 
     @Test
     @DisplayName("NPE if constructor argument is null")
-    public void test1637297423971() {
+    public void test1639065947789() {
         assertThrow(() -> getResponseAsserterBase(null)).assertNPE("response");
     }
 
     @Test
     @DisplayName("#addError(Throwable) & #getErrors()")
-    public void test1637297918112() {
+    public void test1639065947795() {
         final IDualResponse mock = mock(IDualResponse.class);
         final ResponseAsserterBase responseAsserterBase = getResponseAsserterBase(mock);
         assertThat("ResponseAsserterBase.getErrors()", responseAsserterBase.getErrors(), notNullValue());
@@ -53,7 +53,7 @@ public class ResponseAsserterBaseUnitTests {
 
     @Test
     @DisplayName("#close() with AssertionError if errors present")
-    public void test1637299122721() {
+    public void test1639065947807() {
         final IDualResponse mock = mock(IDualResponse.class);
         final ResponseAsserterBase responseAsserterBase = getResponseAsserterBase(mock);
         final NumberFormatException expected = new NumberFormatException("test1637299122721");
@@ -65,14 +65,14 @@ public class ResponseAsserterBaseUnitTests {
 
     @Test
     @DisplayName("#close() without AssertionError if no errors")
-    public void test1637300067114() {
+    public void test1639065947819() {
         final IDualResponse mock = mock(IDualResponse.class);
         getResponseAsserterBase(mock).close();
     }
 
     @Test
     @DisplayName("#getResponse()")
-    public void test1637299230603() {
+    public void test1639065947826() {
         final IDualResponse exp = mock(IDualResponse.class);
         final ResponseAsserterBase responseAsserterBase = getResponseAsserterBase(exp);
         assertThat("ResponseAsserterBase.getResponse()", responseAsserterBase.getResponse(), is(exp));

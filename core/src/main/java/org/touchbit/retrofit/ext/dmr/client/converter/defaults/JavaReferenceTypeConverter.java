@@ -63,7 +63,7 @@ public class JavaReferenceTypeConverter extends JavaTypeConverterBase {
             @Nullable
             @Override
             public Object convert(@Nullable ResponseBody responseBody) throws IOException {
-                if (responseBody == null) {
+                if (responseBody == null || responseBody.contentLength() == 0) {
                     return null;
                 }
                 final String body = responseBody.string();
@@ -80,48 +80,56 @@ public class JavaReferenceTypeConverter extends JavaTypeConverterBase {
                     if (body.equalsIgnoreCase("false") || body.equalsIgnoreCase("true")) {
                         return Boolean.valueOf(body);
                     }
-                    throw new ConvertCallException("Boolean conversion error:\nexpected true/false\nbut was " + body);
+                    throw new ConvertCallException("Boolean conversion error:\n" +
+                            "expected true/false\n" +
+                            "but was " + exceptionBodyValue(body));
                 } else if (type.equals(Byte.class)) {
                     try {
                         return Byte.valueOf(body);
                     } catch (Exception e) {
-                        throw new ConvertCallException("Byte conversion error:\nexpected byte in range " +
-                                Byte.MIN_VALUE + "..." + Byte.MAX_VALUE + "\nbut was " + body, e);
+                        throw new ConvertCallException("Byte conversion error:\n" +
+                                "expected byte in range " + Byte.MIN_VALUE + "..." + Byte.MAX_VALUE + "\n" +
+                                "but was " + exceptionBodyValue(body), e);
                     }
                 } else if (type.equals(Integer.class)) {
                     try {
                         return Integer.valueOf(body);
                     } catch (Exception e) {
-                        throw new ConvertCallException("Integer conversion error:\nexpected integer number in range " +
-                                Integer.MIN_VALUE + "..." + Integer.MAX_VALUE + "\nbut was " + body, e);
+                        throw new ConvertCallException("Integer conversion error:\n" +
+                                "expected integer number in range " + Integer.MIN_VALUE + "..." + Integer.MAX_VALUE + "\n" +
+                                "but was " + exceptionBodyValue(body), e);
                     }
                 } else if (type.equals(Double.class)) {
                     try {
                         return Double.valueOf(body);
                     } catch (Exception e) {
-                        throw new ConvertCallException("Double conversion error:\nexpected double number in range " +
-                                Double.MIN_VALUE + "..." + Double.MAX_VALUE + "\nbut was " + body, e);
+                        throw new ConvertCallException("Double conversion error:\n" +
+                                "expected double number in range " + Double.MIN_VALUE + "..." + Double.MAX_VALUE + "\n" +
+                                "but was " + exceptionBodyValue(body), e);
                     }
                 } else if (type.equals(Float.class)) {
                     try {
                         return Float.valueOf(body);
                     } catch (Exception e) {
-                        throw new ConvertCallException("Float conversion error:\nexpected float number in range " +
-                                Float.MIN_VALUE + "..." + Float.MAX_VALUE + "\nbut was " + body, e);
+                        throw new ConvertCallException("Float conversion error:\n" +
+                                "expected float number in range " + Float.MIN_VALUE + "..." + Float.MAX_VALUE + "\n" +
+                                "but was " + exceptionBodyValue(body), e);
                     }
                 } else if (type.equals(Long.class)) {
                     try {
                         return Long.valueOf(body);
                     } catch (Exception e) {
-                        throw new ConvertCallException("Long conversion error:\nexpected long number in range " +
-                                Long.MIN_VALUE + "..." + Long.MAX_VALUE + "\nbut was " + body, e);
+                        throw new ConvertCallException("Long conversion error:\n" +
+                                "expected long number in range " + Long.MIN_VALUE + "..." + Long.MAX_VALUE + "\n" +
+                                "but was " + exceptionBodyValue(body), e);
                     }
                 } else if (type.equals(Short.class)) {
                     try {
                         return Short.valueOf(body);
                     } catch (Exception e) {
-                        throw new ConvertCallException("Short conversion error:\nexpected short number in range " +
-                                Short.MIN_VALUE + "..." + Short.MAX_VALUE + "\nbut was " + body, e);
+                        throw new ConvertCallException("Short conversion error:\n" +
+                                "expected short number in range " + Short.MIN_VALUE + "..." + Short.MAX_VALUE + "\n" +
+                                "but was " + exceptionBodyValue(body), e);
                     }
                 } else {
                     throw new ConvertCallException("Received an unsupported type for conversion: " + getTypeName(type));

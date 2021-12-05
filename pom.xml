@@ -94,19 +94,17 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest</artifactId>
-        </dependency>
     </dependencies>
 
     <dependencyManagement>
         <dependencies>
             <!-- project dependencies -->
+            <dependency>
+                <groupId>org.touchbit.retrofit.ext</groupId>
+                <artifactId>dual-response-all</artifactId>
+                <version>1.0.0</version>
+                <scope>compile</scope>
+            </dependency>
             <dependency>
                 <groupId>org.touchbit.retrofit.ext</groupId>
                 <artifactId>dual-response-core</artifactId>
@@ -215,18 +213,6 @@
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-params</artifactId>
                 <version>${junit.jupiter.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-junit-jupiter</artifactId>
-                <version>4.0.0</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest</artifactId>
-                <version>2.2</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>

@@ -25,8 +25,9 @@ import static okhttp3.Protocol.HTTP_1_1;
 
 public class MockInterceptor implements Interceptor {
 
-    public static final Integer SUCCESS_CODE_NO_CONTENT = 204;
-    public static final Integer ERROR_CODE_NO_CONTENT = 504;
+    public static final Integer OK = 200;
+    public static final Integer NO_CONTENT = 204;
+    public static final Integer ERR = 500;
 
     @Override
     @SuppressWarnings("NullableProblems")
@@ -45,7 +46,7 @@ public class MockInterceptor implements Interceptor {
         final String body;
         final ResponseBody responseBody;
         final Headers headers;
-        if (SUCCESS_CODE_NO_CONTENT.toString().equals(code) || ERROR_CODE_NO_CONTENT.toString().equals(code)) {
+        if (NO_CONTENT.toString().equals(code)) {
             responseBody = ResponseBody.create(mediaType, 0, new Buffer());
             headers = request.headers();
         } else {

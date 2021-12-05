@@ -31,7 +31,7 @@ public class ContentTypeUnitTests {
 
     @Test
     @DisplayName("Successfully instantiating class without charset parameter")
-    public void test1637471237697() {
+    public void test1639065952345() {
         final ContentType contentType = new ContentType("a", "b");
         assertThat("getType()", contentType.getType(), is("a"));
         assertThat("getSubtype()", contentType.getSubtype(), is("b"));
@@ -44,7 +44,7 @@ public class ContentTypeUnitTests {
 
     @Test
     @DisplayName("Successfully instantiating class with charset parameter")
-    public void test1637475190106() {
+    public void test1639065952358() {
         final ContentType contentType = new ContentType("a", "b", "c");
         assertThat("getType()", contentType.getType(), is("a"));
         assertThat("getSubtype()", contentType.getSubtype(), is("b"));
@@ -57,7 +57,7 @@ public class ContentTypeUnitTests {
 
     @Test
     @DisplayName("Successfully instantiating class where all parameters is null")
-    public void test1637475235272() {
+    public void test1639065952371() {
         final ContentType contentType = new ContentType(null, null, null);
         assertThat("getType()", contentType.getType(), nullValue());
         assertThat("getSubtype()", contentType.getSubtype(), nullValue());
@@ -70,7 +70,7 @@ public class ContentTypeUnitTests {
 
     @Test
     @DisplayName("Successfully instantiating class where type and subtype parameters is null")
-    public void test1637475290962() {
+    public void test1639065952384() {
         final ContentType contentType = new ContentType(null, null, "c");
         assertThat("getType()", contentType.getType(), nullValue());
         assertThat("getSubtype()", contentType.getSubtype(), nullValue());
@@ -83,7 +83,7 @@ public class ContentTypeUnitTests {
 
     @Test
     @DisplayName("Successfully instantiating class where MediaType is null")
-    public void test1637476295343() {
+    public void test1639065952397() {
         final ContentType contentType = new ContentType(null);
         assertThat("getType()", contentType.getType(), nullValue());
         assertThat("getSubtype()", contentType.getSubtype(), nullValue());
@@ -96,7 +96,7 @@ public class ContentTypeUnitTests {
 
     @Test
     @DisplayName("Successfully instantiating class where MediaType is present (with charset)")
-    public void test1637476325145() {
+    public void test1639065952410() {
         MediaType mediaType = MediaType.get("a/b; charset=utf-8");
         final ContentType contentType = new ContentType(mediaType);
         assertThat("getType()", contentType.getType(), is("a"));
@@ -110,7 +110,7 @@ public class ContentTypeUnitTests {
 
     @Test
     @DisplayName("Successfully instantiating class where MediaType is present (without charset)")
-    public void test1637476477675() {
+    public void test1639065952424() {
         MediaType mediaType = MediaType.get("a/b");
         final ContentType contentType = new ContentType(mediaType);
         assertThat("getType()", contentType.getType(), is("a"));
@@ -124,7 +124,7 @@ public class ContentTypeUnitTests {
 
     @Test
     @DisplayName("Error creating class instance if type=<present> and subtype=null")
-    public void test1637475796153() {
+    public void test1639065952438() {
         assertThrow(() -> new ContentType("test1637475796153", null))
                 .assertClass(IllegalArgumentException.class)
                 .assertMessageIs("Type and subtype can only be null at the same time");
@@ -132,7 +132,7 @@ public class ContentTypeUnitTests {
 
     @Test
     @DisplayName("Error creating class instance if type=null and subtype=<present>")
-    public void test1637475903584() {
+    public void test1639065952446() {
         assertThrow(() -> new ContentType(null, "test1637475903584"))
                 .assertClass(IllegalArgumentException.class)
                 .assertMessageIs("Type and subtype can only be null at the same time");
@@ -140,7 +140,7 @@ public class ContentTypeUnitTests {
 
     @Test
     @DisplayName("Error creating class instance if type is blank")
-    public void test1637475938918() {
+    public void test1639065952454() {
         assertThrow(() -> new ContentType("    ", "b"))
                 .assertClass(IllegalArgumentException.class)
                 .assertMessageIs("Parameter 'type' cannot be blank.");
@@ -148,7 +148,7 @@ public class ContentTypeUnitTests {
 
     @Test
     @DisplayName("Error creating class instance if subtype is blank")
-    public void test1637475951987() {
+    public void test1639065952462() {
         assertThrow(() -> new ContentType("a", "   "))
                 .assertClass(IllegalArgumentException.class)
                 .assertMessageIs("Parameter 'subtype' cannot be blank.");
@@ -156,7 +156,7 @@ public class ContentTypeUnitTests {
 
     @Test
     @DisplayName("Error creating class instance if charset is blank")
-    public void test1637476131140() {
+    public void test1639065952470() {
         assertThrow(() -> new ContentType("a", "b", "    "))
                 .assertClass(IllegalArgumentException.class)
                 .assertMessageIs("Parameter 'charset' cannot be blank.");
@@ -164,14 +164,14 @@ public class ContentTypeUnitTests {
 
     @Test
     @DisplayName("equals(null) with nullable ContentType (true)")
-    public void test1637476552375() {
+    public void test1639065952478() {
         ContentType contentType = new ContentType(null, null);
         assertThat("", contentType.equals(null), is(true));
     }
 
     @Test
     @DisplayName("equals() with same parameters ContentType (true)")
-    public void test1637476819470() {
+    public void test1639065952485() {
         ContentType a1 = new ContentType("a", "b", "c");
         ContentType a2 = new ContentType("a", "b", "c");
         assertThat("", a1.equals(a2), is(true));
@@ -179,7 +179,7 @@ public class ContentTypeUnitTests {
 
     @Test
     @DisplayName("equals() with same parameters MediaType (false)")
-    public void test1637477001424() {
+    public void test1639065952493() {
         final MediaType mediaType = MediaType.get("a/b; charset=utf-8");
         ContentType contentType = new ContentType("a", "b", "utf-8");
         assertThat("", contentType.equals(mediaType), is(false));
@@ -187,7 +187,7 @@ public class ContentTypeUnitTests {
 
     @Test
     @DisplayName("equals() with different type value (false)")
-    public void test1637477181449() {
+    public void test1639065952501() {
         ContentType a1 = new ContentType("a1", "b", "c");
         ContentType a2 = new ContentType("a", "b", "c");
         assertThat("", a1.equals(a2), is(false));
@@ -195,7 +195,7 @@ public class ContentTypeUnitTests {
 
     @Test
     @DisplayName("equals() with different subtype value (false)")
-    public void test1637477255057() {
+    public void test1639065952509() {
         ContentType a1 = new ContentType("a", "b1", "c");
         ContentType a2 = new ContentType("a", "b", "c");
         assertThat("", a1.equals(a2), is(false));
@@ -203,7 +203,7 @@ public class ContentTypeUnitTests {
 
     @Test
     @DisplayName("equals() with different charset value (false)")
-    public void test1637477272545() {
+    public void test1639065952517() {
         ContentType a1 = new ContentType("a", "b", "c1");
         ContentType a2 = new ContentType("a", "b", "c");
         assertThat("", a1.equals(a2), is(false));
@@ -211,7 +211,7 @@ public class ContentTypeUnitTests {
 
     @Test
     @DisplayName("ContentTypeConstants is util class")
-    public void test1637477394654() {
+    public void test1639065952525() {
         assertUtilityClassException(ContentTypeConstants.class);
     }
 

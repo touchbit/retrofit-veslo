@@ -50,6 +50,14 @@ public class CompositeInterceptor implements Interceptor {
         this.logger = logger;
     }
 
+    public List<RequestInterceptAction> getRequestInterceptActions() {
+        return requestInterceptActions;
+    }
+
+    public List<ResponseInterceptAction> getResponseInterceptAction() {
+        return responseInterceptAction;
+    }
+
     /**
      * The sequence of execution of {@link RequestInterceptAction} depends
      * on the sequence of passing them to the {@param requestActionsChain}
@@ -119,26 +127,26 @@ public class CompositeInterceptor implements Interceptor {
     @Nonnull
     public Response intercept(@Nonnull Chain realChain) throws IOException {
         Chain chain = realChain;
-        for (RequestInterceptAction action : requestInterceptActions) {
+        for (RequestInterceptAction action : getRequestInterceptActions()) {
             logger.trace("chainAction() call: {}", action);
             chain = action.chainAction(chain);
         }
         Response response;
         try {
             Request request = chain.request();
-            for (RequestInterceptAction action : requestInterceptActions) {
+            for (RequestInterceptAction action : getRequestInterceptActions()) {
                 logger.trace("requestAction() call: {}", action);
                 request = action.requestAction(request);
             }
             response = chain.proceed(request);
         } catch (IOException | RuntimeException e) {
-            for (ResponseInterceptAction action : responseInterceptAction) {
+            for (ResponseInterceptAction action : getResponseInterceptAction()) {
                 logger.trace("errorAction() call: {}", action);
                 action.errorAction(e);
             }
             throw e;
         }
-        for (ResponseInterceptAction action : responseInterceptAction) {
+        for (ResponseInterceptAction action : getResponseInterceptAction()) {
             logger.trace("responseAction() call: {}", action);
             response = action.responseAction(response);
         }

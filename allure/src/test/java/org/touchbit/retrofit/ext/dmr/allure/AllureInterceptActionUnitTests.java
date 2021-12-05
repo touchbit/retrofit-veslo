@@ -42,7 +42,7 @@ public class AllureInterceptActionUnitTests extends BaseUnitTests {
 
     @Test
     @DisplayName("#requestAction() Successful add request attachment")
-    public void test1638347276789() throws IOException {
+    public void test1639065952922() throws IOException {
         UnitTestInternalAllurePlatform.execute("test1638347276789", () -> {
             AllureInterceptAction action = new AllureInterceptAction();
             final Request expRequest = OkHttpUtils.getRequest();
@@ -71,7 +71,7 @@ public class AllureInterceptActionUnitTests extends BaseUnitTests {
 
     @Test
     @DisplayName("#responseAction() Successful add response attachment")
-    public void test1638351724471() throws IOException {
+    public void test1639065952951() throws IOException {
         UnitTestInternalAllurePlatform.execute("test1638351724471", () -> {
             AllureInterceptAction action = new AllureInterceptAction();
             final Response expResponse = OkHttpUtils.getResponse();

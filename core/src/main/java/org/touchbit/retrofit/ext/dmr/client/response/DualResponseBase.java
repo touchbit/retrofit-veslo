@@ -16,54 +16,73 @@
 
 package org.touchbit.retrofit.ext.dmr.client.response;
 
-import okhttp3.Request;
-import retrofit2.Response;
+import okhttp3.Response;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
-public abstract class DualResponseBase<SUCCESSFUL_DTO, ERROR_DTO> implements IDualResponse<SUCCESSFUL_DTO, ERROR_DTO> {
+public abstract class DualResponseBase<SUC_DTO, ERR_DTO> implements IDualResponse<SUC_DTO, ERR_DTO> {
 
-    private final Request rawRequest;
+    private final SUC_DTO sucDTO;
+    private final ERR_DTO errDTO;
+    private final Response response;
     private final String endpointInfo;
-    private final Response<SUCCESSFUL_DTO> response;
-    private final ERROR_DTO errorDTO;
     private final Annotation[] callAnnotations;
 
-    protected DualResponseBase(final Request rawRequest,
-                               final Response<SUCCESSFUL_DTO> response,
-                               final ERROR_DTO errorDto,
-                               final String endpointInfo,
-                               final Annotation[] callAnnotations) {
-        this.rawRequest = rawRequest;
+    protected DualResponseBase(final @Nullable SUC_DTO sucDTO,
+                               final @Nullable ERR_DTO errDTO,
+                               final @Nonnull Response response,
+                               final @Nonnull String endpointInfo,
+                               final @Nonnull Annotation[] callAnnotations) {
         this.response = response;
+        this.sucDTO = sucDTO;
+        this.errDTO = errDTO;
         this.endpointInfo = endpointInfo;
-        this.errorDTO = errorDto;
         this.callAnnotations = callAnnotations;
     }
 
     @Override
-    public Request getRawRequest() {
-        return rawRequest;
+    @Nullable
+    public ERR_DTO getErrorDTO() {
+        return errDTO;
     }
 
     @Override
+    @Nullable
+    public SUC_DTO getSucDTO() {
+        return sucDTO;
+    }
+
+    @Override
+    @Nonnull
     public String getEndpointInfo() {
         return endpointInfo;
     }
 
+
     @Override
-    public Response<SUCCESSFUL_DTO> getResponse() {
+    @Nonnull
+    public Response getResponse() {
         return response;
     }
 
     @Override
-    public ERROR_DTO getErrorDTO() {
-        return errorDTO;
-    }
-
-    @Override
+    @Nonnull
     public Annotation[] getCallAnnotations() {
         return callAnnotations;
     }
 
+    @Override
+    public String toString() {
+        return ("Success DTO: " + sucDTO + "\n" +
+                "Error DTO: " + errDTO + "\n" +
+                "Raw response: " + response + "\n" +
+                "Call info: '" + endpointInfo + "'\n" +
+                "API method annotations:" + (callAnnotations.length == 0 ? "" : "\n  ")
+                + Arrays.stream(callAnnotations)
+                .map(Annotation::toString).collect(Collectors.joining("\n  "))).trim();
+    }
 }

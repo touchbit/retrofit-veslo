@@ -33,7 +33,7 @@ public class BooleanTypeAdapterUnitTests {
     private static final BooleanTypeAdapter ADAPTER = new BooleanTypeAdapter();
     @Test
     @DisplayName("#deserialize() boolean")
-    public void test1638371739319() {
+    public void test1639065946489() {
         final JsonPrimitive primitive = new JsonPrimitive(true);
         final Boolean deserialize = ADAPTER.deserialize(primitive, null, null);
         assertThat("", deserialize, is(true));
@@ -41,7 +41,7 @@ public class BooleanTypeAdapterUnitTests {
 
     @Test
     @DisplayName("#deserialize() Boolean")
-    public void test1638371852841() {
+    public void test1639065946497() {
         final JsonPrimitive primitive = new JsonPrimitive(Boolean.TRUE);
         final Boolean deserialize = ADAPTER.deserialize(primitive, null, null);
         assertThat("", deserialize, is(true));
@@ -49,7 +49,7 @@ public class BooleanTypeAdapterUnitTests {
 
     @Test
     @DisplayName("#deserialize() string true")
-    public void test1638371888599() {
+    public void test1639065946505() {
         final JsonPrimitive primitive = new JsonPrimitive("true");
         final Boolean deserialize = ADAPTER.deserialize(primitive, null, null);
         assertThat("", deserialize, is(true));
@@ -57,7 +57,7 @@ public class BooleanTypeAdapterUnitTests {
 
     @Test
     @DisplayName("#deserialize() string false")
-    public void test1638371914945() {
+    public void test1639065946513() {
         final JsonPrimitive primitive = new JsonPrimitive("false");
         final Boolean deserialize = ADAPTER.deserialize(primitive, null, null);
         assertThat("", deserialize, is(false));
@@ -65,7 +65,7 @@ public class BooleanTypeAdapterUnitTests {
 
     @Test
     @DisplayName("#deserialize() UUID string (exception)")
-    public void test1638371936172() {
+    public void test1639065946521() {
         final String uuid = UUID.randomUUID().toString();
         final JsonPrimitive primitive = new JsonPrimitive(uuid);
         assertThrow(() -> ADAPTER.deserialize(primitive, null, null))
@@ -75,7 +75,7 @@ public class BooleanTypeAdapterUnitTests {
 
     @Test
     @DisplayName("#deserialize() int 1 to true")
-    public void test1638372037648() {
+    public void test1639065946531() {
         final JsonPrimitive primitive = new JsonPrimitive(1);
         final Boolean deserialize = ADAPTER.deserialize(primitive, null, null);
         assertThat("", deserialize, is(true));
@@ -83,7 +83,7 @@ public class BooleanTypeAdapterUnitTests {
 
     @Test
     @DisplayName("#deserialize() int 0 to false")
-    public void test1638372052035() {
+    public void test1639065946539() {
         final JsonPrimitive primitive = new JsonPrimitive(0);
         final Boolean deserialize = ADAPTER.deserialize(primitive, null, null);
         assertThat("", deserialize, is(false));
@@ -91,7 +91,7 @@ public class BooleanTypeAdapterUnitTests {
 
     @Test
     @DisplayName("#deserialize() int -1 (exception)")
-    public void test1638372074508() {
+    public void test1639065946547() {
         final JsonPrimitive primitive = new JsonPrimitive(-1);
         assertThrow(() -> ADAPTER.deserialize(primitive, null, null))
                 .assertClass(JsonParseException.class)

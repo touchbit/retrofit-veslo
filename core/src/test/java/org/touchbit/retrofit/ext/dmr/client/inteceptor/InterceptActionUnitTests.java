@@ -29,7 +29,7 @@ public class InterceptActionUnitTests {
 
     @Test
     @DisplayName("#chainAction() return Request without modification")
-    public void test1637823114190() {
+    public void test1639065951290() {
         Interceptor.Chain chain = mock(Interceptor.Chain.class);
         final Interceptor.Chain result = new InterceptAction() {
         }.chainAction(chain);
@@ -38,7 +38,7 @@ public class InterceptActionUnitTests {
 
     @Test
     @DisplayName("#requestAction() return Request without modification")
-    public void test1637817398236() throws Exception {
+    public void test1639065951299() throws Exception {
         Request request = new Request.Builder().url("http://localhost").get().headers(Headers.of()).build();
         final Request result = new InterceptAction() {
         }.requestAction(request);
@@ -47,7 +47,7 @@ public class InterceptActionUnitTests {
 
     @Test
     @DisplayName("#responseAction() return Response without modification")
-    public void test1637817584009() throws Exception {
+    public void test1639065951308() throws Exception {
         Request request = new Request.Builder().url("http://localhost").get().headers(Headers.of()).build();
         Response expected = new Response.Builder()
                 .request(request)
@@ -64,7 +64,7 @@ public class InterceptActionUnitTests {
 
     @Test
     @DisplayName("#errorAction() does not throw an exception")
-    public void test1637817701116() {
+    public void test1639065951325() {
         new InterceptAction() {
         }.errorAction(new RuntimeException());
     }

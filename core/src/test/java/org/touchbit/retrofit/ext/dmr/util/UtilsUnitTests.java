@@ -35,13 +35,13 @@ public class UtilsUnitTests {
 
     @Test
     @DisplayName("Is util class")
-    public void test1637667467036() {
+    public void test1639065947880() {
         assertUtilityClassException(Utils.class);
     }
 
     @Test
     @DisplayName("#toObjectByteArray() & #toPrimitiveByteArray() positive")
-    public void test1637491140861() {
+    public void test1639065947886() {
         String expected = "test1637491140861";
         byte[] expectedBytes = "test1637491140861".getBytes();
         final Byte[] objBytes = Utils.toObjectByteArray(expected);
@@ -52,7 +52,7 @@ public class UtilsUnitTests {
 
     @Test
     @DisplayName("#toObjectByteArray() & #toPrimitiveByteArray() negative")
-    public void test1637491405685() {
+    public void test1639065947897() {
         assertThrow(() -> Utils.toObjectByteArray((String) null)).assertNPE("data");
         assertThrow(() -> Utils.toObjectByteArray((byte[]) null)).assertNPE("bytes");
         assertThrow(() -> Utils.toPrimitiveByteArray(null)).assertNPE("bytes");
@@ -60,7 +60,7 @@ public class UtilsUnitTests {
 
     @Test
     @DisplayName("#getAnnotation() return annotation if present")
-    public void test1637569339641() {
+    public void test1639065947905() {
         final Annotation[] callMethodAnnotations = getCallMethodAnnotations();
         final POST annotation = Utils.getAnnotation(callMethodAnnotations, POST.class);
         assertThat("", annotation, notNullValue());
@@ -68,7 +68,7 @@ public class UtilsUnitTests {
 
     @Test
     @DisplayName("#getAnnotation() return null if annotation not absent")
-    public void test1637569377426() {
+    public void test1639065947913() {
         final Annotation[] callMethodAnnotations = getCallMethodAnnotations();
         final GET annotation = Utils.getAnnotation(callMethodAnnotations, GET.class);
         assertThat("", annotation, nullValue());

@@ -49,29 +49,30 @@ public class OkhttpUtils {
         Utils.parameterRequireNonNull(request, "request");
         final StringJoiner resultMessage = new StringJoiner("\n");
         final RequestBody requestBody = request.body();
-        final boolean hasRequestBody = requestBody != null;
-        resultMessage.add("Request: " + request.method() + ' ' + request.url());
-        if (request.headers().toMultimap().isEmpty()) {
-            resultMessage.add("Request headers: (absent)");
+        final boolean hasRequestBody = requestBody != null && requestBody.contentLength() != 0;
+        resultMessage.add("REQUEST:\n" + request.method() + ' ' + request.url());
+        final Headers headers = getRequestHeaders(request);
+        if (headers.toMultimap().isEmpty()) {
+            resultMessage.add("Headers: (absent)");
         } else {
-            resultMessage.add("Request headers:");
-            resultMessage.add("  " + request.headers().toString().trim().replaceAll("\n", "\n  "));
+            resultMessage.add("Headers:");
+            resultMessage.add("  " + headers.toString().trim().replaceAll("\n", "\n  "));
         }
         if (!hasRequestBody) {
-            resultMessage.add("Request body: (absent)");
-        } else if (bodyHasUnknownEncoding(request.headers())) {
-            resultMessage.add("Request body: (encoded body omitted)");
+            resultMessage.add("Body: (absent)");
+        } else if (bodyHasUnknownEncoding(headers)) {
+            resultMessage.add("Body: (encoded body omitted)");
         } else if (requestBody.isDuplex()) {
-            resultMessage.add("Request body: (duplex request body omitted)");
+            resultMessage.add("Body: (duplex request body omitted)");
         } else {
             final Buffer buffer = new Buffer();
             requestBody.writeTo(buffer);
             Charset charset = getCharset(requestBody);
             if (isPlaintext(buffer)) {
-                resultMessage.add("Request body:");
-                resultMessage.add("  " + buffer.readString(charset).replace("\n", "  \n"));
+                resultMessage.add("Body: (" + buffer.size() + "-byte body)");
+                resultMessage.add("  " + buffer.readString(charset).replace("\n", "\n  "));
             } else {
-                resultMessage.add("Request body: (binary " + requestBody.contentLength() + "-byte body omitted)");
+                resultMessage.add("Body: (binary " + requestBody.contentLength() + "-byte body omitted)");
             }
         }
         return resultMessage.add("").toString();
@@ -93,25 +94,26 @@ public class OkhttpUtils {
         final StringJoiner resultMessage = new StringJoiner("\n");
         final ResponseBody responseBody = response.body();
         final boolean hasResponseBody = responseBody != null;
-        final String startMessage = "Response: " + response.code()
+        final String startMessage = "RESPONSE:\n" + response.code()
                 + (response.message().isEmpty() ? "" : ' ' + response.message())
                 + ' ' + response.request().url();
         resultMessage.add(startMessage);
-        if (response.headers().toMultimap().isEmpty()) {
-            resultMessage.add("Response headers: (absent)");
+        final Headers responseHeaders = getResponseHeaders(response);
+        if (responseHeaders.toMultimap().isEmpty()) {
+            resultMessage.add("Headers: (absent)");
         } else {
-            resultMessage.add("Response headers:");
-            resultMessage.add("  " + response.headers().toString().trim().replaceAll("\n", "\n  "));
+            resultMessage.add("Headers:");
+            resultMessage.add("  " + responseHeaders.toString().trim().replaceAll("\n", "\n  "));
         }
         if (!hasResponseBody || !HttpHeaders.hasBody(response)) {
-            resultMessage.add("Response body: (absent)");
-        } else if (bodyHasUnknownEncoding(response.headers())) {
-            resultMessage.add("Response body: (encoded body omitted)");
+            resultMessage.add("Body: (absent)");
+        } else if (bodyHasUnknownEncoding(responseHeaders)) {
+            resultMessage.add("Body: (encoded body omitted)");
         } else {
             final BufferedSource source = responseBody.source();
             source.request(Long.MAX_VALUE);
             Buffer buffer = source.getBuffer();
-            if ("gzip".equalsIgnoreCase(response.headers().get("Content-Encoding"))) {
+            if ("gzip".equalsIgnoreCase(responseHeaders.get("Content-Encoding"))) {
                 try (GzipSource gzippedResponseBody = new GzipSource(buffer.clone())) {
                     buffer = new Buffer();
                     buffer.writeAll(gzippedResponseBody);
@@ -120,15 +122,49 @@ public class OkhttpUtils {
             Charset charset = getCharset(responseBody);
             if (isPlaintext(buffer)) {
                 final String body = buffer.clone().readString(charset);
-                resultMessage.add("Response body: (" + buffer.size() + "-byte body)");
+                resultMessage.add("Body: (" + buffer.size() + "-byte body)");
                 if (body.length() > 0) {
                     resultMessage.add("  " + body.replace("\n", "\n  "));
                 }
             } else {
-                resultMessage.add("Response body: (binary " + buffer.size() + "-byte body omitted)");
+                resultMessage.add("Body: (binary " + buffer.size() + "-byte body omitted)");
             }
         }
         return resultMessage.add("").toString();
+    }
+
+    public static Headers getRequestHeaders(@Nonnull final Request request) throws IOException {
+        final Headers headers = request.headers();
+        final RequestBody body = request.body();
+        if (body == null) {
+            return headers;
+        }
+        final Headers.Builder builder = headers.newBuilder();
+        final MediaType mediaType = body.contentType();
+        if (headers.get("Content-Type") == null && mediaType != null) {
+            builder.add("Content-Type", mediaType.toString());
+        }
+        if (headers.get("Content-Length") == null) {
+            builder.add("Content-Length", String.valueOf(body.contentLength()));
+        }
+        return builder.build();
+    }
+
+    public static Headers getResponseHeaders(@Nonnull final Response response) {
+        final Headers headers = response.headers();
+        final ResponseBody body = response.body();
+        if (body == null) {
+            return headers;
+        }
+        final Headers.Builder builder = headers.newBuilder();
+        final MediaType mediaType = body.contentType();
+        if (headers.get("Content-Type") == null && mediaType != null) {
+            builder.add("Content-Type", mediaType.toString());
+        }
+        if (headers.get("Content-Length") == null) {
+            builder.add("Content-Length", String.valueOf(body.contentLength()));
+        }
+        return builder.build();
     }
 
     /**

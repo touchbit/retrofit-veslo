@@ -50,8 +50,13 @@ public class ResourceFile {
         }
     }
 
-    public String getString() {
+    @Override
+    public String toString() {
         return new String(getBytes());
+    }
+
+    public static String resourceToString(String resourceRelativePath) {
+        return new ResourceFile(resourceRelativePath).toString();
     }
 
     public String getResourceRelativePath() {

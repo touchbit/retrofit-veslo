@@ -20,7 +20,7 @@ import internal.test.utils.asserter.ThrowableRunnable;
 import internal.test.utils.client.TestClientBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.touchbit.retrofit.ext.dmr.client.adapter.DualCallAdapterFactory;
+import org.touchbit.retrofit.ext.dmr.client.adapter.DualResponseCallAdapterFactory;
 import org.touchbit.retrofit.ext.dmr.jackson.JacksonDualConverterFactory;
 import org.touchbit.retrofit.ext.dmr.jsr.client.JakartaMockClient;
 import org.touchbit.retrofit.ext.dmr.jsr.client.model.UserDTO;
@@ -36,7 +36,7 @@ import static org.hamcrest.Matchers.notNullValue;
 public class BeanValidationTests {
 
     protected static final JakartaMockClient MOCK_CLIENT = TestClientBuilder
-            .build(JakartaMockClient.class, new DualCallAdapterFactory(), new JacksonDualConverterFactory());
+            .build(JakartaMockClient.class, new DualResponseCallAdapterFactory(), new JacksonDualConverterFactory());
 
     static {
         Locale.setDefault(Locale.ENGLISH);
@@ -53,17 +53,17 @@ public class BeanValidationTests {
 
     @Test
     @DisplayName("Successfully fetching the DTO of the model if no validation errors occurred.")
-    public void test1636916993000() {
-        final UserDTO successfulDTO = MOCK_CLIENT.getUser(200, genUserDTO()).getSuccessfulDTO().assertConsistency();
+    public void test1639065952585() {
+        final UserDTO successfulDTO = MOCK_CLIENT.getUser(200, genUserDTO()).getSucDTO().assertConsistency();
         assertThat("UserDTO", successfulDTO, notNullValue());
     }
 
     @Test
     @DisplayName("If contract is violated, bean validation error is expected (UserDTO)")
-    public void test1636916993187() {
+    public void test1639065952592() {
         String uuid = UUID.randomUUID().toString();
         assertThrow(() -> MOCK_CLIENT.getUser(200, genUserDTO().firstName(uuid))
-                .assertResponse(response -> response.assertSuccessfulBody(UserDTO::assertConsistency)))
+                .assertResponse(response -> response.assertSucBody(UserDTO::assertConsistency)))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("" +
                         "Collected the following errors:\n\n" +
@@ -74,12 +74,12 @@ public class BeanValidationTests {
 
     @Test
     @DisplayName("If contract is violated, bean validation error is expected (UserDTO.UserPassport)")
-    public void test1636922771607() {
+    public void test1639065952606() {
         final String uuid = UUID.randomUUID().toString();
         final UserDTO user = genUserDTO().passport(p -> p.number(uuid));
         final ThrowableRunnable runnable = () -> MOCK_CLIENT.getUser(200, user).assertResponse(response -> response
                 .assertHttpStatusCodeIs(200)
-                .assertSuccessfulBody(UserDTO::assertConsistency));
+                .assertSucBody(UserDTO::assertConsistency));
         assertThrow(runnable)
                 .assertClass(AssertionError.class)
                 .assertMessageIs("" +

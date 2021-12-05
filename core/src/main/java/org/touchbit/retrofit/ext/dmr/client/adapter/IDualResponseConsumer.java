@@ -16,18 +16,20 @@
 
 package org.touchbit.retrofit.ext.dmr.client.adapter;
 
-import okhttp3.Request;
-import retrofit2.Response;
+import okhttp3.Response;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 
 @FunctionalInterface
 public interface IDualResponseConsumer<R> {
 
-    R accept(Request request,
-             Response<Object> response,
-             Object errorDto,
-             String endpointInfo,
-             Annotation[] callAnnotations);
+    @Nonnull
+    R accept(final @Nullable Object sucDTO,
+             final @Nullable Object errDTO,
+             final @Nonnull Response response,
+             final @Nonnull String endpointInfo,
+             final @Nonnull Annotation[] callAnnotations);
 
 }

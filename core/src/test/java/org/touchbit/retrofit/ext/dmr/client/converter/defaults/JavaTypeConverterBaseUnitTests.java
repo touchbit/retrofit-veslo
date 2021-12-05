@@ -31,8 +31,6 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
-import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter.BODY_NULL_VALUE;
@@ -48,7 +46,7 @@ public class JavaTypeConverterBaseUnitTests extends BaseUnitTest {
             throw new CorruptedTestException("Unusable method call");
         }
     };
-    private static final RequestBodyConverter REQUEST_CONVERTER = CONVERTER.requestBodyConverter(OBJ_T, AA, AA, RTF);
+    private static final RequestBodyConverter REQUEST_CONVERTER = CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF);
 
     @Nested
     @DisplayName(".requestBodyConverter(Type, Annotation[], Annotation[], Retrofit) method")
@@ -56,11 +54,11 @@ public class JavaTypeConverterBaseUnitTests extends BaseUnitTest {
 
         @Test
         @DisplayName("All parameters required")
-        public void test1638717993279() {
+        public void test1639065950239() {
             assertThrow(() -> CONVERTER.requestBodyConverter(null, AA, AA, RTF)).assertNPE("type");
-            assertThrow(() -> CONVERTER.requestBodyConverter(OBJ_T, null, AA, RTF)).assertNPE("parameterAnnotations");
-            assertThrow(() -> CONVERTER.requestBodyConverter(OBJ_T, AA, null, RTF)).assertNPE("methodAnnotations");
-            assertThrow(() -> CONVERTER.requestBodyConverter(OBJ_T, AA, AA, null)).assertNPE("retrofit");
+            assertThrow(() -> CONVERTER.requestBodyConverter(OBJ_C, null, AA, RTF)).assertNPE("parameterAnnotations");
+            assertThrow(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, null, RTF)).assertNPE("methodAnnotations");
+            assertThrow(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, null)).assertNPE("retrofit");
         }
 
         @Nested
@@ -68,7 +66,7 @@ public class JavaTypeConverterBaseUnitTests extends BaseUnitTest {
         public class ConvertMethodTests {
             @Test
             @DisplayName("return RequestBody if body present")
-            public void test1638616072076() throws IOException {
+            public void test1639065950251() throws IOException {
                 final RequestBody result = REQUEST_CONVERTER.convert("test1638616072076");
                 final String body = OkHttpUtils.requestBodyToString(result);
                 assertThat("", body, is("test1638616072076"));
@@ -76,14 +74,14 @@ public class JavaTypeConverterBaseUnitTests extends BaseUnitTest {
 
             @Test
             @DisplayName("return null if body = 'BODY_NULL_VALUE' (const)")
-            public void test1638616333838() throws IOException {
+            public void test1639065950259() throws IOException {
                 final RequestBody result = REQUEST_CONVERTER.convert(BODY_NULL_VALUE);
                 assertThat("", result, nullValue());
             }
 
             @Test
             @DisplayName("#requestBodyConverter() NPE if body = null")
-            public void test1638616412496() {
+            public void test1639065950266() {
                 assertThrow(() -> REQUEST_CONVERTER.convert(null)).assertNPE("body");
             }
         }

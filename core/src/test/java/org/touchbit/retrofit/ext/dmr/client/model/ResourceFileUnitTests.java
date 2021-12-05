@@ -34,19 +34,19 @@ public class ResourceFileUnitTests {
 
     @Test
     @DisplayName("Successfully instantiating class where resource file exists")
-    public void test1637486628431() {
+    public void test1639065952256() {
         new ResourceFile("test/data/test1637486628431.txt");
     }
 
     @Test
     @DisplayName("Successfully instantiating class where resource exists")
-    public void test1637486925349() {
+    public void test1639065952262() {
         new ResourceFile("test/data");
     }
 
     @Test
     @DisplayName("Failed to instantiate class where resource not exists")
-    public void test1637486983022() {
+    public void test1639065952268() {
         assertThrow(() -> new ResourceFile("test/data/test1637486983022.txt"))
                 .assertClass(ResourceFileException.class)
                 .assertMessageIs("Resource not exists: test/data/test1637486983022.txt");
@@ -54,14 +54,14 @@ public class ResourceFileUnitTests {
 
     @Test
     @DisplayName("getBytes() successful read of an existing resource file")
-    public void test1637487087922() {
+    public void test1639065952276() {
         final byte[] bytes = new ResourceFile("test/data/test1637487087922.txt").getBytes();
         assertThat("", new String(bytes), is("test1637487087922"));
     }
 
     @Test
     @DisplayName("getBytes() error reading non-existent file")
-    public void test1637487260260() {
+    public void test1639065952283() {
         final ResourceFile resourceFile = mock(ResourceFile.class);
         when(resourceFile.getResourceRelativePath()).thenReturn("test/data/test1637487260260");
         when(resourceFile.getClassLoader()).thenCallRealMethod();
@@ -73,7 +73,7 @@ public class ResourceFileUnitTests {
 
     @Test
     @DisplayName("getBytes() error reading not readable file")
-    public void test1637545665265() throws IOException {
+    public void test1639065952295() throws IOException {
         final ResourceFile resourceFile = mock(ResourceFile.class);
         final InputStream inputStream = mock(InputStream.class);
         final ClassLoader classLoader = mock(ClassLoader.class);

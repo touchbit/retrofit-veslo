@@ -18,11 +18,13 @@ package org.touchbit.retrofit.ext.dmr.client.converter.defaults;
 
 import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
+import org.touchbit.retrofit.ext.dmr.exception.PrimitiveConvertCallException;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -59,11 +61,11 @@ public class JavaPrimitiveTypeConverter extends JavaTypeConverterBase {
              * @return - Converted value
              * @throws IOException if ResponseBody data not readable
              */
-            @Nullable
+            @Nonnull
             @Override
             public Object convert(@Nullable ResponseBody responseBody) throws IOException {
-                if (responseBody == null) {
-                    return null;
+                if (responseBody == null || responseBody.contentLength() == 0) {
+                    throw new PrimitiveConvertCallException(type);
                 }
                 final String body = responseBody.string();
                 if (type.equals(Character.TYPE)) {
@@ -77,48 +79,49 @@ public class JavaPrimitiveTypeConverter extends JavaTypeConverterBase {
                     if (body.equalsIgnoreCase("false") || body.equalsIgnoreCase("true")) {
                         return Boolean.valueOf(body);
                     }
-                    throw new ConvertCallException("Boolean conversion error:\nexpected true/false\nbut was " + body);
+                    throw new ConvertCallException("Boolean conversion error:\n" +
+                            "expected true/false\nbut was " + exceptionBodyValue(body));
                 } else if (type.equals(Byte.TYPE)) {
                     try {
                         return Byte.valueOf(body);
                     } catch (Exception e) {
                         throw new ConvertCallException("Byte conversion error:\nexpected byte in range " +
-                                Byte.MIN_VALUE + "..." + Byte.MAX_VALUE + "\nbut was " + body, e);
+                                Byte.MIN_VALUE + "..." + Byte.MAX_VALUE + "\nbut was " + exceptionBodyValue(body), e);
                     }
                 } else if (type.equals(Integer.TYPE)) {
                     try {
                         return Integer.valueOf(body);
                     } catch (Exception e) {
                         throw new ConvertCallException("Integer conversion error:\nexpected integer number in range " +
-                                Integer.MIN_VALUE + "..." + Integer.MAX_VALUE + "\nbut was " + body, e);
+                                Integer.MIN_VALUE + "..." + Integer.MAX_VALUE + "\nbut was " + exceptionBodyValue(body), e);
                     }
                 } else if (type.equals(Double.TYPE)) {
                     try {
                         return Double.valueOf(body);
                     } catch (Exception e) {
                         throw new ConvertCallException("Double conversion error:\nexpected double number in range " +
-                                Double.MIN_VALUE + "..." + Double.MAX_VALUE + "\nbut was " + body, e);
+                                Double.MIN_VALUE + "..." + Double.MAX_VALUE + "\nbut was " + exceptionBodyValue(body), e);
                     }
                 } else if (type.equals(Float.TYPE)) {
                     try {
                         return Float.valueOf(body);
                     } catch (Exception e) {
                         throw new ConvertCallException("Float conversion error:\nexpected float number in range " +
-                                Float.MIN_VALUE + "..." + Float.MAX_VALUE + "\nbut was " + body, e);
+                                Float.MIN_VALUE + "..." + Float.MAX_VALUE + "\nbut was " + exceptionBodyValue(body), e);
                     }
                 } else if (type.equals(Long.TYPE)) {
                     try {
                         return Long.valueOf(body);
                     } catch (Exception e) {
                         throw new ConvertCallException("Long conversion error:\nexpected long number in range " +
-                                Long.MIN_VALUE + "..." + Long.MAX_VALUE + "\nbut was " + body, e);
+                                Long.MIN_VALUE + "..." + Long.MAX_VALUE + "\nbut was " + exceptionBodyValue(body), e);
                     }
                 } else if (type.equals(Short.TYPE)) {
                     try {
                         return Short.valueOf(body);
                     } catch (Exception e) {
                         throw new ConvertCallException("Short conversion error:\nexpected short number in range " +
-                                Short.MIN_VALUE + "..." + Short.MAX_VALUE + "\nbut was " + body, e);
+                                Short.MIN_VALUE + "..." + Short.MAX_VALUE + "\nbut was " + exceptionBodyValue(body), e);
                     }
                 } else {
                     throw new ConvertCallException("Received an unsupported type for conversion: " + getTypeName(type));

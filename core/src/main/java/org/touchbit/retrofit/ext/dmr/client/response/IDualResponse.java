@@ -18,10 +18,10 @@ package org.touchbit.retrofit.ext.dmr.client.response;
 
 import okhttp3.Headers;
 import okhttp3.MediaType;
-import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.ResponseBody;
-import retrofit2.Response;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 
@@ -37,14 +37,10 @@ import java.lang.annotation.Annotation;
 public interface IDualResponse<SUCCESSFUL_DTO, ERROR_DTO> {
 
     /**
-     * @return okhttp3 {@link Request}
+     * @return okhttp {@link Response}
      */
-    Request getRawRequest();
-
-    /**
-     * @return retrofit {@link Response}
-     */
-    Response<SUCCESSFUL_DTO> getResponse();
+    @Nonnull
+    Response getResponse();
 
     /**
      * @return error DTO model
@@ -53,28 +49,30 @@ public interface IDualResponse<SUCCESSFUL_DTO, ERROR_DTO> {
     ERROR_DTO getErrorDTO();
 
     /**
+     * @return successful DTO model {@link SUCCESSFUL_DTO}
+     */
+    @Nullable
+    SUCCESSFUL_DTO getSucDTO();
+
+    /**
      * @return description of the called resource in detail
      */
+    @Nonnull
     String getEndpointInfo();
 
     /**
      * @return list of annotations for the called API method
      */
+    @Nonnull
     Annotation[] getCallAnnotations();
-
-    /**
-     * @return successful DTO model {@link SUCCESSFUL_DTO}
-     */
-    default SUCCESSFUL_DTO getSuccessfulDTO() {
-        return getResponse().body();
-    }
 
     /**
      * @return okhttp3 response headers
      */
     default Headers getHeaders() {
         Headers headers = getResponse().headers();
-        ResponseBody body = getRawResponse().body();
+        ResponseBody body = getResponse().body();
+        // TODO util method getHeaders(Response)
         if (body != null) {
             MediaType mediaType = body.contentType();
             if (mediaType != null) {
@@ -96,13 +94,6 @@ public interface IDualResponse<SUCCESSFUL_DTO, ERROR_DTO> {
      */
     default String getHttpStatusMessage() {
         return getResponse().message();
-    }
-
-    /**
-     * @return okHttp3 response {@link okhttp3.Response}
-     */
-    default okhttp3.Response getRawResponse() {
-        return getResponse().raw();
     }
 
     /**

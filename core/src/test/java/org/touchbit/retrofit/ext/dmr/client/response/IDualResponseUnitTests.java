@@ -18,12 +18,12 @@ package org.touchbit.retrofit.ext.dmr.client.response;
 
 import okhttp3.Headers;
 import okhttp3.MediaType;
-import okhttp3.Request;
 import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import retrofit2.Response;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 
@@ -38,7 +38,7 @@ public class IDualResponseUnitTests {
 
     @Test
     @DisplayName("Check default methods if all objects is present")
-    public void test1637488565492() {
+    public void test1639065948557() {
         final ResponseBody responseBody = mock(ResponseBody.class);
         when(responseBody.contentType()).thenReturn(MediaType.get("application/json; charset=utf-8"));
         final okhttp3.Response rawResponse = mock(okhttp3.Response.class);
@@ -53,7 +53,7 @@ public class IDualResponseUnitTests {
 
         final IDualResponse<String, String> iDualResponse = getIDualResponse(response);
         assertThat("", iDualResponse, notNullValue());
-        assertThat("", iDualResponse.getSuccessfulDTO(), is("test1637488565492"));
+        assertThat("", iDualResponse.getSucDTO(), is("test1637488565492"));
         assertThat("", iDualResponse.getHttpStatusCode(), is(200));
         assertThat("", iDualResponse.getHttpStatusMessage(), is("TEST"));
         assertThat("", iDualResponse.getHeaders(), notNullValue());
@@ -64,7 +64,7 @@ public class IDualResponseUnitTests {
 
     @Test
     @DisplayName("#getHeaders() successfully fetching headers if okhttp3.ResponseBody is null")
-    public void test1637489675984() {
+    public void test1639065948583() {
         final okhttp3.Response rawResponse = mock(okhttp3.Response.class);
         when(rawResponse.body()).thenReturn(null);
         final Response<String> response = mock(Response.class);
@@ -77,7 +77,7 @@ public class IDualResponseUnitTests {
 
         final IDualResponse<String, String> iDualResponse = getIDualResponse(response);
         assertThat("", iDualResponse, notNullValue());
-        assertThat("", iDualResponse.getSuccessfulDTO(), is("test1637488565492"));
+        assertThat("", iDualResponse.getSucDTO(), is("test1637488565492"));
         assertThat("", iDualResponse.getHttpStatusCode(), is(200));
         assertThat("", iDualResponse.getHttpStatusMessage(), is("TEST"));
         assertThat("", iDualResponse.getHeaders(), notNullValue());
@@ -88,7 +88,7 @@ public class IDualResponseUnitTests {
 
     @Test
     @DisplayName("#getHeaders() successfully fetching headers if okhttp3.ResponseBody contentType is null")
-    public void test1637489827908() {
+    public void test1639065948607() {
         final ResponseBody responseBody = mock(ResponseBody.class);
         when(responseBody.contentType()).thenReturn(null);
         final okhttp3.Response rawResponse = mock(okhttp3.Response.class);
@@ -103,7 +103,7 @@ public class IDualResponseUnitTests {
 
         final IDualResponse<String, String> iDualResponse = getIDualResponse(response);
         assertThat("", iDualResponse, notNullValue());
-        assertThat("", iDualResponse.getSuccessfulDTO(), is("test1637488565492"));
+        assertThat("", iDualResponse.getSucDTO(), is("test1637488565492"));
         assertThat("", iDualResponse.getHttpStatusCode(), is(200));
         assertThat("", iDualResponse.getHttpStatusMessage(), is("TEST"));
         assertThat("", iDualResponse.getHeaders(), notNullValue());
@@ -114,15 +114,10 @@ public class IDualResponseUnitTests {
 
     private IDualResponse<String, String> getIDualResponse(Response<String> response) {
         return new IDualResponse<String, String>() {
-
+            @Nonnull
             @Override
-            public Request getRawRequest() {
+            public okhttp3.Response getResponse() {
                 return null;
-            }
-
-            @Override
-            public Response<String> getResponse() {
-                return response;
             }
 
             @Nullable
@@ -131,11 +126,19 @@ public class IDualResponseUnitTests {
                 return null;
             }
 
+            @Nullable
+            @Override
+            public String getSucDTO() {
+                return null;
+            }
+
+            @Nonnull
             @Override
             public String getEndpointInfo() {
                 return null;
             }
 
+            @Nonnull
             @Override
             public Annotation[] getCallAnnotations() {
                 return new Annotation[0];

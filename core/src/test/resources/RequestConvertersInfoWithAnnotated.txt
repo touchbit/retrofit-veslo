@@ -1,0 +1,40 @@
+SUPPORTED REQUEST CONVERTERS:
+Annotated converters:
+org.touchbit.retrofit.ext.dmr.BaseCoreUnitTest$TestConverter
+    internal.test.utils.client.model.TestDTO
+    java.lang.Object
+Raw converters:
+org.touchbit.retrofit.ext.dmr.client.converter.typed.ByteArrayConverter
+    java.lang.Byte[]
+org.touchbit.retrofit.ext.dmr.client.converter.typed.FileConverter
+    java.io.File
+org.touchbit.retrofit.ext.dmr.client.converter.typed.RawBodyConverter
+    org.touchbit.retrofit.ext.dmr.client.model.RawBody
+org.touchbit.retrofit.ext.dmr.client.converter.typed.ResourceFileConverter
+    org.touchbit.retrofit.ext.dmr.client.model.ResourceFile
+Package converters:
+org.touchbit.retrofit.ext.dmr.BaseCoreUnitTest$TestPackageConverter
+    internal.test.utils.client.model.pack
+Content type converters:
+org.touchbit.retrofit.ext.dmr.BaseCoreUnitTest$TestConverter
+    text/plain
+Java type converters:
+org.touchbit.retrofit.ext.dmr.client.converter.defaults.JavaPrimitiveTypeConverter
+    boolean
+    byte
+    char
+    double
+    float
+    int
+    long
+    short
+org.touchbit.retrofit.ext.dmr.client.converter.defaults.JavaReferenceTypeConverter
+    java.lang.Boolean
+    java.lang.Byte
+    java.lang.Character
+    java.lang.Double
+    java.lang.Float
+    java.lang.Integer
+    java.lang.Long
+    java.lang.Short
+    java.lang.String

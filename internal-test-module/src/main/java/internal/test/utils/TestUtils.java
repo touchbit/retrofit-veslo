@@ -16,11 +16,21 @@
 
 package internal.test.utils;
 
+import java.lang.reflect.Type;
+
 public class TestUtils {
 
     @SafeVarargs
     public static <C> C[] array(C... annotations) {
         return annotations;
+    }
+
+    public static Type getGenericReturnTypeForMethod(Class<?> aClass, String methodName) {
+        try {
+            return aClass.getDeclaredMethod(methodName).getGenericReturnType();
+        } catch (Exception e) {
+            throw new CorruptedTestException(e);
+        }
     }
 
 }

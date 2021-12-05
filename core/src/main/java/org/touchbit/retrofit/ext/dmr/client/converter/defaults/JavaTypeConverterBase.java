@@ -87,4 +87,17 @@ public abstract class JavaTypeConverterBase implements ExtensionConverter {
         }
     }
 
+    protected String exceptionBodyValue(String body) {
+        if (body == null) {
+            return "<null>";
+        }
+        if (body.isEmpty()) {
+            return "<empty body>";
+        }
+        if (body.length() != body.trim().length()) {
+            return "'" + body + "'";
+        }
+        return body;
+    }
+
 }

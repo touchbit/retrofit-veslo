@@ -113,7 +113,8 @@ public class GsonConverter<T> implements ExtensionConverter<T> {
                 try {
                     return getResponseGson().fromJson(strBody, type);
                 } catch (Exception e) {
-                    throw new ConvertCallException("Json body not convertible to " + type + ". See cause below.", e);
+                    throw new ConvertCallException("\nResponse body not convertible to type " + type + "\n" +
+                            e.getMessage(), e);
                 }
             }
         };

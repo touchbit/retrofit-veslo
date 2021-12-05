@@ -38,7 +38,7 @@ public class CompositeInterceptorUnitTests {
 
     @Test
     @DisplayName("CompositeInterceptor with actions without exceptions")
-    public void test1637818616701() throws Exception {
+    public void test1639065951371() throws Exception {
         final Response response = OkHttpUtils.getResponse();
         final Request request = response.request();
         Interceptor.Chain chain = mock(Interceptor.Chain.class);
@@ -53,7 +53,7 @@ public class CompositeInterceptorUnitTests {
 
     @Test
     @DisplayName("CompositeInterceptor with actions with IOException")
-    public void test1637857177331() throws IOException {
+    public void test1639065951386() throws IOException {
         final Response response = OkHttpUtils.getResponse();
         final Request request = response.request();
         Interceptor.Chain chain = mock(Interceptor.Chain.class);
@@ -69,7 +69,7 @@ public class CompositeInterceptorUnitTests {
 
     @Test
     @DisplayName("CompositeInterceptor without actions with RuntimeException")
-    public void test1637857418542() throws IOException {
+    public void test1639065951402() throws IOException {
         final Response response = OkHttpUtils.getResponse();
         final Request request = response.request();
         Interceptor.Chain chain = mock(Interceptor.Chain.class);

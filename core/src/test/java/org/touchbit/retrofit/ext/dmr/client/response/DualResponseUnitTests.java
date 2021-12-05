@@ -16,7 +16,6 @@
 
 package org.touchbit.retrofit.ext.dmr.client.response;
 
-import okhttp3.Request;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.asserter.ResponseAsserter;
@@ -35,12 +34,11 @@ public class DualResponseUnitTests {
 
     @Test
     @DisplayName("DualResponse")
-    public void test1637490683876() {
-        final Request request = mock(Request.class);
+    public void test1639065948503() {
         final Response<String> response = mock(Response.class);
         final Annotation[] aa = new Annotation[]{};
-        DualResponse<String, String> dr = new DualResponse<>(request, response, "test1637490683876", "info", aa);
-        assertThat("", dr.getRawRequest(), is(request));
+        DualResponse<String, String> dr = new DualResponse<>
+                ("test1637490683876", "test1637490683876", response.raw(), "info", aa);
         assertThat("", dr.getResponse(), is(response));
         assertThat("", dr.getErrorDTO(), is("test1637490683876"));
         assertThat("", dr.getEndpointInfo(), is("info"));

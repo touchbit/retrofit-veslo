@@ -31,8 +31,8 @@ public class GsonDualConverterFactory extends ExtensionConverterFactory {
     public GsonDualConverterFactory() {
         super();
         final GsonConverter<Object> gson = new GsonConverter<>();
-        addMimeRequestConverter(gson, APP_JSON, APP_JSON_UTF8, TEXT_JSON, TEXT_JSON_UTF8);
-        addMimeResponseConverter(gson, APP_JSON, APP_JSON_UTF8, TEXT_JSON, TEXT_JSON_UTF8);
+        registerMimeRequestConverter(gson, APP_JSON, APP_JSON_UTF8, TEXT_JSON, TEXT_JSON_UTF8);
+        registerMimeResponseConverter(gson, APP_JSON, APP_JSON_UTF8, TEXT_JSON, TEXT_JSON_UTF8);
     }
 
 }

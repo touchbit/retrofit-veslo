@@ -19,8 +19,10 @@ package org.touchbit.retrofit.ext.dmr.util;
 import org.touchbit.retrofit.ext.dmr.exception.UtilityClassException;
 import retrofit2.internal.EverythingIsNonNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -82,6 +84,16 @@ public class Utils {
             primitiveArray[i] = bytes[i];
         }
         return primitiveArray;
+    }
+
+    @Nonnull
+    public static String getTypeName(Type type) {
+        return type == null ? "null" : type.getTypeName();
+    }
+
+    @Nonnull
+    public static String getTypeName(Object object) {
+        return object == null ? "null" : getTypeName(object.getClass());
     }
 
 }

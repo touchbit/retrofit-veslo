@@ -16,6 +16,7 @@
 
 package org.touchbit.retrofit.ext.dmr.jackson;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -31,9 +32,11 @@ import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+
+import static com.fasterxml.jackson.databind.DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT;
+import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES;
 
 /**
  * Jackson 2 converter
@@ -45,20 +48,38 @@ public class JacksonConverter<T> implements ExtensionConverter<T> {
 
     public static final String JSON_NULL_VALUE = "JSON_NULL_VALUE";
 
+    private final ObjectMapper requestObjectMapper;
+    private final ObjectMapper responseObjectMapper;
+
+    public JacksonConverter() {
+        this(new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT),
+                new ObjectMapper().enable(FAIL_ON_NULL_FOR_PRIMITIVES, ACCEPT_EMPTY_STRING_AS_NULL_OBJECT));
+    }
+
+    public JacksonConverter(ObjectMapper requestObjectMapper, ObjectMapper responseObjectMapper) {
+        this.requestObjectMapper = requestObjectMapper;
+        this.responseObjectMapper = responseObjectMapper;
+    }
+
     @Override
     @EverythingIsNonNull
     public RequestBodyConverter requestBodyConverter(final Type type,
                                                      final Annotation[] parameterAnnotations,
                                                      final Annotation[] methodAnnotations,
                                                      final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(parameterAnnotations, "parameterAnnotations");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new RequestBodyConverter() {
 
             @Override
             @Nullable
             public RequestBody convert(@Nonnull Object body) {
                 Utils.parameterRequireNonNull(body, "body");
-                final ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-                final ObjectWriter objectWriter = objectMapper.writerFor((Class<?>) type);
+                final ObjectMapper objectMapper = getRequestObjectMapper();
+                final JavaType javaType = objectMapper.constructType(type);
+                final ObjectWriter objectWriter = objectMapper.writerFor(javaType);
                 final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
                 try {
                     if (BODY_NULL_VALUE.equals(body)) {
@@ -81,6 +102,9 @@ public class JacksonConverter<T> implements ExtensionConverter<T> {
     public ResponseBodyConverter<T> responseBodyConverter(final Type type,
                                                           final Annotation[] methodAnnotations,
                                                           final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new ResponseBodyConverter<T>() {
 
             @Override
@@ -89,19 +113,24 @@ public class JacksonConverter<T> implements ExtensionConverter<T> {
                 if (body == null || body.contentLength() == 0) {
                     return null;
                 }
-                final byte[] bytes;
                 try {
-                    bytes = body.bytes();
-                } catch (IOException e) {
-                    throw new ConvertCallException("Unable to read response body. See cause below.", e);
-                }
-                try {
-                    return new ObjectMapper().readerFor((Class<?>) type).readValue(bytes);
-                } catch (IOException e) {
-                    throw new ConvertCallException("Json body not convertible to " + type, e);
+                    final ObjectMapper objectMapper = getResponseObjectMapper();
+                    final JavaType javaType = objectMapper.constructType(type);
+                    return objectMapper.readerFor(javaType).readValue(body.string());
+                } catch (Exception e) {
+                    throw new ConvertCallException("\nResponse body not convertible to type " +
+                            type + "\n" + e.getMessage(), e);
                 }
             }
         };
+    }
+
+    public ObjectMapper getRequestObjectMapper() {
+        return requestObjectMapper;
+    }
+
+    public ObjectMapper getResponseObjectMapper() {
+        return responseObjectMapper;
     }
 
 }

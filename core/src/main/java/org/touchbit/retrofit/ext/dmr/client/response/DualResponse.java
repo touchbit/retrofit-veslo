@@ -16,21 +16,22 @@
 
 package org.touchbit.retrofit.ext.dmr.client.response;
 
-import okhttp3.Request;
+import okhttp3.Response;
 import org.touchbit.retrofit.ext.dmr.asserter.ResponseAsserter;
-import retrofit2.Response;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.util.function.Consumer;
 
 public class DualResponse<SUC_DTO, ERR_DTO> extends DualResponseBase<SUC_DTO, ERR_DTO> {
 
-    public DualResponse(final Request rawRequest,
-                        final Response<SUC_DTO> response,
-                        final ERR_DTO errorDto,
-                        final String endpointInfo,
-                        final Annotation[] callAnnotations) {
-        super(rawRequest, response, errorDto, endpointInfo, callAnnotations);
+    public DualResponse(final @Nullable SUC_DTO sucDTO,
+                        final @Nullable ERR_DTO errDTO,
+                        final @Nonnull Response response,
+                        final @Nonnull String endpointInfo,
+                        final @Nonnull Annotation[] callAnnotations) {
+        super(sucDTO, errDTO, response, endpointInfo, callAnnotations);
     }
 
     public DualResponse<SUC_DTO, ERR_DTO> assertResponse(Consumer<ResponseAsserter<SUC_DTO, ERR_DTO>> consumer) {

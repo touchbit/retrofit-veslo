@@ -39,47 +39,47 @@ public class OkhttpUtilsUnitTests {
 
     @Test
     @DisplayName("OkhttpUtils is utility class")
-    public void test1637758141562() {
+    public void test1639065948117() {
         assertUtilityClassException(OkhttpUtils.class);
     }
 
     @Test
     @DisplayName("#bodyHasUnknownEncoding() return true if Content-Encoding: utf-8")
-    public void test1637758192386() {
+    public void test1639065948123() {
         final boolean result = OkhttpUtils.bodyHasUnknownEncoding(Headers.of("Content-Encoding", "utf-8"));
         assertThat("utf-8 is unknown encoding", result, is(true));
     }
 
     @Test
     @DisplayName("#bodyHasUnknownEncoding() return false if Content-Encoding: identity")
-    public void test1637758400517() {
+    public void test1639065948130() {
         final boolean result = OkhttpUtils.bodyHasUnknownEncoding(Headers.of("Content-Encoding", "identity"));
         assertThat("identity is unknown encoding", result, is(false));
     }
 
     @Test
     @DisplayName("#bodyHasUnknownEncoding() return false if Content-Encoding: gzip")
-    public void test1637758415719() {
+    public void test1639065948137() {
         final boolean result = OkhttpUtils.bodyHasUnknownEncoding(Headers.of("Content-Encoding", "gzip"));
         assertThat("gzip is unknown encoding", result, is(false));
     }
 
     @Test
     @DisplayName("#bodyHasUnknownEncoding() return false if Content-Encoding not present")
-    public void test1637758419126() {
+    public void test1639065948144() {
         final boolean result = OkhttpUtils.bodyHasUnknownEncoding(Headers.of());
         assertThat("unknown encoding", result, is(false));
     }
 
     @Test
     @DisplayName("#bodyHasUnknownEncoding() NPE if parameter 'headers' is null")
-    public void test1637758447401() {
+    public void test1639065948151() {
         assertThrow(() -> OkhttpUtils.bodyHasUnknownEncoding(null)).assertNPE("headers");
     }
 
     @Test
     @DisplayName("#isPlaintext() false if buffer contains not ISO control")
-    public void test1637759489490() {
+    public void test1639065948157() {
         Buffer buffer = new Buffer();
         buffer.write(new byte[]{(byte) 17});
         assertThat("", OkhttpUtils.isPlaintext(buffer), is(false));
@@ -87,7 +87,7 @@ public class OkhttpUtilsUnitTests {
 
     @Test
     @DisplayName("#isPlaintext() true if buffer contains ISO controls")
-    public void test1637759639496() {
+    public void test1639065948165() {
         Buffer buffer = new Buffer();
         buffer.write(new byte[]{(byte) 28}); // ISO Control
         assertThat("", OkhttpUtils.isPlaintext(buffer), is(true));
@@ -101,7 +101,7 @@ public class OkhttpUtilsUnitTests {
 
     @Test
     @DisplayName("#isPlaintext() EOF -> false")
-    public void test1637765350840() {
+    public void test1639065948179() {
         final Buffer mock = mock(Buffer.class);
         when(mock.size()).thenThrow(new RuntimeException());
         assertThat("", OkhttpUtils.isPlaintext(mock), is(false));
@@ -109,37 +109,37 @@ public class OkhttpUtilsUnitTests {
 
     @Test
     @DisplayName("#getCharset() return utf-8 if MediaType = null")
-    public void test1637766580627() {
+    public void test1639065948187() {
         assertThat("", OkhttpUtils.getCharset((MediaType) null), is(UTF_8));
     }
 
     @Test
     @DisplayName("#getCharset() return utf-8 if MediaType not contains charset")
-    public void test1637766660621() {
+    public void test1639065948193() {
         assertThat("", OkhttpUtils.getCharset(MediaType.get("a/b")), is(UTF_8));
     }
 
     @Test
     @DisplayName("#getCharset() return utf-16 if MediaType contains utf-16 charset")
-    public void test1637766738031() {
+    public void test1639065948199() {
         assertThat("", OkhttpUtils.getCharset(MediaType.get("a/b; charset=utf-16")), is(UTF_16));
     }
 
     @Test
     @DisplayName("#getCharset() return utf-8 if ResponseBody is null")
-    public void test1637766786187() {
+    public void test1639065948205() {
         assertThat("", OkhttpUtils.getCharset((ResponseBody) null), is(UTF_8));
     }
 
     @Test
     @DisplayName("#getCharset() return utf-8 if RequestBody is null")
-    public void test1637766834751() {
+    public void test1639065948211() {
         assertThat("", OkhttpUtils.getCharset((RequestBody) null), is(UTF_8));
     }
 
     @Test
     @DisplayName("#getCharset() return utf-8 if ResponseBody contains charset")
-    public void test1637766881552() {
+    public void test1639065948217() {
         final ResponseBody mock = mock(ResponseBody.class);
         when(mock.contentType()).thenReturn(MediaType.get("a/b; charset=utf-16"));
         assertThat("", OkhttpUtils.getCharset(mock), is(UTF_16));
@@ -147,7 +147,7 @@ public class OkhttpUtilsUnitTests {
 
     @Test
     @DisplayName("#getCharset() return utf-8 if RequestBody contains charset")
-    public void test1637766962474() {
+    public void test1639065948225() {
         final RequestBody mock = mock(RequestBody.class);
         when(mock.contentType()).thenReturn(MediaType.get("a/b; charset=utf-16"));
         assertThat("", OkhttpUtils.getCharset(mock), is(UTF_16));
@@ -155,13 +155,13 @@ public class OkhttpUtilsUnitTests {
 
     @Test
     @DisplayName("#responseToString() NPE if 'response' is null")
-    public void test1637767114785() {
+    public void test1639065948233() {
         assertThrow(() -> OkhttpUtils.responseToString(null)).assertNPE("response");
     }
 
     @Test
     @DisplayName("#responseToString() without body")
-    public void test1637767217204() throws Exception {
+    public void test1639065948239() throws Exception {
         final Request request = mock(Request.class);
         when(request.url()).thenReturn(HttpUrl.get("http://localhost"));
         final Response response = mock(Response.class);
@@ -177,7 +177,7 @@ public class OkhttpUtilsUnitTests {
 
     @Test
     @DisplayName("#responseToString() without body (HEAD request)")
-    public void test1637769297943() throws Exception {
+    public void test1639065948255() throws Exception {
         final Request request = mock(Request.class);
         when(request.url()).thenReturn(HttpUrl.get("http://localhost"));
         when(request.method()).thenReturn("HEAD");
@@ -195,7 +195,7 @@ public class OkhttpUtilsUnitTests {
 
     @Test
     @DisplayName("#responseToString() with plain body")
-    public void test1637768109234() throws Exception {
+    public void test1639065948273() throws Exception {
         final Request request = mock(Request.class);
         when(request.url()).thenReturn(HttpUrl.get("http://localhost"));
         when(request.method()).thenReturn("POST");
@@ -215,7 +215,7 @@ public class OkhttpUtilsUnitTests {
 
     @Test
     @DisplayName("#responseToString() with empty body")
-    public void test1637768443294() throws Exception {
+    public void test1639065948293() throws Exception {
         final Request request = mock(Request.class);
         when(request.url()).thenReturn(HttpUrl.get("http://localhost"));
         when(request.method()).thenReturn("POST");
@@ -234,7 +234,7 @@ public class OkhttpUtilsUnitTests {
 
     @Test
     @DisplayName("#responseToString() with binary body")
-    public void test1637769074908() throws Exception {
+    public void test1639065948312() throws Exception {
         final Request request = mock(Request.class);
         when(request.url()).thenReturn(HttpUrl.get("http://localhost"));
         when(request.method()).thenReturn("POST");
@@ -254,7 +254,7 @@ public class OkhttpUtilsUnitTests {
 
     @Test
     @DisplayName("#responseToString() with Content-Length: -1 and unknown encoding")
-    public void test1637770539680() throws Exception {
+    public void test1639065948332() throws Exception {
         final Request request = mock(Request.class);
         when(request.url()).thenReturn(HttpUrl.get("http://localhost"));
         when(request.method()).thenReturn("POST");
@@ -278,7 +278,7 @@ public class OkhttpUtilsUnitTests {
 
     @Test
     @DisplayName("#responseToString() with gzip body")
-    public void test1637770825775() throws Exception {
+    public void test1639065948356() throws Exception {
         final Request request = mock(Request.class);
         when(request.url()).thenReturn(HttpUrl.get("http://localhost"));
         when(request.method()).thenReturn("POST");
@@ -304,13 +304,13 @@ public class OkhttpUtilsUnitTests {
 
     @Test
     @DisplayName("#requestToString() NPE if 'request' is null")
-    public void test1637771966285() {
+    public void test1639065948382() {
         assertThrow(() -> OkhttpUtils.requestToString(null)).assertNPE("request");
     }
 
     @Test
     @DisplayName("#requestToString() without body")
-    public void test1637771986295() throws Exception {
+    public void test1639065948388() throws Exception {
         final Request request = mock(Request.class);
         when(request.url()).thenReturn(HttpUrl.get("http://localhost"));
         when(request.method()).thenReturn("POST");
@@ -324,7 +324,7 @@ public class OkhttpUtilsUnitTests {
 
     @Test
     @DisplayName("#requestToString() with plain body")
-    public void test1637772076999() throws Exception {
+    public void test1639065948402() throws Exception {
         final Request request = mock(Request.class);
         when(request.url()).thenReturn(HttpUrl.get("http://localhost"));
         when(request.method()).thenReturn("POST");
@@ -357,7 +357,7 @@ public class OkhttpUtilsUnitTests {
 
     @Test
     @DisplayName("#requestToString() with unknown encoding")
-    public void test1637817032002() throws Exception {
+    public void test1639065948435() throws Exception {
         final Request request = mock(Request.class);
         when(request.url()).thenReturn(HttpUrl.get("http://localhost"));
         when(request.method()).thenReturn("POST");
@@ -373,7 +373,7 @@ public class OkhttpUtilsUnitTests {
 
     @Test
     @DisplayName("#requestToString() with duplex RequestBody")
-    public void test1637817090582() throws Exception {
+    public void test1639065948451() throws Exception {
         final RequestBody mock = mock(RequestBody.class);
         when(mock.isDuplex()).thenReturn(true);
         final Request request = mock(Request.class);

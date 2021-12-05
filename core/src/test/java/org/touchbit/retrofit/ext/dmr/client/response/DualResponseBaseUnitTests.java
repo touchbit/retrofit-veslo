@@ -33,14 +33,12 @@ public class DualResponseBaseUnitTests {
 
     @Test
     @DisplayName("Check default methods if all objects is present")
-    public void test1637490320687() {
+    public void test1639065948701() {
         final Request request = mock(Request.class);
         final Response<String> response = mock(Response.class);
         final Annotation[] annotations = new Annotation[]{};
-        DualResponseBase<String, String> responseBase =
-                new DualResponseBase<String, String>(request, response, "test1637490320687", "info", annotations) {
-                };
-        assertThat("", responseBase.getRawRequest(), is(request));
+        DualResponseBase<String, String> responseBase = new DualResponseBase<String, String>
+                ("test1637490320687", "test1637490320687", response.raw(), "info", annotations) {};
         assertThat("", responseBase.getResponse(), is(response));
         assertThat("", responseBase.getErrorDTO(), is("test1637490320687"));
         assertThat("", responseBase.getEndpointInfo(), is("info"));

@@ -18,17 +18,22 @@ package org.touchbit.retrofit.ext.dmr.util;
 
 import okhttp3.Headers;
 import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.client.header.ContentType;
 import org.touchbit.retrofit.ext.dmr.client.response.IDualResponse;
+import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.exception.UtilityClassException;
 import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.function.Function;
 
 /**
  * Created by Oleg Shaburov on 08.11.2021
@@ -38,6 +43,27 @@ public class ConvertUtils {
 
     private ConvertUtils() {
         throw new UtilityClassException();
+    }
+
+    @EverythingIsNonNull
+    public static <O> RequestBody objectToRequestBody(final ExtensionConverter<?> converter,
+                                                      final Object body,
+                                                      final Class<O> expectedBodyClass,
+                                                      final Function<O, String> bodyFunction,
+                                                      final Annotation[] methodAnnotations) {
+        if (expectedBodyClass.isAssignableFrom(body.getClass())) {
+            //noinspection unchecked
+            final String stringBody = bodyFunction.apply((O) body);
+            final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
+            return RequestBody.create(mediaType, stringBody);
+        }
+        throw new ConverterUnsupportedTypeException(converter.getClass(), Boolean.class, body.getClass());
+    }
+
+    @Nullable
+    public static <O> O responseBodyToJavaType(@Nonnull final Function<String, O> convertFunction,
+                                               @Nullable final ResponseBody responseBody) throws IOException {
+        return responseBody == null ? null : convertFunction.apply(responseBody.string());
     }
 
     /**

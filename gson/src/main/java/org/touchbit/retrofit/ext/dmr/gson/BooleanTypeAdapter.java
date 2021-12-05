@@ -49,7 +49,7 @@ public class BooleanTypeAdapter implements JsonDeserializer<Boolean> {
             if (jsonValue.equalsIgnoreCase("false")) {
                 return false;
             }
-            throw new JsonParseException("Expected a boolean but was: " + jsonValue);
+            throw new JsonParseException("Expected a boolean but was: '" + jsonValue + "'");
         }
         int code = primitive.getAsInt();
         if (code != 0 && code != 1) {
