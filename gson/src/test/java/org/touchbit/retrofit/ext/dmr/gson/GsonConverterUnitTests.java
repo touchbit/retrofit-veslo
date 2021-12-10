@@ -273,7 +273,8 @@ public class GsonConverterUnitTests {
         final ResponseBody body = ResponseBody.create(null, ".");
         assertThrow(() -> getResponseConverter(Map.class).convert(body))
                 .assertClass(ConvertCallException.class)
-                .assertMessageIs("Json body not convertible to interface java.util.Map. See cause below.")
+                .assertMessageIs("\nResponse body not convertible to type interface java.util.Map\n" +
+                        "java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $")
                 .assertCause(cause -> cause.assertClass(JsonSyntaxException.class));
     }
 

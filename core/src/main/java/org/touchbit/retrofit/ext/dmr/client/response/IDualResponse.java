@@ -46,7 +46,7 @@ public interface IDualResponse<SUCCESSFUL_DTO, ERROR_DTO> {
      * @return error DTO model
      */
     @Nullable
-    ERROR_DTO getErrorDTO();
+    ERROR_DTO getErrDTO();
 
     /**
      * @return successful DTO model {@link SUCCESSFUL_DTO}

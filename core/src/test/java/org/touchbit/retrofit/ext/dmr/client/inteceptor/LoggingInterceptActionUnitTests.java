@@ -52,12 +52,13 @@ public class LoggingInterceptActionUnitTests {
         final SubstituteLoggingEvent logEvent = logger.getNextLogEvent();
         assertThat("logEvent.getLevel()", logEvent.getLevel(), is(Level.INFO));
         assertThat("logEvent.getThrowable()", logEvent.getThrowable(), nullValue());
-        assertThat("logEvent.getMessage()", logEvent.getMessage(), is("" +
-                "Request: POST http://localhost/\n" +
-                "Request headers:\n" +
+        assertThat("logEvent.getMessage()", logEvent.getMessage(), is("REQUEST:\n" +
+                "POST http://localhost/\n" +
+                "Headers:\n" +
                 "  Content-Type: text/plain\n" +
                 "  X-Request-ID: generated\n" +
-                "Request body:\n" +
+                "  Content-Length: 9\n" +
+                "Body: (9-byte body)\n" +
                 "  generated\n"));
     }
 
@@ -72,12 +73,13 @@ public class LoggingInterceptActionUnitTests {
         final SubstituteLoggingEvent logEvent = logger.getNextLogEvent();
         assertThat("logEvent.getLevel()", logEvent.getLevel(), is(Level.INFO));
         assertThat("logEvent.getThrowable()", logEvent.getThrowable(), nullValue());
-        assertThat("logEvent.getMessage()", logEvent.getMessage(), is("" +
-                "Response: 200 TEST http://localhost/\n" +
-                "Response headers:\n" +
+        assertThat("logEvent.getMessage()", logEvent.getMessage(), is("RESPONSE:\n" +
+                "200 TEST http://localhost/\n" +
+                "Headers:\n" +
                 "  Content-Type: text/plain\n" +
                 "  X-Request-ID: generated\n" +
-                "Response body: (9-byte body)\n" +
+                "  Content-Length: 9\n" +
+                "Body: (9-byte body)\n" +
                 "  generated\n"));
     }
 

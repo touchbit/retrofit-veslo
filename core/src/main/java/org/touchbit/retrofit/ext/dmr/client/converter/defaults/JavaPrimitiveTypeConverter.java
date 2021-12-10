@@ -24,7 +24,6 @@ import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -61,11 +60,15 @@ public class JavaPrimitiveTypeConverter extends JavaTypeConverterBase {
              * @return - Converted value
              * @throws IOException if ResponseBody data not readable
              */
-            @Nonnull
+            @Nullable
             @Override
             public Object convert(@Nullable ResponseBody responseBody) throws IOException {
-                if (responseBody == null || responseBody.contentLength() == 0) {
+                if ((responseBody == null || responseBody.contentLength() == 0)
+                        && type instanceof Class && ((Class<?>) type).isPrimitive()) {
                     throw new PrimitiveConvertCallException(type);
+                }
+                if (responseBody == null) {
+                    return null;
                 }
                 final String body = responseBody.string();
                 if (type.equals(Character.TYPE)) {

@@ -70,7 +70,7 @@ public class BooleanTypeAdapterUnitTests {
         final JsonPrimitive primitive = new JsonPrimitive(uuid);
         assertThrow(() -> ADAPTER.deserialize(primitive, null, null))
                 .assertClass(JsonParseException.class)
-                .assertMessageIs("Expected a boolean but was: " + uuid);
+                .assertMessageIs("Expected a boolean but was: '" + uuid + "'");
     }
 
     @Test

@@ -101,7 +101,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO> extends ResponseAsserterBase<SUC
     }
 
     public ResponseAsserter<SUC_DTO, ERR_DTO> assertErrBody(final Consumer<ERR_DTO> consumer) {
-        final ERR_DTO actual = getResponse().getErrorDTO();
+        final ERR_DTO actual = getResponse().getErrDTO();
         if (actual == null) {
             assertErrBodyNotNull().blame();
         }
@@ -111,7 +111,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO> extends ResponseAsserterBase<SUC
 
     public ResponseAsserter<SUC_DTO, ERR_DTO> assertErrBody(final BiConsumer<ERR_DTO, ERR_DTO> consumer,
                                                             final ERR_DTO expected) {
-        final ERR_DTO actual = getResponse().getErrorDTO();
+        final ERR_DTO actual = getResponse().getErrDTO();
         if (actual == null) {
             assertErrBodyNotNull().blame();
         }
@@ -129,7 +129,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO> extends ResponseAsserterBase<SUC
     }
 
     public ResponseAsserter<SUC_DTO, ERR_DTO> assertErrBodyNotNull() {
-        if (getResponse().getErrorDTO() == null) {
+        if (getResponse().getErrDTO() == null) {
             addErrors(new AssertionError("Error body\n" +
                     "Expected: is not null\n" +
                     "  Actual: null"));
@@ -138,7 +138,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO> extends ResponseAsserterBase<SUC
     }
 
     public ResponseAsserter<SUC_DTO, ERR_DTO> assertErrBodyIsNull() {
-        final ERR_DTO actual = getResponse().getErrorDTO();
+        final ERR_DTO actual = getResponse().getErrDTO();
         if (actual != null) {
             addErrors(new AssertionError("Error body\n" +
                     "Expected: is null\n" +

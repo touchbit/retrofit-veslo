@@ -125,9 +125,9 @@ public class ResponseAsserterUnitTests {
         assertThrow(() -> asserter.assertSucResponse(200, body -> assertThat("", body, notNullValue())))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("Collected the following errors:\n\n" +
-                        "Received a successful body\n" +
-                        "Expected: true\n" +
-                        "  Actual: false");
+                        "Successful body\n" +
+                        "Expected: is not null\n" +
+                        "  Actual: null");
     }
 
     @Test
@@ -153,9 +153,9 @@ public class ResponseAsserterUnitTests {
         assertThrow(() -> asserter.assertSucBody(body -> assertThat("", body, notNullValue())))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("Collected the following errors:\n\n" +
-                        "Received a successful body\n" +
-                        "Expected: true\n" +
-                        "  Actual: false");
+                        "Successful body\n" +
+                        "Expected: is not null\n" +
+                        "  Actual: null");
     }
 
     @Test
@@ -204,7 +204,7 @@ public class ResponseAsserterUnitTests {
         final IDualResponse<Object, Object> response = mock(IDualResponse.class);
         when(response.getHttpStatusCode()).thenReturn(400);
         when(response.isSuccessful()).thenReturn(false);
-        when(response.getErrorDTO()).thenReturn(new Object());
+        when(response.getErrDTO()).thenReturn(new Object());
         final ResponseAsserter<Object, Object> asserter = new ResponseAsserter<>(response);
         asserter.assertErrResponse(400, body -> assertThat("", body, notNullValue()));
         assertResponseAsserterContainErrors(asserter, 0);
@@ -216,14 +216,14 @@ public class ResponseAsserterUnitTests {
         final IDualResponse<Object, Object> response = mock(IDualResponse.class);
         when(response.getHttpStatusCode()).thenReturn(200);
         when(response.isSuccessful()).thenReturn(true);
-        when(response.getErrorDTO()).thenReturn(null);
+        when(response.getErrDTO()).thenReturn(null);
         final ResponseAsserter<Object, Object> asserter = new ResponseAsserter<>(response);
         assertThrow(() -> asserter.assertErrResponse(500, body -> assertThat("", body, notNullValue())))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("Collected the following errors:\n\n" +
-                        "Error body received\n" +
-                        "Expected: true\n" +
-                        "  Actual: false");
+                        "Error body\n" +
+                        "Expected: is not null\n" +
+                        "  Actual: null");
     }
 
     @Test
@@ -232,7 +232,7 @@ public class ResponseAsserterUnitTests {
         final IDualResponse<Object, Object> response = mock(IDualResponse.class);
         when(response.getHttpStatusCode()).thenReturn(400);
         when(response.isSuccessful()).thenReturn(false);
-        when(response.getErrorDTO()).thenReturn(new Object());
+        when(response.getErrDTO()).thenReturn(new Object());
         final ResponseAsserter<Object, Object> asserter = new ResponseAsserter<>(response);
         asserter.assertErrBody(body -> assertThat("", body, notNullValue()));
         assertResponseAsserterContainErrors(asserter, 0);
@@ -244,14 +244,14 @@ public class ResponseAsserterUnitTests {
         final IDualResponse<Object, Object> response = mock(IDualResponse.class);
         when(response.getHttpStatusCode()).thenReturn(200);
         when(response.isSuccessful()).thenReturn(true);
-        when(response.getErrorDTO()).thenReturn(null);
+        when(response.getErrDTO()).thenReturn(null);
         final ResponseAsserter<Object, Object> asserter = new ResponseAsserter<>(response);
         assertThrow(() -> asserter.assertErrBody(body -> assertThat("", body, notNullValue())))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("Collected the following errors:\n\n" +
-                        "Error body received\n" +
-                        "Expected: true\n" +
-                        "  Actual: false");
+                        "Error body\n" +
+                        "Expected: is not null\n" +
+                        "  Actual: null");
     }
 
     @Test
@@ -278,7 +278,7 @@ public class ResponseAsserterUnitTests {
     @DisplayName("#assertErrorDtoNotNull() positive")
     public void test1639065947666() {
         final IDualResponse<Object, Object> response = mock(IDualResponse.class);
-        when(response.getErrorDTO()).thenReturn(new Object());
+        when(response.getErrDTO()).thenReturn(new Object());
         final ResponseAsserter<Object, Object> asserter = new ResponseAsserter<>(response);
         asserter.assertErrBodyNotNull();
         assertResponseAsserterContainErrors(asserter, 0);
@@ -288,7 +288,7 @@ public class ResponseAsserterUnitTests {
     @DisplayName("#assertErrorDtoNotNull() negative")
     public void test1639065947676() {
         final IDualResponse<Object, Object> response = mock(IDualResponse.class);
-        when(response.getErrorDTO()).thenReturn(null);
+        when(response.getErrDTO()).thenReturn(null);
         final ResponseAsserter<Object, Object> asserter = new ResponseAsserter<>(response);
         asserter.assertErrBodyNotNull();
         assertResponseAsserterContainErrors(asserter, 1);

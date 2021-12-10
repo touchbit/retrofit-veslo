@@ -16,10 +16,10 @@
 
 package org.touchbit.retrofit.ext.dmr.client.response;
 
+import okhttp3.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.asserter.ResponseAsserter;
-import retrofit2.Response;
 
 import java.lang.annotation.Annotation;
 
@@ -28,19 +28,19 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 
-@SuppressWarnings("unchecked")
 @DisplayName("DualResponse tests")
 public class DualResponseUnitTests {
 
     @Test
     @DisplayName("DualResponse")
     public void test1639065948503() {
-        final Response<String> response = mock(Response.class);
+        final Response response = mock(Response.class);
         final Annotation[] aa = new Annotation[]{};
         DualResponse<String, String> dr = new DualResponse<>
-                ("test1637490683876", "test1637490683876", response.raw(), "info", aa);
+                ("test1637490683876", "test1637490683876", response, "info", aa);
         assertThat("", dr.getResponse(), is(response));
-        assertThat("", dr.getErrorDTO(), is("test1637490683876"));
+        assertThat("", dr.getSucDTO(), is("test1637490683876"));
+        assertThat("", dr.getErrDTO(), is("test1637490683876"));
         assertThat("", dr.getEndpointInfo(), is("info"));
         assertThat("", dr.getCallAnnotations(), is(aa));
         dr.assertResponse(asserter -> asserter

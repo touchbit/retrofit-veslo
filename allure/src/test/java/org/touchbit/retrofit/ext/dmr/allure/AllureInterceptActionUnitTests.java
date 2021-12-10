@@ -61,11 +61,13 @@ public class AllureInterceptActionUnitTests extends BaseUnitTests {
         final File attachmentFile = new File(RESULTS_PATH.toFile(), attachment.getSource());
         final String attachmentContent = new String(Files.readAllBytes(attachmentFile.toPath()));
         assertThat("attachment content", attachmentContent, is("" +
-                "Request: POST http://localhost/\n" +
-                "Request headers:\n" +
+                "REQUEST:\n" +
+                "POST http://localhost/\n" +
+                "Headers:\n" +
                 "  Content-Type: text/plain\n" +
                 "  X-Request-ID: generated\n" +
-                "Request body:\n" +
+                "  Content-Length: 9\n" +
+                "Body: (9-byte body)\n" +
                 "  generated\n"));
     }
 
@@ -81,11 +83,13 @@ public class AllureInterceptActionUnitTests extends BaseUnitTests {
             assertThat("attachments.size()", attachments.size(), is(1));
             final String attachment = new String(Files.readAllBytes(attachments.get(0)));
             assertThat("attachment", attachment, is("" +
-                    "Response: 200 TEST http://localhost/\n" +
-                    "Response headers:\n" +
+                    "RESPONSE:\n" +
+                    "200 TEST http://localhost/\n" +
+                    "Headers:\n" +
                     "  Content-Type: text/plain\n" +
                     "  X-Request-ID: generated\n" +
-                    "Response body: (9-byte body)\n" +
+                    "  Content-Length: 9\n" +
+                    "Body: (9-byte body)\n" +
                     "  generated\n"));
         });
         boolean containsResultJson = false;

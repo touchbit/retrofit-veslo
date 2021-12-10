@@ -2,6 +2,7 @@ SUPPORTED REQUEST CONVERTERS:
 Annotated converters: <absent>
 Raw converters:
 org.touchbit.retrofit.ext.dmr.client.converter.typed.ByteArrayConverter
+    byte[]
     java.lang.Byte[]
 org.touchbit.retrofit.ext.dmr.client.converter.typed.FileConverter
     java.io.File

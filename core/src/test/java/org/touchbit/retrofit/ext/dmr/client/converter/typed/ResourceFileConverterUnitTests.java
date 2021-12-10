@@ -81,7 +81,7 @@ public class ResourceFileConverterUnitTests {
                 .convert(null);
         assertThrow(runnable)
                 .assertClass(ConvertCallException.class)
-                .assertMessageIs("It is forbidden to use the " + ResourceFile.class + " model in a response body.");
+                .assertMessageIs("It is forbidden to use the ResourceFile type to convert the response body.");
     }
 
 }

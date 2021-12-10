@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter.ResponseBodyConverter;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
+import org.touchbit.retrofit.ext.dmr.exception.PrimitiveConvertCallException;
 
 import java.io.IOException;
 
@@ -34,7 +35,6 @@ import static org.hamcrest.Matchers.nullValue;
 public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
 
     private static final JavaPrimitiveTypeConverter CONVERTER = new JavaPrimitiveTypeConverter();
-    private static final ResponseBodyConverter<?> RESPONSE_CONVERTER = CONVERTER.responseBodyConverter(OBJ_C, AA, RTF);
 
     private static ResponseBodyConverter<?> getResponseConverter(Class dtoClass) {
         return CONVERTER.responseBodyConverter(dtoClass, AA, RTF);
@@ -59,12 +59,12 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             @Test
             @DisplayName("return null if ResponseBody == null")
             public void test1639065949837() throws IOException {
-                final Object result = RESPONSE_CONVERTER.convert(null);
+                final Object result = CONVERTER.responseBodyConverter(OBJ_C, AA, RTF).convert(null);
                 assertThat("", result, nullValue());
             }
 
             @Test
-            @DisplayName("Character.TYPE: Successful conversion if response body length = 1")
+            @DisplayName("Character.TYPE: return Character if response body length = 1")
             public void test1639065949844() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "1");
                 final Character result = (Character) getResponseConverter(PRIMITIVE_CHARACTER_C).convert(responseBody);
@@ -76,8 +76,8 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             public void test1639065949852() {
                 final ResponseBody responseBody = ResponseBody.create(null, "");
                 assertThrow(() -> getResponseConverter(PRIMITIVE_CHARACTER_C).convert(responseBody))
-                        .assertClass(ConvertCallException.class)
-                        .assertMessageIs("Character conversion error:\nexpected one character\nbut was 0");
+                        .assertClass(PrimitiveConvertCallException.class)
+                        .assertMessageIs("Cannot convert empty response body to primitive type: char");
             }
 
             @Test
@@ -90,7 +90,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Boolean.TYPE: Successful conversion if response body = 'true'")
+            @DisplayName("Boolean.TYPE: return Boolean if response body = 'true'")
             public void test1639065949870() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "true");
                 final Boolean result = (Boolean) getResponseConverter(PRIMITIVE_BOOLEAN_C).convert(responseBody);
@@ -98,7 +98,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Boolean.TYPE: Successful conversion if response body = 'false'")
+            @DisplayName("Boolean.TYPE: return Boolean if response body = 'false'")
             public void test1639065949878() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "false");
                 final Boolean result = (Boolean) getResponseConverter(PRIMITIVE_BOOLEAN_C).convert(responseBody);
@@ -115,7 +115,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Byte.TYPE: Successful conversion if response body = " + Byte.MIN_VALUE)
+            @DisplayName("Byte.TYPE: return Byte if response body = " + Byte.MIN_VALUE)
             public void test1639065949895() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Byte.MIN_VALUE);
                 final Byte result = (Byte) getResponseConverter(PRIMITIVE_BYTE_C).convert(responseBody);
@@ -123,7 +123,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Byte.TYPE: Successful conversion if response body = " + Byte.MAX_VALUE)
+            @DisplayName("Byte.TYPE: return Byte if response body = " + Byte.MAX_VALUE)
             public void test1639065949903() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Byte.MAX_VALUE);
                 final Byte result = (Byte) getResponseConverter(PRIMITIVE_BYTE_C).convert(responseBody);
@@ -140,7 +140,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Integer.TYPE: Successful conversion if response body = " + Integer.MIN_VALUE)
+            @DisplayName("Integer.TYPE: return Integer if response body = " + Integer.MIN_VALUE)
             public void test1639065949920() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Integer.MIN_VALUE);
                 final Integer result = (Integer) getResponseConverter(PRIMITIVE_INTEGER_C).convert(responseBody);
@@ -148,7 +148,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Integer.TYPE: Successful conversion if response body = " + Integer.MAX_VALUE)
+            @DisplayName("Integer.TYPE: return Integer if response body = " + Integer.MAX_VALUE)
             public void test1639065949928() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Integer.MAX_VALUE);
                 final Integer result = (Integer) getResponseConverter(PRIMITIVE_INTEGER_C).convert(responseBody);
@@ -167,7 +167,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Double.TYPE: Successful conversion if response body = " + Double.MIN_VALUE)
+            @DisplayName("Double.TYPE: return Double if response body = " + Double.MIN_VALUE)
             public void test1639065949947() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Double.MIN_VALUE);
                 final Double result = (Double) getResponseConverter(PRIMITIVE_DOUBLE_C).convert(responseBody);
@@ -175,7 +175,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Double.TYPE: Successful conversion if response body = " + Double.MAX_VALUE)
+            @DisplayName("Double.TYPE: return Double if response body = " + Double.MAX_VALUE)
             public void test1639065949955() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Double.MAX_VALUE);
                 final Double result = (Double) getResponseConverter(PRIMITIVE_DOUBLE_C).convert(responseBody);
@@ -194,7 +194,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Float.TYPE: Successful conversion if response body = " + Float.MIN_VALUE)
+            @DisplayName("Float.TYPE: return Float if response body = " + Float.MIN_VALUE)
             public void test1639065949974() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Float.MIN_VALUE);
                 final Float result = (Float) getResponseConverter(PRIMITIVE_FLOAT_C).convert(responseBody);
@@ -202,7 +202,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Float.TYPE: Successful conversion if response body = " + Float.MAX_VALUE)
+            @DisplayName("Float.TYPE: return Float if response body = " + Float.MAX_VALUE)
             public void test1639065949982() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Float.MAX_VALUE);
                 final Float result = (Float) getResponseConverter(PRIMITIVE_FLOAT_C).convert(responseBody);
@@ -221,7 +221,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Long.TYPE: Successful conversion if response body = " + Long.MIN_VALUE)
+            @DisplayName("Long.TYPE: return Long if response body = " + Long.MIN_VALUE)
             public void test1639065950001() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Long.MIN_VALUE);
                 final Long result = (Long) getResponseConverter(PRIMITIVE_LONG_C).convert(responseBody);
@@ -229,7 +229,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Long.TYPE: Successful conversion if response body = " + Long.MAX_VALUE)
+            @DisplayName("Long.TYPE: return Long if response body = " + Long.MAX_VALUE)
             public void test1639065950009() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Long.MAX_VALUE);
                 final Long result = (Long) getResponseConverter(PRIMITIVE_LONG_C).convert(responseBody);
@@ -248,7 +248,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Short.TYPE: Successful conversion if response body = " + Short.MIN_VALUE)
+            @DisplayName("Short.TYPE: return Short if response body = " + Short.MIN_VALUE)
             public void test1639065950028() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Short.MIN_VALUE);
                 final Short result = (Short) getResponseConverter(PRIMITIVE_SHORT_C).convert(responseBody);
@@ -256,7 +256,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Short.TYPE: Successful conversion if response body = " + Short.MAX_VALUE)
+            @DisplayName("Short.TYPE: return Short if response body = " + Short.MAX_VALUE)
             public void test1639065950036() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Short.MAX_VALUE);
                 final Short result = (Short) getResponseConverter(PRIMITIVE_SHORT_C).convert(responseBody);

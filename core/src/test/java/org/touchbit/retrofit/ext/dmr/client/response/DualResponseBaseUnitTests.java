@@ -16,10 +16,9 @@
 
 package org.touchbit.retrofit.ext.dmr.client.response;
 
-import okhttp3.Request;
+import okhttp3.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import retrofit2.Response;
 
 import java.lang.annotation.Annotation;
 
@@ -27,20 +26,19 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 
-@SuppressWarnings("unchecked")
 @DisplayName("DualResponseBase tests")
 public class DualResponseBaseUnitTests {
 
     @Test
     @DisplayName("Check default methods if all objects is present")
     public void test1639065948701() {
-        final Request request = mock(Request.class);
-        final Response<String> response = mock(Response.class);
+        final Response response = mock(Response.class);
         final Annotation[] annotations = new Annotation[]{};
         DualResponseBase<String, String> responseBase = new DualResponseBase<String, String>
-                ("test1637490320687", "test1637490320687", response.raw(), "info", annotations) {};
+                ("test1639065948701", "test1639065948701", response, "info", annotations) {};
         assertThat("", responseBase.getResponse(), is(response));
-        assertThat("", responseBase.getErrorDTO(), is("test1637490320687"));
+        assertThat("", responseBase.getSucDTO(), is("test1639065948701"));
+        assertThat("", responseBase.getErrDTO(), is("test1639065948701"));
         assertThat("", responseBase.getEndpointInfo(), is("info"));
         assertThat("", responseBase.getCallAnnotations(), is(annotations));
     }

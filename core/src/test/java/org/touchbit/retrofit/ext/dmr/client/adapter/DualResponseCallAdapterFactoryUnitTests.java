@@ -16,6 +16,7 @@
 
 package org.touchbit.retrofit.ext.dmr.client.adapter;
 
+import internal.test.utils.BaseUnitTest;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
 import okhttp3.Request;
@@ -24,7 +25,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.client.EndpointInfo;
 import org.touchbit.retrofit.ext.dmr.client.converter.ExtensionConverterFactory;
-import org.touchbit.retrofit.ext.dmr.client.model.RawBody;
 import org.touchbit.retrofit.ext.dmr.client.response.DualResponse;
 import org.touchbit.retrofit.ext.dmr.client.response.IDualResponse;
 import retrofit2.Call;
@@ -40,20 +40,15 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 
 import static internal.test.utils.OkHttpUtils.getRequest;
-import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@SuppressWarnings({"rawtypes", "InstantiatingObjectToGetClassObject", "unchecked", "ConstantConditions"})
+@SuppressWarnings({"rawtypes", "InstantiatingObjectToGetClassObject", "unchecked", "ConstantConditions", "SameParameterValue"})
 @DisplayName("DualCallAdapterFactory tests")
-public class DualResponseCallAdapterFactoryUnitTests {
+public class DualResponseCallAdapterFactoryUnitTests extends BaseUnitTest {
 
     private static final DualResponseCallAdapterFactory DEFAULT_FACTORY = new DualResponseCallAdapterFactory();
-    private static final Class<?> OBJ_C = Object.class;
-    private static final Class<?> STR_C = String.class;
-    private static final Class<?> AB_C = RawBody.class;
     private static final String INFO = "endpointInfo";
     private static final Retrofit R = new Retrofit.Builder()
             .addCallAdapterFactory(DEFAULT_FACTORY)
@@ -78,7 +73,7 @@ public class DualResponseCallAdapterFactoryUnitTests {
     @DisplayName("#getIDualResponse() get default DualResponse")
     public void test1639065951499() {
         final Call call = getCall(200, "");
-        final IDualResponse iDualResponse = DEFAULT_FACTORY.getIDualResponse(call, STR_C, STR_C, INFO, AA, R);
+        final IDualResponse iDualResponse = DEFAULT_FACTORY.getIDualResponse(call, STRING_C, STRING_C, INFO, AA, R);
         assertThat("", iDualResponse, instanceOf(DualResponse.class));
     }
 
@@ -87,7 +82,7 @@ public class DualResponseCallAdapterFactoryUnitTests {
     public void test1639065951507() {
         final Call call = getCall(200, "");
         final IDualResponse iDualResponse = new DualResponseCallAdapterFactory(UnitTestDualResponse::new)
-                .getIDualResponse(call, STR_C, STR_C, INFO, AA, R);
+                .getIDualResponse(call, STRING_C, STRING_C, INFO, AA, R);
         assertThat("", iDualResponse, instanceOf(UnitTestDualResponse.class));
     }
 
@@ -95,35 +90,35 @@ public class DualResponseCallAdapterFactoryUnitTests {
     @Test
     @DisplayName("#getIDualResponse() Parameter 'call' cannot be null.")
     public void test1639065951517() {
-        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(null, STR_C, STR_C, INFO, AA, R)).assertNPE("call");
+        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(null, STRING_C, STRING_C, INFO, AA, R)).assertNPE("call");
     }
 
     @Test
     @DisplayName("#getIDualResponse() Parameter 'successType' cannot be null.")
     public void test1639065951523() {
         final Call call = getCall(200, "");
-        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, null, STR_C, INFO, AA, R)).assertNPE("successType");
+        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, null, STRING_C, INFO, AA, R)).assertNPE("successType");
     }
 
     @Test
     @DisplayName("#getIDualResponse() Parameter 'errorType' cannot be null.")
     public void test1639065951530() {
         final Call call = getCall(200, "");
-        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STR_C, null, INFO, AA, R)).assertNPE("errorType");
+        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STRING_C, null, INFO, AA, R)).assertNPE("errorType");
     }
 
     @Test
     @DisplayName("#getIDualResponse() Parameter 'endpointInfo' cannot be null.")
     public void test1639065951537() {
         final Call call = getCall(200, "");
-        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STR_C, STR_C, null, AA, R)).assertNPE("endpointInfo");
+        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STRING_C, STRING_C, null, AA, R)).assertNPE("endpointInfo");
     }
 
     @Test
     @DisplayName("#getIDualResponse() Parameter 'methodAnnotations' cannot be null.")
     public void test1639065951544() {
         final Call call = getCall(200, "");
-        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STR_C, STR_C, INFO, null, R))
+        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STRING_C, STRING_C, INFO, null, R))
                 .assertNPE("methodAnnotations");
     }
 
@@ -131,7 +126,7 @@ public class DualResponseCallAdapterFactoryUnitTests {
     @DisplayName("#getIDualResponse() Parameter 'retrofit' cannot be null.")
     public void test1639065951552() {
         final Call call = getCall(200, "");
-        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STR_C, STR_C, INFO, AA, null)).assertNPE("retrofit");
+        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STRING_C, STRING_C, INFO, AA, null)).assertNPE("retrofit");
     }
 
     @Test
@@ -357,7 +352,7 @@ public class DualResponseCallAdapterFactoryUnitTests {
             }
 
             @Override
-            public String getErrorDTO() {
+            public String getErrDTO() {
                 return null;
             }
 
@@ -392,7 +387,7 @@ public class DualResponseCallAdapterFactoryUnitTests {
             }
 
             @Override
-            public Object getErrorDTO() {
+            public Object getErrDTO() {
                 return null;
             }
 

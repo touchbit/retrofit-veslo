@@ -26,7 +26,8 @@ import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 
 import java.io.IOException;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 @SuppressWarnings({"ConstantConditions", "rawtypes"})
 @DisplayName("JavaReferenceTypeConverter tests")
@@ -63,15 +64,15 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("String.class: Successful conversion if response body is empty")
+            @DisplayName("String.class: return null if response body is empty")
             public void test1639065950340() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "");
                 final String result = (String) getResponseConverter(STRING_C).convert(responseBody);
-                assertThat("", result, emptyString());
+                assertThat("", result, nullValue());
             }
 
             @Test
-            @DisplayName("String.class: Successful conversion if response body present")
+            @DisplayName("String.class: return String if response body present")
             public void test1639065950348() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "test1638617489426");
                 final String result = (String) getResponseConverter(STRING_C).convert(responseBody);
@@ -79,7 +80,7 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Character.class: Successful conversion if response body length = 1")
+            @DisplayName("Character.class: return Character if response body length = 1")
             public void test1639065950356() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "1");
                 final Character result = (Character) getResponseConverter(CHARACTER_C).convert(responseBody);
@@ -87,12 +88,11 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Character.class: ConvertCallException if response body is empty")
-            public void test1639065950364() {
+            @DisplayName("Character.class: return null if response body is empty")
+            public void test1639065950364() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "");
-                assertThrow(() -> getResponseConverter(CHARACTER_C).convert(responseBody))
-                        .assertClass(ConvertCallException.class)
-                        .assertMessageIs("Character conversion error:\nexpected one character\nbut was 0");
+                final Character result = (Character) getResponseConverter(CHARACTER_C).convert(responseBody);
+                assertThat("", result, nullValue());
             }
 
             @Test
@@ -105,7 +105,7 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Boolean.class: Successful conversion if response body = 'true'")
+            @DisplayName("Boolean.class: return Boolean if response body = 'true'")
             public void test1639065950382() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "true");
                 final Boolean result = (Boolean) getResponseConverter(BOOLEAN_C).convert(responseBody);
@@ -113,7 +113,7 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Boolean.class: Successful conversion if response body = 'false'")
+            @DisplayName("Boolean.class: return Boolean if response body = 'false'")
             public void test1639065950390() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "false");
                 final Boolean result = (Boolean) getResponseConverter(BOOLEAN_C).convert(responseBody);
@@ -130,7 +130,15 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Byte.class: Successful conversion if response body = " + Byte.MIN_VALUE)
+            @DisplayName("Boolean.class: return null if response body is empty")
+            public void test1639170869833() throws IOException {
+                final ResponseBody responseBody = ResponseBody.create(null, "");
+                final Boolean result = (Boolean) getResponseConverter(BOOLEAN_C).convert(responseBody);
+                assertThat("", result, nullValue());
+            }
+
+            @Test
+            @DisplayName("Byte.class: return Byte if response body = " + Byte.MIN_VALUE)
             public void test1639065950407() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Byte.MIN_VALUE);
                 final Byte result = (Byte) getResponseConverter(BYTE_C).convert(responseBody);
@@ -138,7 +146,15 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Byte.class: Successful conversion if response body = " + Byte.MAX_VALUE)
+            @DisplayName("Byte.class: return null if response body is empty")
+            public void test1639170899698() throws IOException {
+                final ResponseBody responseBody = ResponseBody.create(null, "");
+                final Byte result = (Byte) getResponseConverter(BYTE_C).convert(responseBody);
+                assertThat("", result, nullValue());
+            }
+
+            @Test
+            @DisplayName("Byte.class: return Byte if response body = " + Byte.MAX_VALUE)
             public void test1639065950415() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Byte.MAX_VALUE);
                 final Byte result = (Byte) getResponseConverter(BYTE_C).convert(responseBody);
@@ -155,7 +171,7 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Integer.class: Successful conversion if response body = " + Integer.MIN_VALUE)
+            @DisplayName("Integer.class: return Integer if response body = " + Integer.MIN_VALUE)
             public void test1639065950432() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Integer.MIN_VALUE);
                 final Integer result = (Integer) getResponseConverter(INTEGER_C).convert(responseBody);
@@ -163,11 +179,19 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Integer.class: Successful conversion if response body = " + Integer.MAX_VALUE)
+            @DisplayName("Integer.class: return Integer if response body = " + Integer.MAX_VALUE)
             public void test1639065950440() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Integer.MAX_VALUE);
                 final Integer result = (Integer) getResponseConverter(INTEGER_C).convert(responseBody);
                 assertThat("", result, is(Integer.MAX_VALUE));
+            }
+
+            @Test
+            @DisplayName("Integer.class: return null if response body is empty")
+            public void test1639171066420() throws IOException {
+                final ResponseBody responseBody = ResponseBody.create(null, "");
+                final Object result = getResponseConverter(INTEGER_C).convert(responseBody);
+                assertThat("", result, nullValue());
             }
 
             @Test
@@ -182,7 +206,7 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Double.class: Successful conversion if response body = " + Double.MIN_VALUE)
+            @DisplayName("Double.class: return Double if response body = " + Double.MIN_VALUE)
             public void test1639065950459() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Double.MIN_VALUE);
                 final Double result = (Double) getResponseConverter(DOUBLE_C).convert(responseBody);
@@ -190,11 +214,19 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Double.class: Successful conversion if response body = " + Double.MAX_VALUE)
+            @DisplayName("Double.class: return Double if response body = " + Double.MAX_VALUE)
             public void test1639065950467() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Double.MAX_VALUE);
                 final Double result = (Double) getResponseConverter(DOUBLE_C).convert(responseBody);
                 assertThat("", result, is(Double.MAX_VALUE));
+            }
+
+            @Test
+            @DisplayName("Double.class: return null if response body is empty")
+            public void test1639170962903() throws IOException {
+                final ResponseBody responseBody = ResponseBody.create(null, "");
+                final Object result = getResponseConverter(DOUBLE_C).convert(responseBody);
+                assertThat("", result, nullValue());
             }
 
             @Test
@@ -209,7 +241,7 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Float.class: Successful conversion if response body = " + Float.MIN_VALUE)
+            @DisplayName("Float.class: return Float if response body = " + Float.MIN_VALUE)
             public void test1639065950486() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Float.MIN_VALUE);
                 final Float result = (Float) getResponseConverter(FLOAT_C).convert(responseBody);
@@ -217,11 +249,19 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Float.class: Successful conversion if response body = " + Float.MAX_VALUE)
+            @DisplayName("Float.class: return Float if response body = " + Float.MAX_VALUE)
             public void test1639065950494() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Float.MAX_VALUE);
                 final Float result = (Float) getResponseConverter(FLOAT_C).convert(responseBody);
                 assertThat("", result, is(Float.MAX_VALUE));
+            }
+
+            @Test
+            @DisplayName("Float.class: return null if response body is empty")
+            public void test1639170994612() throws IOException {
+                final ResponseBody responseBody = ResponseBody.create(null, "");
+                final Object result = getResponseConverter(FLOAT_C).convert(responseBody);
+                assertThat("", result, nullValue());
             }
 
             @Test
@@ -236,7 +276,7 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Long.class: Successful conversion if response body = " + Long.MIN_VALUE)
+            @DisplayName("Long.class: return Long if response body = " + Long.MIN_VALUE)
             public void test1639065950513() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Long.MIN_VALUE);
                 final Long result = (Long) getResponseConverter(LONG_C).convert(responseBody);
@@ -244,11 +284,19 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Long.class: Successful conversion if response body = " + Long.MAX_VALUE)
+            @DisplayName("Long.class: return Long if response body = " + Long.MAX_VALUE)
             public void test1639065950521() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Long.MAX_VALUE);
                 final Long result = (Long) getResponseConverter(LONG_C).convert(responseBody);
                 assertThat("", result, is(Long.MAX_VALUE));
+            }
+
+            @Test
+            @DisplayName("Long.class: return null if response body is empty")
+            public void test1639171105927() throws IOException {
+                final ResponseBody responseBody = ResponseBody.create(null, "");
+                final Object result = getResponseConverter(LONG_C).convert(responseBody);
+                assertThat("", result, nullValue());
             }
 
             @Test
@@ -263,7 +311,7 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Short.class: Successful conversion if response body = " + Short.MIN_VALUE)
+            @DisplayName("Short.class: return Short if response body = " + Short.MIN_VALUE)
             public void test1639065950540() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Short.MIN_VALUE);
                 final Short result = (Short) getResponseConverter(SHORT_C).convert(responseBody);
@@ -271,11 +319,19 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
             }
 
             @Test
-            @DisplayName("Short.class: Successful conversion if response body = " + Short.MAX_VALUE)
+            @DisplayName("Short.class: return Short if response body = " + Short.MAX_VALUE)
             public void test1639065950548() throws IOException {
                 final ResponseBody responseBody = ResponseBody.create(null, "" + Short.MAX_VALUE);
                 final Short result = (Short) getResponseConverter(SHORT_C).convert(responseBody);
                 assertThat("", result, is(Short.MAX_VALUE));
+            }
+
+            @Test
+            @DisplayName("Short.class: return null if response body is empty")
+            public void test1639171075292() throws IOException {
+                final ResponseBody responseBody = ResponseBody.create(null, "");
+                final Object result = getResponseConverter(SHORT_C).convert(responseBody);
+                assertThat("", result, nullValue());
             }
 
             @Test

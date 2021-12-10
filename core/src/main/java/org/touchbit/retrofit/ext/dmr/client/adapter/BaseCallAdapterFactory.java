@@ -45,6 +45,10 @@ public abstract class BaseCallAdapterFactory extends CallAdapter.Factory {
                                                final @Nonnull Type returnType,
                                                final @Nonnull Annotation[] annotations,
                                                final @Nonnull Retrofit retrofit) {
+        Utils.parameterRequireNonNull(response, "response");
+        Utils.parameterRequireNonNull(returnType, "returnType");
+        Utils.parameterRequireNonNull(annotations, "annotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         final String typeName = Utils.getTypeName(returnType);
         logger.debug("Get successful response body model for type {}", typeName);
         try {
@@ -54,6 +58,7 @@ public abstract class BaseCallAdapterFactory extends CallAdapter.Factory {
                 logger.debug("Received 'No content' response. Forced conversion null body.");
                 dto = retrofit.responseBodyConverter(returnType, annotations).convert(null);
             } else {
+                logger.debug("The existing response body was used.");
                 dto = response.body();
             }
             logger.debug("Successful body is {}present", dto == null ? "not " : "");

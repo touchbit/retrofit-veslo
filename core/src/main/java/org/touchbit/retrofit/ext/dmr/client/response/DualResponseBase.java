@@ -46,7 +46,7 @@ public abstract class DualResponseBase<SUC_DTO, ERR_DTO> implements IDualRespons
 
     @Override
     @Nullable
-    public ERR_DTO getErrorDTO() {
+    public ERR_DTO getErrDTO() {
         return errDTO;
     }
 
@@ -77,12 +77,13 @@ public abstract class DualResponseBase<SUC_DTO, ERR_DTO> implements IDualRespons
 
     @Override
     public String toString() {
-        return ("Success DTO: " + sucDTO + "\n" +
-                "Error DTO: " + errDTO + "\n" +
-                "Raw response: " + response + "\n" +
-                "Call info: '" + endpointInfo + "'\n" +
-                "API method annotations:" + (callAnnotations.length == 0 ? "" : "\n  ")
-                + Arrays.stream(callAnnotations)
+        return ("Success DTO: " + getSucDTO() + "\n" +
+                "Error DTO: " + getErrDTO() + "\n" +
+                "Raw response: " + getResponse() + "\n" +
+                "Call info: '" + getEndpointInfo() + "'\n" +
+                "API method annotations:" + (getCallAnnotations().length == 0 ? "" : "\n  ")
+                + Arrays.stream(getCallAnnotations())
                 .map(Annotation::toString).collect(Collectors.joining("\n  "))).trim();
     }
+
 }

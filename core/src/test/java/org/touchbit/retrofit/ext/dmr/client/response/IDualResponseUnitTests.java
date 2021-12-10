@@ -18,10 +18,10 @@ package org.touchbit.retrofit.ext.dmr.client.response;
 
 import okhttp3.Headers;
 import okhttp3.MediaType;
+import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import retrofit2.Response;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,7 +32,7 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings("SameParameterValue")
 @DisplayName("IDualResponse tests")
 public class IDualResponseUnitTests {
 
@@ -41,19 +41,18 @@ public class IDualResponseUnitTests {
     public void test1639065948557() {
         final ResponseBody responseBody = mock(ResponseBody.class);
         when(responseBody.contentType()).thenReturn(MediaType.get("application/json; charset=utf-8"));
-        final okhttp3.Response rawResponse = mock(okhttp3.Response.class);
-        when(rawResponse.body()).thenReturn(responseBody);
-        final Response<String> response = mock(Response.class);
+        final Response response = mock(Response.class);
         when(response.code()).thenReturn(200);
         when(response.message()).thenReturn("TEST");
         when(response.isSuccessful()).thenReturn(true);
-        when(response.body()).thenReturn("test1637488565492");
+        when(response.body()).thenReturn(responseBody);
         when(response.headers()).thenReturn(Headers.of("testHeader", "test1637488565492"));
-        when(response.raw()).thenReturn(rawResponse);
 
-        final IDualResponse<String, String> iDualResponse = getIDualResponse(response);
+        final IDualResponse<String, String> iDualResponse = getIDualResponse(response, "err", "suc", "info");
         assertThat("", iDualResponse, notNullValue());
-        assertThat("", iDualResponse.getSucDTO(), is("test1637488565492"));
+        assertThat("", iDualResponse.getSucDTO(), is("suc"));
+        assertThat("", iDualResponse.getErrDTO(), is("err"));
+        assertThat("", iDualResponse.getEndpointInfo(), is("info"));
         assertThat("", iDualResponse.getHttpStatusCode(), is(200));
         assertThat("", iDualResponse.getHttpStatusMessage(), is("TEST"));
         assertThat("", iDualResponse.getHeaders(), notNullValue());
@@ -65,19 +64,17 @@ public class IDualResponseUnitTests {
     @Test
     @DisplayName("#getHeaders() successfully fetching headers if okhttp3.ResponseBody is null")
     public void test1639065948583() {
-        final okhttp3.Response rawResponse = mock(okhttp3.Response.class);
-        when(rawResponse.body()).thenReturn(null);
-        final Response<String> response = mock(Response.class);
+        final Response response = mock(Response.class);
         when(response.code()).thenReturn(200);
         when(response.message()).thenReturn("TEST");
         when(response.isSuccessful()).thenReturn(true);
-        when(response.body()).thenReturn("test1637488565492");
         when(response.headers()).thenReturn(Headers.of("testHeader", "test1637488565492"));
-        when(response.raw()).thenReturn(rawResponse);
 
-        final IDualResponse<String, String> iDualResponse = getIDualResponse(response);
+        final IDualResponse<String, String> iDualResponse = getIDualResponse(response, "err", "suc", "info");
         assertThat("", iDualResponse, notNullValue());
-        assertThat("", iDualResponse.getSucDTO(), is("test1637488565492"));
+        assertThat("", iDualResponse.getSucDTO(), is("suc"));
+        assertThat("", iDualResponse.getErrDTO(), is("err"));
+        assertThat("", iDualResponse.getEndpointInfo(), is("info"));
         assertThat("", iDualResponse.getHttpStatusCode(), is(200));
         assertThat("", iDualResponse.getHttpStatusMessage(), is("TEST"));
         assertThat("", iDualResponse.getHeaders(), notNullValue());
@@ -91,19 +88,18 @@ public class IDualResponseUnitTests {
     public void test1639065948607() {
         final ResponseBody responseBody = mock(ResponseBody.class);
         when(responseBody.contentType()).thenReturn(null);
-        final okhttp3.Response rawResponse = mock(okhttp3.Response.class);
-        when(rawResponse.body()).thenReturn(responseBody);
-        final Response<String> response = mock(Response.class);
+        final Response response = mock(Response.class);
         when(response.code()).thenReturn(200);
         when(response.message()).thenReturn("TEST");
         when(response.isSuccessful()).thenReturn(true);
-        when(response.body()).thenReturn("test1637488565492");
+        when(response.body()).thenReturn(responseBody);
         when(response.headers()).thenReturn(Headers.of("testHeader", "test1637488565492"));
-        when(response.raw()).thenReturn(rawResponse);
 
-        final IDualResponse<String, String> iDualResponse = getIDualResponse(response);
+        final IDualResponse<String, String> iDualResponse = getIDualResponse(response, "err", "suc", "info");
         assertThat("", iDualResponse, notNullValue());
-        assertThat("", iDualResponse.getSucDTO(), is("test1637488565492"));
+        assertThat("", iDualResponse.getSucDTO(), is("suc"));
+        assertThat("", iDualResponse.getErrDTO(), is("err"));
+        assertThat("", iDualResponse.getEndpointInfo(), is("info"));
         assertThat("", iDualResponse.getHttpStatusCode(), is(200));
         assertThat("", iDualResponse.getHttpStatusMessage(), is("TEST"));
         assertThat("", iDualResponse.getHeaders(), notNullValue());
@@ -112,30 +108,30 @@ public class IDualResponseUnitTests {
         assertThat("", iDualResponse.isSuccessful(), is(true));
     }
 
-    private IDualResponse<String, String> getIDualResponse(Response<String> response) {
+    private IDualResponse<String, String> getIDualResponse(Response response, String err, String suc, String info) {
         return new IDualResponse<String, String>() {
             @Nonnull
             @Override
-            public okhttp3.Response getResponse() {
-                return null;
+            public Response getResponse() {
+                return response;
             }
 
             @Nullable
             @Override
-            public String getErrorDTO() {
-                return null;
+            public String getErrDTO() {
+                return err;
             }
 
             @Nullable
             @Override
             public String getSucDTO() {
-                return null;
+                return suc;
             }
 
             @Nonnull
             @Override
             public String getEndpointInfo() {
-                return null;
+                return info;
             }
 
             @Nonnull

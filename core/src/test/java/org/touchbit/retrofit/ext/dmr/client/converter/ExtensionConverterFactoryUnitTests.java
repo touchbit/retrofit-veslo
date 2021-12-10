@@ -41,7 +41,6 @@ import org.touchbit.retrofit.ext.dmr.client.header.ContentType;
 import org.touchbit.retrofit.ext.dmr.client.model.RawBody;
 import org.touchbit.retrofit.ext.dmr.client.model.ResourceFile;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
-import org.touchbit.retrofit.ext.dmr.exception.ConverterNotFoundException;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Converter;
 
@@ -82,8 +81,9 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         final Map<ContentType, ExtensionConverter<?>> mimeRsp = factory.getMimeResponseConverters();
         final Map<Type, ExtensionConverter<?>> javaTypeRsp = factory.getJavaTypeResponseConverters();
         softlyAsserter(asserter -> asserter
-                .softly(() -> assertThat("Request raw converters size", rawRqt.size(), is(4)))
+                .softly(() -> assertThat("Request raw converters size", rawRqt.size(), is(5)))
                 .softly(() -> assertThat("Request raw converter", rawRqt.get(RawBody.class), instanceOf(RawBodyConverter.class)))
+                .softly(() -> assertThat("Request raw converter", rawRqt.get(byte[].class), instanceOf(ByteArrayConverter.class)))
                 .softly(() -> assertThat("Request raw converter", rawRqt.get(Byte[].class), instanceOf(ByteArrayConverter.class)))
                 .softly(() -> assertThat("Request raw converter", rawRqt.get(File.class), instanceOf(FileConverter.class)))
                 .softly(() -> assertThat("Request raw converter", rawRqt.get(ResourceFile.class), instanceOf(ResourceFileConverter.class)))
@@ -106,10 +106,12 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
                 .softly(() -> assertThat("Request java type converter", javaTypeRqt.get(Float.class), instanceOf(JavaReferenceTypeConverter.class)))
                 .softly(() -> assertThat("Request java type converter", javaTypeRqt.get(Long.class), instanceOf(JavaReferenceTypeConverter.class)))
                 .softly(() -> assertThat("Request java type converter", javaTypeRqt.get(Short.class), instanceOf(JavaReferenceTypeConverter.class)))
-                .softly(() -> assertThat("Response raw converters size", rawRsp.size(), is(3)))
+                .softly(() -> assertThat("Response raw converters size", rawRsp.size(), is(5)))
                 .softly(() -> assertThat("Response raw converter", rawRsp.get(RawBody.class), instanceOf(RawBodyConverter.class)))
+                .softly(() -> assertThat("Response raw converter", rawRsp.get(byte[].class), instanceOf(ByteArrayConverter.class)))
                 .softly(() -> assertThat("Response raw converter", rawRsp.get(Byte[].class), instanceOf(ByteArrayConverter.class)))
                 .softly(() -> assertThat("Response raw converter", rawRsp.get(File.class), instanceOf(FileConverter.class)))
+                .softly(() -> assertThat("Response raw converter", rawRsp.get(ResourceFile.class), instanceOf(ResourceFileConverter.class)))
                 .softly(() -> assertThat("Response mime converters size", mimeRsp.size(), is(0)))
                 .softly(() -> assertThat("Response java type converters size", javaTypeRsp.size(), is(17)))
                 .softly(() -> assertThat("Response java type converter", javaTypeRsp.get(Character.TYPE), instanceOf(JavaPrimitiveTypeConverter.class)))
@@ -201,8 +203,8 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
                 .responseBodyConverter(ResourceFile.class, array(), RTF)
                 .convert(ResponseBody.create(null, "test1637429829752"));
         assertThrow(runnable)
-                .assertClass(ConverterNotFoundException.class)
-                .assertMessageContains("Converter not found");
+                .assertClass(ConvertCallException.class)
+                .assertMessageContains("It is forbidden to use the ResourceFile type to convert the response body.");
     }
 
     @Test
@@ -395,10 +397,10 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
     }
 
     @Test
-    @DisplayName("#getExtensionConverter() ConvertCallException being throw if bodyClass=null")
+    @DisplayName("#getExtensionConverter() ConvertCallException being throw if bodyType=null")
     public void test1639065949263() {
         final RequestConverter converter = getRequestConverter(TestConverter.class, TestDTO.class);
-        assertThrow(() -> TEST_FACTORY.getExtensionConverter(converter, null)).assertNPE("bodyClass");
+        assertThrow(() -> TEST_FACTORY.getExtensionConverter(converter, null)).assertNPE("bodyType");
     }
 
     @Test
@@ -818,9 +820,9 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
     }
 
     @Test
-    @DisplayName("#getPackageResponseConverter() Exception thrown if bodyClass = null")
+    @DisplayName("#getPackageResponseConverter() Exception thrown if bodyType = null")
     public void test1639065949686() {
-        assertThrow(() -> TEST_FACTORY.getPackageResponseConverter(null, array(), RTF)).assertNPE("bodyClass");
+        assertThrow(() -> TEST_FACTORY.getPackageResponseConverter(null, array(), RTF)).assertNPE("bodyType");
     }
 
     @Test
@@ -857,15 +859,13 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
     @Test
     @DisplayName("#getPackageRequestConverter() Exception thrown if bodyClass = null")
     public void test1639065949723() {
-        assertThrow(() -> TEST_FACTORY.getPackageRequestConverter(null, array(), array(), RTF))
-                .assertNPE("bodyClass");
+        assertNPE(() -> TEST_FACTORY.getPackageRequestConverter(null, array(), array(), RTF), "bodyClass");
     }
 
     @Test
     @DisplayName("#getPackageRequestConverter() Exception thrown if parameterAnnotations = null")
     public void test1639065949730() {
-        assertThrow(() -> TEST_FACTORY.getPackageRequestConverter(OBJ_C, null, array(), RTF))
-                .assertNPE("parameterAnnotations");
+        assertNPE(() -> TEST_FACTORY.getPackageRequestConverter(OBJ_C, null, array(), RTF), "parameterAnnotations");
     }
 
     @Test
