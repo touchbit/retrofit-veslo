@@ -17,14 +17,15 @@
 package org.touchbit.retrofit.ext.dmr.client.response;
 
 import okhttp3.Response;
+import org.touchbit.retrofit.ext.dmr.asserter.HeadersAsserter;
 import org.touchbit.retrofit.ext.dmr.asserter.ResponseAsserter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
-import java.util.function.Consumer;
 
-public class DualResponse<SUC_DTO, ERR_DTO> extends DualResponseBase<SUC_DTO, ERR_DTO> {
+public class DualResponse<SUC_DTO, ERR_DTO>
+        extends BaseDualResponse<SUC_DTO, ERR_DTO, ResponseAsserter<SUC_DTO, ERR_DTO, HeadersAsserter>> {
 
     public DualResponse(final @Nullable SUC_DTO sucDTO,
                         final @Nullable ERR_DTO errDTO,
@@ -34,11 +35,14 @@ public class DualResponse<SUC_DTO, ERR_DTO> extends DualResponseBase<SUC_DTO, ER
         super(sucDTO, errDTO, response, endpointInfo, callAnnotations);
     }
 
-    public DualResponse<SUC_DTO, ERR_DTO> assertResponse(Consumer<ResponseAsserter<SUC_DTO, ERR_DTO>> consumer) {
-        try (final ResponseAsserter<SUC_DTO, ERR_DTO> responseAsserter = new ResponseAsserter<>(this)) {
-            consumer.accept(responseAsserter);
-        }
-        return this;
+    @Override
+    public HeadersAsserter getHeadersAsserter() {
+        return new HeadersAsserter(getResponse().headers());
+    }
+
+    @Override
+    public ResponseAsserter<SUC_DTO, ERR_DTO, HeadersAsserter> getResponseAsserter() {
+        return new ResponseAsserter<>(this, getHeadersAsserter());
     }
 
 }

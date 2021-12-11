@@ -82,7 +82,7 @@ public class ResponseAsserterBaseUnitTests {
         return new ResponseAsserterBase<S, E, A>(o) {
             @Override
             @EverythingIsNonNull
-            public ResponseAsserter<S, E> assertHeaders(Consumer<A> consumer) {
+            public ResponseAsserterBase<S, E, A> assertHeaders(Consumer<A> consumer) {
                 return null;
             }
         };

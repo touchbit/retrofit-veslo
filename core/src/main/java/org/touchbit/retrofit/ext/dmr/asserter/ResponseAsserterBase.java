@@ -21,7 +21,6 @@ import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nonnull;
-import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -33,7 +32,7 @@ import java.util.function.Consumer;
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 19.11.2021
  */
-public abstract class ResponseAsserterBase<SUC_DTO, ERR_DTO, HA> implements Closeable, SoftlyAsserter {
+public abstract class ResponseAsserterBase<SUC_DTO, ERR_DTO, HA> implements IResponseAsserter {
 
     private final IDualResponse<SUC_DTO, ERR_DTO> response;
     private final List<Throwable> errors = new ArrayList<>();
@@ -44,7 +43,7 @@ public abstract class ResponseAsserterBase<SUC_DTO, ERR_DTO, HA> implements Clos
     }
 
     @EverythingIsNonNull
-    public abstract ResponseAsserter<SUC_DTO, ERR_DTO> assertHeaders(Consumer<HA> consumer);
+    public abstract ResponseAsserterBase<SUC_DTO, ERR_DTO, HA> assertHeaders(Consumer<HA> consumer);
 
     @Nonnull
     public IDualResponse<SUC_DTO, ERR_DTO> getResponse() {

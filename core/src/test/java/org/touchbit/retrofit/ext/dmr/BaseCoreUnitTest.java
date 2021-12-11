@@ -199,9 +199,9 @@ public class BaseCoreUnitTest extends BaseUnitTest {
         };
     }
 
-    protected static final class UnitTestDualResponse<SUC_DTO, ERR_DTO> extends DualResponse<SUC_DTO, ERR_DTO> {
+    protected static final class UnitDualResponseTest<SUC_DTO, ERR_DTO> extends DualResponse<SUC_DTO, ERR_DTO> {
 
-        public UnitTestDualResponse(@Nullable SUC_DTO sucDTO,
+        public UnitDualResponseTest(@Nullable SUC_DTO sucDTO,
                                     @Nullable ERR_DTO errDTO,
                                     @Nonnull okhttp3.Response response,
                                     @Nonnull String endpointInfo,

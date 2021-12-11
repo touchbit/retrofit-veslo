@@ -19,8 +19,8 @@ package org.touchbit.retrofit.ext.dmr.client.adapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.touchbit.retrofit.ext.dmr.client.EndpointInfo;
+import org.touchbit.retrofit.ext.dmr.client.response.BaseDualResponse;
 import org.touchbit.retrofit.ext.dmr.client.response.DualResponse;
-import org.touchbit.retrofit.ext.dmr.client.response.DualResponseBase;
 import org.touchbit.retrofit.ext.dmr.client.response.IDualResponse;
 import org.touchbit.retrofit.ext.dmr.exception.HttpCallException;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
@@ -47,7 +47,7 @@ public class DualResponseCallAdapterFactory extends BaseCallAdapterFactory {
     public static final DualResponseCallAdapterFactory INSTANCE = new DualResponseCallAdapterFactory();
 
     /**
-     * {@link IDualResponseConsumer} for constructor of {@link DualResponseBase} heirs
+     * {@link IDualResponseConsumer} for constructor of {@link BaseDualResponse} heirs
      */
     private final IDualResponseConsumer<IDualResponse<?, ?>> dualResponseConsumer;
 
@@ -59,7 +59,7 @@ public class DualResponseCallAdapterFactory extends BaseCallAdapterFactory {
     }
 
     /**
-     * @param dualResponseConsumer - {@link IDualResponseConsumer} for constructor of {@link DualResponseBase} heirs
+     * @param dualResponseConsumer - {@link IDualResponseConsumer} for constructor of {@link BaseDualResponse} heirs
      */
     @EverythingIsNonNull
     public DualResponseCallAdapterFactory(final IDualResponseConsumer<IDualResponse<?, ?>> dualResponseConsumer) {
@@ -76,7 +76,7 @@ public class DualResponseCallAdapterFactory extends BaseCallAdapterFactory {
 
     /**
      * @param logger               - required Slf4J logger
-     * @param dualResponseConsumer - {@link IDualResponseConsumer} for constructor of {@link DualResponseBase} heirs
+     * @param dualResponseConsumer - {@link IDualResponseConsumer} for constructor of {@link BaseDualResponse} heirs
      */
     @EverythingIsNonNull
     public DualResponseCallAdapterFactory(final Logger logger,
@@ -237,7 +237,7 @@ public class DualResponseCallAdapterFactory extends BaseCallAdapterFactory {
     }
 
     /**
-     * @return {@link IDualResponseConsumer} for constructor of {@link DualResponseBase} heirs
+     * @return {@link IDualResponseConsumer} for constructor of {@link BaseDualResponse} heirs
      */
     public IDualResponseConsumer<IDualResponse<?, ?>> getDualResponseConsumer() {
         return dualResponseConsumer;

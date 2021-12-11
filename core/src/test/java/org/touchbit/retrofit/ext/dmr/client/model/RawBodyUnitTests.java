@@ -24,7 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @SuppressWarnings({"EqualsWithItself", "ConstantConditions", "StringOperationCanBeSimplified", "EqualsBetweenInconvertibleTypes"})
-@DisplayName("AnyBody model tests")
+@DisplayName("RawBody model tests")
 public class RawBodyUnitTests {
 
     private static final String BLANK_BODY_STRING = "   ";
@@ -33,47 +33,47 @@ public class RawBodyUnitTests {
     private static final byte[] EMPTY_BODY_BYTES = EMPTY_BODY_STRING.getBytes();
 
     @Test
-    @DisplayName("Successfully instantiating AnyBody class if data is empty string")
+    @DisplayName("Successfully instantiating RawBody class if data is empty string")
     public void test1639065951875() {
         RawBody dto = new RawBody(EMPTY_BODY_STRING);
-        assertThat("AnyBody.getBody()", dto.bytes(), is(EMPTY_BODY_BYTES));
-        assertThat("AnyBody.getBody()", dto.string(), is(EMPTY_BODY_STRING));
-        assertThat("AnyBody.isEmptyBody()", dto.isEmptyBody(), is(true));
-        assertThat("AnyBody.isNullBody()", dto.isNullBody(), is(false));
-        assertThat("AnyBody.isNullBody()", dto.hashCode(), greaterThan(0));
+        assertThat("RawBody.getBody()", dto.bytes(), is(EMPTY_BODY_BYTES));
+        assertThat("RawBody.getBody()", dto.string(), is(EMPTY_BODY_STRING));
+        assertThat("RawBody.isEmptyBody()", dto.isEmptyBody(), is(true));
+        assertThat("RawBody.isNullBody()", dto.isNullBody(), is(false));
+        assertThat("RawBody.isNullBody()", dto.hashCode(), greaterThan(0));
     }
 
     @Test
-    @DisplayName("Successfully instantiating AnyBody class if data is blank string")
+    @DisplayName("Successfully instantiating RawBody class if data is blank string")
     public void test1639065951886() {
         RawBody dto = new RawBody(BLANK_BODY_STRING);
-        assertThat("AnyBody.getBody()", dto.bytes(), is(BLANK_BODY_BYTES));
-        assertThat("AnyBody.getBody()", dto.string(), is(BLANK_BODY_STRING));
-        assertThat("AnyBody.isEmptyBody()", dto.isEmptyBody(), is(false));
-        assertThat("AnyBody.isNullBody()", dto.isNullBody(), is(false));
-        assertThat("AnyBody.isNullBody()", dto.hashCode(), greaterThan(0));
+        assertThat("RawBody.getBody()", dto.bytes(), is(BLANK_BODY_BYTES));
+        assertThat("RawBody.getBody()", dto.string(), is(BLANK_BODY_STRING));
+        assertThat("RawBody.isEmptyBody()", dto.isEmptyBody(), is(false));
+        assertThat("RawBody.isNullBody()", dto.isNullBody(), is(false));
+        assertThat("RawBody.isNullBody()", dto.hashCode(), greaterThan(0));
     }
 
     @Test
-    @DisplayName("Successfully instantiating AnyBody class if data is null string")
+    @DisplayName("Successfully instantiating RawBody class if data is null string")
     public void test1639065951897() {
         RawBody dto = new RawBody((String) null);
-        assertThat("AnyBody.getBody()", dto.bytes(), nullValue());
-        assertThat("AnyBody.getBody()", dto.string(), nullValue());
-        assertThat("AnyBody.isEmptyBody()", dto.isEmptyBody(), is(true));
-        assertThat("AnyBody.isNullBody()", dto.isNullBody(), is(true));
-        assertThat("AnyBody.isNullBody()", dto.hashCode(), is(0));
+        assertThat("RawBody.getBody()", dto.bytes(), nullValue());
+        assertThat("RawBody.getBody()", dto.string(), nullValue());
+        assertThat("RawBody.isEmptyBody()", dto.isEmptyBody(), is(true));
+        assertThat("RawBody.isNullBody()", dto.isNullBody(), is(true));
+        assertThat("RawBody.isNullBody()", dto.hashCode(), is(0));
     }
 
     @Test
-    @DisplayName("Successfully instantiating AnyBody class if data is null byte array")
+    @DisplayName("Successfully instantiating RawBody class if data is null byte array")
     public void test1639065951908() {
         RawBody dto = new RawBody((byte[]) null);
-        assertThat("AnyBody.getBody()", dto.bytes(), nullValue());
-        assertThat("AnyBody.getBody()", dto.string(), nullValue());
-        assertThat("AnyBody.isEmptyBody()", dto.isEmptyBody(), is(true));
-        assertThat("AnyBody.isNullBody()", dto.isNullBody(), is(true));
-        assertThat("AnyBody.isNullBody()", dto.hashCode(), is(0));
+        assertThat("RawBody.getBody()", dto.bytes(), nullValue());
+        assertThat("RawBody.getBody()", dto.string(), nullValue());
+        assertThat("RawBody.isEmptyBody()", dto.isEmptyBody(), is(true));
+        assertThat("RawBody.isNullBody()", dto.isNullBody(), is(true));
+        assertThat("RawBody.isNullBody()", dto.hashCode(), is(0));
     }
 
     @Test
@@ -357,7 +357,7 @@ public class RawBodyUnitTests {
     }
 
     @Test
-    @DisplayName("equals() = false if compared object != AnyBody")
+    @DisplayName("equals() = false if compared object != RawBody")
     public void test1639065952199() {
         final RawBody rawBody = new RawBody("");
         assertThat("", rawBody.equals(new String()), is(false));

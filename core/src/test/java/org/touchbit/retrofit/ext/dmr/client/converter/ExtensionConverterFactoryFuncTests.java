@@ -16,7 +16,9 @@
 
 package org.touchbit.retrofit.ext.dmr.client.converter;
 
+import internal.test.utils.OkHttpTestUtils;
 import internal.test.utils.client.model.TestDTO;
+import internal.test.utils.client.model.pack.PackageDTO;
 import okhttp3.RequestBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -24,10 +26,16 @@ import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.BaseCoreUnitTest;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.Converters;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.RequestConverter;
+import org.touchbit.retrofit.ext.dmr.client.converter.api.ResponseConverter;
+import org.touchbit.retrofit.ext.dmr.client.model.RawBody;
+import org.touchbit.retrofit.ext.dmr.client.model.ResourceFile;
+import org.touchbit.retrofit.ext.dmr.util.Utils;
 
+import java.io.File;
 import java.io.IOException;
 
 import static internal.test.utils.OkHttpTestUtils.requestBodyToString;
+import static internal.test.utils.TestUtils.array;
 import static org.hamcrest.Matchers.*;
 
 @SuppressWarnings("ConstantConditions")
@@ -61,91 +69,91 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
             assertThat("RequestBody.toString()", requestBodyToString(requestBody), is("test1637670751294"));
         }
 
-//        @Test
-//        @DisplayName("Successfully converting String.class to RequestBody")
-//        public void test1639065948779() throws IOException {
-//            String body = "test1637422599548";
-//            final RequestBody requestBody = FACTORY.requestBodyConverter(STRING_T, AA, AA, RTF).convert(body);
-//            assertThat("RequestBody", requestBody, notNullValue());
-//            assertThat("RequestBody.contentType()", requestBody.contentType(), nullValue());
-//            assertThat("RequestBody.toString()", OkHttpUtils.requestBodyToString(requestBody), is(body));
-//        }
-//
-//        @Test
-//        @DisplayName("Successfully converting AnyBody.class to RequestBody by type (raw)")
-//        public void test1639065948789() throws IOException {
-//            final RawBody expected = new RawBody("test1637428451229");
-//            final RequestBody requestBody = new ExtensionConverterFactory()
-//                    .requestBodyConverter(RawBody.class, array(), array(), null)
-//                    .convert(expected);
-//            assertThat("RequestBody", requestBody, notNullValue());
-//            assertThat("RequestBody.toString()", OkHttpUtils.requestBodyToString(requestBody), is("test1637428451229"));
-//        }
-//
-//        @Test
-//        @DisplayName("Successfully converting Byte[].class to RequestBody by type (raw)")
-//        public void test1639065948800() throws IOException {
-//            final Byte[] expected = Utils.toObjectByteArray("test1637428566604".getBytes());
-//            final RequestBody requestBody = new ExtensionConverterFactory()
-//                    .requestBodyConverter(RawBody.class, array(), array(), null)
-//                    .convert(expected);
-//            assertThat("RequestBody", requestBody, notNullValue());
-//            assertThat("RequestBody.toString()", OkHttpUtils.requestBodyToString(requestBody), is("test1637428566604"));
-//        }
-//
-//        @Test
-//        @DisplayName("Successfully converting File.class to RequestBody by type (raw)")
-//        public void test1639065948811() throws IOException {
-//            final File file = new File("src/test/resources/test/data/test1637428660061.txt");
-//            final RequestBody requestBody = new ExtensionConverterFactory()
-//                    .requestBodyConverter(RawBody.class, array(), array(), null)
-//                    .convert(file);
-//            assertThat("RequestBody", requestBody, notNullValue());
-//            assertThat("RequestBody.toString()", OkHttpUtils.requestBodyToString(requestBody), is("test1637428660061"));
-//        }
-//
-//        @Test
-//        @DisplayName("Successfully converting ResourceFile.class to RequestBody by type (raw)")
-//        public void test1639065948822() throws IOException {
-//            final ResourceFile file = new ResourceFile("test/data/test1637428785169.txt");
-//            final RequestBody requestBody = new ExtensionConverterFactory()
-//                    .requestBodyConverter(RawBody.class, array(), array(), null)
-//                    .convert(file);
-//            assertThat("RequestBody", requestBody, notNullValue());
-//            assertThat("RequestBody.toString()", OkHttpUtils.requestBodyToString(requestBody), is("test1637428785169"));
-//        }
-//
-//        @Test
-//        @DisplayName("Successfully converting String->RequestBody using java type Converter")
-//        public void test1639065948833() throws IOException {
-//            final RequestBody requestBody = new ExtensionConverterFactory()
-//                    .requestBodyConverter(RawBody.class, array(), array(), RTF)
-//                    .convert("test1637430252094");
-//            assertThat("RequestBody", requestBody, notNullValue());
-//            assertThat("RequestBody.toString()", OkHttpUtils.requestBodyToString(requestBody), is("test1637430252094"));
-//        }
-//
-//        @Test
-//        @DisplayName("Successfully converting AnyBody->RequestBody using RequestConverter annotation with RawDTO.class")
-//        public void test1639065948843() throws IOException {
-//            final ResponseConverter responseConverter = getResponseConverter(TestConverter.class, TestDTO.class);
-//            final RequestBody dto = TEST_FACTORY.requestBodyConverter(RawBody.class, array(), array(responseConverter), RTF)
-//                    .convert(new RawBody("test1637641171302"));
-//            assertThat("RequestBody", dto, notNullValue());
-//            assertThat("RequestBody.toString()", OkHttpUtils.requestBodyToString(dto), is("test1637641171302"));
-//        }
-//
-//        @Test
-//        @DisplayName("Successfully converting PackDTO->RequestBody using package converter")
-//        public void test1639065948853() throws IOException {
-//            final TestsExtensionConverterFactory factory = new TestsExtensionConverterFactory();
-//            factory.registerPackageRequestConverter(new TestPackageConverter(), "org.touchbit.retrofit.ext.test.model.pack");
-//            final RequestBody dto = factory
-//                    .requestBodyConverter(RawBody.class, array(), array(), RTF)
-//                    .convert(new PackageDTO("test1637687959905"));
-//            assertThat("RequestBody", dto, notNullValue());
-//            assertThat("RequestBody.toString()", OkHttpUtils.requestBodyToString(dto), is("test1637687959905"));
-//        }
+        @Test
+        @DisplayName("Successfully converting String.class to RequestBody")
+        public void test1639065948779() throws IOException {
+            String body = "test1637422599548";
+            final RequestBody requestBody = FACTORY.requestBodyConverter(STRING_T, AA, AA, RTF).convert(body);
+            assertThat("RequestBody", requestBody, notNullValue());
+            assertThat("RequestBody.contentType()", requestBody.contentType(), nullValue());
+            assertThat("RequestBody.toString()", OkHttpTestUtils.requestBodyToString(requestBody), is(body));
+        }
+
+        @Test
+        @DisplayName("Successfully converting RawBody.class to RequestBody by type (raw)")
+        public void test1639065948789() throws IOException {
+            final RawBody expected = new RawBody("test1637428451229");
+            final RequestBody requestBody = new ExtensionConverterFactory()
+                    .requestBodyConverter(RawBody.class, array(), array(), null)
+                    .convert(expected);
+            assertThat("RequestBody", requestBody, notNullValue());
+            assertThat("RequestBody.toString()", OkHttpTestUtils.requestBodyToString(requestBody), is("test1637428451229"));
+        }
+
+        @Test
+        @DisplayName("Successfully converting Byte[].class to RequestBody by type (raw)")
+        public void test1639065948800() throws IOException {
+            final Byte[] expected = Utils.toObjectByteArray("test1637428566604" .getBytes());
+            final RequestBody requestBody = new ExtensionConverterFactory()
+                    .requestBodyConverter(RawBody.class, array(), array(), null)
+                    .convert(expected);
+            assertThat("RequestBody", requestBody, notNullValue());
+            assertThat("RequestBody.toString()", OkHttpTestUtils.requestBodyToString(requestBody), is("test1637428566604"));
+        }
+
+        @Test
+        @DisplayName("Successfully converting File.class to RequestBody by type (raw)")
+        public void test1639065948811() throws IOException {
+            final File file = new File("src/test/resources/test/data/test1637428660061.txt");
+            final RequestBody requestBody = new ExtensionConverterFactory()
+                    .requestBodyConverter(RawBody.class, array(), array(), null)
+                    .convert(file);
+            assertThat("RequestBody", requestBody, notNullValue());
+            assertThat("RequestBody.toString()", OkHttpTestUtils.requestBodyToString(requestBody), is("test1637428660061"));
+        }
+
+        @Test
+        @DisplayName("Successfully converting ResourceFile.class to RequestBody by type (raw)")
+        public void test1639065948822() throws IOException {
+            final ResourceFile file = new ResourceFile("test/data/test1637428785169.txt");
+            final RequestBody requestBody = new ExtensionConverterFactory()
+                    .requestBodyConverter(RawBody.class, array(), array(), null)
+                    .convert(file);
+            assertThat("RequestBody", requestBody, notNullValue());
+            assertThat("RequestBody.toString()", OkHttpTestUtils.requestBodyToString(requestBody), is("test1637428785169"));
+        }
+
+        @Test
+        @DisplayName("Successfully converting String->RequestBody using java type Converter")
+        public void test1639065948833() throws IOException {
+            final RequestBody requestBody = new ExtensionConverterFactory()
+                    .requestBodyConverter(RawBody.class, array(), array(), RTF)
+                    .convert("test1637430252094");
+            assertThat("RequestBody", requestBody, notNullValue());
+            assertThat("RequestBody.toString()", OkHttpTestUtils.requestBodyToString(requestBody), is("test1637430252094"));
+        }
+
+        @Test
+        @DisplayName("Successfully converting RawBody->RequestBody using RequestConverter annotation with RawDTO.class")
+        public void test1639065948843() throws IOException {
+            final ResponseConverter responseConverter = getResponseConverter(TestConverter.class, TestDTO.class);
+            final RequestBody dto = TEST_FACTORY.requestBodyConverter(RawBody.class, array(), array(responseConverter), RTF)
+                    .convert(new RawBody("test1637641171302"));
+            assertThat("RequestBody", dto, notNullValue());
+            assertThat("RequestBody.toString()", OkHttpTestUtils.requestBodyToString(dto), is("test1637641171302"));
+        }
+
+        @Test
+        @DisplayName("Successfully converting PackDTO->RequestBody using package converter")
+        public void test1639065948853() throws IOException {
+            final TestsExtensionConverterFactory factory = new TestsExtensionConverterFactory();
+            factory.registerPackageRequestConverter(new TestPackageConverter(), "org.touchbit.retrofit.ext.test.model.pack");
+            final RequestBody dto = factory
+                    .requestBodyConverter(RawBody.class, array(), array(), RTF)
+                    .convert(new PackageDTO("test1637687959905"));
+            assertThat("RequestBody", dto, notNullValue());
+            assertThat("RequestBody.toString()", OkHttpTestUtils.requestBodyToString(dto), is("test1637687959905"));
+        }
 
     }
 

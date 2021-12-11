@@ -35,11 +35,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("ConstantConditions")
-@DisplayName("AnyBodyConverter tests")
+@DisplayName("RawBodyConverter tests")
 public class RawBodyConverterUnitTests {
 
     @Test
-    @DisplayName("Successful conversion AnyBody->RequestBody if body instanceof AnyBody.class")
+    @DisplayName("Successful conversion RawBody->RequestBody if body instanceof RawBody.class")
     public void test1639065950948() throws IOException {
         final RawBody expected = new RawBody("test1637432781973");
         final RequestBody requestBody = new RawBodyConverter()
@@ -51,7 +51,7 @@ public class RawBodyConverterUnitTests {
     }
 
     @Test
-    @DisplayName("Successful conversion AnyBody->RequestBody if body == AnyBody(null)")
+    @DisplayName("Successful conversion RawBody->RequestBody if body == RawBody(null)")
     public void test1639065950960() throws IOException {
         final RawBody expected = new RawBody((byte[]) null);
         final RequestBody requestBody = new RawBodyConverter()
@@ -63,7 +63,7 @@ public class RawBodyConverterUnitTests {
     }
 
     @Test
-    @DisplayName("Error converting AnyBody->RequestBody if body == null")
+    @DisplayName("Error converting RawBody->RequestBody if body == null")
     public void test1639065950972() {
         final ThrowableRunnable runnable = () -> new RawBodyConverter()
                 .requestBodyConverter(null, null, null, null)
@@ -81,7 +81,7 @@ public class RawBodyConverterUnitTests {
     }
 
     @Test
-    @DisplayName("Successful conversion ResponseBody->AnyBody if body present (return AnyBody)")
+    @DisplayName("Successful conversion ResponseBody->RawBody if body present (return RawBody)")
     public void test1639065950990() throws Exception {
         final ResponseBody responseBody = mock(ResponseBody.class);
         RawBody expected = new RawBody("test1637433847494");
@@ -93,7 +93,7 @@ public class RawBodyConverterUnitTests {
     }
 
     @Test
-    @DisplayName("Successful conversion ResponseBody->AnyBody if body == null (return AnyBody)")
+    @DisplayName("Successful conversion ResponseBody->RawBody if body == null (return RawBody)")
     public void test1639065951002() throws IOException {
         RawBody expected = new RawBody((byte[]) null);
         final RawBody rawBody = new RawBodyConverter()

@@ -16,7 +16,6 @@
 
 package org.touchbit.retrofit.ext.dmr.asserter;
 
-import okhttp3.Headers;
 import org.touchbit.retrofit.ext.dmr.client.response.IDualResponse;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.internal.EverythingIsNonNull;
@@ -26,29 +25,31 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 @SuppressWarnings("UnusedReturnValue")
-public class ResponseAsserter<SUC_DTO, ERR_DTO> extends ResponseAsserterBase<SUC_DTO, ERR_DTO, HeadersAsserter> {
+public class ResponseAsserter<SUC_DTO, ERR_DTO, HEADERS_ASSERTER extends IHeadersAsserter>
+        extends ResponseAsserterBase<SUC_DTO, ERR_DTO, HEADERS_ASSERTER> {
 
-    public ResponseAsserter(final @Nonnull IDualResponse<SUC_DTO, ERR_DTO> response) {
+    private final HEADERS_ASSERTER headersAsserter;
+
+    public ResponseAsserter(final @Nonnull IDualResponse<SUC_DTO, ERR_DTO> response, final HEADERS_ASSERTER headersAsserter) {
         super(response);
+        this.headersAsserter = headersAsserter;
     }
 
     @Override
     @EverythingIsNonNull
-    public ResponseAsserter<SUC_DTO, ERR_DTO> assertHeaders(final Consumer<HeadersAsserter> consumer) {
+    public ResponseAsserter<SUC_DTO, ERR_DTO, HEADERS_ASSERTER> assertHeaders(final Consumer<HEADERS_ASSERTER> consumer) {
         Utils.parameterRequireNonNull(consumer, "consumer");
-        final Headers headers = getResponse().getHeaders();
-        final HeadersAsserter headersAsserter = new HeadersAsserter(headers);
         consumer.accept(headersAsserter);
         addErrors(headersAsserter.getErrors());
         return this;
     }
 
-    public ResponseAsserter<SUC_DTO, ERR_DTO> assertSucResponse(final int expectedStatusCode,
-                                                                final Consumer<SUC_DTO> consumer) {
+    public ResponseAsserter<SUC_DTO, ERR_DTO, HEADERS_ASSERTER> assertSucResponse(final int expectedStatusCode,
+                                                                                  final Consumer<SUC_DTO> consumer) {
         return assertSucBody(consumer).assertHttpStatusCodeIs(expectedStatusCode);
     }
 
-    public ResponseAsserter<SUC_DTO, ERR_DTO> assertSucBody(final Consumer<SUC_DTO> consumer) {
+    public ResponseAsserter<SUC_DTO, ERR_DTO, HEADERS_ASSERTER> assertSucBody(final Consumer<SUC_DTO> consumer) {
         final SUC_DTO actual = getResponse().getSucDTO();
         if (actual == null) {
             assertSucBodyNotNull().blame();
@@ -57,8 +58,8 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO> extends ResponseAsserterBase<SUC
         return this;
     }
 
-    public ResponseAsserter<SUC_DTO, ERR_DTO> assertSucBody(final BiConsumer<SUC_DTO, SUC_DTO> consumer,
-                                                            final SUC_DTO expected) {
+    public ResponseAsserter<SUC_DTO, ERR_DTO, HEADERS_ASSERTER> assertSucBody(final BiConsumer<SUC_DTO, SUC_DTO> consumer,
+                                                                              final SUC_DTO expected) {
         final SUC_DTO actual = getResponse().getSucDTO();
         if (actual == null) {
             assertSucBodyNotNull().blame();
@@ -67,7 +68,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO> extends ResponseAsserterBase<SUC
         return this;
     }
 
-    public ResponseAsserter<SUC_DTO, ERR_DTO> assertIsSucResponse() {
+    public ResponseAsserter<SUC_DTO, ERR_DTO, HEADERS_ASSERTER> assertIsSucResponse() {
         if (!getResponse().isSuccessful()) {
             addErrors(new AssertionError("Received unsuccessful HTTP status code.\n" +
                     "Expected: in range 200..299\n" +
@@ -76,7 +77,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO> extends ResponseAsserterBase<SUC
         return this;
     }
 
-    public ResponseAsserter<SUC_DTO, ERR_DTO> assertSucBodyNotNull() {
+    public ResponseAsserter<SUC_DTO, ERR_DTO, HEADERS_ASSERTER> assertSucBodyNotNull() {
         if (getResponse().getSucDTO() == null) {
             addErrors(new AssertionError("Successful body\n" +
                     "Expected: is not null\n" +
@@ -85,7 +86,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO> extends ResponseAsserterBase<SUC
         return this;
     }
 
-    public ResponseAsserter<SUC_DTO, ERR_DTO> assertSucBodyIsNull() {
+    public ResponseAsserter<SUC_DTO, ERR_DTO, HEADERS_ASSERTER> assertSucBodyIsNull() {
         final SUC_DTO sucDTO = getResponse().getSucDTO();
         if (sucDTO != null) {
             addErrors(new AssertionError("Successful body\n" +
@@ -95,12 +96,12 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO> extends ResponseAsserterBase<SUC
         return this;
     }
 
-    public ResponseAsserter<SUC_DTO, ERR_DTO> assertErrResponse(final int expectedStatusCode,
-                                                                final Consumer<ERR_DTO> consumer) {
+    public ResponseAsserter<SUC_DTO, ERR_DTO, HEADERS_ASSERTER> assertErrResponse(final int expectedStatusCode,
+                                                                                  final Consumer<ERR_DTO> consumer) {
         return assertErrBody(consumer).assertHttpStatusCodeIs(expectedStatusCode);
     }
 
-    public ResponseAsserter<SUC_DTO, ERR_DTO> assertErrBody(final Consumer<ERR_DTO> consumer) {
+    public ResponseAsserter<SUC_DTO, ERR_DTO, HEADERS_ASSERTER> assertErrBody(final Consumer<ERR_DTO> consumer) {
         final ERR_DTO actual = getResponse().getErrDTO();
         if (actual == null) {
             assertErrBodyNotNull().blame();
@@ -109,8 +110,8 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO> extends ResponseAsserterBase<SUC
         return this;
     }
 
-    public ResponseAsserter<SUC_DTO, ERR_DTO> assertErrBody(final BiConsumer<ERR_DTO, ERR_DTO> consumer,
-                                                            final ERR_DTO expected) {
+    public ResponseAsserter<SUC_DTO, ERR_DTO, HEADERS_ASSERTER> assertErrBody(final BiConsumer<ERR_DTO, ERR_DTO> consumer,
+                                                                              final ERR_DTO expected) {
         final ERR_DTO actual = getResponse().getErrDTO();
         if (actual == null) {
             assertErrBodyNotNull().blame();
@@ -119,7 +120,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO> extends ResponseAsserterBase<SUC
         return this;
     }
 
-    public ResponseAsserter<SUC_DTO, ERR_DTO> assertIsErrResponse() {
+    public ResponseAsserter<SUC_DTO, ERR_DTO, HEADERS_ASSERTER> assertIsErrResponse() {
         if (getResponse().isSuccessful()) {
             addErrors(new AssertionError("Received successful HTTP status code.\n" +
                     "Expected: in range 300..599\n" +
@@ -128,7 +129,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO> extends ResponseAsserterBase<SUC
         return this;
     }
 
-    public ResponseAsserter<SUC_DTO, ERR_DTO> assertErrBodyNotNull() {
+    public ResponseAsserter<SUC_DTO, ERR_DTO, HEADERS_ASSERTER> assertErrBodyNotNull() {
         if (getResponse().getErrDTO() == null) {
             addErrors(new AssertionError("Error body\n" +
                     "Expected: is not null\n" +
@@ -137,7 +138,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO> extends ResponseAsserterBase<SUC
         return this;
     }
 
-    public ResponseAsserter<SUC_DTO, ERR_DTO> assertErrBodyIsNull() {
+    public ResponseAsserter<SUC_DTO, ERR_DTO, HEADERS_ASSERTER> assertErrBodyIsNull() {
         final ERR_DTO actual = getResponse().getErrDTO();
         if (actual != null) {
             addErrors(new AssertionError("Error body\n" +
@@ -147,7 +148,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO> extends ResponseAsserterBase<SUC
         return this;
     }
 
-    public ResponseAsserter<SUC_DTO, ERR_DTO> assertHttpStatusCodeIs(final int expected) {
+    public ResponseAsserter<SUC_DTO, ERR_DTO, HEADERS_ASSERTER> assertHttpStatusCodeIs(final int expected) {
         int actual = getResponse().getHttpStatusCode();
         if (actual != expected) {
             addErrors(new AssertionError("HTTP status code\n" +
@@ -157,7 +158,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO> extends ResponseAsserterBase<SUC
         return this;
     }
 
-    public ResponseAsserter<SUC_DTO, ERR_DTO> assertHttpStatusMessageIs(final String expected) {
+    public ResponseAsserter<SUC_DTO, ERR_DTO, HEADERS_ASSERTER> assertHttpStatusMessageIs(final String expected) {
         final String actual = getResponse().getHttpStatusMessage();
         if (actual == null && expected == null) {
             return this;
@@ -170,7 +171,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO> extends ResponseAsserterBase<SUC
         return this;
     }
 
-    public ResponseAsserter<SUC_DTO, ERR_DTO> blame() {
+    public ResponseAsserter<SUC_DTO, ERR_DTO, HEADERS_ASSERTER> blame() {
         super.close();
         return this;
     }

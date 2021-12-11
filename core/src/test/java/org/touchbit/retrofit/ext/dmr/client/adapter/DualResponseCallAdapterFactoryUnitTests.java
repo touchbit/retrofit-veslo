@@ -69,7 +69,7 @@ public class DualResponseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("IDualResponseConsumer parameter constructor")
         public void test1639237203780() {
-            final IDualResponseConsumer<IDualResponse<?, ?>> consumer = UnitTestDualResponse::new;
+            final IDualResponseConsumer<IDualResponse<?, ?>> consumer = UnitDualResponseTest::new;
             final DualResponseCallAdapterFactory factory = new DualResponseCallAdapterFactory(consumer);
             assertThat(factory.getDualResponseConsumer(), is(consumer));
             assertThat(factory.logger, notNullValue());
@@ -86,7 +86,7 @@ public class DualResponseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("IDualResponseConsumer, Logger parameters constructor")
         public void test1639237301104() {
-            final IDualResponseConsumer<IDualResponse<?, ?>> consumer = UnitTestDualResponse::new;
+            final IDualResponseConsumer<IDualResponse<?, ?>> consumer = UnitDualResponseTest::new;
             final DualResponseCallAdapterFactory factory = new DualResponseCallAdapterFactory(UNIT_TEST_LOGGER, consumer);
             assertThat(factory.getDualResponseConsumer(), is(consumer));
             assertThat(factory.logger, is(UNIT_TEST_LOGGER));
@@ -188,9 +188,9 @@ public class DualResponseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
         @DisplayName("Get custom IDualResponse implementation")
         public void test1639065951507() {
             final Call call = RetrofitTestUtils.getCall(200, "");
-            final IDualResponse iDualResponse = new DualResponseCallAdapterFactory(UnitTestDualResponse::new)
+            final IDualResponse iDualResponse = new DualResponseCallAdapterFactory(UnitDualResponseTest::new)
                     .getIDualResponse(call, STRING_C, STRING_C, INFO, AA, RETROFIT);
-            assertThat("", iDualResponse, instanceOf(UnitTestDualResponse.class));
+            assertThat("", iDualResponse, instanceOf(UnitDualResponseTest.class));
         }
 
         @Test

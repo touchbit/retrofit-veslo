@@ -134,16 +134,6 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         );
     }
 
-//    @DisplayName("Successfully converting ResponseBody to String.class by Content-Type header (mime)")
-//    @ParameterizedTest(name = "Content-Type: {1}")
-//    @MethodSource("testProvider1637426286255")
-//    public void test1637426286255(Class<String> type, ContentType contentType, String body) throws IOException {
-//        final Object dto = new ExtensionConverterFactory()
-//                .responseBodyConverter(type, getContentTypeHeaderAnnotations(contentType), RTF)
-//                .convert(ResponseBody.create(contentType.getMediaType(), body));
-//        assertThat("ResponseBody", dto, is(body));
-//    }
-
     @Test
     @DisplayName("Successfully converting ResponseBody to String.class if body == IDualResponse<String, String>")
     public void test1639065949011() throws IOException {
@@ -163,7 +153,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
     }
 
     @Test
-    @DisplayName("Successfully converting ResponseBody to AnyBody.class (raw)")
+    @DisplayName("Successfully converting ResponseBody to RawBody.class (raw)")
     public void test1639065949029() throws IOException {
         RawBody expected = new RawBody("test1637429237836");
         final Object dto = new ExtensionConverterFactory()
@@ -217,7 +207,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
     }
 
     @Test
-    @DisplayName("Successfully converting ResponseBody to AnyBody.class (raw) if body == null (expected AnyBody)")
+    @DisplayName("Successfully converting ResponseBody to RawBody.class (raw) if body == null (expected RawBody)")
     public void test1639065949083() throws IOException {
         RawBody expected = new RawBody((byte[]) null);
         final Object dto = new ExtensionConverterFactory()
@@ -256,7 +246,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
     }
 
     @Test
-    @DisplayName("Successfully converting ResponseBody->AnyBody using ResponseConverter annotation with RawDTO.class")
+    @DisplayName("Successfully converting ResponseBody->RawBody using ResponseConverter annotation with RawDTO.class")
     public void test1639065949122() throws IOException {
         RawBody expected = new RawBody("test1637569961286");
         final ResponseConverter responseConverter = getResponseConverter(TestConverter.class, TestDTO.class);

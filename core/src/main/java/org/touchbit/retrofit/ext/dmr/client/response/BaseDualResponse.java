@@ -17,13 +17,18 @@
 package org.touchbit.retrofit.ext.dmr.client.response;
 
 import okhttp3.Response;
+import org.touchbit.retrofit.ext.dmr.asserter.IHeadersAsserter;
+import org.touchbit.retrofit.ext.dmr.asserter.IResponseAsserter;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
+import java.util.function.Consumer;
 
-public abstract class DualResponseBase<SUC_DTO, ERR_DTO> implements IDualResponse<SUC_DTO, ERR_DTO> {
+@SuppressWarnings("UnusedReturnValue")
+public abstract class BaseDualResponse<SUC_DTO, ERR_DTO, ASSERTER extends IResponseAsserter>
+        implements IDualResponse<SUC_DTO, ERR_DTO> {
 
     private final SUC_DTO sucDTO;
     private final ERR_DTO errDTO;
@@ -31,7 +36,7 @@ public abstract class DualResponseBase<SUC_DTO, ERR_DTO> implements IDualRespons
     private final String endpointInfo;
     private final Annotation[] callAnnotations;
 
-    protected DualResponseBase(final @Nullable SUC_DTO sucDTO,
+    protected BaseDualResponse(final @Nullable SUC_DTO sucDTO,
                                final @Nullable ERR_DTO errDTO,
                                final @Nonnull Response response,
                                final @Nonnull String endpointInfo,
@@ -41,6 +46,17 @@ public abstract class DualResponseBase<SUC_DTO, ERR_DTO> implements IDualRespons
         this.errDTO = errDTO;
         this.endpointInfo = endpointInfo;
         this.callAnnotations = callAnnotations;
+    }
+
+    public abstract IHeadersAsserter getHeadersAsserter();
+
+    public abstract ASSERTER getResponseAsserter();
+
+    public BaseDualResponse<SUC_DTO, ERR_DTO, ASSERTER> assertResponse(Consumer<ASSERTER> consumer) {
+        try (final ASSERTER responseAsserter = getResponseAsserter()) {
+            consumer.accept(responseAsserter);
+        }
+        return this;
     }
 
     @Override

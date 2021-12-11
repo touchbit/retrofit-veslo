@@ -16,31 +16,49 @@
 
 package org.touchbit.retrofit.ext.dmr.client.response;
 
+import internal.test.utils.BaseUnitTest;
+import internal.test.utils.OkHttpTestUtils;
 import okhttp3.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.touchbit.retrofit.ext.dmr.BaseCoreUnitTest;
+import org.touchbit.retrofit.ext.dmr.asserter.HeadersAsserter;
+import org.touchbit.retrofit.ext.dmr.asserter.ResponseAsserter;
 
 import java.lang.annotation.Annotation;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.mock;
 
 @DisplayName("DualResponseBase tests")
-public class DualResponseBaseUnitTests {
+public class BaseDualResponseUnitTests extends BaseCoreUnitTest {
 
     @Test
     @DisplayName("Check default methods if all objects is present")
     public void test1639065948701() {
-        final Response response = mock(Response.class);
+        final Response response = OkHttpTestUtils.getResponse();
         final Annotation[] annotations = new Annotation[]{};
-        DualResponseBase<String, String> responseBase = new DualResponseBase<String, String>
-                ("test1639065948701", "test1639065948701", response, "info", annotations) {};
+        BaseDualResponse<String, String, ResponseAsserter<String, String, HeadersAsserter>> responseBase =
+                new BaseDualResponse<String, String, ResponseAsserter<String, String, HeadersAsserter>>
+                        ("test1639065948701", "test1639065948701", response, "info", annotations) {
+                    @Override
+                    public HeadersAsserter getHeadersAsserter() {
+                        return new HeadersAsserter(getResponse().headers());
+                    }
+
+                    @Override
+                    public ResponseAsserter<String, String, HeadersAsserter> getResponseAsserter() {
+                        return new ResponseAsserter<>(this, getHeadersAsserter());
+                    }
+                };
         assertThat("", responseBase.getResponse(), is(response));
         assertThat("", responseBase.getSucDTO(), is("test1639065948701"));
         assertThat("", responseBase.getErrDTO(), is("test1639065948701"));
         assertThat("", responseBase.getEndpointInfo(), is("info"));
         assertThat("", responseBase.getCallAnnotations(), is(annotations));
+        responseBase.assertResponse(asserter -> asserter
+                .assertSucBody(BaseUnitTest::assertIs, "test1639065948701")
+                .assertHeaders(headersAsserter -> headersAsserter.contentTypeIs("text/plain"))
+        );
     }
 
 }
