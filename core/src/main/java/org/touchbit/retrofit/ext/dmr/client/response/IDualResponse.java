@@ -30,8 +30,9 @@ import java.lang.annotation.Annotation;
  * Contains the deserialized response body from the server, which can be
  * represented by two DTO models (error/success) depending on {@link IDualResponse#getHttpStatusCode()}
  * <p>
- * Created: 03.11.2021
+ *
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 03.11.2021
  */
 @SuppressWarnings("unused")
 public interface IDualResponse<SUC_DTO, ERR_DTO> {

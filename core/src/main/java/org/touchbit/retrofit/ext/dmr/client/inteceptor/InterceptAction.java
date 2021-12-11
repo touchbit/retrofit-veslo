@@ -20,8 +20,9 @@ package org.touchbit.retrofit.ext.dmr.client.inteceptor;
  * The interface is used in the {@link CompositeInterceptor}
  * to indirectly handle/modify chains, requests, responses, and exceptions.
  * <p>
- * Created: 24.11.2021
+ *
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 24.11.2021
  */
 public interface InterceptAction extends RequestInterceptAction, ResponseInterceptAction {
 

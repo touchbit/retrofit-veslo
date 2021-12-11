@@ -23,6 +23,7 @@ import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.CallAdapter;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,8 +35,9 @@ import java.lang.reflect.Type;
  * Base extension call adapter factory {@link CallAdapter.Factory}
  * Implements the basic methods for getting the response body model
  * <p>
- * Created: 11.12.2021
+ *
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 11.12.2021
  */
 public abstract class BaseCallAdapterFactory extends CallAdapter.Factory {
 
@@ -47,7 +49,8 @@ public abstract class BaseCallAdapterFactory extends CallAdapter.Factory {
     /**
      * @param logger - required Slf4J logger
      */
-    protected BaseCallAdapterFactory(Logger logger) {
+    @EverythingIsNonNull
+    protected BaseCallAdapterFactory(final Logger logger) {
         Utils.parameterRequireNonNull(logger, "logger");
         this.logger = logger;
     }

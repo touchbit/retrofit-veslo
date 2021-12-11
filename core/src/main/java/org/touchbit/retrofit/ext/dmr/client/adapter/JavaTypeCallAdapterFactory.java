@@ -33,10 +33,13 @@ import java.lang.reflect.Type;
 /**
  * Factory for creating {@link CallAdapter} with support base java types (reference/primitive)
  * <p>
- * Created: 11.12.2021
+ *
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 11.12.2021
  */
 public class JavaTypeCallAdapterFactory extends BaseCallAdapterFactory {
+
+    public static final JavaTypeCallAdapterFactory INSTANCE = new JavaTypeCallAdapterFactory();
 
     /**
      * Default constructor with this class logger
@@ -48,7 +51,8 @@ public class JavaTypeCallAdapterFactory extends BaseCallAdapterFactory {
     /**
      * @param logger - required Slf4J logger
      */
-    public JavaTypeCallAdapterFactory(Logger logger) {
+    @EverythingIsNonNull
+    public JavaTypeCallAdapterFactory(final Logger logger) {
         super(logger);
     }
 
@@ -63,7 +67,9 @@ public class JavaTypeCallAdapterFactory extends BaseCallAdapterFactory {
      */
     @Override
     @EverythingIsNonNull
-    public CallAdapter<Object, Object> get(Type returnType, Annotation[] methodAnnotations, Retrofit retrofit) {
+    public CallAdapter<Object, Object> get(final Type returnType,
+                                           final Annotation[] methodAnnotations,
+                                           final Retrofit retrofit) {
         return new CallAdapter<Object, Object>() {
 
             /**
@@ -80,7 +86,7 @@ public class JavaTypeCallAdapterFactory extends BaseCallAdapterFactory {
              * @return see {@link CallAdapter#adapt(Call)}
              */
             @Override
-            public Object adapt(@Nonnull Call<Object> call) {
+            public Object adapt(final @Nonnull Call<Object> call) {
                 logger.info("API call: " + call.request().method() + " " + call.request().url());
                 try {
                     final Response<Object> response = call.execute();

@@ -38,8 +38,9 @@ import static com.google.gson.ToNumberPolicy.LONG_OR_DOUBLE;
 /**
  * Gson converter
  * <p>
- * Created: 01.12.2021
+ *
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 01.12.2021
  */
 public class GsonConverter<T> implements ExtensionConverter<T> {
 

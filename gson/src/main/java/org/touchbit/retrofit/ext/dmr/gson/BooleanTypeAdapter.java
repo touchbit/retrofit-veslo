@@ -23,8 +23,9 @@ import java.lang.reflect.Type;
 /**
  * Convert 1/0 to boolean type
  * <p>
- * Created: 01.12.2021
+ *
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 01.12.2021
  */
 public class BooleanTypeAdapter implements JsonDeserializer<Boolean> {
 

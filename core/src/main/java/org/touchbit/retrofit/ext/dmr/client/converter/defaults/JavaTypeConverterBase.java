@@ -33,8 +33,9 @@ import java.lang.reflect.Type;
 /**
  * Base class for converting Java types
  * <p>
- * Created: 05.12.2021
+ *
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 05.12.2021
  */
 @SuppressWarnings("rawtypes")
 public abstract class JavaTypeConverterBase implements ExtensionConverter {

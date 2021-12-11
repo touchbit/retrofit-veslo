@@ -41,8 +41,9 @@ import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_NULL
 /**
  * Jackson 2 converter
  * <p>
- * Created: 08.11.2021
+ *
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 08.11.2021
  */
 public class JacksonConverter<T> implements ExtensionConverter<T> {
 

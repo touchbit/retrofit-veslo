@@ -29,8 +29,9 @@ import java.util.function.Consumer;
 /**
  * Base class with built-in soft checks to check the response from the server.
  * <p>
- * Created: 19.11.2021
+ *
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 19.11.2021
  */
 public abstract class ResponseAsserterBase<SUC_DTO, ERR_DTO, HA> implements Closeable, SoftlyAsserter {
 

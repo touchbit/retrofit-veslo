@@ -16,7 +16,6 @@
 
 package org.touchbit.retrofit.ext.dmr.client.adapter;
 
-import internal.test.utils.BaseUnitTest;
 import internal.test.utils.CorruptedTestException;
 import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
@@ -24,6 +23,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.touchbit.retrofit.ext.dmr.BaseCoreUnitTest;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter.ResponseBodyConverter;
 import org.touchbit.retrofit.ext.dmr.client.converter.defaults.JavaReferenceTypeConverter;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
@@ -45,7 +45,7 @@ import static org.mockito.Mockito.when;
 
 @SuppressWarnings({"NullableProblems", "ConstantConditions", "unchecked", "rawtypes"})
 @DisplayName("BaseCallAdapterFactory.class unit tests")
-public class BaseCallAdapterFactoryUnitTests extends BaseUnitTest {
+public class BaseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseCallAdapterFactoryUnitTests.class);
     private static final BaseCallAdapterFactory FACTORY = new TestBaseCallAdapterFactory(LOGGER);

@@ -23,8 +23,8 @@ import java.io.InputStream;
 import java.net.URL;
 
 /**
- * Created: 18.11.2021
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 18.11.2021
  */
 public class ResourceFile {
 

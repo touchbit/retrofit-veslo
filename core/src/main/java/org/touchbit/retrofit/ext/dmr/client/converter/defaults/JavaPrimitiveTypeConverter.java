@@ -32,8 +32,9 @@ import java.lang.reflect.Type;
 /**
  * Converter for primitive java types: boolean, byte, char, double, float, int, long, short
  * <p>
- * Created: 05.12.2021
+ *
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 05.12.2021
  */
 public class JavaPrimitiveTypeConverter extends JavaTypeConverterBase {
 

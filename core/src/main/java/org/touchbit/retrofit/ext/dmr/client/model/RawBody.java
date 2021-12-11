@@ -25,8 +25,9 @@ import java.util.Arrays;
 /**
  * Universal DTO model with built-in checks and helper methods.
  * <p>
- * Created: 08.11.2021
+ *
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 08.11.2021
  */
 @SuppressWarnings("UnusedReturnValue")
 public class RawBody {

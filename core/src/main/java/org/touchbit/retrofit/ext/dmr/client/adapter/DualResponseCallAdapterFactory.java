@@ -38,10 +38,13 @@ import java.lang.reflect.Type;
 /**
  * Factory for creating {@link CallAdapter} with support {@link IDualResponse} type
  * <p>
- * Created: 11.12.2021
+ *
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 11.12.2021
  */
 public class DualResponseCallAdapterFactory extends BaseCallAdapterFactory {
+
+    public static final DualResponseCallAdapterFactory INSTANCE = new DualResponseCallAdapterFactory();
 
     /**
      * {@link IDualResponseConsumer} for constructor of {@link DualResponseBase} heirs
@@ -58,14 +61,16 @@ public class DualResponseCallAdapterFactory extends BaseCallAdapterFactory {
     /**
      * @param dualResponseConsumer - {@link IDualResponseConsumer} for constructor of {@link DualResponseBase} heirs
      */
-    public DualResponseCallAdapterFactory(IDualResponseConsumer<IDualResponse<?, ?>> dualResponseConsumer) {
+    @EverythingIsNonNull
+    public DualResponseCallAdapterFactory(final IDualResponseConsumer<IDualResponse<?, ?>> dualResponseConsumer) {
         this(LoggerFactory.getLogger(DualResponseCallAdapterFactory.class), dualResponseConsumer);
     }
 
     /**
      * @param logger - required Slf4J logger
      */
-    public DualResponseCallAdapterFactory(Logger logger) {
+    @EverythingIsNonNull
+    public DualResponseCallAdapterFactory(final Logger logger) {
         this(logger, DualResponse::new);
     }
 
@@ -73,7 +78,9 @@ public class DualResponseCallAdapterFactory extends BaseCallAdapterFactory {
      * @param logger               - required Slf4J logger
      * @param dualResponseConsumer - {@link IDualResponseConsumer} for constructor of {@link DualResponseBase} heirs
      */
-    public DualResponseCallAdapterFactory(Logger logger, IDualResponseConsumer<IDualResponse<?, ?>> dualResponseConsumer) {
+    @EverythingIsNonNull
+    public DualResponseCallAdapterFactory(final Logger logger,
+                                          final IDualResponseConsumer<IDualResponse<?, ?>> dualResponseConsumer) {
         super(logger);
         Utils.parameterRequireNonNull(dualResponseConsumer, "dualResponseConsumer");
         this.dualResponseConsumer = dualResponseConsumer;
