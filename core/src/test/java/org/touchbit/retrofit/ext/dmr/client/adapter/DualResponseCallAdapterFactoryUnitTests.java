@@ -16,398 +16,301 @@
 
 package org.touchbit.retrofit.ext.dmr.client.adapter;
 
-import internal.test.utils.BaseUnitTest;
-import okhttp3.MediaType;
-import okhttp3.Protocol;
-import okhttp3.Request;
-import okhttp3.ResponseBody;
+import internal.test.utils.RetrofitTestUtils;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.touchbit.retrofit.ext.dmr.client.EndpointInfo;
+import org.touchbit.retrofit.ext.dmr.BaseCoreUnitTest;
 import org.touchbit.retrofit.ext.dmr.client.converter.ExtensionConverterFactory;
 import org.touchbit.retrofit.ext.dmr.client.response.DualResponse;
 import org.touchbit.retrofit.ext.dmr.client.response.IDualResponse;
+import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
+import org.touchbit.retrofit.ext.dmr.exception.HttpCallException;
 import retrofit2.Call;
 import retrofit2.CallAdapter;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 
-import static internal.test.utils.OkHttpUtils.getRequest;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings({"rawtypes", "InstantiatingObjectToGetClassObject", "unchecked", "ConstantConditions", "SameParameterValue"})
 @DisplayName("DualCallAdapterFactory tests")
-public class DualResponseCallAdapterFactoryUnitTests extends BaseUnitTest {
+public class DualResponseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
 
-    private static final DualResponseCallAdapterFactory DEFAULT_FACTORY = new DualResponseCallAdapterFactory();
-    private static final String INFO = "endpointInfo";
-    private static final Retrofit R = new Retrofit.Builder()
-            .addCallAdapterFactory(DEFAULT_FACTORY)
-            .addConverterFactory(new ExtensionConverterFactory())
-            .baseUrl("http://localhost")
-            .build();
-    private static final Annotation[] AA = new Annotation[]{};
+    private static final DualResponseCallAdapterFactory FACTORY = new DualResponseCallAdapterFactory();
+    private static final Retrofit R = RetrofitTestUtils.retrofit(FACTORY, new ExtensionConverterFactory());
 
-    @Test
-    @DisplayName("#get() successful receipt of IDualResponse CallAdapter")
-    public void test1639065951487() {
-        final Type type = new DualResponse<>(null, null, null, null, null).getClass().getGenericSuperclass();
-        final CallAdapter<Object, IDualResponse<?, ?>> adapter = DEFAULT_FACTORY.get(type, AA, R);
-        assertThat("", adapter, notNullValue());
-        assertThat("", adapter.responseType(), instanceOf(ParameterizedType.class));
-        final Call call = getCall(200, "");
-        final IDualResponse response = adapter.adapt(call);
-        assertThat("", response, instanceOf(DualResponse.class));
-    }
+    @Nested
+    @DisplayName("Constructor tests")
+    public class ConstructorTests {
 
-    @Test
-    @DisplayName("#getIDualResponse() get default DualResponse")
-    public void test1639065951499() {
-        final Call call = getCall(200, "");
-        final IDualResponse iDualResponse = DEFAULT_FACTORY.getIDualResponse(call, STRING_C, STRING_C, INFO, AA, R);
-        assertThat("", iDualResponse, instanceOf(DualResponse.class));
-    }
-
-    @Test
-    @DisplayName("#getIDualResponse() get default UnitTestDualResponse")
-    public void test1639065951507() {
-        final Call call = getCall(200, "");
-        final IDualResponse iDualResponse = new DualResponseCallAdapterFactory(UnitTestDualResponse::new)
-                .getIDualResponse(call, STRING_C, STRING_C, INFO, AA, R);
-        assertThat("", iDualResponse, instanceOf(UnitTestDualResponse.class));
-    }
-
-
-    @Test
-    @DisplayName("#getIDualResponse() Parameter 'call' cannot be null.")
-    public void test1639065951517() {
-        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(null, STRING_C, STRING_C, INFO, AA, R)).assertNPE("call");
-    }
-
-    @Test
-    @DisplayName("#getIDualResponse() Parameter 'successType' cannot be null.")
-    public void test1639065951523() {
-        final Call call = getCall(200, "");
-        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, null, STRING_C, INFO, AA, R)).assertNPE("successType");
-    }
-
-    @Test
-    @DisplayName("#getIDualResponse() Parameter 'errorType' cannot be null.")
-    public void test1639065951530() {
-        final Call call = getCall(200, "");
-        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STRING_C, null, INFO, AA, R)).assertNPE("errorType");
-    }
-
-    @Test
-    @DisplayName("#getIDualResponse() Parameter 'endpointInfo' cannot be null.")
-    public void test1639065951537() {
-        final Call call = getCall(200, "");
-        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STRING_C, STRING_C, null, AA, R)).assertNPE("endpointInfo");
-    }
-
-    @Test
-    @DisplayName("#getIDualResponse() Parameter 'methodAnnotations' cannot be null.")
-    public void test1639065951544() {
-        final Call call = getCall(200, "");
-        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STRING_C, STRING_C, INFO, null, R))
-                .assertNPE("methodAnnotations");
-    }
-
-    @Test
-    @DisplayName("#getIDualResponse() Parameter 'retrofit' cannot be null.")
-    public void test1639065951552() {
-        final Call call = getCall(200, "");
-        assertThrow(() -> DEFAULT_FACTORY.getIDualResponse(call, STRING_C, STRING_C, INFO, AA, null)).assertNPE("retrofit");
-    }
-
-    @Test
-    @DisplayName("Successfully getting ParameterizedType from DualResponse class")
-    public void test1639065951559() {
-        final ParameterizedType mock = mock(ParameterizedType.class);
-        when(mock.getRawType()).thenReturn(DualResponse.class);
-        ParameterizedType parameterizedType = DEFAULT_FACTORY.getParameterizedType(mock);
-        assertThat("ParameterizedType raw type", parameterizedType.getRawType(), is(DualResponse.class));
-        assertThat("ParameterizedType", parameterizedType, is(mock));
-    }
-
-    @Test
-    @DisplayName("Successfully getting ParameterizedType from IDualResponse generic class")
-    public void test1639065951569() {
-        Type drType = getGenericIDualResponse().getClass().getGenericInterfaces()[0];
-        ParameterizedType parameterizedType = DEFAULT_FACTORY.getParameterizedType(drType);
-        assertThat("ParameterizedType raw type", parameterizedType.getRawType(), is(IDualResponse.class));
-        assertThat("ParameterizedType", parameterizedType, is(drType));
-    }
-
-    @Test
-    @DisplayName("Exception when getting ParameterizedType from IDualResponse raw class")
-    public void test1639065951578() {
-        Type drType = getRawIDualResponse().getClass().getGenericInterfaces()[0];
-        assertThrow(() -> DEFAULT_FACTORY.getParameterizedType(drType))
-                .assertClass(IllegalArgumentException.class)
-                .assertMessageIs("API methods must return an implementation class " +
-                        "of interface org.touchbit.retrofit.ext.dmr.client.response.IDualResponse\n" +
-                        "Actual: interface org.touchbit.retrofit.ext.dmr.client.response.IDualResponse");
-    }
-
-    @Test
-    @DisplayName("Exception when getting ParameterizedType from unsupported generic class")
-    public void test1639065951589() {
-        Type unsupported = new HashMap<String, String>().getClass().getGenericInterfaces()[0];
-        assertThrow(() -> DEFAULT_FACTORY.getParameterizedType(unsupported))
-                .assertClass(IllegalArgumentException.class)
-                .assertMessageIs("API methods must return an implementation class " +
-                        "of interface org.touchbit.retrofit.ext.dmr.client.response.IDualResponse\n" +
-                        "Actual: java.util.Map<K, V>");
-    }
-
-    @Test
-    @DisplayName("Exception when getting ParameterizedType from 'null' class")
-    public void test1639065951600() {
-        assertThrow(() -> DEFAULT_FACTORY.getParameterizedType(null))
-                .assertClass(IllegalArgumentException.class)
-                .assertMessageIs("API methods must return an implementation class " +
-                        "of interface org.touchbit.retrofit.ext.dmr.client.response.IDualResponse\n" +
-                        "Actual: null");
-    }
-
-//    @Test
-//    @DisplayName("#getErrorDTO() - return AnyBody if DTO = AnyBody and body != empty string")
-//    public void test1639065951610() {
-//        final Response response = getResponse(500, "test1637391749128");
-//        final RawBody errorDTO = DEFAULT_FACTORY.getErrorDTO(response, RawBody.class, AA, R);
-//        softlyAsserter(asserter -> asserter
-//                .softly(() -> assertThat("AnyBody", errorDTO, notNullValue()))
-//                .softly(() -> assertThat("AnyBody", errorDTO.string(), is("test1637391749128")))
-//        );
-//    }
-//
-//    @Test
-//    @DisplayName("#getErrorDTO() - return AnyBody if DTO = AnyBody and body = empty string")
-//    public void test1639065951621() {
-//        final Response response = getResponse(500, "");
-//        final RawBody errorDTO = DEFAULT_FACTORY.getErrorDTO(response, RawBody.class, AA, R);
-//        softlyAsserter(asserter -> asserter
-//                .softly(() -> assertThat("AnyBody", errorDTO, notNullValue()))
-//                .softly(() -> assertThat("AnyBody", errorDTO.string(), is("")))
-//        );
-//    }
-//
-//    @Test
-//    @DisplayName("#getErrorDTO() - return AnyBody if DTO = AnyBody and body = null")
-//    public void test1639065951632() {
-//        final Response response = getResponse(200, null);
-//        final RawBody errorDTO = DEFAULT_FACTORY.getErrorDTO(response, RawBody.class, AA, R);
-//        softlyAsserter(asserter -> asserter
-//                .softly(() -> assertThat("AnyBody", errorDTO, notNullValue()))
-//                .softly(() -> assertThat("AnyBody", errorDTO.bytes(), nullValue()))
-//        );
-//    }
-//
-//    @Test
-//    @DisplayName("#getErrorDTO() - return null if body=null")
-//    public void test1639065951643() {
-//        final Response response = getResponse(200, null);
-//        final Object errorDTO = DEFAULT_FACTORY.getErrorDTO(response, OBJ_C, AA, R);
-//        softlyAsserter(asserter -> asserter.softly(() -> assertThat("AnyBody", errorDTO, nullValue())));
-//    }
-//
-//    @Test
-//    @DisplayName("#getErrorDTO() Failed to convert error body if DTO = unsupported class")
-//    public void test1639065951651() {
-//        final Response response = getResponse(500, "");
-//        assertThrow(() -> DEFAULT_FACTORY.getErrorDTO(response, OBJ_C, AA, R))
-//                .assertClass(HttpCallException.class)
-//                .assertMessageIs("Failed to convert error body.")
-//                .assertCause(cause1 -> cause1
-//                        .assertClass(ConverterNotFoundException.class)
-//                        .assertMessageContains("Converter not found", "DTO type: class java.lang.Object"));
-//    }
-
-
-    @Test
-    @DisplayName("Successfully getting a EndpointInfo message from a filled EndpointInfo annotation")
-    public void test1639065951664() {
-        Annotation[] annotations = new Annotation[]{getEndpointInfo("test1634561408525")};
-        String endpointInfo = DEFAULT_FACTORY.getEndpointInfo(annotations);
-        assertThat("EndpointInfo", endpointInfo, is("test1634561408525"));
-    }
-
-    @Test
-    @DisplayName("Successfully getting an empty EndpointInfo message from the blank EndpointInfo annotation")
-    public void test1639065951672() {
-        Annotation[] annotations = new Annotation[]{getEndpointInfo("   ")};
-        String endpointInfo = DEFAULT_FACTORY.getEndpointInfo(annotations);
-        assertThat("EndpointInfo", endpointInfo, emptyString());
-    }
-
-    @Test
-    @DisplayName("Successfully getting an empty EndpointInfo message from empty EndpointInfo annotation")
-    public void test1639065951680() {
-        Annotation[] annotations = new Annotation[]{getEndpointInfo(null)};
-        String endpointInfo = DEFAULT_FACTORY.getEndpointInfo(annotations);
-        assertThat("EndpointInfo", endpointInfo, emptyString());
-    }
-
-    @Test
-    @DisplayName("Successfully getting an empty EndpointInfo message if the EndpointInfo annotation not present")
-    public void test1639065951688() {
-        Annotation[] annotations = new Annotation[]{new Test() {
-            public Class<? extends Annotation> annotationType() {
-                return Test.class;
-            }
-        }};
-        String endpointInfo = DEFAULT_FACTORY.getEndpointInfo(annotations);
-        assertThat("EndpointInfo", endpointInfo, emptyString());
-    }
-
-    @Test
-    @DisplayName("Successfully getting an empty EndpointInfo message if the Annotation array is null")
-    public void test1639065951700() {
-        Annotation[] annotations = new Annotation[]{};
-        String endpointInfo = DEFAULT_FACTORY.getEndpointInfo(annotations);
-        assertThat("EndpointInfo", endpointInfo, emptyString());
-    }
-
-    private Call getCall(int code, Object body) {
-        final Request request = getRequest();
-        final Response response = getResponse(code, body);
-        return getCall(request, response);
-    }
-
-    private Call getCall(Request request, Response<?> response) {
-        Call call = mock(Call.class);
-        try {
-            when(call.request()).thenReturn(request);
-            when(call.execute()).thenReturn(response);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        @Test
+        @DisplayName("All parameters required")
+        public void test1639236659356() {
+            assertNPE(() -> new DualResponseCallAdapterFactory(null, DualResponse::new), "logger");
+            assertNPE(() -> new DualResponseCallAdapterFactory(UNIT_TEST_LOGGER, null), "dualResponseConsumer");
         }
-        return call;
-    }
 
-    private Response getResponse(int code, Object body) {
-        if (code >= 200 && code <= 299) {
-            return Response.success(code, body);
+        @Test
+        @DisplayName("No parameters constructor")
+        public void test1639236855659() {
+            final DualResponseCallAdapterFactory factory = new DualResponseCallAdapterFactory();
+            assertThat(factory.getDualResponseConsumer(), notNullValue());
+            assertThat(factory.logger, notNullValue());
         }
-        final ResponseBody rawResponseBody;
-        if (body == null) {
-            rawResponseBody = mock(ResponseBody.class);
-        } else {
-            rawResponseBody = ResponseBody.create(MediaType.get("application/json"), String.valueOf(body));
+
+        @Test
+        @DisplayName("IDualResponseConsumer parameter constructor")
+        public void test1639237203780() {
+            final IDualResponseConsumer<IDualResponse<?, ?>> consumer = UnitTestDualResponse::new;
+            final DualResponseCallAdapterFactory factory = new DualResponseCallAdapterFactory(consumer);
+            assertThat(factory.getDualResponseConsumer(), is(consumer));
+            assertThat(factory.logger, notNullValue());
         }
-        okhttp3.Response rawResponse = new okhttp3.Response.Builder()
-                .body(rawResponseBody)
-                .request(getRequest())
-                .code(code)
-                .protocol(Protocol.HTTP_1_1)
-                .message("TEST")
-                .build();
-        return Response.error(rawResponseBody, rawResponse);
-    }
 
-    private EndpointInfo getEndpointInfo(final String message) {
-        return new EndpointInfo() {
-
-            @Override
-            public Class<? extends Annotation> annotationType() {
-                return EndpointInfo.class;
-            }
-
-            @Override
-            public String value() {
-                return message;
-            }
-        };
-    }
-
-    private IDualResponse<String, String> getGenericIDualResponse() {
-        return new IDualResponse<String, String>() {
-
-            @Nonnull
-            @Override
-            public String getEndpointInfo() {
-                return null;
-            }
-
-            @Nonnull
-            @Override
-            public Annotation[] getCallAnnotations() {
-                return new Annotation[0];
-            }
-
-            @Nonnull
-            @Override
-            public okhttp3.Response getResponse() {
-                return null;
-            }
-
-            @Override
-            public String getErrDTO() {
-                return null;
-            }
-
-            @Nullable
-            @Override
-            public String getSucDTO() {
-                return null;
-            }
-
-        };
-    }
-
-    private IDualResponse getRawIDualResponse() {
-        return new IDualResponse() {
-
-            @Nonnull
-            @Override
-            public String getEndpointInfo() {
-                return null;
-            }
-
-            @Nonnull
-            @Override
-            public Annotation[] getCallAnnotations() {
-                return new Annotation[0];
-            }
-
-            @Nonnull
-            @Override
-            public okhttp3.Response getResponse() {
-                return null;
-            }
-
-            @Override
-            public Object getErrDTO() {
-                return null;
-            }
-
-            @Nullable
-            @Override
-            public Object getSucDTO() {
-                return null;
-            }
-        };
-    }
-
-    private static final class UnitTestDualResponse<SUC_DTO, ERR_DTO> extends DualResponse<SUC_DTO, ERR_DTO> {
-
-        public UnitTestDualResponse(@Nullable SUC_DTO sucDTO,
-                                    @Nullable ERR_DTO errDTO,
-                                    @Nonnull okhttp3.Response response,
-                                    @Nonnull String endpointInfo,
-                                    @Nonnull Annotation[] callAnnotations) {
-            super(sucDTO, errDTO, response, endpointInfo, callAnnotations);
+        @Test
+        @DisplayName("Logger parameter constructor")
+        public void test1639237254772() {
+            final DualResponseCallAdapterFactory factory = new DualResponseCallAdapterFactory(UNIT_TEST_LOGGER);
+            assertThat(factory.getDualResponseConsumer(), notNullValue());
+            assertThat(factory.logger, notNullValue());
         }
+
+        @Test
+        @DisplayName("IDualResponseConsumer, Logger parameters constructor")
+        public void test1639237301104() {
+            final IDualResponseConsumer<IDualResponse<?, ?>> consumer = UnitTestDualResponse::new;
+            final DualResponseCallAdapterFactory factory = new DualResponseCallAdapterFactory(UNIT_TEST_LOGGER, consumer);
+            assertThat(factory.getDualResponseConsumer(), is(consumer));
+            assertThat(factory.logger, notNullValue());
+        }
+
+    }
+
+    @Nested
+    @DisplayName("get() method")
+    public class GetMethodTests {
+
+        @Test
+        @DisplayName("#get() successful receipt of IDualResponse CallAdapter")
+        public void test1639065951487() {
+            final CallAdapter<?, IDualResponse<?, ?>> adapter = FACTORY.get(DUAL_RESPONSE_GENERIC_STRING_TYPE, AA, R);
+            assertThat("", adapter, notNullValue());
+            assertThat("", adapter.responseType(), instanceOf(ParameterizedType.class));
+            final Call call = RetrofitTestUtils.getCall(200, "");
+            final IDualResponse response = adapter.adapt(call);
+            assertThat("", response, instanceOf(DualResponse.class));
+        }
+
+    }
+
+    @Nested
+    @DisplayName("getCallAdapter() method")
+    public class GetCallAdapterMethodTests {
+
+        @Test
+        @DisplayName("All parameters required")
+        public void test1639235535510() {
+            final ParameterizedType type = FACTORY.getParameterizedType(DUAL_RESPONSE_GENERIC_STRING_TYPE);
+            assertNPE(() -> FACTORY.getCallAdapter(null, STRING_C, STRING_C, INFO, AA, R), "type");
+            assertNPE(() -> FACTORY.getCallAdapter(type, null, STRING_C, INFO, AA, R), "successType");
+            assertNPE(() -> FACTORY.getCallAdapter(type, STRING_C, null, INFO, AA, R), "errorType");
+            assertNPE(() -> FACTORY.getCallAdapter(type, STRING_C, STRING_C, null, AA, R), "endpointInfo");
+            assertNPE(() -> FACTORY.getCallAdapter(type, STRING_C, STRING_C, INFO, null, R), "methodAnnotations");
+            assertNPE(() -> FACTORY.getCallAdapter(type, STRING_C, STRING_C, INFO, AA, null), "retrofit");
+        }
+
+        @Test
+        @DisplayName("Get response type")
+        public void test1639235392942() {
+            final ParameterizedType expected = FACTORY.getParameterizedType(DUAL_RESPONSE_GENERIC_STRING_TYPE);
+            final Type actType = FACTORY.getCallAdapter(expected, STRING_C, STRING_C, INFO, AA, R).responseType();
+            assertThat(actType, is(expected));
+        }
+
+        @Test
+        @DisplayName("Get default endpoint info")
+        public void test1639236352471() {
+            final ParameterizedType type = FACTORY.getParameterizedType(DUAL_RESPONSE_GENERIC_STRING_TYPE);
+            final Call call = RetrofitTestUtils.getCall(200, "");
+            final String info = FACTORY.getCallAdapter(type, STRING_C, STRING_C, "", AA, R)
+                    .adapt(call)
+                    .getEndpointInfo();
+            assertThat(info, is("POST http://localhost/"));
+        }
+
+        @Test
+        @DisplayName("Get specified endpoint info")
+        public void test1639236506503() {
+            final ParameterizedType type = FACTORY.getParameterizedType(DUAL_RESPONSE_GENERIC_STRING_TYPE);
+            final Call call = RetrofitTestUtils.getCall(200, "");
+            final String info = FACTORY.getCallAdapter(type, STRING_C, STRING_C, " test1639236506503 ", AA, R)
+                    .adapt(call)
+                    .getEndpointInfo();
+            assertThat(info, is("test1639236506503"));
+        }
+
+
+    }
+
+    @Nested
+    @DisplayName("getIDualResponse() method")
+    public class GetIDualResponseMethodTests {
+
+        @Test
+        @DisplayName("All parameters required")
+        public void test1639065951517() {
+            final Call call = RetrofitTestUtils.getCall(200, "");
+            assertNPE(() -> FACTORY.getIDualResponse(null, STRING_C, STRING_C, INFO, AA, R), "call");
+            assertNPE(() -> FACTORY.getIDualResponse(call, null, STRING_C, INFO, AA, R), "successType");
+            assertNPE(() -> FACTORY.getIDualResponse(call, STRING_C, null, INFO, AA, R), "errorType");
+            assertNPE(() -> FACTORY.getIDualResponse(call, STRING_C, STRING_C, null, AA, R), "endpointInfo");
+            assertNPE(() -> FACTORY.getIDualResponse(call, STRING_C, STRING_C, INFO, null, R), "methodAnnotations");
+            assertNPE(() -> FACTORY.getIDualResponse(call, STRING_C, STRING_C, INFO, AA, null), "retrofit");
+        }
+
+        @Test
+        @DisplayName("Get default IDualResponse implementation")
+        public void test1639065951499() {
+            final Call call = RetrofitTestUtils.getCall(200, "");
+            final IDualResponse iDualResponse = FACTORY.getIDualResponse(call, STRING_C, STRING_C, INFO, AA, R);
+            assertThat("", iDualResponse, instanceOf(DualResponse.class));
+        }
+
+        @Test
+        @DisplayName("Get custom IDualResponse implementation")
+        public void test1639065951507() {
+            final Call call = RetrofitTestUtils.getCall(200, "");
+            final IDualResponse iDualResponse = new DualResponseCallAdapterFactory(UnitTestDualResponse::new)
+                    .getIDualResponse(call, STRING_C, STRING_C, INFO, AA, R);
+            assertThat("", iDualResponse, instanceOf(UnitTestDualResponse.class));
+        }
+
+        @Test
+        @DisplayName("RuntimeException catching")
+        public void test1639233145559() throws IOException {
+            final Call call = mock(Call.class);
+            when(call.execute()).thenThrow(new ConvertCallException("test1639233145559"));
+            assertThrow(() -> FACTORY.getIDualResponse(call, STRING_C, STRING_C, INFO, AA, R))
+                    .assertClass(ConvertCallException.class)
+                    .assertMessageIs("test1639233145559");
+        }
+
+        @Test
+        @DisplayName("Exception catching and wrap to RuntimeException")
+        public void test1639233270487() throws IOException {
+            final Call call = mock(Call.class);
+            when(call.execute()).thenThrow(new IOException("test1639233270487"));
+            assertThrow(() -> FACTORY.getIDualResponse(call, STRING_C, STRING_C, INFO, AA, R))
+                    .assertClass(HttpCallException.class)
+                    .assertMessageIs("Failed to make API call. See the reason below.")
+                    .assertCause(cause -> cause
+                            .assertClass(IOException.class)
+                            .assertMessageIs("test1639233270487"));
+        }
+
+    }
+
+    @Nested
+    @DisplayName("getParameterizedType() method")
+    public class GetParameterizedTypeMethodTests {
+
+        @Test
+        @DisplayName("Get ParameterizedType from DualResponse class")
+        public void test1639065951559() {
+            final ParameterizedType expectedType = mock(ParameterizedType.class);
+            when(expectedType.getRawType()).thenReturn(DualResponse.class);
+            ParameterizedType parameterizedType = FACTORY.getParameterizedType(expectedType);
+            assertThat("ParameterizedType raw type", parameterizedType.getRawType(), is(DualResponse.class));
+            assertThat("ParameterizedType", parameterizedType, is(expectedType));
+        }
+
+        @Test
+        @DisplayName("Return ParameterizedType from IDualResponse generic class")
+        public void test1639065951569() {
+            ParameterizedType parameterizedType = FACTORY.getParameterizedType(DUAL_RESPONSE_GENERIC_STRING_TYPE);
+            assertThat("ParameterizedType raw type", parameterizedType.getRawType(), is(DualResponse.class));
+            assertThat("ParameterizedType", parameterizedType, is(DUAL_RESPONSE_GENERIC_STRING_TYPE));
+        }
+
+        @Test
+        @DisplayName("IllegalArgumentException if type = IDualResponse raw class")
+        public void test1639065951578() {
+            assertThrow(() -> FACTORY.getParameterizedType(DUAL_RESPONSE_RAW_TYPE))
+                    .assertClass(IllegalArgumentException.class)
+                    .assertMessageIs("API method must return generic type of IDualResponse<SUC_DTO, ERR_DTO>\n" +
+                            "Actual: class org.touchbit.retrofit.ext.dmr.client.response.DualResponse");
+        }
+
+        @Test
+        @DisplayName("IllegalArgumentException if type = unsupported generic class")
+        public void test1639065951589() {
+            Type unsupported = new HashMap<String, String>().getClass().getGenericInterfaces()[0];
+            assertThrow(() -> FACTORY.getParameterizedType(unsupported))
+                    .assertClass(IllegalArgumentException.class)
+                    .assertMessageIs("API method must return generic type of IDualResponse<SUC_DTO, ERR_DTO>\n" +
+                            "Actual: java.util.Map<K, V>");
+        }
+
+        @Test
+        @DisplayName("NPE if type = null")
+        public void test1639065951600() {
+            assertNPE(() -> FACTORY.getParameterizedType(null), "type");
+        }
+
+    }
+
+    @Nested
+    @DisplayName("getEndpointInfo() method")
+    public class GetEndpointInfoMethodTests {
+
+        @Test
+        @DisplayName("Successfully getting a EndpointInfo message from a filled EndpointInfo annotation")
+        public void test1639065951664() {
+            Annotation[] annotations = new Annotation[]{getEndpointInfo("test1634561408525")};
+            String endpointInfo = FACTORY.getEndpointInfo(annotations);
+            assertThat("EndpointInfo", endpointInfo, is("test1634561408525"));
+        }
+
+        @Test
+        @DisplayName("Successfully getting an empty EndpointInfo message from the blank EndpointInfo annotation")
+        public void test1639065951672() {
+            Annotation[] annotations = new Annotation[]{getEndpointInfo("   ")};
+            String endpointInfo = FACTORY.getEndpointInfo(annotations);
+            assertThat("EndpointInfo", endpointInfo, emptyString());
+        }
+
+        @Test
+        @DisplayName("Successfully getting an empty EndpointInfo message from empty EndpointInfo annotation")
+        public void test1639065951680() {
+            Annotation[] annotations = new Annotation[]{getEndpointInfo(null)};
+            String endpointInfo = FACTORY.getEndpointInfo(annotations);
+            assertThat("EndpointInfo", endpointInfo, emptyString());
+        }
+
+        @Test
+        @DisplayName("Successfully getting an empty EndpointInfo message if the EndpointInfo annotation not present")
+        public void test1639065951688() {
+            Annotation[] annotations = getAnyAnnotations();
+            String endpointInfo = FACTORY.getEndpointInfo(annotations);
+            assertThat("EndpointInfo", endpointInfo, emptyString());
+        }
+
+        @Test
+        @DisplayName("Successfully getting an empty EndpointInfo message if the Annotation array is null")
+        public void test1639065951700() {
+            Annotation[] annotations = new Annotation[]{};
+            String endpointInfo = FACTORY.getEndpointInfo(annotations);
+            assertThat("EndpointInfo", endpointInfo, emptyString());
+        }
+
     }
 
 }

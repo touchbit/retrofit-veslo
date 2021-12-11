@@ -17,7 +17,7 @@
 package org.touchbit.retrofit.ext.dmr.gson;
 
 import com.google.gson.JsonSyntaxException;
-import internal.test.utils.OkHttpUtils;
+import internal.test.utils.OkHttpTestUtils;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
@@ -56,7 +56,7 @@ public class GsonConverterUnitTests {
     public void test1639065946162() throws IOException {
         GsonDTO dto = new GsonDTO().setCode(123).setMessage("test1638367311822");
         final RequestBody requestBody = getRequestConverter(dto).convert(dto);
-        final String result = OkHttpUtils.requestBodyToString(requestBody);
+        final String result = OkHttpTestUtils.requestBodyToString(requestBody);
         assertThat("DTO json", result, is("{\n  \"code\": 123,\n  \"message\": \"test1638367311822\"\n}"));
     }
 
@@ -66,7 +66,7 @@ public class GsonConverterUnitTests {
         Map<String, Object> dto = new HashMap<>();
         dto.put("method", "test1638367516788");
         final RequestBody requestBody = getRequestConverter(dto).convert(dto);
-        final String result = OkHttpUtils.requestBodyToString(requestBody);
+        final String result = OkHttpTestUtils.requestBodyToString(requestBody);
         assertThat("Map json", result, is("{\n  \"method\": \"test1638367516788\"\n}"));
     }
 
@@ -78,7 +78,7 @@ public class GsonConverterUnitTests {
         List<Object> dto = new ArrayList<>();
         dto.add(inner);
         final RequestBody requestBody = getRequestConverter(dto).convert(dto);
-        final String result = OkHttpUtils.requestBodyToString(requestBody);
+        final String result = OkHttpTestUtils.requestBodyToString(requestBody);
         assertThat("List json", result, is("[\n  {\n    \"method\": \"test1638367557865\"\n  }\n]"));
     }
 
@@ -87,7 +87,7 @@ public class GsonConverterUnitTests {
     public void test1639065946193() throws IOException {
         String dto = "test1638367611927";
         final RequestBody requestBody = getRequestConverter(dto).convert(dto);
-        final String result = OkHttpUtils.requestBodyToString(requestBody);
+        final String result = OkHttpTestUtils.requestBodyToString(requestBody);
         assertThat("String json", result, is("\"test1638367611927\""));
     }
 
@@ -96,7 +96,7 @@ public class GsonConverterUnitTests {
     public void test1639065946202() throws IOException {
         int dto = 1;
         final RequestBody requestBody = getRequestConverter(dto).convert(dto);
-        final String result = OkHttpUtils.requestBodyToString(requestBody);
+        final String result = OkHttpTestUtils.requestBodyToString(requestBody);
         assertThat("Integer json", result, is("1"));
     }
 
@@ -105,7 +105,7 @@ public class GsonConverterUnitTests {
     public void test1639065946211() throws IOException {
         double dto = 16.3;
         final RequestBody requestBody = getRequestConverter(dto).convert(dto);
-        final String result = OkHttpUtils.requestBodyToString(requestBody);
+        final String result = OkHttpTestUtils.requestBodyToString(requestBody);
         assertThat("Double json", result, is("16.3"));
     }
 
@@ -114,7 +114,7 @@ public class GsonConverterUnitTests {
     public void test1639065946220() throws IOException {
         boolean dto = true;
         final RequestBody requestBody = getRequestConverter(dto).convert(dto);
-        final String result = OkHttpUtils.requestBodyToString(requestBody);
+        final String result = OkHttpTestUtils.requestBodyToString(requestBody);
         assertThat("Boolean json", result, is("true"));
     }
 
@@ -122,7 +122,7 @@ public class GsonConverterUnitTests {
     @DisplayName("Gson RequestBodyConverter.convert() successful convert null (JSON_NULL_VALUE)")
     public void test1639065946229() throws IOException {
         final RequestBody requestBody = getRequestConverter(Object.class).convert(JSON_NULL_VALUE);
-        final String result = OkHttpUtils.requestBodyToString(requestBody);
+        final String result = OkHttpTestUtils.requestBodyToString(requestBody);
         assertThat("null json", result, is("null"));
     }
 
@@ -137,7 +137,7 @@ public class GsonConverterUnitTests {
     @DisplayName("Gson RequestBodyConverter.convert() successful convert Object.class")
     public void test1639065946244() throws IOException {
         final RequestBody requestBody = getRequestConverter(Object.class).convert(new Object());
-        final String result = OkHttpUtils.requestBodyToString(requestBody);
+        final String result = OkHttpTestUtils.requestBodyToString(requestBody);
         assertThat("Any json", result, is("{}"));
     }
 

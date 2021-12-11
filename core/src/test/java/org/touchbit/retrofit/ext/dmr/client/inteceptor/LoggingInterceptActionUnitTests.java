@@ -16,7 +16,7 @@
 
 package org.touchbit.retrofit.ext.dmr.client.inteceptor;
 
-import internal.test.utils.OkHttpUtils;
+import internal.test.utils.OkHttpTestUtils;
 import internal.test.utils.log.UnitTestLogger;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -45,7 +45,7 @@ public class LoggingInterceptActionUnitTests {
     @DisplayName("#requestAction() logging an HTTP request")
     public void test1639065951194() throws IOException {
         UnitTestLogger logger = new UnitTestLogger();
-        final Request request = OkHttpUtils.getRequest();
+        final Request request = OkHttpTestUtils.getRequest();
         final Request result = new LoggingInterceptAction(logger).requestAction(request);
         assertThat("", result, is(request));
         assertThat("", logger.getLogEventCount(), is(1));
@@ -66,7 +66,7 @@ public class LoggingInterceptActionUnitTests {
     @DisplayName("#responseAction() logging an HTTP response")
     public void test1639065951214() throws IOException {
         UnitTestLogger logger = new UnitTestLogger();
-        final Response response = OkHttpUtils.getResponse();
+        final Response response = OkHttpTestUtils.getResponse();
         final Response result = new LoggingInterceptAction(logger).responseAction(response);
         assertThat("", result, is(response));
         assertThat("", logger.getLogEventCount(), is(1));

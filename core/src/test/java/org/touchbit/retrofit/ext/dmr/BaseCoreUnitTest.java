@@ -21,6 +21,7 @@ import internal.test.utils.client.model.TestDTO;
 import internal.test.utils.client.model.pack.PackageDTO;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import org.touchbit.retrofit.ext.dmr.client.EndpointInfo;
 import org.touchbit.retrofit.ext.dmr.client.converter.ExtensionConverterFactory;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.Converters;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
@@ -31,6 +32,8 @@ import org.touchbit.retrofit.ext.dmr.client.response.DualResponse;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -40,11 +43,12 @@ import static internal.test.utils.TestUtils.getGenericReturnTypeForMethod;
 import static org.touchbit.retrofit.ext.dmr.client.header.ContentTypeConstants.TEXT_PLAIN;
 
 @EverythingIsNonNull // for suppress interface inspections
-@SuppressWarnings({"ConstantConditions", "SameParameterValue", "unused"})
+@SuppressWarnings({"ConstantConditions", "SameParameterValue", "unused", "rawtypes"})
 public class BaseCoreUnitTest extends BaseUnitTest {
 
     public static final TestsExtensionConverterFactory TEST_FACTORY = new TestsExtensionConverterFactory();
-    public static final Type DUAL_RESPONSE_STRING_TYPE = getGenericReturnTypeForMethod(BaseGenericTypes.class, "stringDualResponse");
+    public static final Type DUAL_RESPONSE_GENERIC_STRING_TYPE = getGenericReturnTypeForMethod(BaseGenericTypes.class, "stringDualResponse");
+    public static final Type DUAL_RESPONSE_RAW_TYPE = getGenericReturnTypeForMethod(BaseGenericTypes.class, "rawDualResponse");
 
     protected static RequestBodyConverter getRequestBodyConverter(Type type, Annotation... methodAnnotations) {
         return TEST_FACTORY.requestBodyConverter(type, AA, methodAnnotations, RTF);
@@ -52,6 +56,8 @@ public class BaseCoreUnitTest extends BaseUnitTest {
 
     private interface BaseGenericTypes {
         DualResponse<String, String> stringDualResponse();
+
+        DualResponse rawDualResponse();
     }
 
     public static final class TestsExtensionConverterFactory extends ExtensionConverterFactory {
@@ -176,6 +182,33 @@ public class BaseCoreUnitTest extends BaseUnitTest {
                 return converter;
             }
         };
+    }
+
+    protected static EndpointInfo getEndpointInfo(final String message) {
+        return new EndpointInfo() {
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return EndpointInfo.class;
+            }
+
+            @Override
+            public String value() {
+                return message;
+            }
+        };
+    }
+
+    protected static final class UnitTestDualResponse<SUC_DTO, ERR_DTO> extends DualResponse<SUC_DTO, ERR_DTO> {
+
+        public UnitTestDualResponse(@Nullable SUC_DTO sucDTO,
+                                    @Nullable ERR_DTO errDTO,
+                                    @Nonnull okhttp3.Response response,
+                                    @Nonnull String endpointInfo,
+                                    @Nonnull Annotation[] callAnnotations) {
+            super(sucDTO, errDTO, response, endpointInfo, callAnnotations);
+        }
+
     }
 
 }

@@ -18,7 +18,7 @@ package org.touchbit.retrofit.ext.dmr.client.converter.defaults;
 
 import internal.test.utils.BaseUnitTest;
 import internal.test.utils.CorruptedTestException;
-import internal.test.utils.OkHttpUtils;
+import internal.test.utils.OkHttpTestUtils;
 import okhttp3.RequestBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -68,7 +68,7 @@ public class JavaTypeConverterBaseUnitTests extends BaseUnitTest {
             @DisplayName("return RequestBody if body present")
             public void test1639065950251() throws IOException {
                 final RequestBody result = REQUEST_CONVERTER.convert("test1638616072076");
-                final String body = OkHttpUtils.requestBodyToString(result);
+                final String body = OkHttpTestUtils.requestBodyToString(result);
                 assertThat("", body, is("test1638616072076"));
             }
 

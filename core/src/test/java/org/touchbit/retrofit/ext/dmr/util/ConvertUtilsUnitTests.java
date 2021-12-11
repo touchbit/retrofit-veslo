@@ -29,7 +29,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.util.Objects;
 
-import static internal.test.utils.RetrofitUtils.getCallMethodAnnotations;
+import static internal.test.utils.RetrofitTestUtils.getCallMethodAnnotations;
 import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
 import static internal.test.utils.asserter.ThrowableAsserter.assertUtilityClassException;
 import static org.hamcrest.MatcherAssert.assertThat;

@@ -17,7 +17,7 @@
 package org.touchbit.retrofit.ext.dmr.allure;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import internal.test.utils.OkHttpUtils;
+import internal.test.utils.OkHttpTestUtils;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.junit.jupiter.api.DisplayName;
@@ -45,7 +45,7 @@ public class AllureInterceptActionUnitTests extends BaseUnitTests {
     public void test1639065952922() throws IOException {
         UnitTestInternalAllurePlatform.execute("test1638347276789", () -> {
             AllureInterceptAction action = new AllureInterceptAction();
-            final Request expRequest = OkHttpUtils.getRequest();
+            final Request expRequest = OkHttpTestUtils.getRequest();
             final Request actRequest = action.requestAction(expRequest);
             assertThat("Request", expRequest, is(actRequest));
         });
@@ -76,7 +76,7 @@ public class AllureInterceptActionUnitTests extends BaseUnitTests {
     public void test1639065952951() throws IOException {
         UnitTestInternalAllurePlatform.execute("test1638351724471", () -> {
             AllureInterceptAction action = new AllureInterceptAction();
-            final Response expResponse = OkHttpUtils.getResponse();
+            final Response expResponse = OkHttpTestUtils.getResponse();
             final Response actResponse = action.responseAction(expResponse);
             assertThat("Response", expResponse, is(actResponse));
             final List<Path> attachments = Files.list(RESULTS_PATH).collect(Collectors.toList());

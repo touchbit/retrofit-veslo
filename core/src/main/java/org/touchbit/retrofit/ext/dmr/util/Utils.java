@@ -25,6 +25,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Utils {
 
@@ -86,14 +87,43 @@ public class Utils {
         return primitiveArray;
     }
 
+    /**
+     * @param type - nullable java Type
+     * @return "null" or type name
+     */
     @Nonnull
-    public static String getTypeName(Type type) {
+    public static String getTypeName(@Nullable Type type) {
         return type == null ? "null" : type.getTypeName();
     }
 
+    /**
+     * @param object - nullable object
+     * @return @return "null" or class type name
+     */
     @Nonnull
-    public static String getTypeName(Object object) {
+    public static String getTypeName(@Nullable Object object) {
         return object == null ? "null" : getTypeName(object.getClass());
+    }
+
+    /**
+     * For example: "API method annotations:" + Utils.arrayToPrettyString(getCallAnnotations())
+     * * API method annotations:
+     * *   @retrofit2.http.POST("/api/mock/application/json/Object")
+     * *   @retrofit2.http.Headers({"Content-Type: application/json"})
+     *
+     * @param objects - nullable object array
+     * @return empty string or list of objects converted to string with leading "\n  " delimiter
+     */
+    public static String arrayToPrettyString(Object[] objects) {
+        if (objects == null || objects.length == 0) {
+            return "";
+        }
+        String delimiter = "\n  ";
+        return delimiter + Arrays.stream(objects)
+                .filter(Objects::nonNull)
+                .map(Object::toString)
+                .collect(Collectors.joining(delimiter))
+                .trim();
     }
 
 }

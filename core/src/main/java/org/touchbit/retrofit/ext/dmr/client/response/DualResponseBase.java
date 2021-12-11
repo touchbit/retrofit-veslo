@@ -17,12 +17,11 @@
 package org.touchbit.retrofit.ext.dmr.client.response;
 
 import okhttp3.Response;
+import org.touchbit.retrofit.ext.dmr.util.Utils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public abstract class DualResponseBase<SUC_DTO, ERR_DTO> implements IDualResponse<SUC_DTO, ERR_DTO> {
 
@@ -81,9 +80,7 @@ public abstract class DualResponseBase<SUC_DTO, ERR_DTO> implements IDualRespons
                 "Error DTO: " + getErrDTO() + "\n" +
                 "Raw response: " + getResponse() + "\n" +
                 "Call info: '" + getEndpointInfo() + "'\n" +
-                "API method annotations:" + (getCallAnnotations().length == 0 ? "" : "\n  ")
-                + Arrays.stream(getCallAnnotations())
-                .map(Annotation::toString).collect(Collectors.joining("\n  "))).trim();
+                "API method annotations:" + Utils.arrayToPrettyString(getCallAnnotations()));
     }
 
 }

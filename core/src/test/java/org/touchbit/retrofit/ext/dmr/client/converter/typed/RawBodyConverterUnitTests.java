@@ -16,7 +16,7 @@
 
 package org.touchbit.retrofit.ext.dmr.client.converter.typed;
 
-import internal.test.utils.OkHttpUtils;
+import internal.test.utils.OkHttpTestUtils;
 import internal.test.utils.asserter.ThrowableRunnable;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -46,7 +46,7 @@ public class RawBodyConverterUnitTests {
                 .requestBodyConverter(null, null, null, null)
                 .convert(expected);
         assertThat("RequestBody", requestBody, notNullValue());
-        final String actual = OkHttpUtils.requestBodyToString(requestBody);
+        final String actual = OkHttpTestUtils.requestBodyToString(requestBody);
         assertThat("Body", actual, is(expected.string()));
     }
 
@@ -58,7 +58,7 @@ public class RawBodyConverterUnitTests {
                 .requestBodyConverter(null, null, null, null)
                 .convert(expected);
         assertThat("RequestBody", requestBody, notNullValue());
-        final String actual = OkHttpUtils.requestBodyToString(requestBody);
+        final String actual = OkHttpTestUtils.requestBodyToString(requestBody);
         assertThat("Body", actual, is(""));
     }
 

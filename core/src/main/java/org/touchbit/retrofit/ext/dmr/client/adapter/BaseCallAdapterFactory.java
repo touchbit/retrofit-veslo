@@ -138,7 +138,7 @@ public abstract class BaseCallAdapterFactory extends CallAdapter.Factory {
 
     /**
      * @param returnType - model type
-     * @param body - model value
+     * @param body       - model value
      * @throws PrimitiveConvertCallException if returnType is primitive and body is null
      */
     protected void checkPrimitiveConvertCall(final @Nonnull Type returnType, final @Nullable Object body) {

@@ -20,6 +20,8 @@ import internal.test.utils.asserter.ThrowableAsserter;
 import internal.test.utils.asserter.ThrowableRunnable;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.http.GET;
@@ -27,6 +29,7 @@ import retrofit2.http.GET;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.annotation.Retention;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,8 +44,9 @@ import static org.hamcrest.Matchers.is;
 @SuppressWarnings({"unused", "rawtypes"})
 public abstract class BaseUnitTest {
 
+    protected static final String INFO = "endpointInfo";
     protected static final Annotation[] AA = array();
-    protected static final Retrofit RTF = RetrofitUtils.retrofit();
+    protected static final Retrofit RTF = RetrofitTestUtils.retrofit();
     protected static final Class<Object> OBJ_C = Object.class;
     protected static final Type OBJ_T = OBJ_C;
     protected static final Class<String> STRING_C = String.class;
@@ -87,6 +91,7 @@ public abstract class BaseUnitTest {
     protected static final Class<List> LIST_C = List.class;
     protected static final Type STRING_MAP_T = getGenericReturnTypeForMethod(BaseGenericTypes.class, "stringMapType");
     protected static final Class<Map> MAP_C = Map.class;
+    protected static final Logger UNIT_TEST_LOGGER = LoggerFactory.getLogger(BaseUnitTest.class);
 
     public static ThrowableAsserter assertThrow(ThrowableRunnable runnable) {
         return new ThrowableAsserter(runnable);
@@ -106,6 +111,10 @@ public abstract class BaseUnitTest {
 
     public static <DTO> void assertIs(DTO actual, DTO expected) {
         assertThat(actual, is(expected));
+    }
+
+    protected Annotation[] getAnyAnnotations() {
+        return Retention.class.getAnnotations();
     }
 
     protected String fileToString(Path file) {

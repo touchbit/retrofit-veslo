@@ -18,7 +18,7 @@ package org.touchbit.retrofit.ext.dmr.jackson;
 
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import internal.test.utils.BaseUnitTest;
-import internal.test.utils.OkHttpUtils;
+import internal.test.utils.OkHttpTestUtils;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
@@ -63,7 +63,7 @@ public class JacksonUnitTests extends BaseUnitTest {
     public void test1639065954682() throws IOException {
         ErrorDTO errorDTO = new ErrorDTO().setCode(100).setMessage("test1637548419338");
         final RequestBody requestBody = requestBodyConverter(ErrorDTO.class).convert(errorDTO);
-        final String result = OkHttpUtils.requestBodyToString(requestBody);
+        final String result = OkHttpTestUtils.requestBodyToString(requestBody);
         assertThat("ErrorDTO json", result, is("{\n  \"code\" : 100,\n  \"message\" : \"test1637548419338\"\n}"));
     }
 
@@ -73,7 +73,7 @@ public class JacksonUnitTests extends BaseUnitTest {
         Map<String, Object> body = new HashMap<>();
         body.put("method", "test1637548760804");
         final RequestBody requestBody = requestBodyConverter(Map.class).convert(body);
-        final String result = OkHttpUtils.requestBodyToString(requestBody);
+        final String result = OkHttpTestUtils.requestBodyToString(requestBody);
         assertThat("Map json", result, is("{\n  \"method\" : \"test1637548760804\"\n}"));
     }
 
@@ -85,7 +85,7 @@ public class JacksonUnitTests extends BaseUnitTest {
         List<Object> body = new ArrayList<>();
         body.add(inner);
         final RequestBody requestBody = requestBodyConverter(List.class).convert(body);
-        final String result = OkHttpUtils.requestBodyToString(requestBody);
+        final String result = OkHttpTestUtils.requestBodyToString(requestBody);
         assertThat("List json", result, is("[ {\n  \"method\" : \"test1637548951112\"\n} ]"));
     }
 
@@ -93,7 +93,7 @@ public class JacksonUnitTests extends BaseUnitTest {
     @DisplayName("Jackson RequestBodyConverter.convert() successful convert String")
     public void test1639065954713() throws IOException {
         final RequestBody requestBody = requestBodyConverter(String.class).convert("test1637549076590");
-        final String result = OkHttpUtils.requestBodyToString(requestBody);
+        final String result = OkHttpTestUtils.requestBodyToString(requestBody);
         assertThat("String json", result, is("\"test1637549076590\""));
     }
 
@@ -101,7 +101,7 @@ public class JacksonUnitTests extends BaseUnitTest {
     @DisplayName("Jackson RequestBodyConverter.convert() successful convert Integer")
     public void test1639065954721() throws IOException {
         final RequestBody requestBody = requestBodyConverter(Integer.class).convert(1);
-        final String result = OkHttpUtils.requestBodyToString(requestBody);
+        final String result = OkHttpTestUtils.requestBodyToString(requestBody);
         assertThat("Integer json", result, is("1"));
     }
 
@@ -109,7 +109,7 @@ public class JacksonUnitTests extends BaseUnitTest {
     @DisplayName("Jackson RequestBodyConverter.convert() successful convert Double")
     public void test1639065954729() throws IOException {
         final RequestBody requestBody = requestBodyConverter(Double.class).convert(16.3);
-        final String result = OkHttpUtils.requestBodyToString(requestBody);
+        final String result = OkHttpTestUtils.requestBodyToString(requestBody);
         assertThat("Double json", result, is("16.3"));
     }
 
@@ -117,7 +117,7 @@ public class JacksonUnitTests extends BaseUnitTest {
     @DisplayName("Jackson RequestBodyConverter.convert() successful convert Boolean")
     public void test1639065954737() throws IOException {
         final RequestBody requestBody = requestBodyConverter(Boolean.class).convert(true);
-        final String result = OkHttpUtils.requestBodyToString(requestBody);
+        final String result = OkHttpTestUtils.requestBodyToString(requestBody);
         assertThat("Boolean json", result, is("true"));
     }
 
@@ -125,7 +125,7 @@ public class JacksonUnitTests extends BaseUnitTest {
     @DisplayName("Jackson RequestBodyConverter.convert() successful convert null (JSON_NULL_VALUE)")
     public void test1639065954745() throws IOException {
         final RequestBody requestBody = requestBodyConverter(String.class).convert(JSON_NULL_VALUE);
-        final String result = OkHttpUtils.requestBodyToString(requestBody);
+        final String result = OkHttpTestUtils.requestBodyToString(requestBody);
         assertThat("null json", result, is("null"));
     }
 

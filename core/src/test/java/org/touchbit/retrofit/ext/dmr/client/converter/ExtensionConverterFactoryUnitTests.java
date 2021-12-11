@@ -16,7 +16,7 @@
 
 package org.touchbit.retrofit.ext.dmr.client.converter;
 
-import internal.test.utils.RetrofitUtils;
+import internal.test.utils.RetrofitTestUtils;
 import internal.test.utils.asserter.ThrowableRunnable;
 import internal.test.utils.client.model.TestDTO;
 import internal.test.utils.client.model.pack.PackageDTO;
@@ -148,7 +148,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
     @DisplayName("Successfully converting ResponseBody to String.class if body == IDualResponse<String, String>")
     public void test1639065949011() throws IOException {
         final Object dto = new ExtensionConverterFactory()
-                .responseBodyConverter(DUAL_RESPONSE_STRING_TYPE, getContentTypeHeaderAnnotations(TEXT_PLAIN), RTF)
+                .responseBodyConverter(DUAL_RESPONSE_GENERIC_STRING_TYPE, getContentTypeHeaderAnnotations(TEXT_PLAIN), RTF)
                 .convert(ResponseBody.create(TEXT_PLAIN.getMediaType(), "test1637431635085"));
         assertThat("ResponseBody", dto, is("test1637431635085"));
     }
@@ -906,7 +906,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
     }
 
     private Annotation[] getContentTypeHeaderAnnotations(String value) {
-        return RetrofitUtils.getCallMethodAnnotations("Content-Type: " + value);
+        return RetrofitTestUtils.getCallMethodAnnotations("Content-Type: " + value);
     }
 
 }

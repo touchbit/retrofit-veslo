@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.touchbit.retrofit.ext.dmr.client.EndpointInfo;
 import org.touchbit.retrofit.ext.dmr.client.response.DualResponse;
+import org.touchbit.retrofit.ext.dmr.client.response.DualResponseBase;
 import org.touchbit.retrofit.ext.dmr.client.response.IDualResponse;
 import org.touchbit.retrofit.ext.dmr.exception.HttpCallException;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
@@ -33,39 +34,63 @@ import javax.annotation.Nonnull;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
+/**
+ * Factory for creating {@link CallAdapter} with support {@link IDualResponse} type
+ * <p>
+ * Created by Oleg Shaburov on 11.12.2021
+ * shaburov.o.a@gmail.com
+ */
 public class DualResponseCallAdapterFactory extends BaseCallAdapterFactory {
 
+    /**
+     * {@link IDualResponseConsumer} for constructor of {@link DualResponseBase} heirs
+     */
     private final IDualResponseConsumer<IDualResponse<?, ?>> dualResponseConsumer;
 
+    /**
+     * Default constructor with {@link DualResponse} return type handling
+     */
     public DualResponseCallAdapterFactory() {
         this(LoggerFactory.getLogger(DualResponseCallAdapterFactory.class), DualResponse::new);
     }
 
+    /**
+     * @param dualResponseConsumer - {@link IDualResponseConsumer} for constructor of {@link DualResponseBase} heirs
+     */
     public DualResponseCallAdapterFactory(IDualResponseConsumer<IDualResponse<?, ?>> dualResponseConsumer) {
         this(LoggerFactory.getLogger(DualResponseCallAdapterFactory.class), dualResponseConsumer);
     }
 
+    /**
+     * @param logger - required Slf4J logger
+     */
     public DualResponseCallAdapterFactory(Logger logger) {
         this(logger, DualResponse::new);
     }
 
+    /**
+     * @param logger               - required Slf4J logger
+     * @param dualResponseConsumer - {@link IDualResponseConsumer} for constructor of {@link DualResponseBase} heirs
+     */
     public DualResponseCallAdapterFactory(Logger logger, IDualResponseConsumer<IDualResponse<?, ?>> dualResponseConsumer) {
         super(logger);
         Utils.parameterRequireNonNull(dualResponseConsumer, "dualResponseConsumer");
         this.dualResponseConsumer = dualResponseConsumer;
     }
 
+    /**
+     * @param returnType        - called method return type
+     * @param methodAnnotations - list of annotations for the called API method
+     * @param retrofit-         - HTTP client
+     * @return a call adapter for {@link IDualResponse} interface
+     */
     @Override
     @EverythingIsNonNull
     public CallAdapter<Object, IDualResponse<?, ?>> get(final Type returnType,
                                                         final Annotation[] methodAnnotations,
                                                         final Retrofit retrofit) {
-        logger.debug("Prepare API call\nAPI method annotations:{}",
-                (methodAnnotations.length == 0 ? "" : "\n  ") + Arrays.stream(methodAnnotations)
-                .map(Annotation::toString).collect(Collectors.joining("\n  ")).trim());
+        logger.debug("Prepare API call\nAPI method annotations:{}", Utils.arrayToPrettyString(methodAnnotations));
         final ParameterizedType type = getParameterizedType(returnType);
         final String endpointInfo = getEndpointInfo(methodAnnotations);
         final Type successType = getParameterUpperBound(0, type);
@@ -99,12 +124,19 @@ public class DualResponseCallAdapterFactory extends BaseCallAdapterFactory {
         Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new CallAdapter<Object, IDualResponse<?, ?>>() {
 
+            /**
+             * @return see {@link CallAdapter#responseType()}
+             */
             @Override
             @Nonnull
             public Type responseType() {
                 return type;
             }
 
+            /**
+             * @param call - see {@link Call}
+             * @return see {@link CallAdapter#adapt(Call)}
+             */
             @Override
             @EverythingIsNonNull
             public IDualResponse<?, ?> adapt(Call<Object> call) {
@@ -112,7 +144,7 @@ public class DualResponseCallAdapterFactory extends BaseCallAdapterFactory {
                 if (endpointInfo.trim().isEmpty()) {
                     finalInfo = call.request().method() + " " + call.request().url();
                 } else {
-                    finalInfo = endpointInfo;
+                    finalInfo = endpointInfo.trim();
                 }
                 logger.info("API call: " + finalInfo);
                 return getIDualResponse(call, successType, errorType, finalInfo, methodAnnotations, retrofit);
@@ -129,14 +161,15 @@ public class DualResponseCallAdapterFactory extends BaseCallAdapterFactory {
      * @return {@link ParameterizedType} of the wrapper class
      */
     public ParameterizedType getParameterizedType(Type type) {
+        Utils.parameterRequireNonNull(type, "type");
         if (type instanceof ParameterizedType) {
             Class<?> rawClass = (Class<?>) ((ParameterizedType) type).getRawType();
             if (IDualResponse.class.isAssignableFrom(rawClass)) {
                 return (ParameterizedType) type;
             }
         }
-        throw new IllegalArgumentException("API methods must return an implementation class of " +
-                IDualResponse.class + "\nActual: " + type);
+        throw new IllegalArgumentException("API method must return generic type of IDualResponse<SUC_DTO, ERR_DTO>" +
+                "\nActual: " + type);
     }
 
     /**
@@ -177,7 +210,7 @@ public class DualResponseCallAdapterFactory extends BaseCallAdapterFactory {
         logger.debug("Define real values for the error/success response body");
         final Object sucDTO = getSuccessfulResponseBody(response, successType, methodAnnotations, retrofit);
         final Object errDTO = getErrorResponseBody(response, errorType, methodAnnotations, retrofit);
-        final IDualResponse<?, ?> result = dualResponseConsumer
+        final IDualResponse<?, ?> result = getDualResponseConsumer()
                 .accept(sucDTO, errDTO, response.raw(), endpointInfo, methodAnnotations);
         logger.debug("IDualResponse created:\n{}", result);
         return result;
@@ -194,6 +227,13 @@ public class DualResponseCallAdapterFactory extends BaseCallAdapterFactory {
             return "";
         }
         return endpointInfo.value().trim();
+    }
+
+    /**
+     * @return {@link IDualResponseConsumer} for constructor of {@link DualResponseBase} heirs
+     */
+    public IDualResponseConsumer<IDualResponse<?, ?>> getDualResponseConsumer() {
+        return dualResponseConsumer;
     }
 
 }

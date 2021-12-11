@@ -27,7 +27,7 @@ import org.touchbit.retrofit.ext.dmr.client.converter.api.RequestConverter;
 
 import java.io.IOException;
 
-import static internal.test.utils.OkHttpUtils.requestBodyToString;
+import static internal.test.utils.OkHttpTestUtils.requestBodyToString;
 import static org.hamcrest.Matchers.*;
 
 @SuppressWarnings("ConstantConditions")

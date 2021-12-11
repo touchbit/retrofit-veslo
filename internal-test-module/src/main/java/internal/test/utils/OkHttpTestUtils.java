@@ -19,9 +19,9 @@ package internal.test.utils;
 import okhttp3.*;
 import okio.Buffer;
 
-public class OkHttpUtils {
+public class OkHttpTestUtils {
 
-    private OkHttpUtils() {
+    private OkHttpTestUtils() {
     }
 
     public static String requestBodyToString(RequestBody requestBody) {

@@ -16,7 +16,7 @@
 
 package org.touchbit.retrofit.ext.dmr.client.inteceptor;
 
-import internal.test.utils.OkHttpUtils;
+import internal.test.utils.OkHttpTestUtils;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -39,7 +39,7 @@ public class CompositeInterceptorUnitTests {
     @Test
     @DisplayName("CompositeInterceptor with actions without exceptions")
     public void test1639065951371() throws Exception {
-        final Response response = OkHttpUtils.getResponse();
+        final Response response = OkHttpTestUtils.getResponse();
         final Request request = response.request();
         Interceptor.Chain chain = mock(Interceptor.Chain.class);
         when(chain.request()).thenReturn(request);
@@ -54,7 +54,7 @@ public class CompositeInterceptorUnitTests {
     @Test
     @DisplayName("CompositeInterceptor with actions with IOException")
     public void test1639065951386() throws IOException {
-        final Response response = OkHttpUtils.getResponse();
+        final Response response = OkHttpTestUtils.getResponse();
         final Request request = response.request();
         Interceptor.Chain chain = mock(Interceptor.Chain.class);
         when(chain.request()).thenReturn(request);
@@ -70,7 +70,7 @@ public class CompositeInterceptorUnitTests {
     @Test
     @DisplayName("CompositeInterceptor without actions with RuntimeException")
     public void test1639065951402() throws IOException {
-        final Response response = OkHttpUtils.getResponse();
+        final Response response = OkHttpTestUtils.getResponse();
         final Request request = response.request();
         Interceptor.Chain chain = mock(Interceptor.Chain.class);
         when(chain.request()).thenReturn(request);

@@ -34,7 +34,7 @@ import java.lang.annotation.Annotation;
  * shaburov.o.a@gmail.com
  */
 @SuppressWarnings("unused")
-public interface IDualResponse<SUCCESSFUL_DTO, ERROR_DTO> {
+public interface IDualResponse<SUC_DTO, ERR_DTO> {
 
     /**
      * @return okhttp {@link Response}
@@ -46,13 +46,13 @@ public interface IDualResponse<SUCCESSFUL_DTO, ERROR_DTO> {
      * @return error DTO model
      */
     @Nullable
-    ERROR_DTO getErrDTO();
+    ERR_DTO getErrDTO();
 
     /**
-     * @return successful DTO model {@link SUCCESSFUL_DTO}
+     * @return successful DTO model {@link SUC_DTO}
      */
     @Nullable
-    SUCCESSFUL_DTO getSucDTO();
+    SUC_DTO getSucDTO();
 
     /**
      * @return description of the called resource in detail
