@@ -17,14 +17,34 @@
 package org.touchbit.retrofit.ext.dmr.client.adapter;
 
 import okhttp3.Response;
+import org.touchbit.retrofit.ext.dmr.client.response.DualResponseBase;
+import org.touchbit.retrofit.ext.dmr.client.response.IDualResponse;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 
+/**
+ * Consumer for {@link DualResponseBase} constructor
+ * Used to add customized {@link DualResponseBase} instances in the {@link DualResponseCallAdapterFactory}
+ * <p>
+ *
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 11.12.2021
+ */
 @FunctionalInterface
 public interface IDualResponseConsumer<R> {
 
+    /**
+     * Constructor signature for {@link DualResponseBase}
+     *
+     * @param sucDTO          - nullable success response DTO
+     * @param errDTO          - nullable error response DTO
+     * @param response        - okhttp raw response
+     * @param endpointInfo    - called method info
+     * @param callAnnotations - called method annotations
+     * @return new instance of {@link IDualResponse}
+     */
     @Nonnull
     R accept(final @Nullable Object sucDTO,
              final @Nullable Object errDTO,
