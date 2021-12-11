@@ -32,8 +32,8 @@ import java.lang.reflect.Type;
  * Converter for reference java types:
  * Boolean.class, Byte.class, Char.class, Double.class, Float.class, Int.class, Long.class, Short.class, String.class
  * <p>
- * Created by Oleg Shaburov on 05.12.2021
- * shaburov.o.a@gmail.com
+ * Created: 05.12.2021
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  */
 public class JavaReferenceTypeConverter extends JavaTypeConverterBase {
 

@@ -35,8 +35,8 @@ import java.lang.reflect.Type;
 /**
  * Converter for {@link String} java type
  * <p>
- * Created by Oleg Shaburov on 05.12.2021
- * shaburov.o.a@gmail.com
+ * Created: 05.12.2021
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  */
 public class StringConverter implements ExtensionConverter<String> {
 

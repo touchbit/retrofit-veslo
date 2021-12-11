@@ -34,8 +34,8 @@ import java.lang.reflect.Type;
  * Base extension call adapter factory {@link CallAdapter.Factory}
  * Implements the basic methods for getting the response body model
  * <p>
- * Created by Oleg Shaburov on 11.12.2021
- * shaburov.o.a@gmail.com
+ * Created: 11.12.2021
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  */
 public abstract class BaseCallAdapterFactory extends CallAdapter.Factory {
 

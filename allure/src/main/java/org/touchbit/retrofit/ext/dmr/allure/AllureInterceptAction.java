@@ -28,8 +28,8 @@ import java.io.IOException;
 /**
  * Adds request/response attachments to the Allure step
  * <p>
- * Created by Oleg Shaburov on 01.12.2021
- * shaburov.o.a@gmail.com
+ * Created: 01.12.2021
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  */
 public class AllureInterceptAction implements InterceptAction {
 

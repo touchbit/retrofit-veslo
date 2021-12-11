@@ -26,8 +26,8 @@ import java.io.IOException;
  * The interface is used in the {@link CompositeInterceptor}
  * to indirectly handle/modify requests and chains.
  * <p>
- * Created by Oleg Shaburov on 25.11.2021
- * shaburov.o.a@gmail.com
+ * Created: 25.11.2021
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  */
 public interface RequestInterceptAction {
 

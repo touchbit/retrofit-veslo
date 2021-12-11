@@ -30,27 +30,55 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
+/**
+ * Factory for creating {@link CallAdapter} with support base java types (reference/primitive)
+ * <p>
+ * Created: 11.12.2021
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ */
 public class JavaTypeCallAdapterFactory extends BaseCallAdapterFactory {
 
+    /**
+     * Default constructor with this class logger
+     */
     public JavaTypeCallAdapterFactory() {
         super(LoggerFactory.getLogger(JavaTypeCallAdapterFactory.class));
     }
 
+    /**
+     * @param logger - required Slf4J logger
+     */
     public JavaTypeCallAdapterFactory(Logger logger) {
         super(logger);
     }
 
+    /**
+     * The returned CallAdapter seeks to convert the response body
+     * to the specified return type, regardless of the HTTP status.
+     *
+     * @param returnType        - called method return type
+     * @param methodAnnotations - list of annotations for the called API method
+     * @param retrofit          - HTTP client
+     * @return a call adapter for the specified return type
+     */
     @Override
     @EverythingIsNonNull
-    public CallAdapter<Object, Object> get(Type returnType, Annotation[] annotations, Retrofit retrofit) {
+    public CallAdapter<Object, Object> get(Type returnType, Annotation[] methodAnnotations, Retrofit retrofit) {
         return new CallAdapter<Object, Object>() {
 
+            /**
+             * @return see {@link CallAdapter#responseType()}
+             */
             @Override
             @Nonnull
             public Type responseType() {
                 return returnType;
             }
 
+            /**
+             * @param call - see {@link Call}
+             * @return see {@link CallAdapter#adapt(Call)}
+             */
             @Override
             public Object adapt(@Nonnull Call<Object> call) {
                 logger.info("API call: " + call.request().method() + " " + call.request().url());
@@ -59,9 +87,9 @@ public class JavaTypeCallAdapterFactory extends BaseCallAdapterFactory {
                     final Object dto;
                     logger.debug("Retrieving the response body.");
                     if (response.isSuccessful()) {
-                        dto = getSuccessfulResponseBody(response, returnType, annotations, retrofit);
+                        dto = getSuccessfulResponseBody(response, returnType, methodAnnotations, retrofit);
                     } else {
-                        dto = getErrorResponseBody(response, returnType, annotations, retrofit);
+                        dto = getErrorResponseBody(response, returnType, methodAnnotations, retrofit);
                     }
                     checkPrimitiveConvertCall(returnType, dto);
                     logger.debug("Response body is {}present for type: {}", dto == null ? "not " : "", returnType);

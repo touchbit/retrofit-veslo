@@ -23,8 +23,8 @@ import static org.touchbit.retrofit.ext.dmr.client.header.ContentTypeConstants.*
 /**
  * Gson DTO converter factory
  * <p>
- * Created by Oleg Shaburov on 01.12.2021
- * shaburov.o.a@gmail.com
+ * Created: 01.12.2021
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  */
 public class GsonDualConverterFactory extends ExtensionConverterFactory {
 

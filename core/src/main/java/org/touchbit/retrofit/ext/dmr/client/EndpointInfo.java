@@ -25,8 +25,8 @@ import java.lang.annotation.Target;
  * Annotation is used to describe the called resource in detail.
  * For example, for logging or broadcasting to Allure.
  * <p>
- * Created by Oleg Shaburov on 03.11.2021
- * shaburov.o.a@gmail.com
+ * Created: 03.11.2021
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})

@@ -26,8 +26,8 @@ import java.util.List;
 /**
  * A class with built-in soft checks for standard response headers.
  * <p>
- * Created by Oleg Shaburov on 19.11.2021
- * shaburov.o.a@gmail.com
+ * Created: 19.11.2021
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  */
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public class HeadersAsserter implements SoftlyAsserter {

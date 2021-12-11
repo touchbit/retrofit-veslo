@@ -45,7 +45,7 @@ import static org.mockito.Mockito.when;
 public class DualResponseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
 
     private static final DualResponseCallAdapterFactory FACTORY = new DualResponseCallAdapterFactory();
-    private static final Retrofit R = RetrofitTestUtils.retrofit(FACTORY, new ExtensionConverterFactory());
+    private static final Retrofit RETROFIT = RetrofitTestUtils.retrofit(FACTORY, new ExtensionConverterFactory());
 
     @Nested
     @DisplayName("Constructor tests")
@@ -80,7 +80,7 @@ public class DualResponseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639237254772() {
             final DualResponseCallAdapterFactory factory = new DualResponseCallAdapterFactory(UNIT_TEST_LOGGER);
             assertThat(factory.getDualResponseConsumer(), notNullValue());
-            assertThat(factory.logger, notNullValue());
+            assertThat(factory.logger, is(UNIT_TEST_LOGGER));
         }
 
         @Test
@@ -89,7 +89,7 @@ public class DualResponseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
             final IDualResponseConsumer<IDualResponse<?, ?>> consumer = UnitTestDualResponse::new;
             final DualResponseCallAdapterFactory factory = new DualResponseCallAdapterFactory(UNIT_TEST_LOGGER, consumer);
             assertThat(factory.getDualResponseConsumer(), is(consumer));
-            assertThat(factory.logger, notNullValue());
+            assertThat(factory.logger, is(UNIT_TEST_LOGGER));
         }
 
     }
@@ -101,7 +101,7 @@ public class DualResponseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#get() successful receipt of IDualResponse CallAdapter")
         public void test1639065951487() {
-            final CallAdapter<?, IDualResponse<?, ?>> adapter = FACTORY.get(DUAL_RESPONSE_GENERIC_STRING_TYPE, AA, R);
+            final CallAdapter<?, IDualResponse<?, ?>> adapter = FACTORY.get(DUAL_RESPONSE_GENERIC_STRING_TYPE, AA, RETROFIT);
             assertThat("", adapter, notNullValue());
             assertThat("", adapter.responseType(), instanceOf(ParameterizedType.class));
             final Call call = RetrofitTestUtils.getCall(200, "");
@@ -119,11 +119,11 @@ public class DualResponseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
         @DisplayName("All parameters required")
         public void test1639235535510() {
             final ParameterizedType type = FACTORY.getParameterizedType(DUAL_RESPONSE_GENERIC_STRING_TYPE);
-            assertNPE(() -> FACTORY.getCallAdapter(null, STRING_C, STRING_C, INFO, AA, R), "type");
-            assertNPE(() -> FACTORY.getCallAdapter(type, null, STRING_C, INFO, AA, R), "successType");
-            assertNPE(() -> FACTORY.getCallAdapter(type, STRING_C, null, INFO, AA, R), "errorType");
-            assertNPE(() -> FACTORY.getCallAdapter(type, STRING_C, STRING_C, null, AA, R), "endpointInfo");
-            assertNPE(() -> FACTORY.getCallAdapter(type, STRING_C, STRING_C, INFO, null, R), "methodAnnotations");
+            assertNPE(() -> FACTORY.getCallAdapter(null, STRING_C, STRING_C, INFO, AA, RETROFIT), "type");
+            assertNPE(() -> FACTORY.getCallAdapter(type, null, STRING_C, INFO, AA, RETROFIT), "successType");
+            assertNPE(() -> FACTORY.getCallAdapter(type, STRING_C, null, INFO, AA, RETROFIT), "errorType");
+            assertNPE(() -> FACTORY.getCallAdapter(type, STRING_C, STRING_C, null, AA, RETROFIT), "endpointInfo");
+            assertNPE(() -> FACTORY.getCallAdapter(type, STRING_C, STRING_C, INFO, null, RETROFIT), "methodAnnotations");
             assertNPE(() -> FACTORY.getCallAdapter(type, STRING_C, STRING_C, INFO, AA, null), "retrofit");
         }
 
@@ -131,7 +131,7 @@ public class DualResponseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
         @DisplayName("Get response type")
         public void test1639235392942() {
             final ParameterizedType expected = FACTORY.getParameterizedType(DUAL_RESPONSE_GENERIC_STRING_TYPE);
-            final Type actType = FACTORY.getCallAdapter(expected, STRING_C, STRING_C, INFO, AA, R).responseType();
+            final Type actType = FACTORY.getCallAdapter(expected, STRING_C, STRING_C, INFO, AA, RETROFIT).responseType();
             assertThat(actType, is(expected));
         }
 
@@ -140,7 +140,7 @@ public class DualResponseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639236352471() {
             final ParameterizedType type = FACTORY.getParameterizedType(DUAL_RESPONSE_GENERIC_STRING_TYPE);
             final Call call = RetrofitTestUtils.getCall(200, "");
-            final String info = FACTORY.getCallAdapter(type, STRING_C, STRING_C, "", AA, R)
+            final String info = FACTORY.getCallAdapter(type, STRING_C, STRING_C, "", AA, RETROFIT)
                     .adapt(call)
                     .getEndpointInfo();
             assertThat(info, is("POST http://localhost/"));
@@ -151,7 +151,7 @@ public class DualResponseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639236506503() {
             final ParameterizedType type = FACTORY.getParameterizedType(DUAL_RESPONSE_GENERIC_STRING_TYPE);
             final Call call = RetrofitTestUtils.getCall(200, "");
-            final String info = FACTORY.getCallAdapter(type, STRING_C, STRING_C, " test1639236506503 ", AA, R)
+            final String info = FACTORY.getCallAdapter(type, STRING_C, STRING_C, " test1639236506503 ", AA, RETROFIT)
                     .adapt(call)
                     .getEndpointInfo();
             assertThat(info, is("test1639236506503"));
@@ -168,11 +168,11 @@ public class DualResponseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
         @DisplayName("All parameters required")
         public void test1639065951517() {
             final Call call = RetrofitTestUtils.getCall(200, "");
-            assertNPE(() -> FACTORY.getIDualResponse(null, STRING_C, STRING_C, INFO, AA, R), "call");
-            assertNPE(() -> FACTORY.getIDualResponse(call, null, STRING_C, INFO, AA, R), "successType");
-            assertNPE(() -> FACTORY.getIDualResponse(call, STRING_C, null, INFO, AA, R), "errorType");
-            assertNPE(() -> FACTORY.getIDualResponse(call, STRING_C, STRING_C, null, AA, R), "endpointInfo");
-            assertNPE(() -> FACTORY.getIDualResponse(call, STRING_C, STRING_C, INFO, null, R), "methodAnnotations");
+            assertNPE(() -> FACTORY.getIDualResponse(null, STRING_C, STRING_C, INFO, AA, RETROFIT), "call");
+            assertNPE(() -> FACTORY.getIDualResponse(call, null, STRING_C, INFO, AA, RETROFIT), "successType");
+            assertNPE(() -> FACTORY.getIDualResponse(call, STRING_C, null, INFO, AA, RETROFIT), "errorType");
+            assertNPE(() -> FACTORY.getIDualResponse(call, STRING_C, STRING_C, null, AA, RETROFIT), "endpointInfo");
+            assertNPE(() -> FACTORY.getIDualResponse(call, STRING_C, STRING_C, INFO, null, RETROFIT), "methodAnnotations");
             assertNPE(() -> FACTORY.getIDualResponse(call, STRING_C, STRING_C, INFO, AA, null), "retrofit");
         }
 
@@ -180,7 +180,7 @@ public class DualResponseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
         @DisplayName("Get default IDualResponse implementation")
         public void test1639065951499() {
             final Call call = RetrofitTestUtils.getCall(200, "");
-            final IDualResponse iDualResponse = FACTORY.getIDualResponse(call, STRING_C, STRING_C, INFO, AA, R);
+            final IDualResponse iDualResponse = FACTORY.getIDualResponse(call, STRING_C, STRING_C, INFO, AA, RETROFIT);
             assertThat("", iDualResponse, instanceOf(DualResponse.class));
         }
 
@@ -189,7 +189,7 @@ public class DualResponseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639065951507() {
             final Call call = RetrofitTestUtils.getCall(200, "");
             final IDualResponse iDualResponse = new DualResponseCallAdapterFactory(UnitTestDualResponse::new)
-                    .getIDualResponse(call, STRING_C, STRING_C, INFO, AA, R);
+                    .getIDualResponse(call, STRING_C, STRING_C, INFO, AA, RETROFIT);
             assertThat("", iDualResponse, instanceOf(UnitTestDualResponse.class));
         }
 
@@ -198,7 +198,7 @@ public class DualResponseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639233145559() throws IOException {
             final Call call = mock(Call.class);
             when(call.execute()).thenThrow(new ConvertCallException("test1639233145559"));
-            assertThrow(() -> FACTORY.getIDualResponse(call, STRING_C, STRING_C, INFO, AA, R))
+            assertThrow(() -> FACTORY.getIDualResponse(call, STRING_C, STRING_C, INFO, AA, RETROFIT))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("test1639233145559");
         }
@@ -208,7 +208,7 @@ public class DualResponseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639233270487() throws IOException {
             final Call call = mock(Call.class);
             when(call.execute()).thenThrow(new IOException("test1639233270487"));
-            assertThrow(() -> FACTORY.getIDualResponse(call, STRING_C, STRING_C, INFO, AA, R))
+            assertThrow(() -> FACTORY.getIDualResponse(call, STRING_C, STRING_C, INFO, AA, RETROFIT))
                     .assertClass(HttpCallException.class)
                     .assertMessageIs("Failed to make API call. See the reason below.")
                     .assertCause(cause -> cause

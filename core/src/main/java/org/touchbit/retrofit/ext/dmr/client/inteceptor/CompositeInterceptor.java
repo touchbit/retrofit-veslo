@@ -33,8 +33,8 @@ import java.util.StringJoiner;
  * Interceptor allows you to store multiple
  * request, response and exception handlers.
  * <p>
- * Created by Oleg Shaburov on 24.11.2021
- * shaburov.o.a@gmail.com
+ * Created: 24.11.2021
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  */
 public class CompositeInterceptor implements Interceptor {
 

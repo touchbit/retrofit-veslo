@@ -36,8 +36,8 @@ import java.lang.reflect.Type;
 import java.util.function.Function;
 
 /**
- * Created by Oleg Shaburov on 08.11.2021
- * shaburov.o.a@gmail.com
+ * Created: 08.11.2021
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  */
 public class ConvertUtils {
 

@@ -68,8 +68,8 @@ import static org.touchbit.retrofit.ext.dmr.util.ConvertUtils.isIDualResponse;
  * - Java type (reference/primitive)
  *
  * <p>
- * Created by Oleg Shaburov on 20.11.2021
- * shaburov.o.a@gmail.com
+ * Created: 20.11.2021
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  */
 public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
 

@@ -38,8 +38,8 @@ import java.lang.reflect.Type;
 /**
  * Factory for creating {@link CallAdapter} with support {@link IDualResponse} type
  * <p>
- * Created by Oleg Shaburov on 11.12.2021
- * shaburov.o.a@gmail.com
+ * Created: 11.12.2021
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  */
 public class DualResponseCallAdapterFactory extends BaseCallAdapterFactory {
 
@@ -82,7 +82,7 @@ public class DualResponseCallAdapterFactory extends BaseCallAdapterFactory {
     /**
      * @param returnType        - called method return type
      * @param methodAnnotations - list of annotations for the called API method
-     * @param retrofit-         - HTTP client
+     * @param retrofit          - HTTP client
      * @return a call adapter for {@link IDualResponse} interface
      */
     @Override
@@ -125,7 +125,7 @@ public class DualResponseCallAdapterFactory extends BaseCallAdapterFactory {
         return new CallAdapter<Object, IDualResponse<?, ?>>() {
 
             /**
-             * @return see {@link CallAdapter#responseType()}
+             * @return @see {@link CallAdapter#responseType()}
              */
             @Override
             @Nonnull

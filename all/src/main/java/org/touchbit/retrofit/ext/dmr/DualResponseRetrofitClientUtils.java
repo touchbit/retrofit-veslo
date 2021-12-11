@@ -40,8 +40,8 @@ import javax.annotation.Nullable;
  * Utility class for creating a Retrofit client
  * that works with the return type of {@link DualResponse}
  * <p>
- * Created by Oleg Shaburov on 07.12.2021
- * shaburov.o.a@gmail.com
+ * Created: 07.12.2021
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  */
 @SuppressWarnings("UnusedReturnValue")
 public class DualResponseRetrofitClientUtils {

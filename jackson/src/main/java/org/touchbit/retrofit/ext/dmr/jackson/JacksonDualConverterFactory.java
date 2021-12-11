@@ -30,8 +30,8 @@ import static org.touchbit.retrofit.ext.dmr.client.header.ContentTypeConstants.*
 /**
  * Jackson 2 DTO converter factory
  * <p>
- * Created by Oleg Shaburov on 03.11.2021
- * shaburov.o.a@gmail.com
+ * Created: 03.11.2021
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  */
 public class JacksonDualConverterFactory extends ExtensionConverterFactory {
 

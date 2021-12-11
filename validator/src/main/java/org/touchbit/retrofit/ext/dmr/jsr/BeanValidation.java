@@ -31,8 +31,8 @@ import java.util.logging.Logger;
 /**
  * An interface for checking JavaBean specification/contract compliance.
  * <p>
- * Created by Oleg Shaburov on 15.11.2021
- * shaburov.o.a@gmail.com
+ * Created: 15.11.2021
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  */
 public interface BeanValidation<DTO> {
 
