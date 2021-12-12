@@ -52,9 +52,9 @@ public abstract class BaseDualResponse<SUC_DTO, ERR_DTO, ASSERTER extends IRespo
 
     public abstract ASSERTER getResponseAsserter();
 
-    public BaseDualResponse<SUC_DTO, ERR_DTO, ASSERTER> assertResponse(Consumer<ASSERTER> consumer) {
+    public BaseDualResponse<SUC_DTO, ERR_DTO, ASSERTER> assertResponse(Consumer<ASSERTER> respAsserter) {
         try (final ASSERTER responseAsserter = getResponseAsserter()) {
-            consumer.accept(responseAsserter);
+            respAsserter.accept(responseAsserter);
         }
         return this;
     }

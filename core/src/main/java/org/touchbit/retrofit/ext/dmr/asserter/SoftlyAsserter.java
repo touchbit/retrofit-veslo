@@ -23,7 +23,6 @@ import retrofit2.internal.EverythingIsNonNull;
 import javax.annotation.Nonnull;
 import java.io.Closeable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
@@ -64,8 +63,14 @@ public interface SoftlyAsserter extends Closeable {
     void addErrors(@Nonnull List<Throwable> throwableList);
 
     @EverythingIsNonNull
-    default void addErrors(@Nonnull Throwable... throwable) {
-        addErrors(Arrays.asList(throwable));
+    default void addErrors(@Nonnull Throwable... throwableArgs) {
+        Utils.parameterRequireNonNull(throwableArgs, "throwableArgs");
+        List<Throwable> result = new ArrayList<>();
+        for (Throwable throwable : throwableArgs) {
+            Utils.parameterRequireNonNull(throwable, "throwable");
+            result.add(throwable);
+        }
+        addErrors(result);
     }
 
     @EverythingIsNonNull

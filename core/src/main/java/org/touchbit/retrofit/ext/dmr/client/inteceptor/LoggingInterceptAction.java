@@ -27,6 +27,8 @@ import java.io.IOException;
 
 public class LoggingInterceptAction implements InterceptAction {
 
+    public static final LoggingInterceptAction INSTANCE = new LoggingInterceptAction();
+
     private final Logger logger;
 
     public LoggingInterceptAction() {

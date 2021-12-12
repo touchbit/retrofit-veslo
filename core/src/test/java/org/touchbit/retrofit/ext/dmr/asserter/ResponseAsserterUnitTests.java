@@ -18,82 +18,98 @@ package org.touchbit.retrofit.ext.dmr.asserter;
 
 import okhttp3.Headers;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.touchbit.retrofit.ext.dmr.BaseCoreUnitTest;
 import org.touchbit.retrofit.ext.dmr.client.response.IDualResponse;
 
-import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings({"unchecked", "rawtypes", "ConstantConditions"})
-@DisplayName("ResponseAsserter tests")
-public class ResponseAsserterUnitTests {
+@DisplayName("ResponseAsserter.class unit tests")
+public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
 
     private static final HeadersAsserter EMPTY_HEADER_ASSERTER = new HeadersAsserter(Headers.of());
     private static final IDualResponse<Object, Object> RESPONSE = mock(IDualResponse.class);
 
-    @Test
-    @DisplayName("NPE if constructor argument is null ")
-    public void test1639065947424() {
-        assertThrow(() -> new ResponseAsserter<>(null, EMPTY_HEADER_ASSERTER)).assertNPE("response");
+    @Nested
+    @DisplayName("Constructor tests")
+    public class ResponseAsserterConstructorTests {
+
+        @Test
+        @DisplayName("All parameters required")
+        public void test1639065947424() {
+            assertThrow(() -> new ResponseAsserter<>(null, EMPTY_HEADER_ASSERTER)).assertNPE("response");
+            assertThrow(() -> new ResponseAsserter<>(RESPONSE, null)).assertNPE("headersAsserter");
+        }
+
+        @Test
+        @DisplayName("Get constructor parameters")
+        public void test1639253809035() {
+            final ResponseAsserter asserter = new ResponseAsserter<>(RESPONSE, EMPTY_HEADER_ASSERTER);
+            assertThat(asserter.getHeadersAsserter(), is(EMPTY_HEADER_ASSERTER));
+            assertThat(asserter.getResponse(), is(RESPONSE));
+        }
+
     }
 
-    @Test
-    @DisplayName("#close() without AssertionError if no errors")
-    public void test1639065947430() {
-        new ResponseAsserter<>(RESPONSE, EMPTY_HEADER_ASSERTER).close();
+    @Nested
+    @DisplayName("#blame() method tests")
+    public class BlameMethodTests {
+
+        @Test
+        @DisplayName("#blame() without AssertionError if no errors")
+        public void test1639254058024() {
+            assertThat(new ResponseAsserter<>(RESPONSE, EMPTY_HEADER_ASSERTER).blame(), notNullValue());
+        }
+
+        @Test
+        @DisplayName("#blame() with AssertionError if has errors")
+        public void test1639254060794() {
+            final ResponseAsserter responseAsserter = new ResponseAsserter<>(RESPONSE, EMPTY_HEADER_ASSERTER);
+            responseAsserter.addErrors(new RuntimeException("test1639254060794"));
+            assertThrow(responseAsserter::blame)
+                    .assertClass(AssertionError.class)
+                    .assertMessageIs("Collected the following errors:\n\ntest1639254060794");
+        }
+
     }
 
-    @Test
-    @DisplayName("#close() with AssertionError if has errors")
-    public void test1639065947437() {
-        final ResponseAsserter responseAsserter = new ResponseAsserter<>(RESPONSE, EMPTY_HEADER_ASSERTER);
-        responseAsserter.addErrors(new RuntimeException("test1637375230127"));
-        assertThrow(responseAsserter::close)
-                .assertClass(AssertionError.class)
-                .assertMessageIs("Collected the following errors:\n\ntest1637375230127");
-    }
+    @Nested
+    @DisplayName("#assertHeaders(Consumer) method tests")
+    public class AssertHeadersMethodTests {
 
-    @Test
-    @DisplayName("#getErrors() and #addError(Throwable)")
-    public void test1639065947448() {
-        final ResponseAsserter responseAsserter = new ResponseAsserter<>(RESPONSE, EMPTY_HEADER_ASSERTER);
-        assertResponseAsserterContainErrors(responseAsserter, 0);
-        responseAsserter.addErrors(new RuntimeException());
-        assertResponseAsserterContainErrors(responseAsserter, 1);
-    }
+        @Test
+        @DisplayName("All parameters required")
+        public void test1639065947466() {
+            final ResponseAsserter responseAsserter = new ResponseAsserter<>(RESPONSE, EMPTY_HEADER_ASSERTER);
+            assertThrow(() -> responseAsserter.assertHeaders(null)).assertNPE("headerAsserterConsumer");
+        }
 
-    @Test
-    @DisplayName("#getResponse() not null")
-    public void test1639065947458() {
-        final ResponseAsserter responseAsserter = new ResponseAsserter<>(RESPONSE, EMPTY_HEADER_ASSERTER);
-        assertThat("ResponseAsserter.getResponse()", responseAsserter.getResponse(), notNullValue());
-    }
+        @Test
+        @DisplayName("#assertHeaders(Consumer) AssertionError is not thrown if headers no errors (Closeable)")
+        public void test1639065947474() {
+            new ResponseAsserter<>(RESPONSE, EMPTY_HEADER_ASSERTER)
+                    .assertHeaders(HeadersAsserter::contentTypeNotPresent)
+                    .blame();
+        }
 
-    @Test
-    @DisplayName("#assertHeaders(Consumer) NPE if Consumer is null")
-    public void test1639065947466() {
-        final ResponseAsserter responseAsserter = new ResponseAsserter<>(RESPONSE, EMPTY_HEADER_ASSERTER);
-        assertThrow(() -> responseAsserter.assertHeaders(null)).assertNPE("consumer");
-    }
+        @Test
+        @DisplayName("#assertHeaders(Consumer) AssertionError is not thrown if headers has errors (Closeable)")
+        public void test1639065947484() {
+            final ResponseAsserter asserter = new ResponseAsserter<>(RESPONSE, EMPTY_HEADER_ASSERTER)
+                    .assertHeaders(HeadersAsserter::connectionIsPresent); // not thrown
+            assertThrow(asserter::blame) // explicit throw
+                    .assertClass(AssertionError.class)
+                    .assertMessageIs("Collected the following errors:\n\n" +
+                            "Response header 'Connection'\n" +
+                            "Expected: is present\n" +
+                            "  Actual: null");
+        }
 
-    @Test
-    @DisplayName("#assertHeaders(Consumer) AssertionError is not thrown if headers no errors (Closeable)")
-    public void test1639065947474() {
-        final ResponseAsserter asserter = new ResponseAsserter<>(RESPONSE, EMPTY_HEADER_ASSERTER)
-                .assertHeaders(HeadersAsserter::contentTypeNotPresent);
-        assertResponseAsserterContainErrors(asserter, 0);
-    }
-
-    @Test
-    @DisplayName("#assertHeaders(Consumer) AssertionError is not thrown if headers has errors (Closeable)")
-    public void test1639065947484() {
-        final ResponseAsserter asserter = new ResponseAsserter<>(RESPONSE, EMPTY_HEADER_ASSERTER)
-                .assertHeaders(HeadersAsserter::connectionIsPresent);
-        assertResponseAsserterContainErrors(asserter, 1);
     }
 
     @Test
@@ -101,7 +117,6 @@ public class ResponseAsserterUnitTests {
     public void test1639065947494() {
         final IDualResponse<Object, Object> response = mock(IDualResponse.class);
         when(response.getHttpStatusCode()).thenReturn(200);
-        when(response.isSuccessful()).thenReturn(true);
         when(response.getSucDTO()).thenReturn(new Object());
         final ResponseAsserter asserter = new ResponseAsserter<>(response, EMPTY_HEADER_ASSERTER);
         asserter.assertSucResponse(200, body -> assertThat("", body, notNullValue()));
@@ -113,12 +128,15 @@ public class ResponseAsserterUnitTests {
     public void test1639065947506() {
         final IDualResponse<Object, Object> response = mock(IDualResponse.class);
         when(response.getHttpStatusCode()).thenReturn(500);
-        when(response.isSuccessful()).thenReturn(false);
         when(response.getSucDTO()).thenReturn(null);
         final ResponseAsserter asserter = new ResponseAsserter<>(response, EMPTY_HEADER_ASSERTER);
         assertThrow(() -> asserter.assertSucResponse(200, body -> assertThat("", body, notNullValue())))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("Collected the following errors:\n\n" +
+                        "HTTP status code\n" +
+                        "Expected: is  200\n" +
+                        "  Actual: was 500\n" +
+                        "\n" +
                         "Successful body\n" +
                         "Expected: is not null\n" +
                         "  Actual: null");
@@ -129,7 +147,6 @@ public class ResponseAsserterUnitTests {
     public void test1639065947522() {
         final IDualResponse<Object, Object> response = mock(IDualResponse.class);
         when(response.getHttpStatusCode()).thenReturn(200);
-        when(response.isSuccessful()).thenReturn(true);
         when(response.getSucDTO()).thenReturn(new Object());
         final ResponseAsserter asserter = new ResponseAsserter<>(response, EMPTY_HEADER_ASSERTER);
         asserter.assertSucBody(body -> assertThat("", body, notNullValue()));
@@ -141,7 +158,6 @@ public class ResponseAsserterUnitTests {
     public void test1639065947534() {
         final IDualResponse<Object, Object> response = mock(IDualResponse.class);
         when(response.getHttpStatusCode()).thenReturn(500);
-        when(response.isSuccessful()).thenReturn(false);
         when(response.getSucDTO()).thenReturn(null);
         final ResponseAsserter asserter = new ResponseAsserter<>(response, EMPTY_HEADER_ASSERTER);
         assertThrow(() -> asserter.assertSucBody(body -> assertThat("", body, notNullValue())))
@@ -156,9 +172,9 @@ public class ResponseAsserterUnitTests {
     @DisplayName("#assertIsSuccessfulResponse() positive")
     public void test1639065947550() {
         final IDualResponse<Object, Object> response = mock(IDualResponse.class);
-        when(response.isSuccessful()).thenReturn(true);
+        when(response.getHttpStatusCode()).thenReturn(200);
         final ResponseAsserter asserter = new ResponseAsserter<>(response, EMPTY_HEADER_ASSERTER);
-        asserter.assertIsSucResponse();
+        asserter.assertIsSucHttpStatusCode();
         assertResponseAsserterContainErrors(asserter, 0);
     }
 
@@ -166,9 +182,9 @@ public class ResponseAsserterUnitTests {
     @DisplayName("#assertIsSuccessfulResponse() negative")
     public void test1639065947560() {
         final IDualResponse<Object, Object> response = mock(IDualResponse.class);
-        when(response.isSuccessful()).thenReturn(false);
+        when(response.getHttpStatusCode()).thenReturn(500);
         final ResponseAsserter asserter = new ResponseAsserter<>(response, EMPTY_HEADER_ASSERTER);
-        asserter.assertIsSucResponse();
+        asserter.assertIsSucHttpStatusCode();
         assertResponseAsserterContainErrors(asserter, 1);
     }
 
@@ -197,7 +213,6 @@ public class ResponseAsserterUnitTests {
     public void test1639065947590() {
         final IDualResponse<Object, Object> response = mock(IDualResponse.class);
         when(response.getHttpStatusCode()).thenReturn(400);
-        when(response.isSuccessful()).thenReturn(false);
         when(response.getErrDTO()).thenReturn(new Object());
         final ResponseAsserter asserter = new ResponseAsserter<>(response, EMPTY_HEADER_ASSERTER);
         asserter.assertErrResponse(400, body -> assertThat("", body, notNullValue()));
@@ -209,12 +224,15 @@ public class ResponseAsserterUnitTests {
     public void test1639065947602() {
         final IDualResponse<Object, Object> response = mock(IDualResponse.class);
         when(response.getHttpStatusCode()).thenReturn(200);
-        when(response.isSuccessful()).thenReturn(true);
         when(response.getErrDTO()).thenReturn(null);
         final ResponseAsserter asserter = new ResponseAsserter<>(response, EMPTY_HEADER_ASSERTER);
         assertThrow(() -> asserter.assertErrResponse(500, body -> assertThat("", body, notNullValue())))
                 .assertClass(AssertionError.class)
                 .assertMessageIs("Collected the following errors:\n\n" +
+                        "HTTP status code\n" +
+                        "Expected: is  500\n" +
+                        "  Actual: was 200\n" +
+                        "\n" +
                         "Error body\n" +
                         "Expected: is not null\n" +
                         "  Actual: null");
@@ -225,7 +243,6 @@ public class ResponseAsserterUnitTests {
     public void test1639065947618() {
         final IDualResponse<Object, Object> response = mock(IDualResponse.class);
         when(response.getHttpStatusCode()).thenReturn(400);
-        when(response.isSuccessful()).thenReturn(false);
         when(response.getErrDTO()).thenReturn(new Object());
         final ResponseAsserter asserter = new ResponseAsserter<>(response, EMPTY_HEADER_ASSERTER);
         asserter.assertErrBody(body -> assertThat("", body, notNullValue()));
@@ -237,7 +254,6 @@ public class ResponseAsserterUnitTests {
     public void test1639065947630() {
         final IDualResponse<Object, Object> response = mock(IDualResponse.class);
         when(response.getHttpStatusCode()).thenReturn(200);
-        when(response.isSuccessful()).thenReturn(true);
         when(response.getErrDTO()).thenReturn(null);
         final ResponseAsserter asserter = new ResponseAsserter<>(response, EMPTY_HEADER_ASSERTER);
         assertThrow(() -> asserter.assertErrBody(body -> assertThat("", body, notNullValue())))
@@ -252,7 +268,7 @@ public class ResponseAsserterUnitTests {
     @DisplayName("#assertIsErrorResponse() positive")
     public void test1639065947646() {
         final IDualResponse<Object, Object> response = mock(IDualResponse.class);
-        when(response.isSuccessful()).thenReturn(false);
+        when(response.getHttpStatusCode()).thenReturn(500);
         final ResponseAsserter asserter = new ResponseAsserter<>(response, EMPTY_HEADER_ASSERTER);
         asserter.assertIsErrResponse();
         assertResponseAsserterContainErrors(asserter, 0);
@@ -262,7 +278,7 @@ public class ResponseAsserterUnitTests {
     @DisplayName("#assertIsErrorResponse() negative")
     public void test1639065947656() {
         final IDualResponse<Object, Object> response = mock(IDualResponse.class);
-        when(response.isSuccessful()).thenReturn(true);
+        when(response.getHttpStatusCode()).thenReturn(200);
         final ResponseAsserter asserter = new ResponseAsserter<>(response, EMPTY_HEADER_ASSERTER);
         asserter.assertIsErrResponse();
         assertResponseAsserterContainErrors(asserter, 1);
@@ -312,7 +328,7 @@ public class ResponseAsserterUnitTests {
     @DisplayName("#assertHttpStatusMessageIs() positive")
     public void test1639065947706() {
         final IDualResponse<Object, Object> response = mock(IDualResponse.class);
-        when(response.getHttpStatusMessage()).thenReturn("ok");
+        when(response.getHttpStatusMessage()).thenReturn("OK");
         final ResponseAsserter asserter = new ResponseAsserter<>(response, EMPTY_HEADER_ASSERTER);
         asserter.assertHttpStatusMessageIs("OK");
         assertResponseAsserterContainErrors(asserter, 0);
