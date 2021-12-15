@@ -16,12 +16,32 @@
 
 package org.touchbit.retrofit.ext.dmr.exception;
 
+import org.touchbit.retrofit.ext.dmr.util.Utils;
+import retrofit2.internal.EverythingIsNonNull;
+
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 public class ConverterUnsupportedTypeException extends RuntimeException {
 
-    public ConverterUnsupportedTypeException(Class<?> converter, Class<?> exp, Class<?> act) {
-        super("Unsupported type for converter " + converter + "\n" +
-                "Expected: " + exp + "\n" +
-                "Received: " + act + "\n");
+    @EverythingIsNonNull
+    public ConverterUnsupportedTypeException(Type converter, Type actual, Type... expected) {
+        super(getExceptionMessage(converter, actual, expected));
+    }
+
+    protected static String getExceptionMessage(Type converter, Type actual, Type... expected) {
+        Utils.parameterRequireNonNull(converter, "converter");
+        Utils.parameterRequireNonNull(actual, "actual");
+        Utils.parameterRequireNonNull(expected, "expected");
+        final String expectedTypes = Arrays.stream(expected)
+                .filter(Objects::nonNull)
+                .map(Type::getTypeName)
+                .collect(Collectors.joining(" or "));
+        return "Unsupported type for converter " + converter.getTypeName() + "\n" +
+                "Received: " + actual.getTypeName() + "\n" +
+                "Expected: " + expectedTypes + "\n";
     }
 
 }

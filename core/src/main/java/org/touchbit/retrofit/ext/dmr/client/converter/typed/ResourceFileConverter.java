@@ -52,7 +52,7 @@ public class ResourceFileConverter implements ExtensionConverter<ResourceFile> {
                     return RequestBody.create(mediaType, resourceFile.getBytes());
                 }
                 final Class<?> bodyClass = body.getClass();
-                throw new ConverterUnsupportedTypeException(ResourceFileConverter.class, ResourceFile.class, bodyClass);
+                throw new ConverterUnsupportedTypeException(ResourceFileConverter.class, bodyClass, ResourceFile.class);
             }
 
         };

@@ -47,8 +47,6 @@ import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_NULL
  */
 public class JacksonConverter<T> implements ExtensionConverter<T> {
 
-    public static final String JSON_NULL_VALUE = "JSON_NULL_VALUE";
-
     private final ObjectMapper requestObjectMapper;
     private final ObjectMapper responseObjectMapper;
 
@@ -83,9 +81,9 @@ public class JacksonConverter<T> implements ExtensionConverter<T> {
                 final ObjectWriter objectWriter = objectMapper.writerFor(javaType);
                 final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
                 try {
-                    if (BODY_NULL_VALUE.equals(body)) {
+                    if (NULL_BODY_VALUE.equals(body)) {
                         return null;
-                    } else if (JSON_NULL_VALUE.equals(body)) {
+                    } else if (NULL_JSON_VALUE.equals(body)) {
                         return RequestBody.create(mediaType, objectWriter.writeValueAsBytes(null));
                     } else {
                         return RequestBody.create(mediaType, objectWriter.writeValueAsBytes(body));

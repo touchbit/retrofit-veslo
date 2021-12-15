@@ -41,8 +41,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter.BODY_NULL_VALUE;
-import static org.touchbit.retrofit.ext.dmr.gson.GsonConverter.JSON_NULL_VALUE;
+import static org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter.NULL_BODY_VALUE;
+import static org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter.NULL_JSON_VALUE;
 
 @SuppressWarnings({"rawtypes", "ConstantConditions", "unchecked"})
 @DisplayName("GsonConverter class tests")
@@ -119,17 +119,17 @@ public class GsonConverterUnitTests {
     }
 
     @Test
-    @DisplayName("Gson RequestBodyConverter.convert() successful convert null (JSON_NULL_VALUE)")
+    @DisplayName("Gson RequestBodyConverter.convert() successful convert null (NULL_JSON_VALUE)")
     public void test1639065946229() throws IOException {
-        final RequestBody requestBody = getRequestConverter(Object.class).convert(JSON_NULL_VALUE);
+        final RequestBody requestBody = getRequestConverter(Object.class).convert(NULL_JSON_VALUE);
         final String result = OkHttpTestUtils.requestBodyToString(requestBody);
         assertThat("null json", result, is("null"));
     }
 
     @Test
-    @DisplayName("Gson RequestBodyConverter.convert() successful convert null (BODY_NULL_VALUE)")
+    @DisplayName("Gson RequestBodyConverter.convert() successful convert null (NULL_BODY_VALUE)")
     public void test1639065946237() throws IOException {
-        final RequestBody requestBody = getRequestConverter(Object.class).convert(BODY_NULL_VALUE);
+        final RequestBody requestBody = getRequestConverter(Object.class).convert(NULL_BODY_VALUE);
         assertThat("RequestBody", requestBody, nullValue());
     }
 

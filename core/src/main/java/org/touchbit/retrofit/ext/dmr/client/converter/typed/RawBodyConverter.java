@@ -57,7 +57,7 @@ public class RawBodyConverter implements ExtensionConverter<RawBody> {
                     }
                     return RequestBody.create(mediaType, rawBody.bytes());
                 }
-                throw new ConverterUnsupportedTypeException(RawBodyConverter.class, RawBody.class, body.getClass());
+                throw new ConverterUnsupportedTypeException(RawBodyConverter.class, body.getClass(), RawBody.class);
             }
 
         };

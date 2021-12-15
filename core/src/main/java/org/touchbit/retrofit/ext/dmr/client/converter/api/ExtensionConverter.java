@@ -18,6 +18,9 @@ package org.touchbit.retrofit.ext.dmr.client.converter.api;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
+import org.touchbit.retrofit.ext.dmr.exception.PrimitiveConvertCallException;
+import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
@@ -27,10 +30,12 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 
 public interface ExtensionConverter<DTO> {
 
-    String BODY_NULL_VALUE = "BODY_NULL_VALUE";
+    String NULL_JSON_VALUE = "NULL_JSON_VALUE";
+    String NULL_BODY_VALUE = "NULL_BODY_VALUE";
 
     /**
      * @param type                 - request method body type.
@@ -88,6 +93,46 @@ public interface ExtensionConverter<DTO> {
         @Nullable
         DTO convert(@Nullable ResponseBody body) throws IOException;
 
+    }
+
+    @EverythingIsNonNull
+    default void assertNotNullableBodyType(Type bodyType) {
+        Utils.parameterRequireNonNull(bodyType, "bodyType");
+        if (bodyType instanceof Class && ((Class<?>) bodyType).isPrimitive()) {
+            throw new PrimitiveConvertCallException(bodyType);
+        }
+    }
+
+    @EverythingIsNonNull
+    default void assertSupportedBodyType(ExtensionConverter<?> converter, Object body, Type... expectedTypes) {
+        Utils.parameterRequireNonNull(body, "body");
+        Utils.parameterRequireNonNull(expectedTypes, "expectedTypes");
+        final Class<?> bodyType = body.getClass();
+        assertSupportedBodyType(converter, bodyType, expectedTypes);
+    }
+
+    default void assertSupportedBodyType(ExtensionConverter<?> converter, Type bodyType, Type... expectedTypes) {
+        Utils.parameterRequireNonNull(bodyType, "bodyType");
+        Utils.parameterRequireNonNull(expectedTypes, "expectedTypes");
+        if (!Arrays.asList(expectedTypes).contains(bodyType)) {
+            throw new ConverterUnsupportedTypeException(converter.getClass(), bodyType, expectedTypes);
+        }
+    }
+
+    default boolean isForceNullBodyValue(@Nullable Object body) {
+        return isForceNullBodyValue(String.valueOf(body));
+    }
+
+    default boolean isForceNullBodyValue(@Nullable String body) {
+        return NULL_BODY_VALUE.equals(body);
+    }
+
+    default boolean isForceNullJsonValue(@Nullable Object body) {
+        return isForceNullJsonValue(String.valueOf(body));
+    }
+
+    default boolean isForceNullJsonValue(@Nullable String body) {
+        return NULL_JSON_VALUE.equals(body);
     }
 
 }

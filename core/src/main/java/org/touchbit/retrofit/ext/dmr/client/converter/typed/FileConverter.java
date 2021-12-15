@@ -63,7 +63,7 @@ public class FileConverter implements ExtensionConverter<File> {
                     final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
                     return RequestBody.create(mediaType, data);
                 }
-                throw new ConverterUnsupportedTypeException(FileConverter.class, File.class, body.getClass());
+                throw new ConverterUnsupportedTypeException(FileConverter.class, body.getClass(), File.class);
             }
 
         };

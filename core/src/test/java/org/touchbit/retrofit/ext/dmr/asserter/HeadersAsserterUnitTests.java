@@ -16,24 +16,38 @@
 
 package org.touchbit.retrofit.ext.dmr.asserter;
 
+import internal.test.utils.OkHttpTestUtils;
 import okhttp3.Headers;
+import okhttp3.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.touchbit.retrofit.ext.dmr.BaseCoreUnitTest;
+import org.touchbit.retrofit.ext.dmr.client.response.DualResponse;
 
 import java.util.UUID;
 
-import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static internal.test.utils.TestUtils.array;
 import static org.hamcrest.Matchers.is;
 import static org.touchbit.retrofit.ext.dmr.asserter.HeadersAsserter.*;
 
 @DisplayName("HeadersAsserter class tests")
-public class HeadersAsserterUnitTests {
+public class HeadersAsserterUnitTests extends BaseCoreUnitTest {
 
     private static final String ANY_CONTENT = UUID.randomUUID().toString();
     private static final String EXP_CONTENT = UUID.randomUUID().toString();
     private static final String CONTAINS_CONTENT = EXP_CONTENT + ANY_CONTENT;
     private static final String ERR_MSG_PREFIX = "Collected the following errors:\n\nResponse header ";
+
+    @Test
+    @DisplayName("Constructor")
+    public void test1639587530749() {
+        final Headers headers1 = new HeadersAsserter(Headers.of(H_CONTENT_TYPE, EXP_CONTENT)).getHeaders();
+        assertThat(headers1.get(H_CONTENT_TYPE), is(EXP_CONTENT));
+        final Response response = OkHttpTestUtils.getResponse();
+        DualResponse<?, ?> dualResponse = new DualResponse<>("", "", response, "", array());
+        final Headers headers2 = new HeadersAsserter(dualResponse).getHeaders();
+        assertThat(headers2.get(H_CONTENT_TYPE), is("text/plain"));
+    }
 
     @Test
     @DisplayName("contentTypeIsPresent() positive")

@@ -38,8 +38,8 @@ import static okhttp3.ResponseBody.create;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter.BODY_NULL_VALUE;
-import static org.touchbit.retrofit.ext.dmr.jackson.JacksonConverter.JSON_NULL_VALUE;
+import static org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter.NULL_BODY_VALUE;
+import static org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter.NULL_JSON_VALUE;
 
 @SuppressWarnings({"ConstantConditions", "unchecked"})
 @DisplayName("JacksonConverter.class unit tests")
@@ -122,17 +122,17 @@ public class JacksonUnitTests extends BaseUnitTest {
     }
 
     @Test
-    @DisplayName("Jackson RequestBodyConverter.convert() successful convert null (JSON_NULL_VALUE)")
+    @DisplayName("Jackson RequestBodyConverter.convert() successful convert null (NULL_JSON_VALUE)")
     public void test1639065954745() throws IOException {
-        final RequestBody requestBody = requestBodyConverter(String.class).convert(JSON_NULL_VALUE);
+        final RequestBody requestBody = requestBodyConverter(String.class).convert(NULL_JSON_VALUE);
         final String result = OkHttpTestUtils.requestBodyToString(requestBody);
         assertThat("null json", result, is("null"));
     }
 
     @Test
-    @DisplayName("Jackson RequestBodyConverter.convert() successful convert null (BODY_NULL_VALUE)")
+    @DisplayName("Jackson RequestBodyConverter.convert() successful convert null (NULL_BODY_VALUE)")
     public void test1639065954753() throws IOException {
-        final RequestBody requestBody = requestBodyConverter(String.class).convert(BODY_NULL_VALUE);
+        final RequestBody requestBody = requestBodyConverter(String.class).convert(NULL_BODY_VALUE);
         assertThat("RequestBody", requestBody, nullValue());
     }
 

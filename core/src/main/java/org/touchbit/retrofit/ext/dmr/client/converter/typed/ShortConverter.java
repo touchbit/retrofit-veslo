@@ -20,27 +20,28 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
+import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
+import org.touchbit.retrofit.ext.dmr.exception.PrimitiveConvertCallException;
 import org.touchbit.retrofit.ext.dmr.util.ConvertUtils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 /**
- * String java type converter
+ * Reference/primitive Short java type converter
  * <p>
  *
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
- * Created: 05.12.2021
+ * Created: 15.12.2021
  */
-public class StringConverter implements ExtensionConverter<String> {
+public class ShortConverter implements ExtensionConverter<Short> {
 
-    public static final StringConverter INSTANCE = new StringConverter();
+    public static final ShortConverter INSTANCE = new ShortConverter();
 
     /**
      * @see ExtensionConverter#requestBodyConverter(Type, Annotation[], Annotation[], Retrofit)
@@ -54,24 +55,19 @@ public class StringConverter implements ExtensionConverter<String> {
         return new RequestBodyConverter() {
 
             /**
-             * Converts {@link String} to {@link RequestBody}
-             *
-             * @param body -
-             * @return HTTP {@link RequestBody} or null if {@link ExtensionConverter#NULL_BODY_VALUE} present
+             * @param body - Short body
+             * @return HTTP {@link RequestBody}
+             * @throws ConverterUnsupportedTypeException unsupported body type
              */
             @Override
-            @Nullable
-            public RequestBody convert(@Nonnull Object body) {
-                assertSupportedBodyType(INSTANCE, body, String.class);
-                if (!isForceNullBodyValue(body)) {
-                    final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
-                    return RequestBody.create(mediaType, body.toString());
-                }
-                return null;
+            @EverythingIsNonNull
+            public RequestBody convert(Object body) {
+                assertSupportedBodyType(INSTANCE, body, Short.class, Short.TYPE);
+                Short aShort = (Short) body;
+                final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
+                return RequestBody.create(mediaType, aShort.toString());
             }
-
         };
-
     }
 
     /**
@@ -79,24 +75,34 @@ public class StringConverter implements ExtensionConverter<String> {
      */
     @Override
     @EverythingIsNonNull
-    public ResponseBodyConverter<String> responseBodyConverter(final Type type,
-                                                               final Annotation[] methodAnnotations,
-                                                               final Retrofit retrofit) {
-        return new ResponseBodyConverter<String>() {
+    public ResponseBodyConverter<Short> responseBodyConverter(final Type type,
+                                                              final Annotation[] methodAnnotations,
+                                                              final Retrofit retrofit) {
+        return new ResponseBodyConverter<Short>() {
 
             /**
              * @param responseBody - HTTP call {@link ResponseBody}
-             * @return {@link Character}
-             * @throws IOException                       body bytes not readable
+             * @return {@link Short}
+             * @throws IOException body bytes not readable
+             * @throws ConvertCallException inconvertible body
+             * @throws PrimitiveConvertCallException primitive cannot be null
              * @throws ConverterUnsupportedTypeException unsupported body type
              */
             @Nullable
             @Override
-            public String convert(@Nullable ResponseBody responseBody) throws IOException {
+            public Short convert(@Nullable ResponseBody responseBody) throws IOException {
                 if (responseBody != null && responseBody.contentLength() != 0) {
-                    assertSupportedBodyType(INSTANCE, type, String.class);
-                    return responseBody.string();
+                    assertSupportedBodyType(INSTANCE, type, Short.class, Short.TYPE);
+                    final String body = responseBody.string();
+                    try {
+                        return Short.valueOf(body);
+                    } catch (Exception e) {
+                        throw new ConvertCallException("Short conversion error:\n" +
+                                "expected short number in range " + Short.MIN_VALUE + "..." + Short.MAX_VALUE + "\n" +
+                                "but was '" + body + "'", e);
+                    }
                 }
+                assertNotNullableBodyType(type);
                 return null;
             }
         };

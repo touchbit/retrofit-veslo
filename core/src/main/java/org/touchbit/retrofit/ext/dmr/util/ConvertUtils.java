@@ -57,7 +57,7 @@ public class ConvertUtils {
             final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
             return RequestBody.create(mediaType, stringBody);
         }
-        throw new ConverterUnsupportedTypeException(converter.getClass(), Boolean.class, body.getClass());
+        throw new ConverterUnsupportedTypeException(converter.getClass(), body.getClass(), Boolean.class);
     }
 
     @Nullable

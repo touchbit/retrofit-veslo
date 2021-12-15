@@ -37,7 +37,7 @@ import java.util.*;
 import static internal.test.utils.client.MockInterceptor.*;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter.BODY_NULL_VALUE;
+import static org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter.NULL_BODY_VALUE;
 
 @DisplayName("JacksonDualConverterFactory.class functional tests")
 public class JacksonDualConverterFactoryClientFuncTests extends BaseUnitTest {
@@ -105,7 +105,7 @@ public class JacksonDualConverterFactoryClientFuncTests extends BaseUnitTest {
         @Test
         @DisplayName("Byte[]: return empty Byte[] if body not present (HTTP status 204 'no content')")
         public void test1639065953313() {
-            CLIENT.returnByteArray(NO_CONTENT, BODY_NULL_VALUE)
+            CLIENT.returnByteArray(NO_CONTENT, NULL_BODY_VALUE)
                     .assertResponse(asserter -> asserter
                             .assertHttpStatusCodeIs(NO_CONTENT)
                             .assertSucBodyIsNull()
@@ -222,7 +222,7 @@ public class JacksonDualConverterFactoryClientFuncTests extends BaseUnitTest {
         @Test
         @DisplayName("File: return empty File if body not present (HTTP status 204 'no content')")
         public void test1639065953436() {
-            CLIENT.returnFile(NO_CONTENT, BODY_NULL_VALUE).assertResponse(asserter -> asserter
+            CLIENT.returnFile(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
                     .assertErrBodyIsNull());
@@ -307,7 +307,7 @@ public class JacksonDualConverterFactoryClientFuncTests extends BaseUnitTest {
         @Test
         @DisplayName("List<DTO>: return null if body not present (HTTP status 204 'no content')")
         public void test1639150470209() {
-            CLIENT.returnListJacksonModel(NO_CONTENT, BODY_NULL_VALUE).assertResponse(asserter -> asserter
+            CLIENT.returnListJacksonModel(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
                     .assertErrBodyIsNull());
@@ -450,7 +450,7 @@ public class JacksonDualConverterFactoryClientFuncTests extends BaseUnitTest {
         @Test
         @DisplayName("Jackson DTO: return null if body body not present (HTTP status 204 'no content')")
         public void test1639158410149() {
-            CLIENT.returnJacksonModel(NO_CONTENT, BODY_NULL_VALUE).assertResponse(asserter -> asserter
+            CLIENT.returnJacksonModel(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
                     .assertErrBodyIsNull());
@@ -486,7 +486,7 @@ public class JacksonDualConverterFactoryClientFuncTests extends BaseUnitTest {
         @Test
         @DisplayName("String: return null if body not present (HTTP status 204 'no content')")
         public void test1639065953483() {
-            CLIENT.returnString(NO_CONTENT, BODY_NULL_VALUE).assertResponse(asserter -> asserter
+            CLIENT.returnString(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
                     .assertErrBodyIsNull());
@@ -495,7 +495,7 @@ public class JacksonDualConverterFactoryClientFuncTests extends BaseUnitTest {
         @Test
         @DisplayName("String: return null if body is empty (content-length=0)")
         public void test1639065953489() {
-            CLIENT.returnString(NO_CONTENT, BODY_NULL_VALUE).assertResponse(asserter -> asserter
+            CLIENT.returnString(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
                     .assertErrBodyIsNull());
@@ -522,7 +522,7 @@ public class JacksonDualConverterFactoryClientFuncTests extends BaseUnitTest {
         @Test
         @DisplayName("Character: return null if body not present (HTTP status 204 'no content')")
         public void test1639065953507() {
-            CLIENT.returnCharacter(NO_CONTENT, BODY_NULL_VALUE).assertResponse(asserter -> asserter
+            CLIENT.returnCharacter(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
                     .assertErrBodyIsNull());
@@ -577,7 +577,7 @@ public class JacksonDualConverterFactoryClientFuncTests extends BaseUnitTest {
         @Test
         @DisplayName("Boolean: return null if body not present (HTTP status 204 'no content')")
         public void test1639065953547() {
-            CLIENT.returnBoolean(NO_CONTENT, BODY_NULL_VALUE).assertResponse(asserter -> asserter
+            CLIENT.returnBoolean(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
                     .assertErrBodyIsNull());
@@ -631,7 +631,7 @@ public class JacksonDualConverterFactoryClientFuncTests extends BaseUnitTest {
         @Test
         @DisplayName("Byte: return null if body not present (HTTP status 204 'no content')")
         public void test1639065953591() {
-            CLIENT.returnByte(NO_CONTENT, BODY_NULL_VALUE).assertResponse(asserter -> asserter
+            CLIENT.returnByte(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
                     .assertErrBodyIsNull());
@@ -676,7 +676,7 @@ public class JacksonDualConverterFactoryClientFuncTests extends BaseUnitTest {
         @Test
         @DisplayName("Integer: return null if body not present (HTTP status 204 'no content')")
         public void test1639065953625() {
-            CLIENT.returnInteger(NO_CONTENT, BODY_NULL_VALUE).assertResponse(asserter -> asserter
+            CLIENT.returnInteger(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
                     .assertErrBodyIsNull());
@@ -721,7 +721,7 @@ public class JacksonDualConverterFactoryClientFuncTests extends BaseUnitTest {
         @Test
         @DisplayName("Double: return null if body not present (HTTP status 204 'no content')")
         public void test1639065953659() {
-            CLIENT.returnDouble(NO_CONTENT, BODY_NULL_VALUE).assertResponse(asserter -> asserter
+            CLIENT.returnDouble(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
                     .assertErrBodyIsNull());
@@ -766,7 +766,7 @@ public class JacksonDualConverterFactoryClientFuncTests extends BaseUnitTest {
         @Test
         @DisplayName("Float: return null if body not present (HTTP status 204 'no content')")
         public void test1639065953693() {
-            CLIENT.returnFloat(NO_CONTENT, BODY_NULL_VALUE).assertResponse(asserter -> asserter
+            CLIENT.returnFloat(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
                     .assertErrBodyIsNull());
@@ -811,7 +811,7 @@ public class JacksonDualConverterFactoryClientFuncTests extends BaseUnitTest {
         @Test
         @DisplayName("Long: return null if body not present (HTTP status 204 'no content')")
         public void test1639065953727() {
-            CLIENT.returnLong(NO_CONTENT, BODY_NULL_VALUE).assertResponse(asserter -> asserter
+            CLIENT.returnLong(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
                     .assertErrBodyIsNull());
@@ -856,7 +856,7 @@ public class JacksonDualConverterFactoryClientFuncTests extends BaseUnitTest {
         @Test
         @DisplayName("Short: return null if body not present (HTTP status 204 'no content')")
         public void test1639065953761() {
-            CLIENT.returnShort(NO_CONTENT, BODY_NULL_VALUE).assertResponse(asserter -> asserter
+            CLIENT.returnShort(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
                     .assertErrBodyIsNull());

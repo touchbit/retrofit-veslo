@@ -23,18 +23,23 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter.ResponseBodyConverter;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
+import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.exception.PrimitiveConvertCallException;
 
 import java.io.IOException;
 
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 
 @SuppressWarnings({"ConstantConditions", "rawtypes"})
 @DisplayName("JavaReferenceTypeConverter tests")
 public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
 
     private static final JavaPrimitiveTypeConverter CONVERTER = new JavaPrimitiveTypeConverter();
+    private static final String REPLACE = "REPLACE";
+    private static final String UNSUPPORTED_TYPE_MSG = "Unsupported type for converter " +
+            "org.touchbit.retrofit.ext.dmr.client.converter.defaults.JavaPrimitiveTypeConverter\n" +
+            "Received: " + REPLACE + "\n" +
+            "Expected: char or boolean or byte or int or double or float or long or short\n";
 
     private static ResponseBodyConverter<?> getResponseConverter(Class dtoClass) {
         return CONVERTER.responseBodyConverter(dtoClass, AA, RTF);
@@ -55,13 +60,6 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
         @Nested
         @DisplayName(".convert(ResponseBody) method")
         public class ConvertMethodTests {
-
-            @Test
-            @DisplayName("return null if ResponseBody == null")
-            public void test1639065949837() throws IOException {
-                final Object result = CONVERTER.responseBodyConverter(OBJ_C, AA, RTF).convert(null);
-                assertThat("", result, nullValue());
-            }
 
             @Test
             @DisplayName("Character.TYPE: return Character if response body length = 1")
@@ -111,7 +109,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(PRIMITIVE_BOOLEAN_C).convert(responseBody))
                         .assertClass(ConvertCallException.class)
-                        .assertMessageIs("Boolean conversion error:\nexpected true/false\nbut was foobar");
+                        .assertMessageIs("Boolean conversion error:\nexpected true/false\nbut was 'foobar'");
             }
 
             @Test
@@ -136,7 +134,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(PRIMITIVE_BYTE_C).convert(responseBody))
                         .assertClass(ConvertCallException.class)
-                        .assertMessageIs("Byte conversion error:\nexpected byte in range -128...127\nbut was foobar");
+                        .assertMessageIs("Byte conversion error:\nexpected byte in range -128...127\nbut was 'foobar'");
             }
 
             @Test
@@ -163,7 +161,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
                         .assertClass(ConvertCallException.class)
                         .assertMessageIs("Integer conversion error:\n" +
                                 "expected integer number in range -2147483648...2147483647\n" +
-                                "but was foobar");
+                                "but was 'foobar'");
             }
 
             @Test
@@ -190,7 +188,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
                         .assertClass(ConvertCallException.class)
                         .assertMessageIs("Double conversion error:\n" +
                                 "expected double number in range 4.9E-324...1.7976931348623157E308\n" +
-                                "but was foobar");
+                                "but was 'foobar'");
             }
 
             @Test
@@ -217,7 +215,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
                         .assertClass(ConvertCallException.class)
                         .assertMessageIs("Float conversion error:\n" +
                                 "expected float number in range 1.4E-45...3.4028235E38\n" +
-                                "but was foobar");
+                                "but was 'foobar'");
             }
 
             @Test
@@ -244,7 +242,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
                         .assertClass(ConvertCallException.class)
                         .assertMessageIs("Long conversion error:\n" +
                                 "expected long number in range -9223372036854775808...9223372036854775807\n" +
-                                "but was foobar");
+                                "but was 'foobar'");
             }
 
             @Test
@@ -271,7 +269,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
                         .assertClass(ConvertCallException.class)
                         .assertMessageIs("Short conversion error:\n" +
                                 "expected short number in range -32768...32767\n" +
-                                "but was foobar");
+                                "but was 'foobar'");
             }
 
             @Test
@@ -279,8 +277,8 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             public void test1639065950055() {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(OBJ_C).convert(responseBody))
-                        .assertClass(ConvertCallException.class)
-                        .assertMessageIs("Received an unsupported type for conversion: class java.lang.Object");
+                        .assertClass(ConverterUnsupportedTypeException.class)
+                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Object"));
             }
 
             @Test
@@ -288,8 +286,8 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             public void test1639065950064() {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(SET_C).convert(responseBody))
-                        .assertClass(ConvertCallException.class)
-                        .assertMessageIs("Received an unsupported type for conversion: interface java.util.Set");
+                        .assertClass(ConverterUnsupportedTypeException.class)
+                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.util.Set"));
             }
 
             @Test
@@ -297,8 +295,8 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             public void test1639065950073() {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(LIST_C).convert(responseBody))
-                        .assertClass(ConvertCallException.class)
-                        .assertMessageIs("Received an unsupported type for conversion: interface java.util.List");
+                        .assertClass(ConverterUnsupportedTypeException.class)
+                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.util.List"));
             }
 
             @Test
@@ -306,8 +304,8 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             public void test1639065950082() {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(MAP_C).convert(responseBody))
-                        .assertClass(ConvertCallException.class)
-                        .assertMessageIs("Received an unsupported type for conversion: interface java.util.Map");
+                        .assertClass(ConverterUnsupportedTypeException.class)
+                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.util.Map"));
             }
 
             @Test
@@ -315,8 +313,8 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             public void test1639065950091() {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(STRING_ARRAY_C).convert(responseBody))
-                        .assertClass(ConvertCallException.class)
-                        .assertMessageIs("Received an unsupported type for conversion: class java.lang.String[]");
+                        .assertClass(ConverterUnsupportedTypeException.class)
+                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.String[]"));
             }
 
             @Test
@@ -324,8 +322,8 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             public void test1639065950100() {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(BOOLEAN_C).convert(responseBody))
-                        .assertClass(ConvertCallException.class)
-                        .assertMessageIs("Received an unsupported type for conversion: class java.lang.Boolean");
+                        .assertClass(ConverterUnsupportedTypeException.class)
+                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Boolean"));
             }
 
             @Test
@@ -333,8 +331,8 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             public void test1639065950109() {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(BYTE_C).convert(responseBody))
-                        .assertClass(ConvertCallException.class)
-                        .assertMessageIs("Received an unsupported type for conversion: class java.lang.Byte");
+                        .assertClass(ConverterUnsupportedTypeException.class)
+                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Byte"));
             }
 
             @Test
@@ -342,8 +340,8 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             public void test1639065950118() {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(CHARACTER_C).convert(responseBody))
-                        .assertClass(ConvertCallException.class)
-                        .assertMessageIs("Received an unsupported type for conversion: class java.lang.Character");
+                        .assertClass(ConverterUnsupportedTypeException.class)
+                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Character"));
             }
 
             @Test
@@ -351,8 +349,8 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             public void test1639065950127() {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(DOUBLE_C).convert(responseBody))
-                        .assertClass(ConvertCallException.class)
-                        .assertMessageIs("Received an unsupported type for conversion: class java.lang.Double");
+                        .assertClass(ConverterUnsupportedTypeException.class)
+                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Double"));
             }
 
             @Test
@@ -360,8 +358,8 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             public void test1639065950136() {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(FLOAT_C).convert(responseBody))
-                        .assertClass(ConvertCallException.class)
-                        .assertMessageIs("Received an unsupported type for conversion: class java.lang.Float");
+                        .assertClass(ConverterUnsupportedTypeException.class)
+                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Float"));
             }
 
             @Test
@@ -369,8 +367,8 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             public void test1639065950145() {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(INTEGER_C).convert(responseBody))
-                        .assertClass(ConvertCallException.class)
-                        .assertMessageIs("Received an unsupported type for conversion: class java.lang.Integer");
+                        .assertClass(ConverterUnsupportedTypeException.class)
+                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Integer"));
             }
 
             @Test
@@ -378,8 +376,8 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             public void test1639065950154() {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(LONG_C).convert(responseBody))
-                        .assertClass(ConvertCallException.class)
-                        .assertMessageIs("Received an unsupported type for conversion: class java.lang.Long");
+                        .assertClass(ConverterUnsupportedTypeException.class)
+                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Long"));
             }
 
             @Test
@@ -387,8 +385,8 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             public void test1639065950163() {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(SHORT_C).convert(responseBody))
-                        .assertClass(ConvertCallException.class)
-                        .assertMessageIs("Received an unsupported type for conversion: class java.lang.Short");
+                        .assertClass(ConverterUnsupportedTypeException.class)
+                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Short"));
             }
 
             @Test
@@ -396,8 +394,8 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
             public void test1639065950172() {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(STRING_C).convert(responseBody))
-                        .assertClass(ConvertCallException.class)
-                        .assertMessageIs("Received an unsupported type for conversion: class java.lang.String");
+                        .assertClass(ConverterUnsupportedTypeException.class)
+                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.String"));
             }
 
         }

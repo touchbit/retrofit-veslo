@@ -36,7 +36,7 @@ import java.io.File;
 import static internal.test.utils.client.MockInterceptor.*;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter.BODY_NULL_VALUE;
+import static org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter.NULL_BODY_VALUE;
 
 @DisplayName("JavaTypeAdapterFactory functional tests")
 public class JavaTypeCallAdapterFactoryFuncTests extends BaseUnitTest {
@@ -168,7 +168,7 @@ public class JavaTypeCallAdapterFactoryFuncTests extends BaseUnitTest {
         @Test
         @DisplayName("File: return empty File if body not present (HTTP status 204 'no content')")
         public void test1639065953961() {
-            final File actual = CLIENT.returnFileReferenceType(NO_CONTENT, BODY_NULL_VALUE);
+            final File actual = CLIENT.returnFileReferenceType(NO_CONTENT, NULL_BODY_VALUE);
             assertThat(actual, nullValue());
         }
 
@@ -294,7 +294,7 @@ public class JavaTypeCallAdapterFactoryFuncTests extends BaseUnitTest {
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("Boolean conversion error:\n" +
                             "expected true/false\n" +
-                            "but was 1");
+                            "but was '1'");
         }
 
         @Test

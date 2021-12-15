@@ -58,7 +58,7 @@ public class ByteArrayConverter implements ExtensionConverter<Byte[]> {
                     final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
                     return RequestBody.create(mediaType, bytes);
                 }
-                throw new ConverterUnsupportedTypeException(ByteArrayConverter.class, Byte[].class, body.getClass());
+                throw new ConverterUnsupportedTypeException(ByteArrayConverter.class, body.getClass(), Byte[].class);
             }
 
         };

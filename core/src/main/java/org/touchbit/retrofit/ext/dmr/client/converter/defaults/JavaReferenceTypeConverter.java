@@ -16,15 +16,13 @@
 
 package org.touchbit.retrofit.ext.dmr.client.converter.defaults;
 
-import okhttp3.ResponseBody;
-import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
+import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
+import org.touchbit.retrofit.ext.dmr.client.converter.typed.*;
+import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
-import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
-import javax.annotation.Nullable;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
@@ -36,15 +34,57 @@ import java.lang.reflect.Type;
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 05.12.2021
  */
-public class JavaReferenceTypeConverter extends JavaTypeConverterBase {
+@SuppressWarnings("rawtypes")
+public class JavaReferenceTypeConverter implements ExtensionConverter {
 
     public static final JavaReferenceTypeConverter INSTANCE = new JavaReferenceTypeConverter();
 
     /**
-     * @param type              - response body type.
-     * @param methodAnnotations - API client called method annotations
-     * @param retrofit          - see {@link Retrofit}
-     * @return {@link Converter}
+     * @see ExtensionConverter#requestBodyConverter(Type, Annotation[], Annotation[], Retrofit)
+     */
+    @Override
+    @EverythingIsNonNull
+    public RequestBodyConverter requestBodyConverter(final Type type,
+                                                     final Annotation[] paramAnnotations,
+                                                     final Annotation[] methodAnnotations,
+                                                     final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(paramAnnotations, "parameterAnnotations");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
+        if (type.equals(String.class)) {
+            return StringConverter.INSTANCE.requestBodyConverter(type, paramAnnotations, methodAnnotations, retrofit);
+        }
+        if (type.equals(Character.class)) {
+            return CharacterConverter.INSTANCE.requestBodyConverter(type, paramAnnotations, methodAnnotations, retrofit);
+        }
+        if (type.equals(Boolean.class)) {
+            return BooleanConverter.INSTANCE.requestBodyConverter(type, paramAnnotations, methodAnnotations, retrofit);
+        }
+        if (type.equals(Byte.class)) {
+            return ByteConverter.INSTANCE.requestBodyConverter(type, paramAnnotations, methodAnnotations, retrofit);
+        }
+        if (type.equals(Integer.class)) {
+            return IntegerConverter.INSTANCE.requestBodyConverter(type, paramAnnotations, methodAnnotations, retrofit);
+        }
+        if (type.equals(Double.class)) {
+            return DoubleConverter.INSTANCE.requestBodyConverter(type, paramAnnotations, methodAnnotations, retrofit);
+        }
+        if (type.equals(Float.class)) {
+            return FloatConverter.INSTANCE.requestBodyConverter(type, paramAnnotations, methodAnnotations, retrofit);
+        }
+        if (type.equals(Long.class)) {
+            return LongConverter.INSTANCE.requestBodyConverter(type, paramAnnotations, methodAnnotations, retrofit);
+        }
+        if (type.equals(Short.class)) {
+            return ShortConverter.INSTANCE.requestBodyConverter(type, paramAnnotations, methodAnnotations, retrofit);
+        }
+        throw new ConverterUnsupportedTypeException(this.getClass(), type, String.class, Character.class,
+                Boolean.class, Byte.class, Integer.class, Double.class, Float.class, Long.class, Short.class);
+    }
+
+    /**
+     * @see ExtensionConverter#responseBodyConverter(Type, Annotation[], Retrofit)
      */
     @Override
     @EverythingIsNonNull
@@ -54,89 +94,35 @@ public class JavaReferenceTypeConverter extends JavaTypeConverterBase {
         Utils.parameterRequireNonNull(type, "type");
         Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
         Utils.parameterRequireNonNull(retrofit, "retrofit");
-        return new ResponseBodyConverter<Object>() {
-
-            /**
-             * @param responseBody - HTTP call {@link ResponseBody}
-             * @return - Converted value
-             * @throws IOException if ResponseBody data not readable
-             */
-            @Nullable
-            @Override
-            public Object convert(@Nullable ResponseBody responseBody) throws IOException {
-                if (responseBody == null || responseBody.contentLength() == 0) {
-                    return null;
-                }
-                final String body = responseBody.string();
-                if (type.equals(String.class)) {
-                    return body;
-                } else if (type.equals(Character.class)) {
-                    final int length = body.length();
-                    if (length != 1) {
-                        throw new ConvertCallException("Character conversion error:\n" +
-                                "expected one character\nbut was " + length);
-                    }
-                    return body.charAt(0);
-                } else if (type.equals(Boolean.class)) {
-                    if (body.equalsIgnoreCase("false") || body.equalsIgnoreCase("true")) {
-                        return Boolean.valueOf(body);
-                    }
-                    throw new ConvertCallException("Boolean conversion error:\n" +
-                            "expected true/false\n" +
-                            "but was " + exceptionBodyValue(body));
-                } else if (type.equals(Byte.class)) {
-                    try {
-                        return Byte.valueOf(body);
-                    } catch (Exception e) {
-                        throw new ConvertCallException("Byte conversion error:\n" +
-                                "expected byte in range " + Byte.MIN_VALUE + "..." + Byte.MAX_VALUE + "\n" +
-                                "but was " + exceptionBodyValue(body), e);
-                    }
-                } else if (type.equals(Integer.class)) {
-                    try {
-                        return Integer.valueOf(body);
-                    } catch (Exception e) {
-                        throw new ConvertCallException("Integer conversion error:\n" +
-                                "expected integer number in range " + Integer.MIN_VALUE + "..." + Integer.MAX_VALUE + "\n" +
-                                "but was " + exceptionBodyValue(body), e);
-                    }
-                } else if (type.equals(Double.class)) {
-                    try {
-                        return Double.valueOf(body);
-                    } catch (Exception e) {
-                        throw new ConvertCallException("Double conversion error:\n" +
-                                "expected double number in range " + Double.MIN_VALUE + "..." + Double.MAX_VALUE + "\n" +
-                                "but was " + exceptionBodyValue(body), e);
-                    }
-                } else if (type.equals(Float.class)) {
-                    try {
-                        return Float.valueOf(body);
-                    } catch (Exception e) {
-                        throw new ConvertCallException("Float conversion error:\n" +
-                                "expected float number in range " + Float.MIN_VALUE + "..." + Float.MAX_VALUE + "\n" +
-                                "but was " + exceptionBodyValue(body), e);
-                    }
-                } else if (type.equals(Long.class)) {
-                    try {
-                        return Long.valueOf(body);
-                    } catch (Exception e) {
-                        throw new ConvertCallException("Long conversion error:\n" +
-                                "expected long number in range " + Long.MIN_VALUE + "..." + Long.MAX_VALUE + "\n" +
-                                "but was " + exceptionBodyValue(body), e);
-                    }
-                } else if (type.equals(Short.class)) {
-                    try {
-                        return Short.valueOf(body);
-                    } catch (Exception e) {
-                        throw new ConvertCallException("Short conversion error:\n" +
-                                "expected short number in range " + Short.MIN_VALUE + "..." + Short.MAX_VALUE + "\n" +
-                                "but was " + exceptionBodyValue(body), e);
-                    }
-                } else {
-                    throw new ConvertCallException("Received an unsupported type for conversion: " + getTypeName(type));
-                }
-            }
-        };
+        if (type.equals(String.class)) {
+            return StringConverter.INSTANCE.responseBodyConverter(type, methodAnnotations, retrofit);
+        }
+        if (type.equals(Character.class)) {
+            return CharacterConverter.INSTANCE.responseBodyConverter(type, methodAnnotations, retrofit);
+        }
+        if (type.equals(Boolean.class)) {
+            return BooleanConverter.INSTANCE.responseBodyConverter(type, methodAnnotations, retrofit);
+        }
+        if (type.equals(Byte.class)) {
+            return ByteConverter.INSTANCE.responseBodyConverter(type, methodAnnotations, retrofit);
+        }
+        if (type.equals(Integer.class)) {
+            return IntegerConverter.INSTANCE.responseBodyConverter(type, methodAnnotations, retrofit);
+        }
+        if (type.equals(Double.class)) {
+            return DoubleConverter.INSTANCE.responseBodyConverter(type, methodAnnotations, retrofit);
+        }
+        if (type.equals(Float.class)) {
+            return FloatConverter.INSTANCE.responseBodyConverter(type, methodAnnotations, retrofit);
+        }
+        if (type.equals(Long.class)) {
+            return LongConverter.INSTANCE.responseBodyConverter(type, methodAnnotations, retrofit);
+        }
+        if (type.equals(Short.class)) {
+            return ShortConverter.INSTANCE.responseBodyConverter(type, methodAnnotations, retrofit);
+        }
+        throw new ConverterUnsupportedTypeException(this.getClass(), type, String.class, Character.class, Boolean.class,
+                Byte.class, Integer.class, Double.class, Float.class, Long.class, Short.class);
     }
 
 }

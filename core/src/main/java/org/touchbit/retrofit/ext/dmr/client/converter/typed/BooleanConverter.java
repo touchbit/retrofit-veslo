@@ -20,27 +20,28 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
+import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
+import org.touchbit.retrofit.ext.dmr.exception.PrimitiveConvertCallException;
 import org.touchbit.retrofit.ext.dmr.util.ConvertUtils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 /**
- * String java type converter
+ * Reference/primitive Boolean java type converter
  * <p>
  *
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
- * Created: 05.12.2021
+ * Created: 15.12.2021
  */
-public class StringConverter implements ExtensionConverter<String> {
+public class BooleanConverter implements ExtensionConverter<Boolean> {
 
-    public static final StringConverter INSTANCE = new StringConverter();
+    public static final BooleanConverter INSTANCE = new BooleanConverter();
 
     /**
      * @see ExtensionConverter#requestBodyConverter(Type, Annotation[], Annotation[], Retrofit)
@@ -54,24 +55,21 @@ public class StringConverter implements ExtensionConverter<String> {
         return new RequestBodyConverter() {
 
             /**
-             * Converts {@link String} to {@link RequestBody}
+             * Converts Boolean to string for {@link RequestBody}
              *
-             * @param body -
-             * @return HTTP {@link RequestBody} or null if {@link ExtensionConverter#NULL_BODY_VALUE} present
+             * @param body - Boolean body
+             * @return {@link RequestBody}
+             * @throws ConverterUnsupportedTypeException unsupported body type
              */
             @Override
-            @Nullable
-            public RequestBody convert(@Nonnull Object body) {
-                assertSupportedBodyType(INSTANCE, body, String.class);
-                if (!isForceNullBodyValue(body)) {
-                    final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
-                    return RequestBody.create(mediaType, body.toString());
-                }
-                return null;
+            @EverythingIsNonNull
+            public RequestBody convert(Object body) {
+                assertSupportedBodyType(INSTANCE, body, Boolean.class, Boolean.TYPE);
+                Boolean aBoolean = (Boolean) body;
+                final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
+                return RequestBody.create(mediaType, aBoolean.toString());
             }
-
         };
-
     }
 
     /**
@@ -79,24 +77,33 @@ public class StringConverter implements ExtensionConverter<String> {
      */
     @Override
     @EverythingIsNonNull
-    public ResponseBodyConverter<String> responseBodyConverter(final Type type,
-                                                               final Annotation[] methodAnnotations,
-                                                               final Retrofit retrofit) {
-        return new ResponseBodyConverter<String>() {
+    public ResponseBodyConverter<Boolean> responseBodyConverter(final Type type,
+                                                                final Annotation[] methodAnnotations,
+                                                                final Retrofit retrofit) {
+        return new ResponseBodyConverter<Boolean>() {
 
             /**
              * @param responseBody - HTTP call {@link ResponseBody}
-             * @return {@link Character}
-             * @throws IOException                       body bytes not readable
+             * @return {@link Boolean}
+             * @throws IOException body bytes not readable
+             * @throws ConvertCallException inconvertible body
+             * @throws PrimitiveConvertCallException primitive cannot be null
              * @throws ConverterUnsupportedTypeException unsupported body type
              */
             @Nullable
             @Override
-            public String convert(@Nullable ResponseBody responseBody) throws IOException {
+            public Boolean convert(@Nullable ResponseBody responseBody) throws IOException {
                 if (responseBody != null && responseBody.contentLength() != 0) {
-                    assertSupportedBodyType(INSTANCE, type, String.class);
-                    return responseBody.string();
+                    assertSupportedBodyType(INSTANCE, type, Boolean.class, Boolean.TYPE);
+                    final String body = responseBody.string();
+                    if (body.equalsIgnoreCase("false") || body.equalsIgnoreCase("true")) {
+                        return Boolean.valueOf(body);
+                    }
+                    throw new ConvertCallException("Boolean conversion error:\n" +
+                            "expected true/false\n" +
+                            "but was '" + body + "'");
                 }
+                assertNotNullableBodyType(type);
                 return null;
             }
         };

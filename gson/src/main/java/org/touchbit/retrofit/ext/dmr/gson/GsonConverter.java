@@ -44,7 +44,6 @@ import static com.google.gson.ToNumberPolicy.LONG_OR_DOUBLE;
  */
 public class GsonConverter<T> implements ExtensionConverter<T> {
 
-    public static final String JSON_NULL_VALUE = "JSON_NULL_VALUE";
     public final Gson requestGson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
     public final Gson responseGson = new GsonBuilder()
             .serializeNulls()
@@ -76,10 +75,9 @@ public class GsonConverter<T> implements ExtensionConverter<T> {
                 final Gson gson = getRequestGson();
                 try {
                     final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
-                    if (BODY_NULL_VALUE.equals(body)) {
+                    if (NULL_BODY_VALUE.equals(body)) {
                         return null;
-                    } else if (JSON_NULL_VALUE.equals(body)) {
-
+                    } else if (NULL_JSON_VALUE.equals(body)) {
                         return RequestBody.create(mediaType, gson.toJson(null));
                     } else {
                         return RequestBody.create(mediaType, gson.toJson(body));

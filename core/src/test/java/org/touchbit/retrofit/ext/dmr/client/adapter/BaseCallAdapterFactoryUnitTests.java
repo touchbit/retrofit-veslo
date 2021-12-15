@@ -77,9 +77,9 @@ public class BaseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
             when(response.code()).thenReturn(204);
             when(response.body()).thenReturn("");
             final Retrofit retrofit = mock(Retrofit.class);
-            final ResponseBodyConverter converter = JavaReferenceTypeConverter.INSTANCE.responseBodyConverter(OBJ_T, AA, retrofit);
-            when(retrofit.responseBodyConverter(OBJ_T, AA)).thenReturn(converter);
-            final Object result = FACTORY.getSuccessfulResponseBody(response, OBJ_T, AA, retrofit);
+            final ResponseBodyConverter converter = JavaReferenceTypeConverter.INSTANCE.responseBodyConverter(STRING_T, AA, retrofit);
+            when(retrofit.responseBodyConverter(STRING_T, AA)).thenReturn(converter);
+            final Object result = FACTORY.getSuccessfulResponseBody(response, STRING_T, AA, retrofit);
             assertThat(result, nullValue());
         }
 
@@ -90,9 +90,9 @@ public class BaseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
             when(response.code()).thenReturn(205);
             when(response.body()).thenReturn("");
             final Retrofit retrofit = mock(Retrofit.class);
-            final ResponseBodyConverter converter = JavaReferenceTypeConverter.INSTANCE.responseBodyConverter(OBJ_T, AA, retrofit);
-            when(retrofit.responseBodyConverter(OBJ_T, AA)).thenReturn(converter);
-            final Object result = FACTORY.getSuccessfulResponseBody(response, OBJ_T, AA, retrofit);
+            final ResponseBodyConverter converter = JavaReferenceTypeConverter.INSTANCE.responseBodyConverter(STRING_C, AA, retrofit);
+            when(retrofit.responseBodyConverter(STRING_C, AA)).thenReturn(converter);
+            final Object result = FACTORY.getSuccessfulResponseBody(response, STRING_C, AA, retrofit);
             assertThat(result, nullValue());
         }
 
@@ -103,9 +103,9 @@ public class BaseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
             when(response.code()).thenReturn(200);
             when(response.body()).thenReturn(null);
             final Retrofit retrofit = mock(Retrofit.class);
-            final ResponseBodyConverter converter = JavaReferenceTypeConverter.INSTANCE.responseBodyConverter(OBJ_T, AA, retrofit);
-            when(retrofit.responseBodyConverter(OBJ_T, AA)).thenReturn(converter);
-            final Object result = FACTORY.getSuccessfulResponseBody(response, OBJ_T, AA, retrofit);
+            final ResponseBodyConverter converter = JavaReferenceTypeConverter.INSTANCE.responseBodyConverter(STRING_C, AA, retrofit);
+            when(retrofit.responseBodyConverter(STRING_C, AA)).thenReturn(converter);
+            final Object result = FACTORY.getSuccessfulResponseBody(response, STRING_C, AA, retrofit);
             assertThat(result, nullValue());
         }
 
@@ -116,9 +116,9 @@ public class BaseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
             when(response.code()).thenReturn(200);
             when(response.body()).thenReturn("test1639173916792");
             final Retrofit retrofit = mock(Retrofit.class);
-            final ResponseBodyConverter converter = JavaReferenceTypeConverter.INSTANCE.responseBodyConverter(OBJ_T, AA, retrofit);
-            when(retrofit.responseBodyConverter(OBJ_T, AA)).thenReturn(converter);
-            final Object result = FACTORY.getSuccessfulResponseBody(response, OBJ_T, AA, retrofit);
+            final ResponseBodyConverter converter = JavaReferenceTypeConverter.INSTANCE.responseBodyConverter(STRING_C, AA, retrofit);
+            when(retrofit.responseBodyConverter(STRING_C, AA)).thenReturn(converter);
+            final Object result = FACTORY.getSuccessfulResponseBody(response, STRING_C, AA, retrofit);
             assertThat(result, is("test1639173916792"));
         }
 
@@ -198,8 +198,8 @@ public class BaseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
             when(response.isSuccessful()).thenReturn(false);
             final Retrofit retrofit = mock(Retrofit.class);
             final ResponseBodyConverter converter = JavaReferenceTypeConverter.INSTANCE.responseBodyConverter(STRING_C, AA, retrofit);
-            when(retrofit.responseBodyConverter(OBJ_T, AA)).thenReturn(converter);
-            final Object result = FACTORY.getErrorResponseBody(response, OBJ_T, AA, retrofit);
+            when(retrofit.responseBodyConverter(STRING_C, AA)).thenReturn(converter);
+            final Object result = FACTORY.getErrorResponseBody(response, STRING_C, AA, retrofit);
             assertThat(result, is("test1639176585577"));
         }
 

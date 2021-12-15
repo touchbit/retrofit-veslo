@@ -146,7 +146,7 @@ public class ExampleApiClientAssertionsTests {
                     DTO dto = (DTO) body;
                     RequestBody.create(null, dto.getMsg());
                 }
-                throw new ConverterUnsupportedTypeException(RawBodyConverter.class, String.class, body.getClass());
+                throw new ConverterUnsupportedTypeException(RawBodyConverter.class, body.getClass(), String.class);
             };
         }
 
