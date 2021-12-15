@@ -774,6 +774,50 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     }
 
     /**
+     * Add converter for specified package names
+     *
+     * @param converter             - Converter implementing interface {@link ExtensionConverter}
+     * @param supportedPackageNames - array list of package names supported by the {@link ExtensionConverter}
+     */
+    @EverythingIsNonNull
+    public void registerPackageConverter(ExtensionConverter<?> converter, String... supportedPackageNames) {
+        registerPackageRequestConverter(converter, supportedPackageNames);
+        registerPackageResponseConverter(converter, supportedPackageNames);
+    }
+
+    /**
+     * Add converter for specified package names
+     *
+     * @param converter         - Converter implementing interface {@link ExtensionConverter}
+     * @param supportedPackages - array list of packages supported by the {@link ExtensionConverter}
+     */
+    @EverythingIsNonNull
+    public void registerPackageConverter(ExtensionConverter<?> converter, Package... supportedPackages) {
+        Utils.parameterRequireNonNull(supportedPackages, "supportedPackages");
+        final String[] packageNames = Arrays.stream(supportedPackages)
+                .filter(Objects::nonNull)
+                .map(Package::getName)
+                .toArray(String[]::new);
+        registerPackageConverter(converter, packageNames);
+    }
+
+    /**
+     * Add converter for specified package names
+     *
+     * @param converter               - Converter implementing interface {@link ExtensionConverter}
+     * @param supportedPackageClasses - array list of class packages supported by the {@link ExtensionConverter}
+     */
+    @EverythingIsNonNull
+    public void registerPackageConverter(ExtensionConverter<?> converter, Class<?>... supportedPackageClasses) {
+        Utils.parameterRequireNonNull(supportedPackageClasses, "supportedPackageClasses");
+        final Package[] packages = Arrays.stream(supportedPackageClasses)
+                .filter(Objects::nonNull)
+                .map(Class::getPackage)
+                .toArray(Package[]::new);
+        registerPackageConverter(converter, packages);
+    }
+
+    /**
      * @return Map of request converters where key - package prefix, value - {@link ExtensionConverter}
      */
     @Nonnull

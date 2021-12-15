@@ -113,7 +113,7 @@ public class OkhttpUtils {
             final BufferedSource source = responseBody.source();
             source.request(Long.MAX_VALUE);
             Buffer buffer = source.getBuffer();
-            if ("gzip".equalsIgnoreCase(responseHeaders.get("Content-Encoding"))) {
+            if ("gzip" .equalsIgnoreCase(responseHeaders.get("Content-Encoding"))) {
                 try (GzipSource gzippedResponseBody = new GzipSource(buffer.clone())) {
                     buffer = new Buffer();
                     buffer.writeAll(gzippedResponseBody);
@@ -216,7 +216,7 @@ public class OkhttpUtils {
         }
     }
 
-    /**§
+    /**
      * @param headers - okhttp headers multimap
      * @return true if 'Content-Encoding' header is present and has no 'identity' or 'gzip' value
      */

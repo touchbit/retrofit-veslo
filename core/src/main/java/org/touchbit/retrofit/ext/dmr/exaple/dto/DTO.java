@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package org.touchbit.retrofit.ext.dmr.asserter;
+package org.touchbit.retrofit.ext.dmr.exaple.dto;
 
-import okhttp3.Headers;
+public interface DTO {
 
-/**
- * Interface for Generic typification
- * <p>
- *
- * @author Oleg Shaburov (shaburov.o.a@gmail.com)
- * Created: 11.12.2021
- */
-public interface IHeadersAsserter extends SoftlyAsserter {
+    String getMsg();
 
-    Headers getHeaders();
+    void setMsg(String msg);
 
 }

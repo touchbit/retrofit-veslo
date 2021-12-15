@@ -21,7 +21,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.client.JacksonDualConverterFactoryClient;
-import org.touchbit.retrofit.ext.dmr.client.MockInterceptor;
+import org.touchbit.retrofit.ext.dmr.client.LoggedMockInterceptor;
 import org.touchbit.retrofit.ext.dmr.client.adapter.DualResponseCallAdapterFactory;
 import org.touchbit.retrofit.ext.dmr.client.jackson.ErrDTO;
 import org.touchbit.retrofit.ext.dmr.client.jackson.SucDTO;
@@ -54,7 +54,7 @@ public class JacksonDualConverterFactoryClientFuncTests extends BaseUnitTest {
     private static final JacksonDualConverterFactoryClient CLIENT = DualResponseRetrofitClientUtils
             .create(JacksonDualConverterFactoryClient.class,
                     "http://localhost",
-                    new MockInterceptor(),
+                    new LoggedMockInterceptor(),
                     new DualResponseCallAdapterFactory(),
                     new JacksonDualConverterFactory());
 

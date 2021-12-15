@@ -17,9 +17,8 @@
 package org.touchbit.retrofit.ext.dmr.client.response;
 
 import okhttp3.Headers;
-import okhttp3.MediaType;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
+import org.touchbit.retrofit.ext.dmr.util.OkhttpUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -71,16 +70,7 @@ public interface IDualResponse<SUC_DTO, ERR_DTO> {
      * @return okhttp3 response headers
      */
     default Headers getHeaders() {
-        Headers headers = getResponse().headers();
-        ResponseBody body = getResponse().body();
-        // TODO util method getHeaders(Response)
-        if (body != null) {
-            MediaType mediaType = body.contentType();
-            if (mediaType != null) {
-                return headers.newBuilder().add("Content-Type", mediaType.toString()).build();
-            }
-        }
-        return headers;
+        return OkhttpUtils.getResponseHeaders(getResponse());
     }
 
     /**

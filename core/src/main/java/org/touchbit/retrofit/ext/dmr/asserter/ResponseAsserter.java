@@ -39,9 +39,9 @@ import static org.touchbit.retrofit.ext.dmr.exaple.ExampleApiClientAssertions.*;
  * Created: 12.12.2021
  * <p>
  * Examples
- * @see AssertResponseMethodTests#example1639328754881()
- * @see AssertResponseMethodTests#example1639329013867()
- * @see AssertResponseMethodTests#example1639437048937()
+ * @see AssertResponseMethodExamples#example1639328754881()
+ * @see AssertResponseMethodExamples#example1639329013867()
+ * @see AssertResponseMethodExamples#example1639437048937()
  */
 @SuppressWarnings("UnusedReturnValue")
 public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> implements IResponseAsserter {

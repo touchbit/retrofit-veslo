@@ -37,7 +37,7 @@ public class DualResponse<SUC_DTO, ERR_DTO>
 
     @Override
     public HeadersAsserter getHeadersAsserter() {
-        return new HeadersAsserter(getResponse().headers());
+        return new HeadersAsserter(this);
     }
 
     @Override

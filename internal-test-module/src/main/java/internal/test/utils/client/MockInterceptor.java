@@ -18,6 +18,8 @@ package internal.test.utils.client;
 
 import okhttp3.*;
 import okio.Buffer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -28,11 +30,13 @@ public class MockInterceptor implements Interceptor {
     public static final Integer OK = 200;
     public static final Integer NO_CONTENT = 204;
     public static final Integer ERR = 500;
+    protected final Logger logger = LoggerFactory.getLogger(MockInterceptor.class);
 
     @Override
     @SuppressWarnings("NullableProblems")
-    public Response intercept(Chain chain) {
+    public Response intercept(Chain chain) throws IOException {
         final Request request = chain.request();
+        logRequest(request);
         final HttpUrl url = request.url();
         final MediaType mediaType;
         if (request.body() != null) {
@@ -63,7 +67,8 @@ public class MockInterceptor implements Interceptor {
             responseBody = ResponseBody.create(mediaType, body);
             headers = request.headers().newBuilder().set("Content-Length", "" + body.length()).build();
         }
-        return new Response.Builder()
+
+        final Response response = new Response.Builder()
                 .request(request)
                 .protocol(HTTP_1_1)
                 .headers(headers)
@@ -71,6 +76,16 @@ public class MockInterceptor implements Interceptor {
                 .code(Integer.parseInt(code != null ? code : "200"))
                 .body(responseBody)
                 .build();
+        logResponse(response);
+        return response;
+    }
+
+    public void logRequest(Request request) throws IOException {
+
+    }
+
+    public void logResponse(Response response) throws IOException {
+
     }
 
 }

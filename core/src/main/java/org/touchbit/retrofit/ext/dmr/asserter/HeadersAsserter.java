@@ -17,6 +17,7 @@
 package org.touchbit.retrofit.ext.dmr.asserter;
 
 import okhttp3.Headers;
+import org.touchbit.retrofit.ext.dmr.client.response.DualResponse;
 import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nonnull;
@@ -52,6 +53,10 @@ public class HeadersAsserter implements IHeadersAsserter {
 
     private final List<Throwable> errors = new ArrayList<>();
     private final Headers headers;
+
+    public <ERR_DTO, SUC_DTO> HeadersAsserter(DualResponse<?, ?> response) {
+        this(response.getHeaders());
+    }
 
     public HeadersAsserter(final @Nonnull Headers headers) {
         this.headers = headers;
@@ -257,6 +262,11 @@ public class HeadersAsserter implements IHeadersAsserter {
         return new AssertionError(reason + "\n" +
                 "Expected: " + condition + (expected == null ? "" : " '" + expected + "'") + "\n" +
                 "  Actual: " + actual);
+    }
+
+    @Override
+    public Headers getHeaders() {
+        return headers;
     }
 
 }

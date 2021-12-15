@@ -16,60 +16,26 @@
 
 package org.touchbit.retrofit.ext.dmr.exaple;
 
-import org.touchbit.retrofit.ext.dmr.asserter.SoftlyAsserter;
 import org.touchbit.retrofit.ext.dmr.client.response.DualResponse;
+import org.touchbit.retrofit.ext.dmr.exaple.dto.ErrDTO;
+import org.touchbit.retrofit.ext.dmr.exaple.dto.SucDTO;
 import retrofit2.http.Body;
-
-import static org.touchbit.retrofit.ext.dmr.asserter.AssertionMatcher.*;
+import retrofit2.http.Headers;
+import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 public interface ExampleClient {
 
-    DualResponse<SucDTO, ErrDTO> exampleApiCall(@Body Object body);
+    @POST("/api/mock/example")
+    @Headers({"Content-Type: application/json", "X-Request-Id: random", "Access-Control-Allow-Origin: *"})
+    DualResponse<SucDTO, ErrDTO> exampleApiCall(@Query("status") int status, @Body Object body);
 
-    class ErrDTO {
-
-        public Integer code;
-
-        public ErrDTO(Integer code) {
-            this.code = code;
-        }
-
-        public void assertDTO(ErrDTO expected) {
-            try (final SoftlyAsserter asserter = SoftlyAsserter.get()) {
-                asserter.softly(() -> is("ErrDTO.code", this.code, expected.code));
-            }
-        }
-
-        public void assertConsistency() {
-            try (final SoftlyAsserter asserter = SoftlyAsserter.get()) {
-                asserter.softly(() -> isNotNull("SucDTO.code", this.code));
-                asserter.softly(() -> inRange("SucDTO.code range", this.code, 0, 1000));
-            }
-        }
-
+    default DualResponse<SucDTO, ErrDTO> exampleSucCall(Object body) {
+        return exampleApiCall(200, body);
     }
 
-    class SucDTO {
-
-        public String msg;
-
-        public SucDTO(String msg) {
-            this.msg = msg;
-        }
-
-        public void assertDTO(SucDTO expected) {
-            try (final SoftlyAsserter asserter = SoftlyAsserter.get()) {
-                asserter.softly(() -> is("SucDTO.message", this.msg, expected.msg));
-            }
-        }
-
-        public void assertConsistency() {
-            try (final SoftlyAsserter asserter = SoftlyAsserter.get()) {
-                asserter.softly(() -> isNotNull("SucDTO.message", this.msg));
-                asserter.softly(() -> inRange("SucDTO.message length", this.msg.length(), 1, 255));
-            }
-        }
-
+    default DualResponse<SucDTO, ErrDTO> exampleErrCall(Object body) {
+        return exampleApiCall(500, body);
     }
 
 }

@@ -25,6 +25,8 @@ import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.BaseCoreUnitTest;
 import org.touchbit.retrofit.ext.dmr.client.response.DualResponse;
 import org.touchbit.retrofit.ext.dmr.client.response.IDualResponse;
+import org.touchbit.retrofit.ext.dmr.exaple.dto.ErrDTO;
+import org.touchbit.retrofit.ext.dmr.exaple.dto.SucDTO;
 import org.touchbit.retrofit.ext.dmr.util.TripleConsumer;
 
 import java.util.function.BiConsumer;
@@ -34,8 +36,6 @@ import static internal.test.utils.TestUtils.array;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.mock;
-import static org.touchbit.retrofit.ext.dmr.asserter.AssertionMatcher.inRange;
-import static org.touchbit.retrofit.ext.dmr.asserter.AssertionMatcher.isNotNull;
 
 @SuppressWarnings({"unchecked", "rawtypes", "ConstantConditions"})
 @DisplayName("ResponseAsserter.class unit tests")
@@ -865,52 +865,6 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
 
     }
 
-    public static class ErrDTO {
-
-        public String msg;
-
-        public ErrDTO(String msg) {
-            this.msg = msg;
-        }
-
-        public void assertConsistency() {
-            try (final SoftlyAsserter asserter = SoftlyAsserter.get()) {
-                asserter.softly(() -> isNotNull("SucDTO.message", this.msg));
-                asserter.softly(() -> inRange("SucDTO.message length", this.msg.length(), 1, 255));
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "ErrDTO{" +
-                    "msg='" + msg + '\'' +
-                    '}';
-        }
-    }
-
-    public static class SucDTO {
-
-        public String msg;
-
-        public SucDTO(String msg) {
-            this.msg = msg;
-        }
-
-        public void assertConsistency() {
-            try (final SoftlyAsserter asserter = SoftlyAsserter.get()) {
-                asserter.softly(() -> isNotNull("SucDTO.message", this.msg));
-                asserter.softly(() -> inRange("SucDTO.message length", this.msg.length(), 1, 255));
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "SucDTO{" +
-                    "msg='" + msg + '\'' +
-                    '}';
-        }
-    }
-
     public static ResponseAsserter<SucDTO, ?, ?> getSucResponseAsserter(int status, SucDTO dto) {
         return getSucResponseAsserter(status, dto, EMPTY_HEADER_ASSERTER);
     }
@@ -943,19 +897,6 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
                 .softly(() -> AssertionMatcher.is("DTO.message", actual.msg, expected.msg));
     }
 
-    public static void assertSucResponse(ResponseAsserter<SucDTO, ErrDTO, HeadersAsserter> asserter, SucDTO expected) {
-        asserter.assertHttpStatusCodeIs(200)
-                .assertHttpStatusMessageIs("OK")
-                .assertHeaders(headersAsserter -> headersAsserter
-                        .contentTypeIs("application/json")
-                        .assertHeaderIsPresent("X-Request-Id")
-                        .accessControlAllowOriginIs("*"))
-                .assertSucBody(actual -> {
-                    actual.assertConsistency();
-                    AssertionMatcher.is("DTO.message", actual.msg, expected.msg);
-                });
-    }
-
     public static void assertErrDTO(ErrDTO actual, ErrDTO expected) {
         try (final SoftlyAsserter asserter = SoftlyAsserter.get()) {
             asserter.softly(actual::assertConsistency)
@@ -966,26 +907,6 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
     public static void assertSoftlyErrDTO(SoftlyAsserter asserter, ErrDTO actual, ErrDTO expected) {
         asserter.softly(actual::assertConsistency)
                 .softly(() -> AssertionMatcher.is("DTO.message", actual.msg, expected.msg));
-    }
-
-    public static void assertErrResponse(ResponseAsserter<SucDTO, ErrDTO, HeadersAsserter> asserter, ErrDTO expected) {
-        asserter.assertHttpStatusCodeIs(200)
-                .assertHttpStatusMessageIs("OK")
-                .assertHeaders(headersAsserter -> headersAsserter
-                        .contentTypeIs("application/json")
-                        .assertHeaderIsPresent("X-Request-Id")
-                        .accessControlAllowOriginIs("*"))
-                .assertErrBody(actual -> {
-                    actual.assertConsistency();
-                    AssertionMatcher.is("DTO.message", actual.msg, expected.msg);
-                });
-    }
-
-    public static void assertHeaders(HeadersAsserter asserter) {
-        asserter.contentTypeIs("application/json")
-                .assertHeaderIsPresent("X-Request-Id")
-                .assertHeaderIs("Custom-Header", "example value")
-                .accessControlAllowOriginIs("*");
     }
 
 }

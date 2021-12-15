@@ -22,7 +22,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.client.JavaTypeAdapterFactoryClient;
-import org.touchbit.retrofit.ext.dmr.client.MockInterceptor;
+import org.touchbit.retrofit.ext.dmr.client.LoggedMockInterceptor;
 import org.touchbit.retrofit.ext.dmr.client.adapter.JavaTypeCallAdapterFactory;
 import org.touchbit.retrofit.ext.dmr.client.converter.ExtensionConverterFactory;
 import org.touchbit.retrofit.ext.dmr.client.model.RawBody;
@@ -51,7 +51,7 @@ public class JavaTypeCallAdapterFactoryFuncTests extends BaseUnitTest {
     private static final JavaTypeAdapterFactoryClient CLIENT = DualResponseRetrofitClientUtils
             .create(JavaTypeAdapterFactoryClient.class,
                     "http://localhost",
-                    new MockInterceptor(),
+                    new LoggedMockInterceptor(),
                     new JavaTypeCallAdapterFactory(),
                     new ExtensionConverterFactory());
 
