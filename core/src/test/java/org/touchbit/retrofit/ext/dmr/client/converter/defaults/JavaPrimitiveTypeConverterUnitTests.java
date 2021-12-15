@@ -38,8 +38,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
     private static final String REPLACE = "REPLACE";
     private static final String UNSUPPORTED_TYPE_MSG = "Unsupported type for converter " +
             "org.touchbit.retrofit.ext.dmr.client.converter.defaults.JavaPrimitiveTypeConverter\n" +
-            "Received: " + REPLACE + "\n" +
-            "Expected: char or boolean or byte or int or double or float or long or short\n";
+            "Received: " + REPLACE + "\n";
 
     private static ResponseBodyConverter<?> getResponseConverter(Class dtoClass) {
         return CONVERTER.responseBodyConverter(dtoClass, AA, RTF);
@@ -278,7 +277,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(OBJ_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Object"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Object"));
             }
 
             @Test
@@ -287,7 +286,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(SET_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.util.Set"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.util.Set"));
             }
 
             @Test
@@ -296,7 +295,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(LIST_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.util.List"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.util.List"));
             }
 
             @Test
@@ -305,7 +304,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(MAP_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.util.Map"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.util.Map"));
             }
 
             @Test
@@ -314,7 +313,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(STRING_ARRAY_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.String[]"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.String[]"));
             }
 
             @Test
@@ -323,7 +322,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(BOOLEAN_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Boolean"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Boolean"));
             }
 
             @Test
@@ -332,7 +331,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(BYTE_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Byte"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Byte"));
             }
 
             @Test
@@ -341,7 +340,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(CHARACTER_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Character"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Character"));
             }
 
             @Test
@@ -350,7 +349,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(DOUBLE_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Double"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Double"));
             }
 
             @Test
@@ -359,7 +358,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(FLOAT_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Float"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Float"));
             }
 
             @Test
@@ -368,7 +367,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(INTEGER_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Integer"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Integer"));
             }
 
             @Test
@@ -377,7 +376,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(LONG_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Long"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Long"));
             }
 
             @Test
@@ -386,7 +385,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(SHORT_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Short"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Short"));
             }
 
             @Test
@@ -395,7 +394,7 @@ public class JavaPrimitiveTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(STRING_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.String"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.String"));
             }
 
         }

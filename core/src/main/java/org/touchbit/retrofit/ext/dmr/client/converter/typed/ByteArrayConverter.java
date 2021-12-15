@@ -20,7 +20,6 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
-import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.util.ConvertUtils;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Retrofit;
@@ -30,7 +29,6 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.function.Supplier;
 
 public class ByteArrayConverter implements ExtensionConverter<Byte[]> {
 
@@ -48,17 +46,15 @@ public class ByteArrayConverter implements ExtensionConverter<Byte[]> {
             @EverythingIsNonNull
             public RequestBody convert(Object body) {
                 Utils.parameterRequireNonNull(body, "body");
-                if (body instanceof Byte[] || body instanceof byte[]) {
-                    final byte[] bytes;
-                    if (body instanceof Byte[]) {
-                        bytes = Utils.toPrimitiveByteArray((Byte[]) body);
-                    } else {
-                        bytes = (byte[]) body;
-                    }
-                    final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
-                    return RequestBody.create(mediaType, bytes);
+                assertSupportedBodyType(INSTANCE, type, Byte[].class, byte[].class);
+                final byte[] bytes;
+                if (body instanceof Byte[]) {
+                    bytes = Utils.toPrimitiveByteArray((Byte[]) body);
+                } else {
+                    bytes = (byte[]) body;
                 }
-                throw new ConverterUnsupportedTypeException(ByteArrayConverter.class, body.getClass(), Byte[].class);
+                final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
+                return RequestBody.create(mediaType, bytes);
             }
 
         };
@@ -77,18 +73,12 @@ public class ByteArrayConverter implements ExtensionConverter<Byte[]> {
                 if (body == null) {
                     return null;
                 }
+                assertSupportedBodyType(INSTANCE, type, Byte[].class, byte[].class);
                 return Utils.toObjectByteArray(body.bytes());
             }
 
         };
 
-    }
-
-    public static <R> R doIfNotNull(Object conditionObject, Supplier<R> conditionSupplier) {
-        if (conditionObject != null) {
-            return conditionSupplier.get();
-        }
-        return null;
     }
 
 }

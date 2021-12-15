@@ -56,6 +56,8 @@ public abstract class BaseUnitTest {
     protected static final Class<Boolean> BOOLEAN_C = Boolean.class;
     protected static final Type BOOLEAN_T = BOOLEAN_C;
     protected static final Class<Byte> BYTE_C = Byte.class;
+    protected static final Class<Byte[]> BYTE_ARRAY_C = Byte[].class;
+    protected static final Type BYTE_ARRAY_T = BYTE_ARRAY_C;
     protected static final Type BYTE_T = BYTE_C;
     protected static final Class<Integer> INTEGER_C = Integer.class;
     protected static final Type INTEGER_T = INTEGER_C;
@@ -85,6 +87,7 @@ public abstract class BaseUnitTest {
     protected static final Type PRIMITIVE_SHORT_T = PRIMITIVE_SHORT_C;
     protected static final Type STRING_ARRAY_T = String[].class;
     protected static final Class<String[]> STRING_ARRAY_C = String[].class;
+    protected static final Class<File> FILE_C = File.class;
     protected static final Type STRING_SET_T = getGenericReturnTypeForMethod(BaseGenericTypes.class, "stringSetType");
     protected static final Class<Set> SET_C = Set.class;
     protected static final Type STRING_LIST_T = getGenericReturnTypeForMethod(BaseGenericTypes.class, "stringListType");

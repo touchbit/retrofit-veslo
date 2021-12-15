@@ -22,20 +22,20 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.touchbit.retrofit.ext.dmr.BaseCoreUnitTest;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
 
 import java.io.IOException;
 
-import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static internal.test.utils.TestUtils.array;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("ConstantConditions")
 @DisplayName("ByteArrayConverter tests")
-public class ByteArrayConverterUnitTests {
+public class ByteArrayConverterUnitTests extends BaseCoreUnitTest {
 
     @Test
     @DisplayName("Successful conversion Byte[]->RequestBody if body instanceof Byte.class")
@@ -43,7 +43,7 @@ public class ByteArrayConverterUnitTests {
         final String expected = "test1637463917948";
         final Byte[] body = Utils.toObjectByteArray(expected);
         final RequestBody requestBody = new ByteArrayConverter()
-                .requestBodyConverter(null, null, null, null)
+                .requestBodyConverter(BYTE_ARRAY_C, array(), array(), RTF)
                 .convert(body);
         assertThat("RequestBody", requestBody, notNullValue());
         final String actual = OkHttpTestUtils.requestBodyToString(requestBody);
@@ -54,7 +54,7 @@ public class ByteArrayConverterUnitTests {
     @DisplayName("Error converting Byte[]->RequestBody if body == null")
     public void test1639065951065() {
         final ThrowableRunnable runnable = () -> new ByteArrayConverter()
-                .requestBodyConverter(null, null, null, null)
+                .requestBodyConverter(OBJ_T, array(), array(), RTF)
                 .convert(null);
         assertThrow(runnable).assertNPE("body");
     }
@@ -63,7 +63,7 @@ public class ByteArrayConverterUnitTests {
     @DisplayName("Error converting Object->RequestBody")
     public void test1639065951074() {
         final ThrowableRunnable runnable = () -> new ByteArrayConverter()
-                .requestBodyConverter(null, null, null, null)
+                .requestBodyConverter(OBJ_T, array(), array(), RTF)
                 .convert(new Object());
         assertThrow(runnable).assertClass(ConverterUnsupportedTypeException.class);
     }
@@ -72,10 +72,10 @@ public class ByteArrayConverterUnitTests {
     @DisplayName("Successful conversion ResponseBody->Byte[] if content length == 0 then return empty byte array")
     public void test1639065951083() throws Exception {
         final ResponseBody responseBody = mock(ResponseBody.class);
-        when(responseBody.bytes()).thenReturn("".getBytes());
+        when(responseBody.bytes()).thenReturn("" .getBytes());
         when(responseBody.contentLength()).thenReturn(0L);
         final Byte[] result = new ByteArrayConverter()
-                .responseBodyConverter(null, null, null)
+                .responseBodyConverter(BYTE_ARRAY_C, array(), RTF)
                 .convert(responseBody);
         assertThat("Body", result, is(new Byte[]{}));
     }
@@ -89,7 +89,7 @@ public class ByteArrayConverterUnitTests {
         when(responseBody.bytes()).thenReturn(expected.getBytes());
         when(responseBody.contentLength()).thenReturn(Long.valueOf(expected.length()));
         final Byte[] result = new ByteArrayConverter()
-                .responseBodyConverter(null, null, null)
+                .responseBodyConverter(BYTE_ARRAY_C, array(), RTF)
                 .convert(responseBody);
         assertThat("Body", result, is(body));
     }
@@ -98,7 +98,7 @@ public class ByteArrayConverterUnitTests {
     @DisplayName("Successful conversion ResponseBody->Byte[] if body == null then return null")
     public void test1639065951109() throws IOException {
         final Byte[] body = new ByteArrayConverter()
-                .responseBodyConverter(null, null, null)
+                .responseBodyConverter(BYTE_ARRAY_C, array(), RTF)
                 .convert(null);
         assertThat("Body", body, nullValue());
     }

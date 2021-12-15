@@ -39,10 +39,7 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
     private static final String REPLACE = "REPLACE";
     private static final String UNSUPPORTED_TYPE_MSG = "Unsupported type for converter " +
             "org.touchbit.retrofit.ext.dmr.client.converter.defaults.JavaReferenceTypeConverter\n" +
-            "Received: " + REPLACE + "\n" +
-            "Expected: java.lang.String or java.lang.Character or java.lang.Boolean or " +
-            "java.lang.Byte or java.lang.Integer or java.lang.Double or " +
-            "java.lang.Float or java.lang.Long or java.lang.Short\n";
+            "Received: " + REPLACE + "\n";
 
     private static ResponseBodyConverter<?> getResponseConverter(Class dtoClass) {
         return CONVERTER.responseBodyConverter(dtoClass, AA, RTF);
@@ -359,7 +356,7 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(OBJ_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Object"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.Object"));
             }
 
             @Test
@@ -368,7 +365,7 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(SET_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.util.Set"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.util.Set"));
             }
 
             @Test
@@ -377,7 +374,7 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(LIST_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.util.List"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.util.List"));
             }
 
             @Test
@@ -386,7 +383,7 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(MAP_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.util.Map"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.util.Map"));
             }
 
             @Test
@@ -395,7 +392,7 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(STRING_ARRAY_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.String[]"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "java.lang.String[]"));
             }
 
             @Test
@@ -404,7 +401,7 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(PRIMITIVE_BOOLEAN_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "boolean"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "boolean"));
             }
 
             @Test
@@ -413,7 +410,7 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(PRIMITIVE_BYTE_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "byte"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "byte"));
             }
 
             @Test
@@ -422,7 +419,7 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(PRIMITIVE_CHARACTER_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "char"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "char"));
             }
 
             @Test
@@ -431,7 +428,7 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(PRIMITIVE_DOUBLE_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "double"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "double"));
             }
 
             @Test
@@ -440,7 +437,7 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(PRIMITIVE_FLOAT_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "float"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "float"));
             }
 
             @Test
@@ -449,7 +446,7 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(PRIMITIVE_INTEGER_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "int"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "int"));
             }
 
             @Test
@@ -458,7 +455,7 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(PRIMITIVE_LONG_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "long"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "long"));
             }
 
             @Test
@@ -467,7 +464,7 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
                 final ResponseBody responseBody = ResponseBody.create(null, "foobar");
                 assertThrow(() -> getResponseConverter(PRIMITIVE_SHORT_C).convert(responseBody))
                         .assertClass(ConverterUnsupportedTypeException.class)
-                        .assertMessageIs(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "short"));
+                        .assertMessageContains(UNSUPPORTED_TYPE_MSG.replace(REPLACE, "short"));
             }
 
         }
