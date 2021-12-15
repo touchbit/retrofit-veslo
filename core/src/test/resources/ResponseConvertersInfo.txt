@@ -1,14 +1,11 @@
 SUPPORTED RESPONSE CONVERTERS:
 Annotated converters: <absent>
 Raw converters:
-org.touchbit.retrofit.ext.dmr.client.converter.typed.ByteArrayConverter
+org.touchbit.retrofit.ext.dmr.client.converter.defaults.RawBodyTypeConverter
     byte[]
-    java.lang.Byte[]
-org.touchbit.retrofit.ext.dmr.client.converter.typed.FileConverter
     java.io.File
-org.touchbit.retrofit.ext.dmr.client.converter.typed.RawBodyConverter
+    java.lang.Byte[]
     org.touchbit.retrofit.ext.dmr.client.model.RawBody
-org.touchbit.retrofit.ext.dmr.client.converter.typed.ResourceFileConverter
     org.touchbit.retrofit.ext.dmr.client.model.ResourceFile
 Package converters:
 org.touchbit.retrofit.ext.dmr.BaseCoreUnitTest$TestPackageConverter

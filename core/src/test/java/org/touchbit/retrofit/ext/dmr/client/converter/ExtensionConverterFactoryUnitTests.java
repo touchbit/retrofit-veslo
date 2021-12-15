@@ -33,10 +33,8 @@ import org.touchbit.retrofit.ext.dmr.client.converter.api.RequestConverter;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ResponseConverter;
 import org.touchbit.retrofit.ext.dmr.client.converter.defaults.JavaPrimitiveTypeConverter;
 import org.touchbit.retrofit.ext.dmr.client.converter.defaults.JavaReferenceTypeConverter;
-import org.touchbit.retrofit.ext.dmr.client.converter.typed.ByteArrayConverter;
-import org.touchbit.retrofit.ext.dmr.client.converter.typed.FileConverter;
+import org.touchbit.retrofit.ext.dmr.client.converter.defaults.RawBodyTypeConverter;
 import org.touchbit.retrofit.ext.dmr.client.converter.typed.RawBodyConverter;
-import org.touchbit.retrofit.ext.dmr.client.converter.typed.ResourceFileConverter;
 import org.touchbit.retrofit.ext.dmr.client.header.ContentType;
 import org.touchbit.retrofit.ext.dmr.client.model.RawBody;
 import org.touchbit.retrofit.ext.dmr.client.model.ResourceFile;
@@ -82,11 +80,11 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         final Map<Type, ExtensionConverter<?>> javaTypeRsp = factory.getJavaTypeResponseConverters();
         softlyAsserter(asserter -> asserter
                 .softly(() -> assertThat("Request raw converters size", rawRqt.size(), is(5)))
-                .softly(() -> assertThat("Request raw converter", rawRqt.get(RawBody.class), instanceOf(RawBodyConverter.class)))
-                .softly(() -> assertThat("Request raw converter", rawRqt.get(byte[].class), instanceOf(ByteArrayConverter.class)))
-                .softly(() -> assertThat("Request raw converter", rawRqt.get(Byte[].class), instanceOf(ByteArrayConverter.class)))
-                .softly(() -> assertThat("Request raw converter", rawRqt.get(File.class), instanceOf(FileConverter.class)))
-                .softly(() -> assertThat("Request raw converter", rawRqt.get(ResourceFile.class), instanceOf(ResourceFileConverter.class)))
+                .softly(() -> assertThat("Request raw converter", rawRqt.get(RawBody.class), instanceOf(RawBodyTypeConverter.class)))
+                .softly(() -> assertThat("Request raw converter", rawRqt.get(byte[].class), instanceOf(RawBodyTypeConverter.class)))
+                .softly(() -> assertThat("Request raw converter", rawRqt.get(Byte[].class), instanceOf(RawBodyTypeConverter.class)))
+                .softly(() -> assertThat("Request raw converter", rawRqt.get(File.class), instanceOf(RawBodyTypeConverter.class)))
+                .softly(() -> assertThat("Request raw converter", rawRqt.get(ResourceFile.class), instanceOf(RawBodyTypeConverter.class)))
                 .softly(() -> assertThat("Request mime converters size", mimeRqt.size(), is(0)))
                 .softly(() -> assertThat("Request java type converters size", javaTypeRqt.size(), is(17)))
                 .softly(() -> assertThat("Request java type converter", javaTypeRqt.get(Character.TYPE), instanceOf(JavaPrimitiveTypeConverter.class)))
@@ -107,11 +105,11 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
                 .softly(() -> assertThat("Request java type converter", javaTypeRqt.get(Long.class), instanceOf(JavaReferenceTypeConverter.class)))
                 .softly(() -> assertThat("Request java type converter", javaTypeRqt.get(Short.class), instanceOf(JavaReferenceTypeConverter.class)))
                 .softly(() -> assertThat("Response raw converters size", rawRsp.size(), is(5)))
-                .softly(() -> assertThat("Response raw converter", rawRsp.get(RawBody.class), instanceOf(RawBodyConverter.class)))
-                .softly(() -> assertThat("Response raw converter", rawRsp.get(byte[].class), instanceOf(ByteArrayConverter.class)))
-                .softly(() -> assertThat("Response raw converter", rawRsp.get(Byte[].class), instanceOf(ByteArrayConverter.class)))
-                .softly(() -> assertThat("Response raw converter", rawRsp.get(File.class), instanceOf(FileConverter.class)))
-                .softly(() -> assertThat("Response raw converter", rawRsp.get(ResourceFile.class), instanceOf(ResourceFileConverter.class)))
+                .softly(() -> assertThat("Response raw converter", rawRsp.get(RawBody.class), instanceOf(RawBodyTypeConverter.class)))
+                .softly(() -> assertThat("Response raw converter", rawRsp.get(byte[].class), instanceOf(RawBodyTypeConverter.class)))
+                .softly(() -> assertThat("Response raw converter", rawRsp.get(Byte[].class), instanceOf(RawBodyTypeConverter.class)))
+                .softly(() -> assertThat("Response raw converter", rawRsp.get(File.class), instanceOf(RawBodyTypeConverter.class)))
+                .softly(() -> assertThat("Response raw converter", rawRsp.get(ResourceFile.class), instanceOf(RawBodyTypeConverter.class)))
                 .softly(() -> assertThat("Response mime converters size", mimeRsp.size(), is(0)))
                 .softly(() -> assertThat("Response java type converters size", javaTypeRsp.size(), is(17)))
                 .softly(() -> assertThat("Response java type converter", javaTypeRsp.get(Character.TYPE), instanceOf(JavaPrimitiveTypeConverter.class)))
@@ -157,7 +155,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
     public void test1639065949029() throws IOException {
         RawBody expected = new RawBody("test1637429237836");
         final Object dto = new ExtensionConverterFactory()
-                .responseBodyConverter(RawBody.class, array(), null)
+                .responseBodyConverter(RawBody.class, array(), RTF)
                 .convert(ResponseBody.create(null, expected.string()));
         assertThat("ResponseBody", dto, is(expected));
     }
@@ -168,7 +166,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         final String body = "test1637429413684";
         Byte[] expected = Utils.toObjectByteArray(body.getBytes());
         final Object dto = new ExtensionConverterFactory()
-                .responseBodyConverter(Byte[].class, array(), null)
+                .responseBodyConverter(Byte[].class, array(), RTF)
                 .convert(ResponseBody.create(null, body));
         assertThat("ResponseBody", dto, is(expected));
     }
@@ -178,7 +176,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
     public void test1639065949050() throws Exception {
         final String body = "test1637429592556";
         final Object dto = new ExtensionConverterFactory()
-                .responseBodyConverter(File.class, array(), null)
+                .responseBodyConverter(File.class, array(), RTF)
                 .convert(ResponseBody.create(null, body));
         assertThat("ResponseBody", dto, instanceOf(File.class));
         File file = (File) dto;
@@ -251,7 +249,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         RawBody expected = new RawBody("test1637569961286");
         final ResponseConverter responseConverter = getResponseConverter(TestConverter.class, TestDTO.class);
         final Object dto = new ExtensionConverterFactory()
-                .responseBodyConverter(RawBody.class, new Annotation[]{responseConverter}, null)
+                .responseBodyConverter(RawBody.class, new Annotation[]{responseConverter}, RTF)
                 .convert(ResponseBody.create(null, expected.bytes()));
         assertThat("ResponseBody", dto, is(expected));
     }

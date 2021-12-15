@@ -28,10 +28,7 @@ import org.touchbit.retrofit.ext.dmr.client.converter.api.RequestConverter;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ResponseConverter;
 import org.touchbit.retrofit.ext.dmr.client.converter.defaults.JavaPrimitiveTypeConverter;
 import org.touchbit.retrofit.ext.dmr.client.converter.defaults.JavaReferenceTypeConverter;
-import org.touchbit.retrofit.ext.dmr.client.converter.typed.ByteArrayConverter;
-import org.touchbit.retrofit.ext.dmr.client.converter.typed.FileConverter;
-import org.touchbit.retrofit.ext.dmr.client.converter.typed.RawBodyConverter;
-import org.touchbit.retrofit.ext.dmr.client.converter.typed.ResourceFileConverter;
+import org.touchbit.retrofit.ext.dmr.client.converter.defaults.RawBodyTypeConverter;
 import org.touchbit.retrofit.ext.dmr.client.header.ContentType;
 import org.touchbit.retrofit.ext.dmr.client.model.RawBody;
 import org.touchbit.retrofit.ext.dmr.client.model.ResourceFile;
@@ -91,27 +88,14 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     public ExtensionConverterFactory(Logger logger) {
         Utils.parameterRequireNonNull(logger, "logger");
         this.logger = logger;
-        // raw request converters
-        registerRawRequestConverter(RawBodyConverter.INSTANCE, RawBody.class);
-        registerRawRequestConverter(ByteArrayConverter.INSTANCE, Byte[].class, byte[].class);
-        registerRawRequestConverter(FileConverter.INSTANCE, File.class);
-        registerRawRequestConverter(ResourceFileConverter.INSTANCE, ResourceFile.class);
-        // raw response converters
-        registerRawResponseConverter(RawBodyConverter.INSTANCE, RawBody.class);
-        registerRawResponseConverter(ByteArrayConverter.INSTANCE, Byte[].class, byte[].class);
-        registerRawResponseConverter(FileConverter.INSTANCE, File.class);
-        registerRawResponseConverter(ResourceFileConverter.INSTANCE, ResourceFile.class);
-        // Java type primitive request converters
-        registerJavaTypeRequestConverter(JavaPrimitiveTypeConverter.INSTANCE, Character.TYPE, Boolean.TYPE, Byte.TYPE,
+        // Raw body converters
+        registerRawConverter(RawBodyTypeConverter.INSTANCE,
+                RawBody.class, Byte[].class, byte[].class, File.class, ResourceFile.class);
+        // Java type primitive converters
+        registerJavaTypeConverter(JavaPrimitiveTypeConverter.INSTANCE, Character.TYPE, Boolean.TYPE, Byte.TYPE,
                 Integer.TYPE, Double.TYPE, Float.TYPE, Long.TYPE, Short.TYPE);
-        // Java type primitive response converters
-        registerJavaTypeResponseConverter(JavaPrimitiveTypeConverter.INSTANCE, Character.TYPE, Boolean.TYPE, Byte.TYPE,
-                Integer.TYPE, Double.TYPE, Float.TYPE, Long.TYPE, Short.TYPE);
-        // Java type reference request converters
-        registerJavaTypeRequestConverter(JavaReferenceTypeConverter.INSTANCE, String.class, Character.class, Boolean.class,
-                Byte.class, Integer.class, Double.class, Float.class, Long.class, Short.class);
-        // Java type reference response converters
-        registerJavaTypeResponseConverter(JavaReferenceTypeConverter.INSTANCE, String.class, Character.class, Boolean.class,
+        // Java type reference converters
+        registerJavaTypeConverter(JavaReferenceTypeConverter.INSTANCE, String.class, Character.class, Boolean.class,
                 Byte.class, Integer.class, Double.class, Float.class, Long.class, Short.class);
     }
 
@@ -667,6 +651,18 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
             Utils.parameterRequireNonNull(supportedContentType, "supportedContentType");
             getMimeResponseConverters().put(supportedContentType, converter);
         }
+    }
+
+    /**
+     * Add converter for specified classes
+     *
+     * @param converter           - Converter implementing interface {@link ExtensionConverter}
+     * @param supportedRawClasses - array list of classes supported by the {@link ExtensionConverter}
+     */
+    @EverythingIsNonNull
+    public void registerRawConverter(ExtensionConverter<?> converter, Type... supportedRawClasses) {
+        registerRawRequestConverter(converter, supportedRawClasses);
+        registerRawResponseConverter(converter, supportedRawClasses);
     }
 
     /**

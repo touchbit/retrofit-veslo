@@ -84,7 +84,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         public void test1639065948789() throws IOException {
             final RawBody expected = new RawBody("test1637428451229");
             final RequestBody requestBody = new ExtensionConverterFactory()
-                    .requestBodyConverter(RawBody.class, array(), array(), null)
+                    .requestBodyConverter(RawBody.class, array(), array(), RTF)
                     .convert(expected);
             assertThat("RequestBody", requestBody, notNullValue());
             assertThat("RequestBody.toString()", OkHttpTestUtils.requestBodyToString(requestBody), is("test1637428451229"));
@@ -95,7 +95,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         public void test1639065948800() throws IOException {
             final Byte[] expected = Utils.toObjectByteArray("test1637428566604" .getBytes());
             final RequestBody requestBody = new ExtensionConverterFactory()
-                    .requestBodyConverter(RawBody.class, array(), array(), null)
+                    .requestBodyConverter(RawBody.class, array(), array(), RTF)
                     .convert(expected);
             assertThat("RequestBody", requestBody, notNullValue());
             assertThat("RequestBody.toString()", OkHttpTestUtils.requestBodyToString(requestBody), is("test1637428566604"));
@@ -106,7 +106,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         public void test1639065948811() throws IOException {
             final File file = new File("src/test/resources/test/data/test1637428660061.txt");
             final RequestBody requestBody = new ExtensionConverterFactory()
-                    .requestBodyConverter(RawBody.class, array(), array(), null)
+                    .requestBodyConverter(RawBody.class, array(), array(), RTF)
                     .convert(file);
             assertThat("RequestBody", requestBody, notNullValue());
             assertThat("RequestBody.toString()", OkHttpTestUtils.requestBodyToString(requestBody), is("test1637428660061"));
@@ -117,7 +117,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         public void test1639065948822() throws IOException {
             final ResourceFile file = new ResourceFile("test/data/test1637428785169.txt");
             final RequestBody requestBody = new ExtensionConverterFactory()
-                    .requestBodyConverter(RawBody.class, array(), array(), null)
+                    .requestBodyConverter(RawBody.class, array(), array(), RTF)
                     .convert(file);
             assertThat("RequestBody", requestBody, notNullValue());
             assertThat("RequestBody.toString()", OkHttpTestUtils.requestBodyToString(requestBody), is("test1637428785169"));
