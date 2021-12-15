@@ -98,7 +98,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
     /**
      * @param expCode           - expected HTTP status code
      * @param assertionConsumer - actual/expected successful DTO model assertion bi consumer (actual, expected)
-     * @param expected          - expected successful DTO model
+     * @param expectedSucDto    - expected successful DTO model
      * @return this
      * <p>
      * Examples:
@@ -107,9 +107,10 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      */
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertSucResponse(final int expCode,
                                                                     final BiConsumer<SUC_DTO, SUC_DTO> assertionConsumer,
-                                                                    final SUC_DTO expected) {
+                                                                    final SUC_DTO expectedSucDto) {
         Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
-        return assertHttpStatusCodeIs(expCode).assertSucBody(assertionConsumer, expected);
+        Utils.parameterRequireNonNull(expectedSucDto, "expectedSucDto");
+        return assertHttpStatusCodeIs(expCode).assertSucBody(assertionConsumer, expectedSucDto);
     }
 
     /**
@@ -130,7 +131,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
     /**
      * @param expCode           - expected HTTP status code
      * @param assertionConsumer - actual/expected successful DTO model assertion triple consumer (SoftlyAsserter, actual, expected)
-     * @param expected          - expected successful DTO model
+     * @param expectedSucDto    - expected successful DTO model
      * @return this
      * <p>
      * Examples:
@@ -138,9 +139,10 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      */
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertSucResponse(final int expCode,
                                                                     final TripleConsumer<SoftlyAsserter, SUC_DTO, SUC_DTO> assertionConsumer,
-                                                                    final SUC_DTO expected) {
+                                                                    final SUC_DTO expectedSucDto) {
         Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
-        return assertHttpStatusCodeIs(expCode).assertSucBody(assertionConsumer, expected);
+        Utils.parameterRequireNonNull(expectedSucDto, "expectedSucDto");
+        return assertHttpStatusCodeIs(expCode).assertSucBody(assertionConsumer, expectedSucDto);
     }
 
     /**
@@ -156,16 +158,15 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertSucBody(final Consumer<SUC_DTO> assertionConsumer) {
         Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
         final SUC_DTO actual = getResponse().getSucDTO();
-        if (actual == null) {
-            assertSucBodyNotNull().blame();
+        if (actual != null) {
+            softly(() -> assertionConsumer.accept(actual));
         }
-        softly(() -> assertionConsumer.accept(actual));
-        return this;
+        return assertSucBodyNotNull().blame();
     }
 
     /**
      * @param assertionConsumer - actual/expected successful DTO model assertion bi consumer (actual, expected)
-     * @param expected          - expected successful DTO model
+     * @param expectedSucDto    - expected successful DTO model
      * @return this
      * <p>
      * Examples:
@@ -173,14 +174,14 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * @see AssertSucBodyMethodExamples#example1639325563806()
      */
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertSucBody(final BiConsumer<SUC_DTO, SUC_DTO> assertionConsumer,
-                                                                final SUC_DTO expected) {
+                                                                final SUC_DTO expectedSucDto) {
         Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
+        Utils.parameterRequireNonNull(expectedSucDto, "expectedSucDto");
         final SUC_DTO actual = getResponse().getSucDTO();
-        if (actual == null) {
-            assertSucBodyNotNull().blame();
+        if (actual != null) {
+            softly(() -> assertionConsumer.accept(actual, expectedSucDto));
         }
-        softly(() -> assertionConsumer.accept(actual, expected));
-        return this;
+        return assertSucBodyNotNull().blame();
     }
 
     /**
@@ -194,11 +195,10 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertSucBody(final BiConsumer<SoftlyAsserter, SUC_DTO> assertionConsumer) {
         Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
         final SUC_DTO actual = getResponse().getSucDTO();
-        if (actual == null) {
-            assertSucBodyNotNull().blame();
+        if (actual != null) {
+            softly(() -> assertionConsumer.accept(this, actual));
         }
-        softly(() -> assertionConsumer.accept(this, actual));
-        return this;
+        return assertSucBodyNotNull().blame();
     }
 
     /**
@@ -209,14 +209,14 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * @see AssertSucBodyMethodExamples#example1639326893023()
      */
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertSucBody(final TripleConsumer<SoftlyAsserter, SUC_DTO, SUC_DTO> assertionConsumer,
-                                                                final SUC_DTO expected) {
+                                                                final SUC_DTO expectedSucDto) {
         Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
+        Utils.parameterRequireNonNull(expectedSucDto, "expectedSucDto");
         final SUC_DTO actual = getResponse().getSucDTO();
-        if (actual == null) {
-            assertSucBodyNotNull().blame();
+        if (actual != null) {
+            softly(() -> assertionConsumer.accept(this, actual, expectedSucDto));
         }
-        softly(() -> assertionConsumer.accept(this, actual, expected));
-        return this;
+        return assertSucBodyNotNull().blame();
     }
 
     /**
@@ -267,7 +267,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
     /**
      * @param expCode           - expected HTTP status code
      * @param assertionConsumer - actual/expected error DTO model assertion bi consumer (actual, expected)
-     * @param expected          - expected error DTO model
+     * @param expectedErrDto    - expected error DTO model
      * @return this
      * <p>
      * Examples:
@@ -276,9 +276,10 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      */
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertErrResponse(final int expCode,
                                                                     final BiConsumer<ERR_DTO, ERR_DTO> assertionConsumer,
-                                                                    final ERR_DTO expected) {
+                                                                    final ERR_DTO expectedErrDto) {
         Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
-        return assertHttpStatusCodeIs(expCode).assertErrBody(assertionConsumer, expected);
+        Utils.parameterRequireNonNull(expectedErrDto, "expectedErrDto");
+        return assertHttpStatusCodeIs(expCode).assertErrBody(assertionConsumer, expectedErrDto);
     }
 
     /**
@@ -299,7 +300,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
     /**
      * @param expCode           - expected HTTP status code
      * @param assertionConsumer - actual/expected error DTO model assertion triple consumer (SoftlyAsserter, actual, expected)
-     * @param expected          - expected error DTO model
+     * @param expectedErrDto    - expected error DTO model
      * @return this
      * <p>
      * Examples:
@@ -307,9 +308,10 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      */
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertErrResponse(final int expCode,
                                                                     final TripleConsumer<SoftlyAsserter, ERR_DTO, ERR_DTO> assertionConsumer,
-                                                                    final ERR_DTO expected) {
+                                                                    final ERR_DTO expectedErrDto) {
         Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
-        return assertHttpStatusCodeIs(expCode).assertErrBody(assertionConsumer, expected);
+        Utils.parameterRequireNonNull(expectedErrDto, "expectedErrDto");
+        return assertHttpStatusCodeIs(expCode).assertErrBody(assertionConsumer, expectedErrDto);
     }
 
     /**
@@ -325,16 +327,15 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertErrBody(final Consumer<ERR_DTO> assertionConsumer) {
         Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
         final ERR_DTO actual = getResponse().getErrDTO();
-        if (actual == null) {
-            assertErrBodyNotNull().blame();
+        if (actual != null) {
+            softly(() -> assertionConsumer.accept(actual));
         }
-        softly(() -> assertionConsumer.accept(actual));
-        return this;
+        return assertErrBodyNotNull().blame();
     }
 
     /**
      * @param assertionConsumer - actual/expected error DTO model assertion bi consumer (actual, expected)
-     * @param expected          - expected error DTO model
+     * @param expectedErrDto    - expected error DTO model
      * @return this
      * <p>
      * Examples:
@@ -342,14 +343,14 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * @see AssertErrBodyMethodExamples#example1639437376687()
      */
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertErrBody(final BiConsumer<ERR_DTO, ERR_DTO> assertionConsumer,
-                                                                final ERR_DTO expected) {
+                                                                final ERR_DTO expectedErrDto) {
         Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
+        Utils.parameterRequireNonNull(expectedErrDto, "expectedErrDto");
         final ERR_DTO actual = getResponse().getErrDTO();
-        if (actual == null) {
-            assertErrBodyNotNull().blame();
+        if (actual != null) {
+            softly(() -> assertionConsumer.accept(actual, expectedErrDto));
         }
-        softly(() -> assertionConsumer.accept(actual, expected));
-        return this;
+        return assertErrBodyNotNull().blame();
     }
 
     /**
@@ -363,36 +364,36 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertErrBody(final BiConsumer<SoftlyAsserter, ERR_DTO> assertionConsumer) {
         Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
         final ERR_DTO actual = getResponse().getErrDTO();
-        if (actual == null) {
-            assertSucBodyNotNull().blame();
+        if (actual != null) {
+            softly(() -> assertionConsumer.accept(this, actual));
         }
-        softly(() -> assertionConsumer.accept(this, actual));
-        return this;
+        return assertErrBodyNotNull().blame();
     }
 
     /**
      * @param assertionConsumer - actual/expected error DTO model assertion triple consumer (SoftlyAsserter, actual, expected)
+     * @param expectedErrDto    - expected error DTO model
      * @return this
      * <p>
      * Examples:
      * @see AssertErrBodyMethodExamples#example1639437397547()
      */
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertErrBody(final TripleConsumer<SoftlyAsserter, ERR_DTO, ERR_DTO> assertionConsumer,
-                                                                final ERR_DTO expected) {
+                                                                final ERR_DTO expectedErrDto) {
         Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
+        Utils.parameterRequireNonNull(expectedErrDto, "expectedErrDto");
         final ERR_DTO actual = getResponse().getErrDTO();
-        if (actual == null) {
-            assertSucBodyNotNull().blame();
+        if (actual != null) {
+            softly(() -> assertionConsumer.accept(this, actual, expectedErrDto));
         }
-        softly(() -> assertionConsumer.accept(this, actual, expected));
-        return this;
+        return assertErrBodyNotNull().blame();
     }
 
     /**
      * @return this
      * @throws AssertionError if HTTP status code not in range 300...599
      */
-    public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertIsErrResponse() {
+    public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertIsErrHttpStatusCode() {
         final int code = getResponse().getHttpStatusCode();
         softly(() -> AssertionMatcher.inRange("Error HTTP status code", code, 300, 599));
         return this;

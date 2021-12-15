@@ -39,13 +39,21 @@ public class OkHttpTestUtils {
     }
 
     public static Response getResponse(String body) {
+        return getResponse(body, 200);
+    }
+
+    public static Response getResponse(int status) {
+        return getResponse("body", status);
+    }
+
+    public static Response getResponse(String body, int status) {
         return new Response.Builder()
                 .request(getRequest())
                 .headers(Headers.of("Content-Type", "text/plain", "X-Request-ID", "generated"))
                 .body(ResponseBody.create(null, body))
                 .protocol(Protocol.HTTP_1_1)
                 .message("TEST")
-                .code(200)
+                .code(status)
                 .build();
     }
 
