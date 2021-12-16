@@ -16,12 +16,11 @@
 
 package org.touchbit.retrofit.ext.dmr.client.converter.typed;
 
-import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
-import org.touchbit.retrofit.ext.dmr.util.ConvertUtils;
+import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
@@ -51,12 +50,14 @@ public class StringConverter implements ExtensionConverter<String> {
                                                      final Annotation[] parameterAnnotations,
                                                      final Annotation[] methodAnnotations,
                                                      final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(parameterAnnotations, "parameterAnnotations");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new RequestBodyConverter() {
 
             /**
-             * Converts {@link String} to {@link RequestBody}
-             *
-             * @param body -
+             * @param body - {@link String} body
              * @return HTTP {@link RequestBody} or null if {@link ExtensionConverter#NULL_BODY_VALUE} present
              */
             @Override
@@ -64,8 +65,7 @@ public class StringConverter implements ExtensionConverter<String> {
             public RequestBody convert(@Nonnull Object body) {
                 assertSupportedBodyType(INSTANCE, body, String.class);
                 if (!isForceNullBodyValue(body)) {
-                    final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
-                    return RequestBody.create(mediaType, body.toString());
+                    return createRequestBody(methodAnnotations, body.toString());
                 }
                 return null;
             }
@@ -82,11 +82,14 @@ public class StringConverter implements ExtensionConverter<String> {
     public ResponseBodyConverter<String> responseBodyConverter(final Type type,
                                                                final Annotation[] methodAnnotations,
                                                                final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new ResponseBodyConverter<String>() {
 
             /**
              * @param responseBody - HTTP call {@link ResponseBody}
-             * @return {@link Character}
+             * @return null if body == null or empty otherwise {@link String}
              * @throws IOException                       body bytes not readable
              * @throws ConverterUnsupportedTypeException unsupported body type
              */
