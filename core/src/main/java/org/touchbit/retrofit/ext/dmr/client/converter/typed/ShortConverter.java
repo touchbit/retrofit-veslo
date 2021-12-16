@@ -16,14 +16,13 @@
 
 package org.touchbit.retrofit.ext.dmr.client.converter.typed;
 
-import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.exception.PrimitiveConvertCallException;
-import org.touchbit.retrofit.ext.dmr.util.ConvertUtils;
+import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
@@ -52,10 +51,14 @@ public class ShortConverter implements ExtensionConverter<Short> {
                                                      final Annotation[] parameterAnnotations,
                                                      final Annotation[] methodAnnotations,
                                                      final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(parameterAnnotations, "parameterAnnotations");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new RequestBodyConverter() {
 
             /**
-             * @param body - Short body
+             * @param body - {@link Short} or short body
              * @return HTTP {@link RequestBody}
              * @throws ConverterUnsupportedTypeException unsupported body type
              */
@@ -63,9 +66,7 @@ public class ShortConverter implements ExtensionConverter<Short> {
             @EverythingIsNonNull
             public RequestBody convert(Object body) {
                 assertSupportedBodyType(INSTANCE, body, Short.class, Short.TYPE);
-                Short aShort = (Short) body;
-                final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
-                return RequestBody.create(mediaType, aShort.toString());
+                return createRequestBody(methodAnnotations, body.toString());
             }
         };
     }
@@ -78,11 +79,14 @@ public class ShortConverter implements ExtensionConverter<Short> {
     public ResponseBodyConverter<Short> responseBodyConverter(final Type type,
                                                               final Annotation[] methodAnnotations,
                                                               final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new ResponseBodyConverter<Short>() {
 
             /**
              * @param responseBody - HTTP call {@link ResponseBody}
-             * @return {@link Short}
+             * @return null if body == null or empty otherwise {@link Short} or short body
              * @throws IOException body bytes not readable
              * @throws ConvertCallException inconvertible body
              * @throws PrimitiveConvertCallException primitive cannot be null

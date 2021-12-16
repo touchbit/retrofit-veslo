@@ -64,7 +64,7 @@ public class IntegerConverterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Convert body by real body primitive type")
         public void test1639671465705() throws IOException {
-            Integer expected = Integer.MAX_VALUE;
+            int expected = Integer.MAX_VALUE;
             final RequestBody requestBody = CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(expected);
             final String result = OkHttpTestUtils.requestBodyToString(requestBody);
             assertThat(result, is(String.valueOf(expected)));

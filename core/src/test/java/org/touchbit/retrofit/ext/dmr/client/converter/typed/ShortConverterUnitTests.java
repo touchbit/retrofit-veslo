@@ -33,10 +33,10 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
 @SuppressWarnings("ConstantConditions")
-@DisplayName("FloatConverter.class unit tests")
-public class FloatConverterUnitTests extends BaseCoreUnitTest {
+@DisplayName("ShortConverter.class unit tests")
+public class ShortConverterUnitTests extends BaseCoreUnitTest {
 
-    private static final FloatConverter CONVERTER = FloatConverter.INSTANCE;
+    private static final ShortConverter CONVERTER = ShortConverter.INSTANCE;
 
     @Nested
     @DisplayName("#requestBodyConverter() method tests")
@@ -44,7 +44,7 @@ public class FloatConverterUnitTests extends BaseCoreUnitTest {
 
         @Test
         @DisplayName("All parameters required")
-        public void test1639671246714() {
+        public void test1639672664284() {
             assertNPE(() -> CONVERTER.requestBodyConverter(null, AA, AA, RTF), "type");
             assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, null, AA, RTF), "parameterAnnotations");
             assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, null, RTF), "methodAnnotations");
@@ -54,8 +54,8 @@ public class FloatConverterUnitTests extends BaseCoreUnitTest {
 
         @Test
         @DisplayName("Convert body by real body reference type")
-        public void test1639671249824() throws IOException {
-            Float expected = Float.MAX_VALUE;
+        public void test1639672667160() throws IOException {
+            Short expected = Short.MAX_VALUE;
             final RequestBody requestBody = CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(expected);
             final String result = OkHttpTestUtils.requestBodyToString(requestBody);
             assertThat(result, is(String.valueOf(expected)));
@@ -63,22 +63,22 @@ public class FloatConverterUnitTests extends BaseCoreUnitTest {
 
         @Test
         @DisplayName("Convert body by real body primitive type")
-        public void test1639671252405() throws IOException {
-            float expected = Float.MAX_VALUE;
+        public void test1639672671315() throws IOException {
+            short expected = Short.MAX_VALUE;
             final RequestBody requestBody = CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(expected);
             final String result = OkHttpTestUtils.requestBodyToString(requestBody);
             assertThat(result, is(String.valueOf(expected)));
         }
 
         @Test
-        @DisplayName("ConverterUnsupportedTypeException if body != Float type")
-        public void test1639671255318() {
-            assertThrow(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(1))
+        @DisplayName("ConverterUnsupportedTypeException if body != Short type")
+        public void test1639672674266() {
+            assertThrow(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert("foo"))
                     .assertClass(ConverterUnsupportedTypeException.class)
                     .assertMessageIs("Unsupported type for converter " +
                             CONVERTER.getClass().getTypeName() + "\n" +
-                            "Received: java.lang.Integer\n" +
-                            "Expected: java.lang.Float or float\n");
+                            "Received: java.lang.String\n" +
+                            "Expected: java.lang.Short or short\n");
         }
 
     }
@@ -89,72 +89,72 @@ public class FloatConverterUnitTests extends BaseCoreUnitTest {
 
         @Test
         @DisplayName("All parameters required")
-        public void test1639671258476() {
+        public void test1639672677437() {
             assertNPE(() -> CONVERTER.responseBodyConverter(null, AA, RTF), "type");
-            assertNPE(() -> CONVERTER.responseBodyConverter(Float.class, null, RTF), "methodAnnotations");
-            assertNPE(() -> CONVERTER.responseBodyConverter(Float.class, AA, null), "retrofit");
+            assertNPE(() -> CONVERTER.responseBodyConverter(Short.class, null, RTF), "methodAnnotations");
+            assertNPE(() -> CONVERTER.responseBodyConverter(Short.class, AA, null), "retrofit");
         }
 
         @Test
-        @DisplayName("return Float if response body present")
-        public void test1639671261210() throws IOException {
+        @DisplayName("return Short if response body present")
+        public void test1639672700278() throws IOException {
             final ResponseBody responseBody = ResponseBody.create(null, "1");
-            final Float result = CONVERTER.responseBodyConverter(Float.class, AA, RTF).convert(responseBody);
-            assertThat(result, is((float) 1));
+            final Short result = CONVERTER.responseBodyConverter(Short.class, AA, RTF).convert(responseBody);
+            assertThat(result, is((short) 1));
         }
 
         @Test
-        @DisplayName("return float if response body present")
-        public void test1639671264104() throws IOException {
+        @DisplayName("return short if response body present")
+        public void test1639672703314() throws IOException {
             final ResponseBody responseBody = ResponseBody.create(null, "1");
-            final float result = CONVERTER.responseBodyConverter(Float.TYPE, AA, RTF).convert(responseBody);
-            assertThat(result, is((float) 1));
+            final short result = CONVERTER.responseBodyConverter(Short.TYPE, AA, RTF).convert(responseBody);
+            assertThat(result, is((short) 1));
         }
 
         @Test
         @DisplayName("return null if response body is empty")
-        public void test1639671266800() throws IOException {
+        public void test1639672705640() throws IOException {
             final ResponseBody responseBody = ResponseBody.create(null, "");
-            final Float result = CONVERTER.responseBodyConverter(Float.class, AA, RTF).convert(responseBody);
+            final Short result = CONVERTER.responseBodyConverter(Short.class, AA, RTF).convert(responseBody);
             assertThat(result, nullValue());
         }
 
         @Test
         @DisplayName("return null if response body is null")
-        public void test1639671269695() throws IOException {
-            final Float result = CONVERTER.responseBodyConverter(Float.class, AA, RTF).convert(null);
+        public void test1639672708556() throws IOException {
+            final Short result = CONVERTER.responseBodyConverter(Short.class, AA, RTF).convert(null);
             assertThat(result, nullValue());
         }
 
         @Test
         @DisplayName("ConvertCallException if response body = 'foobar'")
-        public void test1639671272459() {
+        public void test1639672711843() {
             final ResponseBody responseBody = ResponseBody.create(null, "foobar");
-            assertThrow(() -> CONVERTER.responseBodyConverter(Float.class, AA, RTF).convert(responseBody))
+            assertThrow(() -> CONVERTER.responseBodyConverter(Short.class, AA, RTF).convert(responseBody))
                     .assertClass(ConvertCallException.class)
-                    .assertMessageIs("Float conversion error:\n" +
-                            "expected float number in range 1.4E-45...3.4028235E38\n" +
+                    .assertMessageIs("Short conversion error:\n" +
+                            "expected short number in range -32768...32767\n" +
                             "but was 'foobar'");
         }
 
         @Test
         @DisplayName("PrimitiveConvertCallException if body = null and return type = primitive")
-        public void test1639671275235() {
-            assertThrow(() -> CONVERTER.responseBodyConverter(Float.TYPE, AA, RTF).convert(null))
+        public void test1639672715113() {
+            assertThrow(() -> CONVERTER.responseBodyConverter(Short.TYPE, AA, RTF).convert(null))
                     .assertClass(PrimitiveConvertCallException.class)
-                    .assertMessageIs("Cannot convert empty response body to primitive type: float");
+                    .assertMessageIs("Cannot convert empty response body to primitive type: short");
         }
 
         @Test
-        @DisplayName("ConverterUnsupportedTypeException if body != Float type")
-        public void test1639671277992() {
+        @DisplayName("ConverterUnsupportedTypeException if body != Short type")
+        public void test1639672717856() {
             final ResponseBody responseBody = ResponseBody.create(null, "true");
             assertThrow(() -> CONVERTER.responseBodyConverter(OBJ_C, AA, RTF).convert(responseBody))
                     .assertClass(ConverterUnsupportedTypeException.class)
                     .assertMessageIs("Unsupported type for converter " +
                             CONVERTER.getClass().getTypeName() + "\n" +
                             "Received: java.lang.Object\n" +
-                            "Expected: java.lang.Float or float\n");
+                            "Expected: java.lang.Short or short\n");
         }
 
     }
