@@ -17,89 +17,129 @@
 package org.touchbit.retrofit.ext.dmr.client.converter.typed;
 
 import internal.test.utils.OkHttpTestUtils;
-import internal.test.utils.asserter.ThrowableRunnable;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.touchbit.retrofit.ext.dmr.BaseCoreUnitTest;
 import org.touchbit.retrofit.ext.dmr.client.model.RawBody;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 
 import java.io.IOException;
 
-import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static internal.test.utils.TestUtils.array;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.nullValue;
 
 @SuppressWarnings("ConstantConditions")
 @DisplayName("RawBodyConverter tests")
-public class RawBodyConverterUnitTests {
+public class RawBodyConverterUnitTests extends BaseCoreUnitTest {
 
-    @Test
-    @DisplayName("Successful conversion RawBody->RequestBody if body instanceof RawBody.class")
-    public void test1639065950948() throws IOException {
-        final RawBody expected = new RawBody("test1637432781973");
-        final RequestBody requestBody = new RawBodyConverter()
-                .requestBodyConverter(null, null, null, null)
-                .convert(expected);
-        assertThat("RequestBody", requestBody, notNullValue());
-        final String actual = OkHttpTestUtils.requestBodyToString(requestBody);
-        assertThat("Body", actual, is(expected.string()));
+    private static final RawBodyConverter CONVERTER = RawBodyConverter.INSTANCE;
+
+    @Nested
+    @DisplayName("#requestBodyConverter() method tests")
+    public class RequestBodyConverterMethodTests {
+
+        @Test
+        @DisplayName("All parameters required")
+        public void test1639674366886() {
+            assertNPE(() -> CONVERTER.requestBodyConverter(null, AA, AA, RTF), "type");
+            assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, null, AA, RTF), "parameterAnnotations");
+            assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, null, RTF), "methodAnnotations");
+            assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, null), "retrofit");
+            assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(null), "body");
+        }
+
+        @Test
+        @DisplayName("Return RequestBody if RawBody not empty")
+        public void test1639674369468() throws IOException {
+            final RawBody body = new RawBody("test");
+            final RequestBody requestBody = CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(body);
+            final String result = OkHttpTestUtils.requestBodyToString(requestBody);
+            assertThat(result, is(body.string()));
+        }
+
+        @Test
+        @DisplayName("Return RequestBody if RawBody.isEmptyBody() == true")
+        public void test1639674371868() throws IOException {
+            final RawBody body = RawBody.empty();
+            final RequestBody requestBody = CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(body);
+            final String result = OkHttpTestUtils.requestBodyToString(requestBody);
+            assertThat(result, is(body.string()));
+        }
+
+        @Test
+        @DisplayName("Return null if RawBody.isNullBody() == true")
+        public void test1639674374437() throws IOException {
+            final RawBody body = RawBody.nullable();
+            final RequestBody requestBody = CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(body);
+            assertThat(requestBody, nullValue());
+        }
+
+        @Test
+        @DisplayName("ConverterUnsupportedTypeException if body != RawBody")
+        public void test1639674377206() {
+            assertThrow(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(1))
+                    .assertClass(ConverterUnsupportedTypeException.class)
+                    .assertMessageIs("Unsupported type for converter " +
+                            CONVERTER.getClass().getTypeName() + "\n" +
+                            "Received: java.lang.Integer\n" +
+                            "Expected: org.touchbit.retrofit.ext.dmr.client.model.RawBody\n");
+        }
+
     }
 
-    @Test
-    @DisplayName("Successful conversion RawBody->RequestBody if body == RawBody(null)")
-    public void test1639065950960() throws IOException {
-        final RawBody expected = new RawBody((byte[]) null);
-        final RequestBody requestBody = new RawBodyConverter()
-                .requestBodyConverter(null, null, null, null)
-                .convert(expected);
-        assertThat("RequestBody", requestBody, notNullValue());
-        final String actual = OkHttpTestUtils.requestBodyToString(requestBody);
-        assertThat("Body", actual, is(""));
-    }
+    @Nested
+    @DisplayName("#responseBodyConverter() method tests")
+    public class ResponseBodyConverterMethodTests {
 
-    @Test
-    @DisplayName("Error converting RawBody->RequestBody if body == null")
-    public void test1639065950972() {
-        final ThrowableRunnable runnable = () -> new RawBodyConverter()
-                .requestBodyConverter(null, null, null, null)
-                .convert(null);
-        assertThrow(runnable).assertNPE("body");
-    }
+        @Test
+        @DisplayName("All parameters required")
+        public void test1639674380757() {
+            assertNPE(() -> CONVERTER.responseBodyConverter(null, AA, RTF), "type");
+            assertNPE(() -> CONVERTER.responseBodyConverter(Long.class, null, RTF), "methodAnnotations");
+            assertNPE(() -> CONVERTER.responseBodyConverter(Long.class, AA, null), "retrofit");
+        }
 
-    @Test
-    @DisplayName("Error converting Object->RequestBody")
-    public void test1639065950981() {
-        final ThrowableRunnable runnable = () -> new RawBodyConverter()
-                .requestBodyConverter(null, null, null, null)
-                .convert(new Object());
-        assertThrow(runnable).assertClass(ConverterUnsupportedTypeException.class);
-    }
+        @Test
+        @DisplayName("return RawBody if response body present")
+        public void test1639674352863() throws IOException {
+            final RawBody expected = new RawBody("test");
+            final ResponseBody responseBody = ResponseBody.create(null, expected.string());
+            final RawBody result = CONVERTER.responseBodyConverter(RawBody.class, array(), RTF).convert(responseBody);
+            assertThat(result, is(expected));
+        }
 
-    @Test
-    @DisplayName("Successful conversion ResponseBody->RawBody if body present (return RawBody)")
-    public void test1639065950990() throws Exception {
-        final ResponseBody responseBody = mock(ResponseBody.class);
-        RawBody expected = new RawBody("test1637433847494");
-        when(responseBody.bytes()).thenReturn(expected.bytes());
-        final RawBody rawBody = new RawBodyConverter()
-                .responseBodyConverter(null, null, null)
-                .convert(responseBody);
-        assertThat("Body", rawBody, is(expected));
-    }
+        @Test
+        @DisplayName("return RawBody if response body is empty")
+        public void test1639674355703() throws IOException {
+            final RawBody expected = new RawBody("");
+            final ResponseBody responseBody = ResponseBody.create(null, expected.string());
+            final RawBody result = CONVERTER.responseBodyConverter(RawBody.class, array(), RTF).convert(responseBody);
+            assertThat(result, is(expected));
+        }
 
-    @Test
-    @DisplayName("Successful conversion ResponseBody->RawBody if body == null (return RawBody)")
-    public void test1639065951002() throws IOException {
-        RawBody expected = new RawBody((byte[]) null);
-        final RawBody rawBody = new RawBodyConverter()
-                .responseBodyConverter(null, null, null)
-                .convert(null);
-        assertThat("Body", rawBody, is(expected));
+        @Test
+        @DisplayName("return RawBody if response body == null")
+        public void test1639674359219() throws IOException {
+            final RawBody expected = RawBody.nullable();
+            final RawBody result = CONVERTER.responseBodyConverter(FILE_C, array(), RTF).convert(null);
+            assertThat(result, is(expected));
+        }
+
+        @Test
+        @DisplayName("ConverterUnsupportedTypeException if body != boolean type")
+        public void test1639674362074() {
+            final ResponseBody responseBody = ResponseBody.create(null, "test");
+            assertThrow(() -> CONVERTER.responseBodyConverter(OBJ_C, AA, RTF).convert(responseBody))
+                    .assertClass(ConverterUnsupportedTypeException.class)
+                    .assertMessageIs("Unsupported type for converter " +
+                            CONVERTER.getClass().getTypeName() + "\n" +
+                            "Received: java.lang.Object\n" +
+                            "Expected: org.touchbit.retrofit.ext.dmr.client.model.RawBody\n");
+        }
     }
 
 }

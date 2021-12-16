@@ -16,13 +16,11 @@
 
 package org.touchbit.retrofit.ext.dmr.client.converter.typed;
 
-import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.client.model.RawBody;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
-import org.touchbit.retrofit.ext.dmr.util.ConvertUtils;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
@@ -33,50 +31,78 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
+/**
+ * {@link RawBody} java type converter
+ * <p>
+ *
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 16.12.2021
+ */
 public class RawBodyConverter implements ExtensionConverter<RawBody> {
 
     public static final RawBodyConverter INSTANCE = new RawBodyConverter();
 
+    /**
+     * @see ExtensionConverter#requestBodyConverter(Type, Annotation[], Annotation[], Retrofit)
+     */
     @Override
     @EverythingIsNonNull
     public RequestBodyConverter requestBodyConverter(final Type type,
                                                      final Annotation[] parameterAnnotations,
                                                      final Annotation[] methodAnnotations,
                                                      final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(parameterAnnotations, "parameterAnnotations");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new RequestBodyConverter() {
 
+            /**
+             * @param body - {@link RawBody}
+             * @return {@link RequestBody}
+             * @throws ConverterUnsupportedTypeException unsupported body type
+             */
             @Override
-            @EverythingIsNonNull
-            public RequestBody convert(Object body) {
-                Utils.parameterRequireNonNull(body, "body");
-                if (body instanceof RawBody) {
-                    final RawBody rawBody = (RawBody) body;
-                    final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
-                    if (rawBody.isNullBody()) {
-                        return RequestBody.create(mediaType, new byte[]{});
-                    }
-                    return RequestBody.create(mediaType, rawBody.bytes());
+            @Nullable
+            public RequestBody convert(@Nonnull Object body) {
+                assertSupportedBodyType(INSTANCE, body, RawBody.class);
+                final RawBody rawBody = (RawBody) body;
+                if (rawBody.isNullBody()) {
+                    return null;
                 }
-                throw new ConverterUnsupportedTypeException(RawBodyConverter.class, body.getClass(), RawBody.class);
+                return createRequestBody(methodAnnotations, rawBody.bytes());
             }
 
         };
     }
 
+    /**
+     * @see ExtensionConverter#responseBodyConverter(Type, Annotation[], Retrofit)
+     */
     @Override
     @EverythingIsNonNull
     public ResponseBodyConverter<RawBody> responseBodyConverter(final Type type,
                                                                 final Annotation[] methodAnnotations,
                                                                 final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new ResponseBodyConverter<RawBody>() {
 
+            /**
+             * @param responseBody - HTTP call {@link ResponseBody}
+             * @return {@link RawBody}
+             * @throws IOException                       body bytes not readable
+             * @throws ConverterUnsupportedTypeException unsupported body type
+             */
             @Override
             @Nonnull
-            public RawBody convert(@Nullable ResponseBody body) throws IOException {
-                if (body == null) {
+            public RawBody convert(@Nullable ResponseBody responseBody) throws IOException {
+                if (responseBody == null) {
                     return RawBody.nullable();
                 }
-                return new RawBody(body.bytes());
+                assertSupportedBodyType(INSTANCE, type, RawBody.class);
+                return new RawBody(responseBody.bytes());
             }
 
         };
