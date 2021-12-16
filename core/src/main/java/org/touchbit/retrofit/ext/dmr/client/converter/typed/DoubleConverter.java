@@ -16,14 +16,13 @@
 
 package org.touchbit.retrofit.ext.dmr.client.converter.typed;
 
-import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.exception.PrimitiveConvertCallException;
-import org.touchbit.retrofit.ext.dmr.util.ConvertUtils;
+import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
@@ -52,10 +51,14 @@ public class DoubleConverter implements ExtensionConverter<Double> {
                                                      final Annotation[] parameterAnnotations,
                                                      final Annotation[] methodAnnotations,
                                                      final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(parameterAnnotations, "parameterAnnotations");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new RequestBodyConverter() {
 
             /**
-             * @param body - Double body
+             * @param body - Double or double body
              * @return HTTP {@link RequestBody}
              * @throws ConverterUnsupportedTypeException unsupported body type
              */
@@ -63,10 +66,9 @@ public class DoubleConverter implements ExtensionConverter<Double> {
             @EverythingIsNonNull
             public RequestBody convert(Object body) {
                 assertSupportedBodyType(INSTANCE, body, Double.class, Double.TYPE);
-                Double aDouble = (Double) body;
-                final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
-                return RequestBody.create(mediaType, aDouble.toString());
+                return createRequestBody(methodAnnotations, body.toString());
             }
+
         };
     }
 
@@ -78,11 +80,14 @@ public class DoubleConverter implements ExtensionConverter<Double> {
     public ResponseBodyConverter<Double> responseBodyConverter(final Type type,
                                                                final Annotation[] methodAnnotations,
                                                                final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new ResponseBodyConverter<Double>() {
 
             /**
              * @param responseBody - HTTP call {@link ResponseBody}
-             * @return {@link Double}
+             * @return null if body == null or empty otherwise Double or double
              * @throws IOException body bytes not readable
              * @throws ConvertCallException inconvertible body
              * @throws PrimitiveConvertCallException primitive cannot be null

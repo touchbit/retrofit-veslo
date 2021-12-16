@@ -16,10 +16,12 @@
 
 package org.touchbit.retrofit.ext.dmr.client.converter.api;
 
+import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.exception.PrimitiveConvertCallException;
+import org.touchbit.retrofit.ext.dmr.util.ConvertUtils;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
@@ -67,6 +69,14 @@ public interface ExtensionConverter<DTO> {
         if (bodyType instanceof Class && ((Class<?>) bodyType).isPrimitive()) {
             throw new PrimitiveConvertCallException(bodyType);
         }
+    }
+
+    @EverythingIsNonNull
+    default RequestBody createRequestBody(final Annotation[] methodAnnotations, String body) {
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(body, "body");
+        final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
+        return RequestBody.create(mediaType, body);
     }
 
     @EverythingIsNonNull
