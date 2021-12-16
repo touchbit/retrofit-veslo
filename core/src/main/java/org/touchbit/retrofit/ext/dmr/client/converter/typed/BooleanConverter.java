@@ -70,9 +70,8 @@ public class BooleanConverter implements ExtensionConverter<Boolean> {
             @EverythingIsNonNull
             public RequestBody convert(Object body) {
                 assertSupportedBodyType(INSTANCE, body, Boolean.class, Boolean.TYPE);
-                Boolean aBoolean = (Boolean) body;
                 final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
-                return RequestBody.create(mediaType, aBoolean.toString());
+                return RequestBody.create(mediaType, body.toString());
             }
         };
     }
@@ -92,10 +91,10 @@ public class BooleanConverter implements ExtensionConverter<Boolean> {
 
             /**
              * @param responseBody - HTTP call {@link ResponseBody}
-             * @return {@link Boolean}
-             * @throws IOException body bytes not readable
-             * @throws ConvertCallException inconvertible body
-             * @throws PrimitiveConvertCallException primitive cannot be null
+             * @return null if body == null or empty otherwise Boolean or boolean
+             * @throws IOException                       body bytes not readable
+             * @throws ConvertCallException              inconvertible body
+             * @throws PrimitiveConvertCallException     primitive cannot be null
              * @throws ConverterUnsupportedTypeException unsupported body type
              */
             @Nullable

@@ -56,9 +56,9 @@ public abstract class BaseUnitTest {
     protected static final Class<Boolean> BOOLEAN_C = Boolean.class;
     protected static final Type BOOLEAN_T = BOOLEAN_C;
     protected static final Class<Byte> BYTE_C = Byte.class;
+    protected static final Type BYTE_T = BYTE_C;
     protected static final Class<Byte[]> BYTE_ARRAY_C = Byte[].class;
     protected static final Type BYTE_ARRAY_T = BYTE_ARRAY_C;
-    protected static final Type BYTE_T = BYTE_C;
     protected static final Class<Integer> INTEGER_C = Integer.class;
     protected static final Type INTEGER_T = INTEGER_C;
     protected static final Class<Double> DOUBLE_C = Double.class;
