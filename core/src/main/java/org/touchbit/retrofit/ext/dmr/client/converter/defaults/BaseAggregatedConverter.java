@@ -17,18 +17,22 @@
 package org.touchbit.retrofit.ext.dmr.client.converter.defaults;
 
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
+import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Base default converter
@@ -41,24 +45,50 @@ import java.util.stream.Collectors;
 @SuppressWarnings("rawtypes")
 public abstract class BaseAggregatedConverter implements ExtensionConverter {
 
-    private final Map<ExtensionConverter<?>, List<Type>> defaultConverters = new HashMap<>();
+    private final Map<ExtensionConverter<?>, Set<Type>> defaultConverters = new HashMap<>();
 
+    /**
+     * Add supported converter for types
+     *
+     * @param converter - implementation of {@link ExtensionConverter}
+     * @param types     - types supported by the converter
+     */
+    @EverythingIsNonNull
     public void addConverter(ExtensionConverter<?> converter, Type... types) {
-        defaultConverters.put(converter, Arrays.asList(types));
+        Utils.parameterRequireNonNull(converter, "converter");
+        Utils.parameterRequireNonNull(types, "types");
+        defaultConverters.put(converter, Stream.of(types).collect(Collectors.toSet()));
     }
 
-    public ExtensionConverter<?> getConverterForType(Type type) {
-        return defaultConverters.entrySet().stream()
+    /**
+     * @param type - type to convert
+     * @return {@link ExtensionConverter} or null if converter not found
+     */
+    @Nullable
+    public ExtensionConverter<?> getConverterForType(@Nonnull Type type) {
+        Utils.parameterRequireNonNull(type, "type");
+        final List<? extends ExtensionConverter<?>> result = defaultConverters.entrySet().stream()
                 .filter(e -> e.getValue().contains(type))
                 .map(Map.Entry::getKey)
-                .findFirst()
-                .orElse(null);
+                .collect(Collectors.toList());
+        if (result.isEmpty()) {
+            return null;
+        }
+        if (result.size() > 1) {
+            throw new ConvertCallException("Found more than one converters for type " + type.getTypeName() + ":\n"
+                    + result.stream().map(e -> e.getClass().getTypeName()).collect(Collectors.joining("\n")));
+        }
+        return result.get(0);
     }
 
+    /**
+     * @return all supported types
+     */
+    @EverythingIsNonNull
     public Type[] getSupportedTypes() {
         return defaultConverters.values().stream()
-                .flatMap(List::stream)
-                .collect(Collectors.toList())
+                .flatMap(Set::stream)
+                .collect(Collectors.toSet())
                 .toArray(new Type[]{});
     }
 
@@ -98,6 +128,13 @@ public abstract class BaseAggregatedConverter implements ExtensionConverter {
             return converter.responseBodyConverter(type, methodAnnotations, retrofit);
         }
         throw new ConverterUnsupportedTypeException(this.getClass(), type, getSupportedTypes());
+    }
+
+    /**
+     * @return registered converters
+     */
+    public Map<ExtensionConverter<?>, Set<Type>> getDefaultConverters() {
+        return defaultConverters;
     }
 
 }
