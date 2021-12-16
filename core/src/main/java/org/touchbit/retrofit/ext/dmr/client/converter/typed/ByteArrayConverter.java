@@ -16,12 +16,10 @@
 
 package org.touchbit.retrofit.ext.dmr.client.converter.typed;
 
-import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
-import org.touchbit.retrofit.ext.dmr.util.ConvertUtils;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
@@ -67,8 +65,7 @@ public class ByteArrayConverter implements ExtensionConverter<Object> {
             public RequestBody convert(Object body) {
                 assertSupportedBodyType(INSTANCE, body, Byte[].class, byte[].class);
                 final byte[] bytes = Utils.toPrimitiveByteArray(body);
-                final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
-                return RequestBody.create(mediaType, bytes);
+                return createRequestBody(methodAnnotations, bytes);
             }
 
         };

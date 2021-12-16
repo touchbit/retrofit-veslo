@@ -16,13 +16,11 @@
 
 package org.touchbit.retrofit.ext.dmr.client.converter.typed;
 
-import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
-import org.touchbit.retrofit.ext.dmr.util.ConvertUtils;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
@@ -35,55 +33,83 @@ import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * {@link File} java type converter
+ * <p>
+ *
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 16.12.2021
+ */
 public class FileConverter implements ExtensionConverter<File> {
 
     public static final FileConverter INSTANCE = new FileConverter();
 
+    /**
+     * @see ExtensionConverter#requestBodyConverter(Type, Annotation[], Annotation[], Retrofit)
+     */
     @Override
     @EverythingIsNonNull
     public RequestBodyConverter requestBodyConverter(final Type type,
                                                      final Annotation[] parameterAnnotations,
                                                      final Annotation[] methodAnnotations,
                                                      final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(parameterAnnotations, "parameterAnnotations");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new RequestBodyConverter() {
 
+            /**
+             * @param body - readable {@link File}
+             * @return {@link RequestBody}
+             * @throws ConverterUnsupportedTypeException unsupported body type
+             */
             @Override
             @EverythingIsNonNull
             public RequestBody convert(Object body) throws IOException {
-                Utils.parameterRequireNonNull(body, "body");
-                if (body instanceof File) {
-                    File file = (File) body;
-                    if (!file.exists()) {
-                        throw new ConvertCallException("Request body file not exists: " + file);
-                    }
-                    if (!file.isFile()) {
-                        throw new ConvertCallException("Request body file is not a readable file: " + file);
-                    }
-                    final byte[] data = Files.readAllBytes(file.toPath());
-                    final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
-                    return RequestBody.create(mediaType, data);
+                assertSupportedBodyType(INSTANCE, body, File.class);
+                File file = (File) body;
+                if (!file.exists()) {
+                    throw new ConvertCallException("Request body file not exists: " + file);
                 }
-                throw new ConverterUnsupportedTypeException(FileConverter.class, body.getClass(), File.class);
+                if (!file.isFile()) {
+                    throw new ConvertCallException("Request body file is not a readable file: " + file);
+                }
+                final byte[] data = Files.readAllBytes(file.toPath());
+                return createRequestBody(methodAnnotations, data);
             }
 
         };
     }
 
+    /**
+     * @see ExtensionConverter#responseBodyConverter(Type, Annotation[], Retrofit)
+     */
     @Override
     @EverythingIsNonNull
     public ResponseBodyConverter<File> responseBodyConverter(final Type type,
                                                              final Annotation[] methodAnnotations,
                                                              final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new ResponseBodyConverter<File>() {
 
+            /**
+             * @param responseBody - HTTP call {@link ResponseBody}
+             * @return null if body == null otherwise {@link File} if body present or empty
+             * @throws IOException                       body bytes not readable
+             * @throws ConverterUnsupportedTypeException unsupported body type
+             */
             @Override
             @Nullable
-            public File convert(@Nullable ResponseBody body) throws IOException {
-                if (body == null) {
+            public File convert(@Nullable ResponseBody responseBody) throws IOException {
+                if (responseBody == null) {
                     return null;
                 }
+                assertSupportedBodyType(INSTANCE, type, File.class);
                 final Path tempFile = Files.createTempFile(null, null);
-                return Files.write(tempFile, body.bytes()).toFile();
+                return Files.write(tempFile, responseBody.bytes()).toFile();
             }
 
         };

@@ -75,6 +75,13 @@ public interface ExtensionConverter<DTO> {
     default RequestBody createRequestBody(final Annotation[] methodAnnotations, String body) {
         Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
         Utils.parameterRequireNonNull(body, "body");
+        return createRequestBody(methodAnnotations, body.getBytes());
+    }
+
+    @EverythingIsNonNull
+    default RequestBody createRequestBody(final Annotation[] methodAnnotations, byte[] body) {
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(body, "body");
         final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
         return RequestBody.create(mediaType, body);
     }

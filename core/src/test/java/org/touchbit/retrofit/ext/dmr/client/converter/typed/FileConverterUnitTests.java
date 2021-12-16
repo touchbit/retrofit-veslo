@@ -17,10 +17,10 @@
 package org.touchbit.retrofit.ext.dmr.client.converter.typed;
 
 import internal.test.utils.OkHttpTestUtils;
-import internal.test.utils.asserter.ThrowableRunnable;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.BaseCoreUnitTest;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
@@ -31,101 +31,121 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 import static internal.test.utils.TestUtils.array;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 @SuppressWarnings("ConstantConditions")
 @DisplayName("FileConverter tests")
 public class FileConverterUnitTests extends BaseCoreUnitTest {
 
-    @Test
-    @DisplayName("Successful conversion File->RequestBody if body instanceof File.class (exists)")
-    public void test1639065950818() throws IOException {
-        final String expected = "test1637466272864";
-        final File body = new File("src/test/resources/test/data/test1637466272864.txt");
-        final RequestBody requestBody = new FileConverter()
-                .requestBodyConverter(FILE_C, array(), array(), RTF)
-                .convert(body);
-        assertThat("RequestBody", requestBody, notNullValue());
-        final String actual = OkHttpTestUtils.requestBodyToString(requestBody);
-        assertThat("Body", actual, is(expected));
+    private static final FileConverter CONVERTER = FileConverter.INSTANCE;
+
+    @Nested
+    @DisplayName("#requestBodyConverter() method tests")
+    public class RequestBodyConverterMethodTests {
+
+        @Test
+        @DisplayName("All parameters required")
+        public void test1639668892322() {
+            assertNPE(() -> CONVERTER.requestBodyConverter(null, AA, AA, RTF), "type");
+            assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, null, AA, RTF), "parameterAnnotations");
+            assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, null, RTF), "methodAnnotations");
+            assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, null), "retrofit");
+            assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(null), "body");
+        }
+
+        @Test
+        @DisplayName("Convert body by real body reference type")
+        public void test1637466272864() throws IOException {
+            final String expected = "test1637466272864";
+            final File file = new File("src/test/resources/test/data/test1637466272864.txt");
+            final RequestBody requestBody = CONVERTER.requestBodyConverter(OBJ_C, array(), array(), RTF).convert(file);
+            final String actual = OkHttpTestUtils.requestBodyToString(requestBody);
+            assertThat("Body", actual, is(expected));
+        }
+
+        @Test
+        @DisplayName("ConvertCallException if file not exists")
+        public void test1639669359068() {
+            final File file = new File("src/test_foo_bar");
+            assertThrow(() -> CONVERTER.requestBodyConverter(FILE_C, array(), array(), RTF).convert(file))
+                    .assertClass(ConvertCallException.class)
+                    .assertMessageIs("Request body file not exists: src/test_foo_bar");
+        }
+
+        @Test
+        @DisplayName("ConvertCallException if file is a directory")
+        public void test1639669398095() {
+            final File file = new File("src");
+            assertThrow(() -> CONVERTER.requestBodyConverter(FILE_C, array(), array(), RTF).convert(file))
+                    .assertClass(ConvertCallException.class)
+                    .assertMessageIs("Request body file is not a readable file: src");
+        }
+
+        @Test
+        @DisplayName("ConverterUnsupportedTypeException if body != File type")
+        public void test1639669417891() {
+            assertThrow(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(1))
+                    .assertClass(ConverterUnsupportedTypeException.class)
+                    .assertMessageIs("Unsupported type for converter " +
+                            CONVERTER.getClass().getTypeName() + "\n" +
+                            "Received: java.lang.Integer\n" +
+                            "Expected: java.io.File\n");
+        }
+
     }
 
-    @Test
-    @DisplayName("Error converting File->RequestBody if body == null")
-    public void test1639065950831() {
-        final ThrowableRunnable runnable = () -> new FileConverter()
-                .requestBodyConverter(FILE_C, array(), array(), RTF)
-                .convert(null);
-        assertThrow(runnable).assertNPE("body");
-    }
+    @Nested
+    @DisplayName("#responseBodyConverter() method tests")
+    public class ResponseBodyConverterMethodTests {
 
-    @Test
-    @DisplayName("Error converting File->RequestBody if file not exists")
-    public void test1639065950840() {
-        final ThrowableRunnable runnable = () -> new FileConverter()
-                .requestBodyConverter(FILE_C, array(), array(), RTF)
-                .convert(new File("src/test1637544911671"));
-        assertThrow(runnable)
-                .assertClass(ConvertCallException.class)
-                .assertMessageIs("Request body file not exists: src/test1637544911671");
-    }
+        @Test
+        @DisplayName("All parameters required")
+        public void test1639669545521() {
+            assertNPE(() -> CONVERTER.responseBodyConverter(null, AA, RTF), "type");
+            assertNPE(() -> CONVERTER.responseBodyConverter(BOOLEAN_C, null, RTF), "methodAnnotations");
+            assertNPE(() -> CONVERTER.responseBodyConverter(BOOLEAN_C, AA, null), "retrofit");
+        }
 
-    @Test
-    @DisplayName("Error converting File->RequestBody if file is a directory")
-    public void test1639065950851() {
-        final ThrowableRunnable runnable = () -> new FileConverter()
-                .requestBodyConverter(FILE_C, array(), array(), RTF)
-                .convert(new File("src"));
-        assertThrow(runnable)
-                .assertClass(ConvertCallException.class)
-                .assertMessageIs("Request body file is not a readable file: src");
-    }
+        @Test
+        @DisplayName("return File if response body present")
+        public void test1639669554897() throws IOException {
+            final String expected = "test";
+            final ResponseBody responseBody = ResponseBody.create(null, expected);
+            final File result = CONVERTER.responseBodyConverter(FILE_C, array(), RTF).convert(responseBody);
+            final byte[] resultData = Files.readAllBytes(result.toPath());
+            assertThat("Body", resultData, is("test" .getBytes()));
+        }
 
-    @Test
-    @DisplayName("Error converting Object->RequestBody")
-    public void test1639065950862() {
-        final ThrowableRunnable runnable = () -> new FileConverter()
-                .requestBodyConverter(FILE_C, array(), array(), RTF)
-                .convert(new Object());
-        assertThrow(runnable).assertClass(ConverterUnsupportedTypeException.class);
-    }
+        @Test
+        @DisplayName("return File if response body is empty")
+        public void test1639669659531() throws IOException {
+            final String expected = "";
+            final ResponseBody responseBody = ResponseBody.create(null, expected);
+            final File result = CONVERTER.responseBodyConverter(FILE_C, array(), RTF).convert(responseBody);
+            final byte[] resultData = Files.readAllBytes(result.toPath());
+            assertThat("Body", resultData, is("" .getBytes()));
+        }
 
-    @Test
-    @DisplayName("Successful conversion ResponseBody->File if content length == 0 (return File)")
-    public void test1639065950871() throws Exception {
-        final String expected = "test1637467418220";
-        final ResponseBody responseBody = mock(ResponseBody.class);
-        when(responseBody.bytes()).thenReturn(expected.getBytes());
-        final File result = new FileConverter()
-                .responseBodyConverter(FILE_C, array(), RTF)
-                .convert(responseBody);
-        final byte[] resultData = Files.readAllBytes(result.toPath());
-        assertThat("Body", resultData, is("test1637467418220" .getBytes()));
-    }
+        @Test
+        @DisplayName("return null if response body == null")
+        public void test1639669773834() throws IOException {
+            final File result = CONVERTER.responseBodyConverter(FILE_C, array(), RTF).convert(null);
+            assertThat("Body", result, nullValue());
+        }
 
-    @Test
-    @DisplayName("Successful conversion ResponseBody->File if content length > 0 (return File)")
-    public void test1639065950884() throws Exception {
-        final String expected = "test1637467421357";
-        final ResponseBody responseBody = mock(ResponseBody.class);
-        when(responseBody.bytes()).thenReturn(expected.getBytes());
-        when(responseBody.contentLength()).thenReturn(Long.valueOf(expected.length()));
-        final File result = new FileConverter()
-                .responseBodyConverter(FILE_C, array(), RTF)
-                .convert(responseBody);
-        final byte[] resultData = Files.readAllBytes(result.toPath());
-        assertThat("Body", resultData, is("test1637467421357" .getBytes()));
-    }
+        @Test
+        @DisplayName("ConverterUnsupportedTypeException if body != boolean type")
+        public void test1639669795774() {
+            final ResponseBody responseBody = ResponseBody.create(null, "test");
+            assertThrow(() -> CONVERTER.responseBodyConverter(OBJ_C, AA, RTF).convert(responseBody))
+                    .assertClass(ConverterUnsupportedTypeException.class)
+                    .assertMessageIs("Unsupported type for converter " +
+                            CONVERTER.getClass().getTypeName() + "\n" +
+                            "Received: java.lang.Object\n" +
+                            "Expected: java.io.File\n");
+        }
 
-    @Test
-    @DisplayName("Successful conversion ResponseBody->File if body == null (return null)")
-    public void test1639065950898() throws IOException {
-        final File body = new FileConverter()
-                .responseBodyConverter(FILE_C, array(), RTF)
-                .convert(null);
-        assertThat("Body", body, nullValue());
     }
 
 }
