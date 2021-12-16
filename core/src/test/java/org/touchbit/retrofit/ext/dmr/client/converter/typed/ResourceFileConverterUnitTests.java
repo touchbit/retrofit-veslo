@@ -17,71 +17,97 @@
 package org.touchbit.retrofit.ext.dmr.client.converter.typed;
 
 import internal.test.utils.OkHttpTestUtils;
-import internal.test.utils.asserter.ThrowableRunnable;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.touchbit.retrofit.ext.dmr.BaseCoreUnitTest;
 import org.touchbit.retrofit.ext.dmr.client.model.ResourceFile;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 
 import java.io.IOException;
 
-import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static internal.test.utils.TestUtils.array;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @SuppressWarnings("ConstantConditions")
 @DisplayName("ResourceFileConverter tests")
-public class ResourceFileConverterUnitTests {
+public class ResourceFileConverterUnitTests extends BaseCoreUnitTest {
 
-    @Test
-    @DisplayName("Successful conversion ResourceFile->RequestBody if body instanceof ResourceFile.class (exists)")
-    public void test1639065950731() throws IOException {
-        final String expected = "test1637468946514";
-        final ResourceFile body = new ResourceFile("test/data/test1637468946514.txt");
-        final RequestBody requestBody = new ResourceFileConverter()
-                .requestBodyConverter(null, null, null, null)
-                .convert(body);
-        assertThat("RequestBody", requestBody, notNullValue());
-        final String actual = OkHttpTestUtils.requestBodyToString(requestBody);
-        assertThat("Body", actual, is(expected));
+    private static final ResourceFileConverter CONVERTER = ResourceFileConverter.INSTANCE;
+
+    @Nested
+    @DisplayName("#requestBodyConverter() method tests")
+    public class RequestBodyConverterMethodTests {
+
+        @Test
+        @DisplayName("All parameters required")
+        public void test1639675612780() {
+            assertNPE(() -> CONVERTER.requestBodyConverter(null, AA, AA, RTF), "type");
+            assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, null, AA, RTF), "parameterAnnotations");
+            assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, null, RTF), "methodAnnotations");
+            assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, null), "retrofit");
+            assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(null), "body");
+        }
+
+        @Test
+        @DisplayName("Convert ResourceFile to RequestBody")
+        public void test1637468946514() throws IOException {
+            final String expected = "test1637468946514";
+            final ResourceFile body = new ResourceFile("test/data/test1637468946514.txt");
+            final RequestBody requestBody = CONVERTER.requestBodyConverter(OBJ_C, array(), array(), RTF).convert(body);
+            final String actual = OkHttpTestUtils.requestBodyToString(requestBody);
+            assertThat("Body", actual, is(expected));
+        }
+
+        @Test
+        @DisplayName("ConverterUnsupportedTypeException if body != File type")
+        public void test1639675616271() {
+            assertThrow(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(1))
+                    .assertClass(ConverterUnsupportedTypeException.class)
+                    .assertMessageIs("Unsupported type for converter " +
+                            CONVERTER.getClass().getTypeName() + "\n" +
+                            "Received: java.lang.Integer\n" +
+                            "Expected: org.touchbit.retrofit.ext.dmr.client.model.ResourceFile\n");
+        }
+
     }
 
-    @Test
-    @DisplayName("Error converting ResourceFile->RequestBody if body == null")
-    public void test1639065950744() {
-        final ThrowableRunnable runnable = () -> new ResourceFileConverter()
-                .requestBodyConverter(null, null, null, null)
-                .convert(null);
-        assertThrow(runnable).assertNPE("body");
-    }
+    @Nested
+    @DisplayName("#responseBodyConverter() method tests")
+    public class ResponseBodyConverterMethodTests {
 
-    @Test
-    @DisplayName("Error converting Object->RequestBody")
-    public void test1639065950753() {
-        final ThrowableRunnable runnable = () -> new ResourceFileConverter()
-                .requestBodyConverter(null, null, null, null)
-                .convert(new Object());
-        assertThrow(runnable).assertClass(ConverterUnsupportedTypeException.class);
-    }
+        @Test
+        @DisplayName("All parameters required")
+        public void test1639675722127() {
+            assertNPE(() -> CONVERTER.responseBodyConverter(null, AA, RTF), "type");
+            assertNPE(() -> CONVERTER.responseBodyConverter(Long.class, null, RTF), "methodAnnotations");
+            assertNPE(() -> CONVERTER.responseBodyConverter(Long.class, AA, null), "retrofit");
+        }
 
-    @Test
-    @DisplayName("Error converting ResponseBody->ResourceFile")
-    public void test1639065950762() throws Exception {
-        final String expected = "test1637463929423";
-        final ResponseBody responseBody = mock(ResponseBody.class);
-        when(responseBody.bytes()).thenReturn(expected.getBytes());
-        final ThrowableRunnable runnable = () -> new ResourceFileConverter()
-                .responseBodyConverter(null, null, null)
-                .convert(null);
-        assertThrow(runnable)
-                .assertClass(ConvertCallException.class)
-                .assertMessageIs("It is forbidden to use the ResourceFile type to convert the response body.");
+        @Test
+        @DisplayName("ConvertCallException if ResponseBody present")
+        public void test1639065950762() {
+            final ResponseBody responseBody = ResponseBody.create(null, "test");
+            assertThrow(() -> CONVERTER.responseBodyConverter(ResourceFile.class, AA, RTF).convert(responseBody))
+                    .assertClass(ConvertCallException.class)
+                    .assertMessageIs("It is forbidden to use the ResourceFile type to convert the response body.");
+        }
+
+        @Test
+        @DisplayName("ConverterUnsupportedTypeException if body == unsupported type")
+        public void test1639676718389() {
+            assertThrow(() -> CONVERTER.responseBodyConverter(OBJ_C, AA, RTF).convert(null))
+                    .assertClass(ConverterUnsupportedTypeException.class)
+                    .assertMessageIs("Unsupported type for converter " +
+                            CONVERTER.getClass().getTypeName() + "\n" +
+                            "Received: java.lang.Object\n" +
+                            "Expected: org.touchbit.retrofit.ext.dmr.client.model.ResourceFile\n");
+        }
+
+
     }
 
 }

@@ -146,7 +146,7 @@ public class ShortConverterUnitTests extends BaseCoreUnitTest {
         }
 
         @Test
-        @DisplayName("ConverterUnsupportedTypeException if body != Short type")
+        @DisplayName("ConverterUnsupportedTypeException if body == unsupported type")
         public void test1639672717856() {
             final ResponseBody responseBody = ResponseBody.create(null, "true");
             assertThrow(() -> CONVERTER.responseBodyConverter(OBJ_C, AA, RTF).convert(responseBody))

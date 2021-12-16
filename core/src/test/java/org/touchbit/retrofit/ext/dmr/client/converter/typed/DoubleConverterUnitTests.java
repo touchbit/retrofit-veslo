@@ -146,7 +146,7 @@ public class DoubleConverterUnitTests extends BaseCoreUnitTest {
         }
 
         @Test
-        @DisplayName("ConverterUnsupportedTypeException if body != Double type")
+        @DisplayName("ConverterUnsupportedTypeException if body == unsupported type")
         public void test1639668073525() {
             final ResponseBody responseBody = ResponseBody.create(null, "true");
             assertThrow(() -> CONVERTER.responseBodyConverter(OBJ_C, AA, RTF).convert(responseBody))

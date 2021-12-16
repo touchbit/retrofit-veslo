@@ -130,7 +130,7 @@ public class RawBodyConverterUnitTests extends BaseCoreUnitTest {
         }
 
         @Test
-        @DisplayName("ConverterUnsupportedTypeException if body != boolean type")
+        @DisplayName("ConverterUnsupportedTypeException if body == unsupported type")
         public void test1639674362074() {
             final ResponseBody responseBody = ResponseBody.create(null, "test");
             assertThrow(() -> CONVERTER.responseBodyConverter(OBJ_C, AA, RTF).convert(responseBody))

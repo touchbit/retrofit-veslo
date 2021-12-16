@@ -163,7 +163,7 @@ public class BooleanConverterUnitTests extends BaseCoreUnitTest {
         }
 
         @Test
-        @DisplayName("ConverterUnsupportedTypeException if body != boolean type")
+        @DisplayName("ConverterUnsupportedTypeException if body == unsupported type")
         public void test1639662419053() {
             final ResponseBody responseBody = ResponseBody.create(null, "true");
             assertThrow(() -> CONVERTER.responseBodyConverter(OBJ_C, AA, RTF).convert(responseBody))

@@ -146,7 +146,7 @@ public class LongConverterUnitTests extends BaseCoreUnitTest {
         }
 
         @Test
-        @DisplayName("ConverterUnsupportedTypeException if body != Long type")
+        @DisplayName("ConverterUnsupportedTypeException if body == unsupported type")
         public void test1639671948640() {
             final ResponseBody responseBody = ResponseBody.create(null, "true");
             assertThrow(() -> CONVERTER.responseBodyConverter(OBJ_C, AA, RTF).convert(responseBody))

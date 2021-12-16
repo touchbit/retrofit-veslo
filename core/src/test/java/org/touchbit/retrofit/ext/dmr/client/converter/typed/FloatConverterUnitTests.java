@@ -146,7 +146,7 @@ public class FloatConverterUnitTests extends BaseCoreUnitTest {
         }
 
         @Test
-        @DisplayName("ConverterUnsupportedTypeException if body != Float type")
+        @DisplayName("ConverterUnsupportedTypeException if body == unsupported type")
         public void test1639671277992() {
             final ResponseBody responseBody = ResponseBody.create(null, "true");
             assertThrow(() -> CONVERTER.responseBodyConverter(OBJ_C, AA, RTF).convert(responseBody))

@@ -16,55 +16,88 @@
 
 package org.touchbit.retrofit.ext.dmr.client.converter.typed;
 
-import okhttp3.MediaType;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.client.model.ResourceFile;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
-import org.touchbit.retrofit.ext.dmr.util.ConvertUtils;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
+/**
+ * {@link ResourceFile} java type converter
+ * <p>
+ *
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 16.12.2021
+ */
 public class ResourceFileConverter implements ExtensionConverter<ResourceFile> {
 
     public static final ResourceFileConverter INSTANCE = new ResourceFileConverter();
 
+    /**
+     * @see ExtensionConverter#requestBodyConverter(Type, Annotation[], Annotation[], Retrofit)
+     */
     @Override
     @EverythingIsNonNull
     public RequestBodyConverter requestBodyConverter(final Type type,
                                                      final Annotation[] parameterAnnotations,
                                                      final Annotation[] methodAnnotations,
                                                      final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(parameterAnnotations, "parameterAnnotations");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new RequestBodyConverter() {
 
+            /**
+             * @param body - {@link ResourceFile}
+             * @return {@link RequestBody}
+             * @throws ConverterUnsupportedTypeException unsupported body type
+             */
             @Override
             @EverythingIsNonNull
             public RequestBody convert(Object body) {
-                Utils.parameterRequireNonNull(body, "body");
-                if (body instanceof ResourceFile) {
-                    final ResourceFile resourceFile = (ResourceFile) body;
-                    final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
-                    return RequestBody.create(mediaType, resourceFile.getBytes());
-                }
-                final Class<?> bodyClass = body.getClass();
-                throw new ConverterUnsupportedTypeException(ResourceFileConverter.class, bodyClass, ResourceFile.class);
+                assertSupportedBodyType(INSTANCE, body, ResourceFile.class);
+                final ResourceFile resourceFile = (ResourceFile) body;
+                return createRequestBody(methodAnnotations, resourceFile.getBytes());
             }
 
         };
     }
 
+    /**
+     * @see ExtensionConverter#responseBodyConverter(Type, Annotation[], Retrofit)
+     */
     @Override
     @EverythingIsNonNull
     public ResponseBodyConverter<ResourceFile> responseBodyConverter(final Type type,
                                                                      final Annotation[] methodAnnotations,
                                                                      final Retrofit retrofit) {
-        return body -> {
-            throw new ConvertCallException("It is forbidden to use the ResourceFile type to convert the response body.");
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
+        return new ResponseBodyConverter<ResourceFile>() {
+
+            /**
+             * @param responseBody - HTTP call {@link ResponseBody}
+             * @throws ConverterUnsupportedTypeException unsupported body type
+             * @throws ConvertCallException forbidden to use the ResourceFile type to convert the response body
+             */
+            @Override
+            @Nonnull
+            public ResourceFile convert(@Nullable ResponseBody responseBody) {
+                assertSupportedBodyType(INSTANCE, type, ResourceFile.class);
+                throw new ConvertCallException("It is forbidden to use the ResourceFile type to convert the response body.");
+            }
+
         };
     }
 
