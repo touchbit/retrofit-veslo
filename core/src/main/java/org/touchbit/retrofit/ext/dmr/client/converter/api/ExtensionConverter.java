@@ -63,6 +63,10 @@ public interface ExtensionConverter<DTO> {
                                                      final Annotation[] methodAnnotations,
                                                      final Retrofit retrofit);
 
+    /**
+     * @param bodyType - DTO java type
+     * @throws PrimitiveConvertCallException if bodyType is primitive and cannot be null
+     */
     @EverythingIsNonNull
     default void assertNotNullableBodyType(Type bodyType) {
         Utils.parameterRequireNonNull(bodyType, "bodyType");
@@ -71,6 +75,11 @@ public interface ExtensionConverter<DTO> {
         }
     }
 
+    /**
+     * @param methodAnnotations - API client called method annotations
+     * @param body              - request string body
+     * @return {@link RequestBody} with content-type from methodAnnotations
+     */
     @EverythingIsNonNull
     default RequestBody createRequestBody(final Annotation[] methodAnnotations, String body) {
         Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
@@ -78,6 +87,11 @@ public interface ExtensionConverter<DTO> {
         return createRequestBody(methodAnnotations, body.getBytes());
     }
 
+    /**
+     * @param methodAnnotations - API client called method annotations
+     * @param body              - request byte array body
+     * @return {@link RequestBody} with content-type from methodAnnotations
+     */
     @EverythingIsNonNull
     default RequestBody createRequestBody(final Annotation[] methodAnnotations, byte[] body) {
         Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
@@ -86,15 +100,30 @@ public interface ExtensionConverter<DTO> {
         return RequestBody.create(mediaType, body);
     }
 
+    /**
+     * @param converter     - {@link ExtensionConverter} for exception info
+     * @param body          - convertable body
+     * @param expectedTypes - list of expected (supported) types
+     * @throws ConverterUnsupportedTypeException if the body type does not match the expected types
+     */
     @EverythingIsNonNull
     default void assertSupportedBodyType(ExtensionConverter<?> converter, Object body, Type... expectedTypes) {
+        Utils.parameterRequireNonNull(converter, "converter");
         Utils.parameterRequireNonNull(body, "body");
         Utils.parameterRequireNonNull(expectedTypes, "expectedTypes");
         final Class<?> bodyType = body.getClass();
         assertSupportedBodyType(converter, bodyType, expectedTypes);
     }
 
+    /**
+     * @param converter     - {@link ExtensionConverter} for exception info
+     * @param bodyType      - convertable body type
+     * @param expectedTypes - list of expected (supported) types
+     * @throws ConverterUnsupportedTypeException if the body type does not match the expected types
+     */
+    @EverythingIsNonNull
     default void assertSupportedBodyType(ExtensionConverter<?> converter, Type bodyType, Type... expectedTypes) {
+        Utils.parameterRequireNonNull(converter, "converter");
         Utils.parameterRequireNonNull(bodyType, "bodyType");
         Utils.parameterRequireNonNull(expectedTypes, "expectedTypes");
         if (!Arrays.asList(expectedTypes).contains(bodyType)) {
@@ -102,18 +131,34 @@ public interface ExtensionConverter<DTO> {
         }
     }
 
+    /**
+     * @param body - request body
+     * @return true if body == NULL_BODY_VALUE
+     */
     default boolean isForceNullBodyValue(@Nullable Object body) {
         return isForceNullBodyValue(String.valueOf(body));
     }
 
+    /**
+     * @param body - request body
+     * @return true if body == NULL_BODY_VALUE
+     */
     default boolean isForceNullBodyValue(@Nullable String body) {
         return NULL_BODY_VALUE.equals(body);
     }
 
+    /**
+     * @param body - request body
+     * @return true if body == NULL_JSON_VALUE
+     */
     default boolean isForceNullJsonValue(@Nullable Object body) {
         return isForceNullJsonValue(String.valueOf(body));
     }
 
+    /**
+     * @param body - request body
+     * @return true if body == NULL_JSON_VALUE
+     */
     default boolean isForceNullJsonValue(@Nullable String body) {
         return NULL_JSON_VALUE.equals(body);
     }

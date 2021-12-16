@@ -49,6 +49,7 @@ public class BaseCoreUnitTest extends BaseUnitTest {
     public static final TestsExtensionConverterFactory TEST_FACTORY = new TestsExtensionConverterFactory();
     public static final Type DUAL_RESPONSE_GENERIC_STRING_TYPE = getGenericReturnTypeForMethod(BaseGenericTypes.class, "stringDualResponse");
     public static final Type DUAL_RESPONSE_RAW_TYPE = getGenericReturnTypeForMethod(BaseGenericTypes.class, "rawDualResponse");
+    public static final TestConverter TEST_CONVERTER = new TestConverter();
 
     protected static RequestBodyConverter getRequestBodyConverter(Type type, Annotation... methodAnnotations) {
         return TEST_FACTORY.requestBodyConverter(type, AA, methodAnnotations, RTF);
