@@ -24,6 +24,7 @@ import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.exception.PrimitiveConvertCallException;
 import org.touchbit.retrofit.ext.dmr.util.ConvertUtils;
+import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
@@ -52,10 +53,14 @@ public class CharacterConverter implements ExtensionConverter<Character> {
                                                      final Annotation[] parameterAnnotations,
                                                      final Annotation[] methodAnnotations,
                                                      final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(parameterAnnotations, "parameterAnnotations");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new RequestBodyConverter() {
 
             /**
-             * @param body - Character body
+             * @param body - char or Character body
              * @return HTTP {@link RequestBody}
              * @throws ConverterUnsupportedTypeException unsupported body type
              */
@@ -63,9 +68,8 @@ public class CharacterConverter implements ExtensionConverter<Character> {
             @EverythingIsNonNull
             public RequestBody convert(Object body) {
                 assertSupportedBodyType(INSTANCE, body, Character.class, Character.TYPE);
-                Character character = (Character) body;
                 final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
-                return RequestBody.create(mediaType, character.toString());
+                return RequestBody.create(mediaType, body.toString());
             }
         };
     }
@@ -78,11 +82,14 @@ public class CharacterConverter implements ExtensionConverter<Character> {
     public ResponseBodyConverter<Character> responseBodyConverter(final Type type,
                                                                   final Annotation[] methodAnnotations,
                                                                   final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new ResponseBodyConverter<Character>() {
 
             /**
              * @param responseBody - HTTP call {@link ResponseBody}
-             * @return {@link Character}
+             * @return null if body == null or empty otherwise Character or char
              * @throws IOException body bytes not readable
              * @throws ConvertCallException inconvertible body
              * @throws PrimitiveConvertCallException primitive cannot be null
