@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  * Created: 15.12.2021
  */
 @SuppressWarnings("rawtypes")
-public abstract class BaseDefaultConverter implements ExtensionConverter {
+public abstract class BaseAggregatedConverter implements ExtensionConverter {
 
     private final Map<ExtensionConverter<?>, List<Type>> defaultConverters = new HashMap<>();
 
@@ -47,7 +47,7 @@ public abstract class BaseDefaultConverter implements ExtensionConverter {
         defaultConverters.put(converter, Arrays.asList(types));
     }
 
-    protected ExtensionConverter<?> getConverterForType(Type type) {
+    public ExtensionConverter<?> getConverterForType(Type type) {
         return defaultConverters.entrySet().stream()
                 .filter(e -> e.getValue().contains(type))
                 .map(Map.Entry::getKey)
@@ -55,7 +55,7 @@ public abstract class BaseDefaultConverter implements ExtensionConverter {
                 .orElse(null);
     }
 
-    protected Type[] getSupportedTypes() {
+    public Type[] getSupportedTypes() {
         return defaultConverters.values().stream()
                 .flatMap(List::stream)
                 .collect(Collectors.toList())

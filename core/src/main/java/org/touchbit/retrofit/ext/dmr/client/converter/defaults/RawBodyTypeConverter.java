@@ -33,7 +33,7 @@ import java.io.File;
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 15.12.2021
  */
-public class RawBodyTypeConverter extends BaseDefaultConverter {
+public class RawBodyTypeConverter extends BaseAggregatedConverter {
 
     public static final RawBodyTypeConverter INSTANCE = new RawBodyTypeConverter();
 

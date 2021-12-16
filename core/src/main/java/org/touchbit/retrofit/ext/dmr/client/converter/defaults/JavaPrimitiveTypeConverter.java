@@ -25,7 +25,7 @@ import org.touchbit.retrofit.ext.dmr.client.converter.typed.*;
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 05.12.2021
  */
-public class JavaPrimitiveTypeConverter extends BaseDefaultConverter {
+public class JavaPrimitiveTypeConverter extends BaseAggregatedConverter {
 
     public static final JavaPrimitiveTypeConverter INSTANCE = new JavaPrimitiveTypeConverter();
 

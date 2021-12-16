@@ -30,8 +30,6 @@ import org.touchbit.retrofit.ext.dmr.client.converter.defaults.JavaPrimitiveType
 import org.touchbit.retrofit.ext.dmr.client.converter.defaults.JavaReferenceTypeConverter;
 import org.touchbit.retrofit.ext.dmr.client.converter.defaults.RawBodyTypeConverter;
 import org.touchbit.retrofit.ext.dmr.client.header.ContentType;
-import org.touchbit.retrofit.ext.dmr.client.model.RawBody;
-import org.touchbit.retrofit.ext.dmr.client.model.ResourceFile;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterNotFoundException;
 import org.touchbit.retrofit.ext.dmr.util.ConvertUtils;
@@ -41,7 +39,6 @@ import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
@@ -89,14 +86,14 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
         Utils.parameterRequireNonNull(logger, "logger");
         this.logger = logger;
         // Raw body converters
-        registerRawConverter(RawBodyTypeConverter.INSTANCE,
-                RawBody.class, Byte[].class, byte[].class, File.class, ResourceFile.class);
+        final RawBodyTypeConverter rawBodyTypeConverter = RawBodyTypeConverter.INSTANCE;
+        registerRawConverter(rawBodyTypeConverter, rawBodyTypeConverter.getSupportedTypes());
         // Java type primitive converters
-        registerJavaTypeConverter(JavaPrimitiveTypeConverter.INSTANCE, Character.TYPE, Boolean.TYPE, Byte.TYPE,
-                Integer.TYPE, Double.TYPE, Float.TYPE, Long.TYPE, Short.TYPE);
+        final JavaPrimitiveTypeConverter javaPrimitiveTypeConverter = JavaPrimitiveTypeConverter.INSTANCE;
+        registerJavaTypeConverter(javaPrimitiveTypeConverter, javaPrimitiveTypeConverter.getSupportedTypes());
         // Java type reference converters
-        registerJavaTypeConverter(JavaReferenceTypeConverter.INSTANCE, String.class, Character.class, Boolean.class,
-                Byte.class, Integer.class, Double.class, Float.class, Long.class, Short.class);
+        final JavaReferenceTypeConverter javaReferenceTypeConverter = JavaReferenceTypeConverter.INSTANCE;
+        registerJavaTypeConverter(javaReferenceTypeConverter, javaReferenceTypeConverter.getSupportedTypes());
     }
 
     /**

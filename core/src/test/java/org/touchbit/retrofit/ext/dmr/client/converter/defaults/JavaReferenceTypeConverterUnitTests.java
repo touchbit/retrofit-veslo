@@ -109,38 +109,6 @@ public class JavaReferenceTypeConverterUnitTests extends BaseUnitTest {
                         .assertMessageIs("Character conversion error:\nexpected one character\nbut was 2");
             }
 
-            @Test
-            @DisplayName("Boolean.class: return Boolean if response body = 'true'")
-            public void test1639065950382() throws IOException {
-                final ResponseBody responseBody = ResponseBody.create(null, "true");
-                final Boolean result = (Boolean) getResponseConverter(BOOLEAN_C).convert(responseBody);
-                assertThat("", result, is(true));
-            }
-
-            @Test
-            @DisplayName("Boolean.class: return Boolean if response body = 'false'")
-            public void test1639065950390() throws IOException {
-                final ResponseBody responseBody = ResponseBody.create(null, "false");
-                final Boolean result = (Boolean) getResponseConverter(BOOLEAN_C).convert(responseBody);
-                assertThat("", result, is(false));
-            }
-
-            @Test
-            @DisplayName("Boolean.class: ConvertCallException if response body = 'foobar'")
-            public void test1639065950398() {
-                final ResponseBody responseBody = ResponseBody.create(null, "foobar");
-                assertThrow(() -> getResponseConverter(BOOLEAN_C).convert(responseBody))
-                        .assertClass(ConvertCallException.class)
-                        .assertMessageIs("Boolean conversion error:\nexpected true/false\nbut was 'foobar'");
-            }
-
-            @Test
-            @DisplayName("Boolean.class: return null if response body is empty")
-            public void test1639170869833() throws IOException {
-                final ResponseBody responseBody = ResponseBody.create(null, "");
-                final Boolean result = (Boolean) getResponseConverter(BOOLEAN_C).convert(responseBody);
-                assertThat("", result, nullValue());
-            }
 
             @Test
             @DisplayName("Byte.class: return Byte if response body = " + Byte.MIN_VALUE)

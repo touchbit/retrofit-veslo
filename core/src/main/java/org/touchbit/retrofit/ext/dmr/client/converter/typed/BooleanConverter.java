@@ -24,6 +24,7 @@ import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.exception.PrimitiveConvertCallException;
 import org.touchbit.retrofit.ext.dmr.util.ConvertUtils;
+import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
@@ -52,6 +53,10 @@ public class BooleanConverter implements ExtensionConverter<Boolean> {
                                                      final Annotation[] parameterAnnotations,
                                                      final Annotation[] methodAnnotations,
                                                      final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(parameterAnnotations, "parameterAnnotations");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new RequestBodyConverter() {
 
             /**
@@ -80,6 +85,9 @@ public class BooleanConverter implements ExtensionConverter<Boolean> {
     public ResponseBodyConverter<Boolean> responseBodyConverter(final Type type,
                                                                 final Annotation[] methodAnnotations,
                                                                 final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new ResponseBodyConverter<Boolean>() {
 
             /**
