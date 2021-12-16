@@ -16,14 +16,13 @@
 
 package org.touchbit.retrofit.ext.dmr.client.converter.typed;
 
-import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.ext.dmr.exception.ConvertCallException;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.exception.PrimitiveConvertCallException;
-import org.touchbit.retrofit.ext.dmr.util.ConvertUtils;
+import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
@@ -52,10 +51,14 @@ public class IntegerConverter implements ExtensionConverter<Integer> {
                                                      final Annotation[] parameterAnnotations,
                                                      final Annotation[] methodAnnotations,
                                                      final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(parameterAnnotations, "parameterAnnotations");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new RequestBodyConverter() {
 
             /**
-             * @param body - Integer body
+             * @param body - {@link Integer} or int body
              * @return HTTP {@link RequestBody}
              * @throws ConverterUnsupportedTypeException unsupported body type
              */
@@ -63,9 +66,7 @@ public class IntegerConverter implements ExtensionConverter<Integer> {
             @EverythingIsNonNull
             public RequestBody convert(Object body) {
                 assertSupportedBodyType(INSTANCE, body, Integer.class, Integer.TYPE);
-                Integer aInteger = (Integer) body;
-                final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
-                return RequestBody.create(mediaType, aInteger.toString());
+                return createRequestBody(methodAnnotations, body.toString());
             }
         };
     }
@@ -78,11 +79,14 @@ public class IntegerConverter implements ExtensionConverter<Integer> {
     public ResponseBodyConverter<Integer> responseBodyConverter(final Type type,
                                                                 final Annotation[] methodAnnotations,
                                                                 final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new ResponseBodyConverter<Integer>() {
 
             /**
              * @param responseBody - HTTP call {@link ResponseBody}
-             * @return {@link Integer}
+             * @return null if body == null or empty otherwise {@link Integer} or int body
              * @throws IOException body bytes not readable
              * @throws ConvertCallException inconvertible body
              * @throws PrimitiveConvertCallException primitive cannot be null
