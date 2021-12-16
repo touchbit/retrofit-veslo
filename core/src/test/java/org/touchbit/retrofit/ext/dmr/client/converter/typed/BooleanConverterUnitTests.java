@@ -49,6 +49,7 @@ public class BooleanConverterUnitTests extends BaseCoreUnitTest {
             assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, null, AA, RTF), "parameterAnnotations");
             assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, null, RTF), "methodAnnotations");
             assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, null), "retrofit");
+            assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(null), "body");
         }
 
         @Test
@@ -75,7 +76,7 @@ public class BooleanConverterUnitTests extends BaseCoreUnitTest {
             assertThrow(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(1))
                     .assertClass(ConverterUnsupportedTypeException.class)
                     .assertMessageIs("Unsupported type for converter " +
-                            "org.touchbit.retrofit.ext.dmr.client.converter.typed.BooleanConverter\n" +
+                            CONVERTER.getClass().getTypeName() + "\n" +
                             "Received: java.lang.Integer\n" +
                             "Expected: java.lang.Boolean or boolean\n");
         }
@@ -168,7 +169,7 @@ public class BooleanConverterUnitTests extends BaseCoreUnitTest {
             assertThrow(() -> CONVERTER.responseBodyConverter(OBJ_C, AA, RTF).convert(responseBody))
                     .assertClass(ConverterUnsupportedTypeException.class)
                     .assertMessageIs("Unsupported type for converter " +
-                            "org.touchbit.retrofit.ext.dmr.client.converter.typed.BooleanConverter\n" +
+                            CONVERTER.getClass().getTypeName() + "\n" +
                             "Received: java.lang.Object\n" +
                             "Expected: java.lang.Boolean or boolean\n");
         }

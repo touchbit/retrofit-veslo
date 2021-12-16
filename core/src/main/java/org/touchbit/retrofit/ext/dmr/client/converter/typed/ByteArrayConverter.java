@@ -20,6 +20,7 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
+import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.ext.dmr.util.ConvertUtils;
 import org.touchbit.retrofit.ext.dmr.util.Utils;
 import retrofit2.Retrofit;
@@ -30,29 +31,42 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
-public class ByteArrayConverter implements ExtensionConverter<Byte[]> {
+/**
+ * Reference/primitive byte array converter (raw body)
+ * <p>
+ *
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 16.12.2021
+ */
+public class ByteArrayConverter implements ExtensionConverter<Object> {
 
     public static final ByteArrayConverter INSTANCE = new ByteArrayConverter();
 
+    /**
+     * @see ExtensionConverter#requestBodyConverter(Type, Annotation[], Annotation[], Retrofit)
+     */
     @Override
     @EverythingIsNonNull
     public RequestBodyConverter requestBodyConverter(final Type type,
                                                      final Annotation[] parameterAnnotations,
                                                      final Annotation[] methodAnnotations,
                                                      final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(parameterAnnotations, "parameterAnnotations");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new RequestBodyConverter() {
 
+            /**
+             * @param body - Byte[] or byte[]
+             * @return {@link RequestBody}
+             * @throws ConverterUnsupportedTypeException unsupported body type
+             */
             @Override
             @EverythingIsNonNull
             public RequestBody convert(Object body) {
-                Utils.parameterRequireNonNull(body, "body");
-                assertSupportedBodyType(INSTANCE, type, Byte[].class, byte[].class);
-                final byte[] bytes;
-                if (body instanceof Byte[]) {
-                    bytes = Utils.toPrimitiveByteArray((Byte[]) body);
-                } else {
-                    bytes = (byte[]) body;
-                }
+                assertSupportedBodyType(INSTANCE, body, Byte[].class, byte[].class);
+                final byte[] bytes = Utils.toPrimitiveByteArray(body);
                 final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
                 return RequestBody.create(mediaType, bytes);
             }
@@ -60,21 +74,37 @@ public class ByteArrayConverter implements ExtensionConverter<Byte[]> {
         };
     }
 
+    /**
+     * @see ExtensionConverter#responseBodyConverter(Type, Annotation[], Retrofit)
+     */
     @Override
     @EverythingIsNonNull
-    public ResponseBodyConverter<Byte[]> responseBodyConverter(final Type type,
+    public ResponseBodyConverter<Object> responseBodyConverter(final Type type,
                                                                final Annotation[] methodAnnotations,
                                                                final Retrofit retrofit) {
-        return new ResponseBodyConverter<Byte[]>() {
+        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
+        return new ResponseBodyConverter<Object>() {
 
+            /**
+             * @param responseBody - HTTP call {@link ResponseBody}
+             * @return null if body == null otherwise Byte[] or byte[] if body present or empty
+             * @throws IOException                       body bytes not readable
+             * @throws ConverterUnsupportedTypeException unsupported body type
+             */
             @Override
             @Nullable
-            public Byte[] convert(@Nullable ResponseBody body) throws IOException {
-                if (body == null) {
+            public Object convert(@Nullable ResponseBody responseBody) throws IOException {
+                if (responseBody == null) {
                     return null;
                 }
                 assertSupportedBodyType(INSTANCE, type, Byte[].class, byte[].class);
-                return Utils.toObjectByteArray(body.bytes());
+                final byte[] bytes = responseBody.bytes();
+                if (type.equals(Byte[].class)) {
+                    return Utils.toObjectByteArray(bytes);
+                }
+                return bytes;
             }
 
         };

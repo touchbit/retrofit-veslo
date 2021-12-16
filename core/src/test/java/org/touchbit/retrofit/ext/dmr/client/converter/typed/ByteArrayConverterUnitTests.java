@@ -17,10 +17,10 @@
 package org.touchbit.retrofit.ext.dmr.client.converter.typed;
 
 import internal.test.utils.OkHttpTestUtils;
-import internal.test.utils.asserter.ThrowableRunnable;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.ext.dmr.BaseCoreUnitTest;
 import org.touchbit.retrofit.ext.dmr.exception.ConverterUnsupportedTypeException;
@@ -28,79 +28,121 @@ import org.touchbit.retrofit.ext.dmr.util.Utils;
 
 import java.io.IOException;
 
-import static internal.test.utils.TestUtils.array;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @SuppressWarnings("ConstantConditions")
-@DisplayName("ByteArrayConverter tests")
+@DisplayName("ByteArrayConverter.class unit tests")
 public class ByteArrayConverterUnitTests extends BaseCoreUnitTest {
 
-    @Test
-    @DisplayName("Successful conversion Byte[]->RequestBody if body instanceof Byte.class")
-    public void test1639065951052() throws IOException {
-        final String expected = "test1637463917948";
-        final Byte[] body = Utils.toObjectByteArray(expected);
-        final RequestBody requestBody = new ByteArrayConverter()
-                .requestBodyConverter(BYTE_ARRAY_C, array(), array(), RTF)
-                .convert(body);
-        assertThat("RequestBody", requestBody, notNullValue());
-        final String actual = OkHttpTestUtils.requestBodyToString(requestBody);
-        assertThat("Body", actual, is(expected));
+    private static final ByteArrayConverter CONVERTER = ByteArrayConverter.INSTANCE;
+
+    @Nested
+    @DisplayName("#requestBodyConverter() method tests")
+    public class RequestBodyConverterMethodTests {
+
+        @Test
+        @DisplayName("All parameters required")
+        public void test1639663456575() {
+            assertNPE(() -> CONVERTER.requestBodyConverter(null, AA, AA, RTF), "type");
+            assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, null, AA, RTF), "parameterAnnotations");
+            assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, null, RTF), "methodAnnotations");
+            assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, null), "retrofit");
+            assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(null), "body");
+        }
+
+        @Test
+        @DisplayName("Convert body by real body reference array type")
+        public void test1639663479573() throws IOException {
+            final String expected = "test";
+            final Byte[] body = Utils.toObjectByteArray(expected);
+            final RequestBody requestBody = CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(body);
+            final String result = OkHttpTestUtils.requestBodyToString(requestBody);
+            assertThat(result, is(expected));
+        }
+
+        @Test
+        @DisplayName("Convert body by real body primitive array type")
+        public void test1639663530556() throws IOException {
+            final String expected = "test";
+            final byte[] body = expected.getBytes();
+            final RequestBody requestBody = CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(body);
+            final String result = OkHttpTestUtils.requestBodyToString(requestBody);
+            assertThat(result, is(expected));
+        }
+
+        @Test
+        @DisplayName("ConverterUnsupportedTypeException if body != Byte[]")
+        public void test1639663568425() {
+            assertThrow(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(1))
+                    .assertClass(ConverterUnsupportedTypeException.class)
+                    .assertMessageIs("Unsupported type for converter " +
+                            CONVERTER.getClass().getTypeName() + "\n" +
+                            "Received: java.lang.Integer\n" +
+                            "Expected: java.lang.Byte[] or byte[]\n");
+        }
+
     }
 
-    @Test
-    @DisplayName("Error converting Byte[]->RequestBody if body == null")
-    public void test1639065951065() {
-        final ThrowableRunnable runnable = () -> new ByteArrayConverter()
-                .requestBodyConverter(OBJ_T, array(), array(), RTF)
-                .convert(null);
-        assertThrow(runnable).assertNPE("body");
-    }
+    @Nested
+    @DisplayName("#responseBodyConverter() method tests")
+    public class ResponseBodyConverterMethodTests {
 
-    @Test
-    @DisplayName("Error converting Object->RequestBody")
-    public void test1639065951074() {
-        final ThrowableRunnable runnable = () -> new ByteArrayConverter()
-                .requestBodyConverter(OBJ_T, array(), array(), RTF)
-                .convert(new Object());
-        assertThrow(runnable).assertClass(ConverterUnsupportedTypeException.class);
-    }
+        @Test
+        @DisplayName("All parameters required")
+        public void test1639663925930() {
+            assertNPE(() -> CONVERTER.responseBodyConverter(null, AA, RTF), "type");
+            assertNPE(() -> CONVERTER.responseBodyConverter(BOOLEAN_C, null, RTF), "methodAnnotations");
+            assertNPE(() -> CONVERTER.responseBodyConverter(BOOLEAN_C, AA, null), "retrofit");
+        }
 
-    @Test
-    @DisplayName("Successful conversion ResponseBody->Byte[] if content length == 0 then return empty byte array")
-    public void test1639065951083() throws Exception {
-        final ResponseBody responseBody = mock(ResponseBody.class);
-        when(responseBody.bytes()).thenReturn("" .getBytes());
-        when(responseBody.contentLength()).thenReturn(0L);
-        final Byte[] result = new ByteArrayConverter()
-                .responseBodyConverter(BYTE_ARRAY_C, array(), RTF)
-                .convert(responseBody);
-        assertThat("Body", result, is(new Byte[]{}));
-    }
+        @Test
+        @DisplayName("return Byte[] if response body present and type = Byte[].class")
+        public void test1639663950638() throws IOException {
+            final byte[] expected = "test" .getBytes();
+            final ResponseBody responseBody = ResponseBody.create(null, expected);
+            final Object result = CONVERTER.responseBodyConverter(Byte[].class, AA, RTF).convert(responseBody);
+            assertThat(result, instanceOf(Byte[].class));
+            assertThat(result, is(expected));
+        }
 
-    @Test
-    @DisplayName("Successful conversion ResponseBody->Byte[] if content length > 0 then return byte array")
-    public void test1639065951095() throws Exception {
-        final String expected = "test1637465032249";
-        final Byte[] body = Utils.toObjectByteArray(expected);
-        final ResponseBody responseBody = mock(ResponseBody.class);
-        when(responseBody.bytes()).thenReturn(expected.getBytes());
-        when(responseBody.contentLength()).thenReturn(Long.valueOf(expected.length()));
-        final Byte[] result = new ByteArrayConverter()
-                .responseBodyConverter(BYTE_ARRAY_C, array(), RTF)
-                .convert(responseBody);
-        assertThat("Body", result, is(body));
-    }
+        @Test
+        @DisplayName("return byte[] if response body present and type = byte[].class")
+        public void test1639664296631() throws IOException {
+            final byte[] expected = "test" .getBytes();
+            final ResponseBody responseBody = ResponseBody.create(null, expected);
+            final Object result = CONVERTER.responseBodyConverter(byte[].class, AA, RTF).convert(responseBody);
+            assertThat(result, instanceOf(byte[].class));
+            assertThat(result, is("test" .getBytes()));
+        }
 
-    @Test
-    @DisplayName("Successful conversion ResponseBody->Byte[] if body == null then return null")
-    public void test1639065951109() throws IOException {
-        final Byte[] body = new ByteArrayConverter()
-                .responseBodyConverter(BYTE_ARRAY_C, array(), RTF)
-                .convert(null);
-        assertThat("Body", body, nullValue());
+        @Test
+        @DisplayName("return byte array if response body is empty")
+        public void test1639664011559() throws IOException {
+            final byte[] expected = "" .getBytes();
+            final ResponseBody responseBody = ResponseBody.create(null, "");
+            final Object result = CONVERTER.responseBodyConverter(Byte[].class, AA, RTF).convert(responseBody);
+            assertThat(result, is(expected));
+        }
+
+        @Test
+        @DisplayName("return null if response body is null")
+        public void test1639664018809() throws IOException {
+            final Object result = CONVERTER.responseBodyConverter(Byte[].class, AA, RTF).convert(null);
+            assertThat(result, nullValue());
+        }
+
+        @Test
+        @DisplayName("ConverterUnsupportedTypeException if body != boolean type")
+        public void test1639665541105() {
+            final ResponseBody responseBody = ResponseBody.create(null, "test");
+            assertThrow(() -> CONVERTER.responseBodyConverter(OBJ_C, AA, RTF).convert(responseBody))
+                    .assertClass(ConverterUnsupportedTypeException.class)
+                    .assertMessageIs("Unsupported type for converter " +
+                            CONVERTER.getClass().getTypeName() + "\n" +
+                            "Received: java.lang.Object\n" +
+                            "Expected: java.lang.Byte[] or byte[]\n");
+        }
+
     }
 
 }

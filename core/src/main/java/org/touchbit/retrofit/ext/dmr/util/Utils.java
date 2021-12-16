@@ -74,6 +74,23 @@ public class Utils {
     }
 
     /**
+     * @param bytes - {@link Byte[]} or {@link byte[]} object
+     * @return byte[]
+     */
+    @EverythingIsNonNull
+    public static byte[] toPrimitiveByteArray(Object bytes) {
+        Utils.parameterRequireNonNull(bytes, "bytes");
+        if (bytes instanceof Byte[]) {
+            return toPrimitiveByteArray((Byte[]) bytes);
+        }
+        if (bytes instanceof byte[]) {
+            return (byte[]) bytes;
+        }
+        throw new IllegalArgumentException("Received unsupported type: " + bytes.getClass() + "\n" +
+                "Expected: " + Byte[].class + " or " + byte[].class);
+    }
+
+    /**
      * @param bytes - {@link Byte[]}
      * @return byte[]
      */
