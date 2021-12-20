@@ -100,8 +100,12 @@ public abstract class BaseUnitTest {
         return new ThrowableAsserter(runnable);
     }
 
-    public ThrowableAsserter assertNPE(ThrowableRunnable runnable, String parameter) {
-        return new ThrowableAsserter(runnable).assertNPE(parameter);
+    public static void assertUtilityClassException(Class<?> aClass) {
+        ThrowableAsserter.assertUtilityClassException(aClass);
+    }
+
+    public void assertNPE(ThrowableRunnable runnable, String parameter) {
+        new ThrowableAsserter(runnable).assertNPE(parameter);
     }
 
     public static <T> void assertThat(T actual, Matcher<? super T> matcher) {

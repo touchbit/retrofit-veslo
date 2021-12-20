@@ -181,7 +181,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
             public Object convert(@Nullable final ResponseBody respBody) throws IOException {
                 final String responseBodyTypeName = ResponseBody.class.getTypeName();
                 logger.debug("Convert {} to type: {}", responseBodyTypeName, type);
-                final Type bodyType = getResponseBodyClass(type);
+                final Type bodyType = getResponseBodyType(type);
                 final String bodyTypeName = Utils.getTypeName(bodyType);
                 logger.debug("Definition of response converter for type: {}", bodyTypeName);
                 try {
@@ -237,6 +237,10 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
                                                                      @Nonnull final Annotation[] parameterAnnotations,
                                                                      @Nonnull final Annotation[] methodAnnotations,
                                                                      @Nonnull final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(bodyClass, "bodyClass");
+        Utils.parameterRequireNonNull(parameterAnnotations, "parameterAnnotations");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         final RequestConverter aRequestConverter = Utils.getAnnotation(methodAnnotations, RequestConverter.class);
         final Converters aConverters = Utils.getAnnotation(methodAnnotations, Converters.class);
         if (aRequestConverter != null && aConverters != null) {
@@ -279,6 +283,10 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
                                                        @Nonnull final Annotation[] parameterAnnotations,
                                                        @Nonnull final Annotation[] methodAnnotations,
                                                        @Nonnull final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(bodyClass, "bodyClass");
+        Utils.parameterRequireNonNull(parameterAnnotations, "parameterAnnotations");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         final ExtensionConverter<?> converter = getRawRequestConverters().get(bodyClass);
         if (converter != null) {
             return converter.requestBodyConverter(bodyClass, parameterAnnotations, methodAnnotations, retrofit);
@@ -330,6 +338,10 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
                                                         @Nonnull final Annotation[] parameterAnnotations,
                                                         @Nonnull final Annotation[] methodAnnotations,
                                                         @Nonnull final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(bodyClass, "bodyClass");
+        Utils.parameterRequireNonNull(parameterAnnotations, "parameterAnnotations");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         final ContentType contentType = ConvertUtils.getContentType(methodAnnotations);
         final ExtensionConverter<?> converter = getMimeRequestConverters().get(contentType);
         if (converter != null) {
@@ -352,6 +364,10 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
                                                             @Nonnull final Annotation[] parameterAnnotations,
                                                             @Nonnull final Annotation[] methodAnnotations,
                                                             @Nonnull final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(bodyClass, "bodyClass");
+        Utils.parameterRequireNonNull(parameterAnnotations, "parameterAnnotations");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         final ExtensionConverter<?> converter = getJavaTypeRequestConverters().get(bodyClass);
         if (converter != null) {
             return converter.requestBodyConverter(bodyClass, parameterAnnotations, methodAnnotations, retrofit);
@@ -373,7 +389,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      * @return body type real {@link Class} (UserDTO from example)
      */
     @EverythingIsNonNull
-    protected Type getResponseBodyClass(Type type) {
+    protected Type getResponseBodyType(Type type) {
         Utils.parameterRequireNonNull(type, "type");
         final Type bodyType;
         if (isIDualResponse(type)) {
@@ -396,6 +412,9 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     protected ResponseBodyConverter<?> getRawResponseConverter(@Nonnull final Type bodyType,
                                                                @Nonnull final Annotation[] methodAnnotations,
                                                                @Nonnull final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(bodyType, "bodyType");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         final Map<Type, ExtensionConverter<?>> rawConverters = getRawResponseConverters();
         final ExtensionConverter<?> rawConverter = rawConverters.get(bodyType);
         if (rawConverter != null) {
@@ -419,14 +438,20 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
         Utils.parameterRequireNonNull(bodyType, "bodyType");
         Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
         Utils.parameterRequireNonNull(retrofit, "retrofit");
-        if (bodyType instanceof ParameterizedType) {
+        final Type responseBodyType = getResponseBodyType(bodyType);
+        if (responseBodyType instanceof ParameterizedType) {
+            // get converter by generic type package name
+            // For example get converter for UserDTO from parameterized type List<UserDTO>
             ParameterizedType r = (ParameterizedType) bodyType;
             for (Type typeArgument : r.getActualTypeArguments()) {
-                return getPackageResponseConverter(typeArgument, methodAnnotations, retrofit);
+                final ResponseBodyConverter<?> result = getPackageResponseConverter(typeArgument, methodAnnotations, retrofit);
+                if (result != null) {
+                    return result;
+                }
             }
         }
-        if (bodyType instanceof Class) {
-            Class<?> bodyClass = (Class<?>) bodyType;
+        if (responseBodyType instanceof Class) {
+            Class<?> bodyClass = (Class<?>) responseBodyType;
             if (bodyClass.isPrimitive()) {
                 return null;
             }
@@ -454,6 +479,9 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
                                                                 @Nonnull final Type bodyType,
                                                                 @Nonnull final Annotation[] methodAnnotations,
                                                                 @Nonnull final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(bodyType, "bodyType");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         final ContentType contentType;
         if (responseBody == null) {
             contentType = new ContentType(null);
@@ -479,6 +507,9 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     protected ResponseBodyConverter<?> getJavaTypeResponseConverter(@Nonnull final Type bodyType,
                                                                     @Nonnull final Annotation[] methodAnnotations,
                                                                     @Nonnull final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(bodyType, "bodyType");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         final ExtensionConverter<?> extensionConverter;
         if (bodyType instanceof ParameterizedType) {
             ParameterizedType pType = (ParameterizedType) bodyType;
@@ -505,6 +536,9 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     protected ResponseBodyConverter<?> getResponseConverterFromAnnotation(@Nonnull final Type bodyType,
                                                                           @Nonnull final Annotation[] methodAnnotations,
                                                                           @Nonnull final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(bodyType, "bodyType");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         final ResponseConverter responseConverter = Utils.getAnnotation(methodAnnotations, ResponseConverter.class);
         final Converters converters = Utils.getAnnotation(methodAnnotations, Converters.class);
         if (responseConverter != null && converters != null) {
@@ -600,6 +634,8 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      */
     @EverythingIsNonNull
     public void registerMimeConverter(ExtensionConverter<?> converter, ContentType... supportedContentTypes) {
+        Utils.parameterRequireNonNull(converter, "converter");
+        Utils.parameterRequireNonNull(supportedContentTypes, "supportedContentTypes");
         registerMimeRequestConverter(converter, supportedContentTypes);
         registerMimeResponseConverter(converter, supportedContentTypes);
     }
@@ -621,6 +657,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     @EverythingIsNonNull
     public void registerMimeRequestConverter(ExtensionConverter<?> converter, ContentType... supportedContentTypes) {
         Utils.parameterRequireNonNull(converter, "converter");
+        Utils.parameterRequireNonNull(supportedContentTypes, "supportedContentTypes");
         for (ContentType supportedContentType : supportedContentTypes) {
             Utils.parameterRequireNonNull(supportedContentType, "supportedContentType");
             getMimeRequestConverters().put(supportedContentType, converter);
@@ -644,6 +681,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     @EverythingIsNonNull
     public void registerMimeResponseConverter(ExtensionConverter<?> converter, ContentType... supportedContentTypes) {
         Utils.parameterRequireNonNull(converter, "converter");
+        Utils.parameterRequireNonNull(supportedContentTypes, "supportedContentTypes");
         for (ContentType supportedContentType : supportedContentTypes) {
             Utils.parameterRequireNonNull(supportedContentType, "supportedContentType");
             getMimeResponseConverters().put(supportedContentType, converter);
@@ -658,6 +696,8 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      */
     @EverythingIsNonNull
     public void registerRawConverter(ExtensionConverter<?> converter, Type... supportedRawClasses) {
+        Utils.parameterRequireNonNull(converter, "converter");
+        Utils.parameterRequireNonNull(supportedRawClasses, "supportedRawClasses");
         registerRawRequestConverter(converter, supportedRawClasses);
         registerRawResponseConverter(converter, supportedRawClasses);
     }
@@ -679,6 +719,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     @EverythingIsNonNull
     public void registerRawRequestConverter(ExtensionConverter<?> converter, Type... supportedRawClasses) {
         Utils.parameterRequireNonNull(converter, "converter");
+        Utils.parameterRequireNonNull(supportedRawClasses, "supportedRawClasses");
         for (Type supportedRawClass : supportedRawClasses) {
             Utils.parameterRequireNonNull(supportedRawClass, "supportedRawClass");
             getRawRequestConverters().put(supportedRawClass, converter);
@@ -702,6 +743,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     @EverythingIsNonNull
     public void registerRawResponseConverter(ExtensionConverter<?> converter, Type... supportedRawClasses) {
         Utils.parameterRequireNonNull(converter, "converter");
+        Utils.parameterRequireNonNull(supportedRawClasses, "supportedRawClasses");
         for (Type supportedRawClass : supportedRawClasses) {
             Utils.parameterRequireNonNull(supportedRawClass, "supportedRawClass");
             getRawResponseConverters().put(supportedRawClass, converter);
@@ -716,6 +758,8 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      */
     @EverythingIsNonNull
     public void registerJavaTypeConverter(ExtensionConverter<?> converter, Type... supportedJavaTypeClasses) {
+        Utils.parameterRequireNonNull(converter, "converter");
+        Utils.parameterRequireNonNull(supportedJavaTypeClasses, "supportedJavaTypeClasses");
         registerJavaTypeRequestConverter(converter, supportedJavaTypeClasses);
         registerJavaTypeResponseConverter(converter, supportedJavaTypeClasses);
     }
@@ -737,6 +781,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     @EverythingIsNonNull
     public void registerJavaTypeRequestConverter(ExtensionConverter<?> converter, Type... supportedJavaTypeClasses) {
         Utils.parameterRequireNonNull(converter, "converter");
+        Utils.parameterRequireNonNull(supportedJavaTypeClasses, "supportedJavaTypeClasses");
         for (Type supportedJavaTypeClass : supportedJavaTypeClasses) {
             Utils.parameterRequireNonNull(supportedJavaTypeClass, "supportedJavaTypeClass");
             getJavaTypeRequestConverters().put(supportedJavaTypeClass, converter);
@@ -760,6 +805,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     @EverythingIsNonNull
     public void registerJavaTypeResponseConverter(ExtensionConverter<?> converter, Type... supportedJavaTypeClasses) {
         Utils.parameterRequireNonNull(converter, "converter");
+        Utils.parameterRequireNonNull(supportedJavaTypeClasses, "supportedJavaTypeClasses");
         for (Type supportedJavaTypeClass : supportedJavaTypeClasses) {
             Utils.parameterRequireNonNull(supportedJavaTypeClass, "supportedJavaTypeClass");
             getJavaTypeResponseConverters().put(supportedJavaTypeClass, converter);
@@ -774,6 +820,8 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      */
     @EverythingIsNonNull
     public void registerPackageConverter(ExtensionConverter<?> converter, String... supportedPackageNames) {
+        Utils.parameterRequireNonNull(converter, "converter");
+        Utils.parameterRequireNonNull(supportedPackageNames, "supportedPackageNames");
         registerPackageRequestConverter(converter, supportedPackageNames);
         registerPackageResponseConverter(converter, supportedPackageNames);
     }
@@ -786,6 +834,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      */
     @EverythingIsNonNull
     public void registerPackageConverter(ExtensionConverter<?> converter, Package... supportedPackages) {
+        Utils.parameterRequireNonNull(converter, "converter");
         Utils.parameterRequireNonNull(supportedPackages, "supportedPackages");
         final String[] packageNames = Arrays.stream(supportedPackages)
                 .filter(Objects::nonNull)
@@ -802,6 +851,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      */
     @EverythingIsNonNull
     public void registerPackageConverter(ExtensionConverter<?> converter, Class<?>... supportedPackageClasses) {
+        Utils.parameterRequireNonNull(converter, "converter");
         Utils.parameterRequireNonNull(supportedPackageClasses, "supportedPackageClasses");
         final Package[] packages = Arrays.stream(supportedPackageClasses)
                 .filter(Objects::nonNull)
@@ -827,11 +877,10 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     @EverythingIsNonNull
     public void registerPackageRequestConverter(ExtensionConverter<?> converter, String... supportedPackageNames) {
         Utils.parameterRequireNonNull(converter, "converter");
+        Utils.parameterRequireNonNull(supportedPackageNames, "supportedPackageNames");
         for (String supportedPackageName : supportedPackageNames) {
             Utils.parameterRequireNonNull(supportedPackageName, "supportedPackageName");
-            if (!supportedPackageName.matches("^[a-z]+(\\.[a-z0-9]+)*$")) {
-                throw new IllegalArgumentException("Invalid package name: " + supportedPackageName);
-            }
+            assertPackageName(supportedPackageName);
             getPackageRequestConverters().put(supportedPackageName, converter);
         }
     }
@@ -853,12 +902,23 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     @EverythingIsNonNull
     public void registerPackageResponseConverter(ExtensionConverter<?> converter, String... supportedPackageNames) {
         Utils.parameterRequireNonNull(converter, "converter");
+        Utils.parameterRequireNonNull(supportedPackageNames, "supportedPackageNames");
         for (String supportedPackageName : supportedPackageNames) {
             Utils.parameterRequireNonNull(supportedPackageName, "supportedPackageName");
-            if (!supportedPackageName.matches("^[a-z]+(\\.[a-z0-9]+)*$")) {
-                throw new IllegalArgumentException("Invalid package name: " + supportedPackageName);
-            }
+            assertPackageName(supportedPackageName);
             getPackageResponseConverters().put(supportedPackageName, converter);
+        }
+    }
+
+    /**
+     * @param packageName - DTO model package name
+     */
+    protected void assertPackageName(String packageName) {
+        Utils.parameterRequireNonNull(packageName, "packageName");
+        String regexp = "^[a-zA-Z_]+(:?[a-zA-Z0-9_]*)?+(\\.[a-zA-Z_][a-zA-Z0-9_]*)*$";
+        if (!packageName.matches(regexp)) {
+            throw new IllegalArgumentException("Invalid package name: " + packageName +
+                    "\nExpected regex match: " + regexp);
         }
     }
 

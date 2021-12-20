@@ -21,8 +21,8 @@ import java.lang.reflect.Type;
 public class TestUtils {
 
     @SafeVarargs
-    public static <C> C[] array(C... annotations) {
-        return annotations;
+    public static <C> C[] array(C... items) {
+        return items;
     }
 
     public static Type getGenericReturnTypeForMethod(Class<?> aClass, String methodName) {

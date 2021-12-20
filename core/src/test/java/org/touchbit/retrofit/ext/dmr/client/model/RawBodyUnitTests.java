@@ -33,6 +33,17 @@ public class RawBodyUnitTests {
     private static final byte[] EMPTY_BODY_BYTES = EMPTY_BODY_STRING.getBytes();
 
     @Test
+    @DisplayName("Successfully instantiating nullable RawBody class with empty constructor")
+    public void test1639981400649() {
+        RawBody dto = new RawBody();
+        assertThat("RawBody.getBody()", dto.bytes(), nullValue());
+        assertThat("RawBody.getBody()", dto.string(), nullValue());
+        assertThat("RawBody.isEmptyBody()", dto.isEmptyBody(), is(true));
+        assertThat("RawBody.isNullBody()", dto.isNullBody(), is(true));
+        assertThat("RawBody.isNullBody()", dto.hashCode(), is(0));
+    }
+
+    @Test
     @DisplayName("Successfully instantiating RawBody class if data is empty string")
     public void test1639065951875() {
         RawBody dto = new RawBody(EMPTY_BODY_STRING);

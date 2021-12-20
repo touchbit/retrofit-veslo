@@ -26,6 +26,7 @@ import org.touchbit.retrofit.ext.dmr.client.inteceptor.CompositeInterceptor;
 import org.touchbit.retrofit.ext.dmr.client.inteceptor.LoggingInterceptAction;
 import org.touchbit.retrofit.ext.dmr.exaple.dto.ErrDTO;
 import org.touchbit.retrofit.ext.dmr.exaple.dto.SucDTO;
+import org.touchbit.retrofit.ext.dmr.exception.UtilityClassException;
 import retrofit2.Retrofit;
 
 import static org.touchbit.retrofit.ext.dmr.asserter.AssertionMatcher.is;
@@ -39,6 +40,10 @@ import static org.touchbit.retrofit.ext.dmr.exaple.ExampleApiClientAssertions.As
  * Created: 12.12.2021
  */
 public class ExampleApiClientAssertions {
+
+    private ExampleApiClientAssertions() {
+        throw new UtilityClassException();
+    }
 
     protected static ExampleClient apiClient = new Retrofit.Builder()
             .client(new OkHttpClient.Builder()
@@ -358,6 +363,10 @@ public class ExampleApiClientAssertions {
     }
 
     public static class Assertions {
+
+        private Assertions() {
+            throw new UtilityClassException();
+        }
 
         public static void assertSucDTO(SucDTO actual, SucDTO expected) {
             try (final SoftlyAsserter asserter = SoftlyAsserter.get()) {

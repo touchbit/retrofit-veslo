@@ -17,6 +17,7 @@
 package org.touchbit.retrofit.ext.dmr;
 
 import internal.test.utils.BaseUnitTest;
+import internal.test.utils.RetrofitTestUtils;
 import internal.test.utils.client.model.TestDTO;
 import internal.test.utils.client.model.pack.PackageDTO;
 import okhttp3.RequestBody;
@@ -25,9 +26,9 @@ import org.touchbit.retrofit.ext.dmr.client.EndpointInfo;
 import org.touchbit.retrofit.ext.dmr.client.converter.ExtensionConverterFactory;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.Converters;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
-import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter.RequestBodyConverter;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.RequestConverter;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ResponseConverter;
+import org.touchbit.retrofit.ext.dmr.client.header.ContentType;
 import org.touchbit.retrofit.ext.dmr.client.response.DualResponse;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
@@ -37,6 +38,8 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
 
 import static internal.test.utils.TestUtils.array;
 import static internal.test.utils.TestUtils.getGenericReturnTypeForMethod;
@@ -46,19 +49,27 @@ import static org.touchbit.retrofit.ext.dmr.client.header.ContentTypeConstants.T
 @SuppressWarnings({"ConstantConditions", "SameParameterValue", "unused", "rawtypes"})
 public class BaseCoreUnitTest extends BaseUnitTest {
 
-    public static final TestsExtensionConverterFactory TEST_FACTORY = new TestsExtensionConverterFactory();
     public static final Type DUAL_RESPONSE_GENERIC_STRING_TYPE = getGenericReturnTypeForMethod(BaseGenericTypes.class, "stringDualResponse");
+    public static final Type DUAL_RESPONSE_PACKAGE_DTO_TYPE = getGenericReturnTypeForMethod(BaseGenericTypes.class, "packageDTODualResponse");
     public static final Type DUAL_RESPONSE_RAW_TYPE = getGenericReturnTypeForMethod(BaseGenericTypes.class, "rawDualResponse");
+    public static final Type LIST_PACKAGE_DTO_TYPE = getGenericReturnTypeForMethod(BaseGenericTypes.class, "packageDTOList");
+    public static final Type MAP_PACKAGE_DTO_TYPE = getGenericReturnTypeForMethod(BaseGenericTypes.class, "packageDTOMap");
     public static final TestConverter TEST_CONVERTER = new TestConverter();
 
-    protected static RequestBodyConverter getRequestBodyConverter(Type type, Annotation... methodAnnotations) {
-        return TEST_FACTORY.requestBodyConverter(type, AA, methodAnnotations, RTF);
+    protected static TestsExtensionConverterFactory getTestFactory() {
+        return new TestsExtensionConverterFactory();
     }
 
     private interface BaseGenericTypes {
         DualResponse<String, String> stringDualResponse();
 
+        DualResponse<PackageDTO, PackageDTO> packageDTODualResponse();
+
         DualResponse rawDualResponse();
+
+        List<PackageDTO> packageDTOList();
+
+        Map<String, PackageDTO> packageDTOMap();
     }
 
     public static final class TestsExtensionConverterFactory extends ExtensionConverterFactory {
@@ -92,6 +103,8 @@ public class BaseCoreUnitTest extends BaseUnitTest {
     }
 
     public static final class TestConverter implements ExtensionConverter<TestDTO> {
+
+        public static final TestConverter INSTANCE = new TestConverter();
 
         public RequestBodyConverter requestBodyConverter(Type a1, Annotation[] a2, Annotation[] a3, Retrofit a4) {
             return body -> RequestBody.create(null, String.valueOf(body));
@@ -210,6 +223,14 @@ public class BaseCoreUnitTest extends BaseUnitTest {
             super(sucDTO, errDTO, response, endpointInfo, callAnnotations);
         }
 
+    }
+
+    protected static Annotation[] getContentTypeHeaderAnnotations(ContentType value) {
+        return getContentTypeHeaderAnnotations(value.toString());
+    }
+
+    protected static Annotation[] getContentTypeHeaderAnnotations(String value) {
+        return RetrofitTestUtils.getCallMethodAnnotations("Content-Type: " + value);
     }
 
 }

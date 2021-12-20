@@ -46,7 +46,7 @@ public class ExtensionConverterUnitTests extends BaseCoreUnitTest {
         }
 
         @Test
-        @DisplayName("No exception if not primitive class")
+        @DisplayName("No exception if reference class")
         public void test1639683736333() {
             TEST_CONVERTER.assertNotNullableBodyType(Boolean.class);
         }
@@ -85,7 +85,6 @@ public class ExtensionConverterUnitTests extends BaseCoreUnitTest {
             final String act = OkHttpTestUtils.requestBodyToString(requestBody);
             assertThat(act, is("test"));
         }
-
 
     }
 

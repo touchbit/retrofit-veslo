@@ -21,6 +21,7 @@ import internal.test.utils.client.MockInterceptor;
 import okhttp3.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.touchbit.retrofit.ext.dmr.BaseCoreUnitTest;
 import org.touchbit.retrofit.ext.dmr.client.adapter.UniversalCallAdapterFactory;
 import org.touchbit.retrofit.ext.dmr.client.converter.ExtensionConverterFactory;
 import org.touchbit.retrofit.ext.dmr.client.converter.api.ExtensionConverter;
@@ -40,7 +41,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 @DisplayName("ExampleApiClientAssertions.class tests")
-public class ExampleApiClientAssertionsTests {
+public class ExampleApiClientAssertionsTests extends BaseCoreUnitTest {
 
     static {
         ExtensionConverterFactory factory = new ExtensionConverterFactory();
@@ -54,6 +55,13 @@ public class ExampleApiClientAssertionsTests {
                 .addConverterFactory(factory)
                 .build()
                 .create(ExampleClient.class);
+    }
+
+    @Test
+    @DisplayName("Util classes")
+    public void test1639981211052() {
+        assertUtilityClassException(ExampleApiClientAssertions.class);
+        assertUtilityClassException(Assertions.class);
     }
 
     @Test
