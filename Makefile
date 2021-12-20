@@ -6,6 +6,9 @@ i:
 
 t:
 	mvn clean test
+
+c:
+	mvn clean test -Dcoverage
 	open ./all/target/site/jacoco-aggregate/index.html
 
 d:
