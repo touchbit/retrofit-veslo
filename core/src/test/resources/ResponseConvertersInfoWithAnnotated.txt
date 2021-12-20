@@ -1,23 +1,23 @@
 SUPPORTED RESPONSE CONVERTERS:
 Annotated converters:
-org.touchbit.retrofit.ext.dmr.BaseCoreUnitTest$TestConverter
+org.touchbit.retrofit.veslo.BaseCoreUnitTest$TestConverter
     internal.test.utils.client.model.TestDTO
     java.lang.Object
 Raw converters:
-org.touchbit.retrofit.ext.dmr.client.converter.defaults.RawBodyTypeConverter
+org.touchbit.retrofit.veslo.client.converter.defaults.RawBodyTypeConverter
     byte[]
     java.io.File
     java.lang.Byte[]
-    org.touchbit.retrofit.ext.dmr.client.model.RawBody
-    org.touchbit.retrofit.ext.dmr.client.model.ResourceFile
+    org.touchbit.retrofit.veslo.client.model.RawBody
+    org.touchbit.retrofit.veslo.client.model.ResourceFile
 Package converters:
-org.touchbit.retrofit.ext.dmr.BaseCoreUnitTest$TestPackageConverter
+org.touchbit.retrofit.veslo.BaseCoreUnitTest$TestPackageConverter
     internal.test.utils.client.model.pack
 Content type converters:
-org.touchbit.retrofit.ext.dmr.BaseCoreUnitTest$TestConverter
+org.touchbit.retrofit.veslo.BaseCoreUnitTest$TestConverter
     text/plain
 Java type converters:
-org.touchbit.retrofit.ext.dmr.client.converter.defaults.JavaPrimitiveTypeConverter
+org.touchbit.retrofit.veslo.client.converter.defaults.JavaPrimitiveTypeConverter
     boolean
     byte
     char
@@ -26,7 +26,7 @@ org.touchbit.retrofit.ext.dmr.client.converter.defaults.JavaPrimitiveTypeConvert
     int
     long
     short
-org.touchbit.retrofit.ext.dmr.client.converter.defaults.JavaReferenceTypeConverter
+org.touchbit.retrofit.veslo.client.converter.defaults.JavaReferenceTypeConverter
     java.lang.Boolean
     java.lang.Byte
     java.lang.Character
