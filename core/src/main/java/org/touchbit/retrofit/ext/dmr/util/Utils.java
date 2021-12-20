@@ -27,16 +27,31 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 20.12.2021
+ */
 public class Utils {
 
     private Utils() {
         throw new UtilityClassException();
     }
 
+    /**
+     * @param parameter     - checked parameter
+     * @param parameterName - checked parameter name
+     * @throws NullPointerException if parameter is null
+     */
     public static void parameterRequireNonNull(Object parameter, String parameterName) {
         Objects.requireNonNull(parameter, "Parameter '" + parameterName + "' is required and cannot be null.");
     }
 
+    /**
+     * @param annotations - list of annotations
+     * @param expected    - annotation class
+     * @param <A>         - annotation generic type
+     * @return first annotation from annotation list by expected class
+     */
     @SuppressWarnings("unchecked")
     @Nullable
     public static <A extends Annotation> A getAnnotation(@Nullable final Annotation[] annotations,
@@ -87,7 +102,7 @@ public class Utils {
             return (byte[]) bytes;
         }
         throw new IllegalArgumentException("Received unsupported type: " + bytes.getClass() + "\n" +
-                "Expected: " + Byte[].class + " or " + byte[].class);
+                "Expected: " + Byte[].class.getTypeName() + " or " + byte[].class.getTypeName());
     }
 
     /**
