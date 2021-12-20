@@ -47,10 +47,22 @@ public class OkHttpTestUtils {
     }
 
     public static Response getResponse(String body, int status) {
+        return getResponse(body, status, body == null ? null : MediaType.get("text/plain"));
+    }
+
+    public static Response getResponse(String body, int status, MediaType mediaType) {
+        final Headers.Builder builder = new Headers.Builder();
+        if (mediaType != null) {
+            builder.add("Content-Type", mediaType.toString());
+        }
+        if (body != null) {
+            builder.add("Content-Length", body.length() + "");
+        }
+        builder.add("X-Request-ID", "generated");
         return new Response.Builder()
                 .request(getRequest())
-                .headers(Headers.of("Content-Type", "text/plain", "X-Request-ID", "generated"))
-                .body(ResponseBody.create(null, body))
+                .headers(builder.build())
+                .body(body == null ? null : ResponseBody.create(mediaType, body))
                 .protocol(Protocol.HTTP_1_1)
                 .message("TEST")
                 .code(status)

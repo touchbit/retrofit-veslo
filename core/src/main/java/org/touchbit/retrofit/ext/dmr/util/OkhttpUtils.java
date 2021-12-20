@@ -22,6 +22,7 @@ import okio.Buffer;
 import okio.BufferedSource;
 import okio.GzipSource;
 import org.touchbit.retrofit.ext.dmr.exception.UtilityClassException;
+import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,8 +32,16 @@ import java.util.StringJoiner;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+/**
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 20.12.2021
+ */
 @SuppressWarnings("DuplicatedCode")
 public class OkhttpUtils {
+
+    private OkhttpUtils() {
+        throw new UtilityClassException();
+    }
 
     /**
      * Copied and modified
@@ -133,7 +142,9 @@ public class OkhttpUtils {
         return resultMessage.add("").toString();
     }
 
-    public static Headers getRequestHeaders(@Nonnull final Request request) throws IOException {
+    @EverythingIsNonNull
+    public static Headers getRequestHeaders(final Request request) throws IOException {
+        Utils.parameterRequireNonNull(request, "request");
         final Headers headers = request.headers();
         final RequestBody body = request.body();
         if (body == null) {
@@ -150,7 +161,9 @@ public class OkhttpUtils {
         return builder.build();
     }
 
-    public static Headers getResponseHeaders(@Nonnull final Response response) {
+    @EverythingIsNonNull
+    public static Headers getResponseHeaders(final Response response) {
+        Utils.parameterRequireNonNull(response, "response");
         final Headers headers = response.headers();
         final ResponseBody body = response.body();
         if (body == null) {
@@ -226,10 +239,6 @@ public class OkhttpUtils {
         return contentEncoding != null &&
                 !contentEncoding.equalsIgnoreCase("identity") &&
                 !contentEncoding.equalsIgnoreCase("gzip");
-    }
-
-    private OkhttpUtils() {
-        throw new UtilityClassException();
     }
 
 }

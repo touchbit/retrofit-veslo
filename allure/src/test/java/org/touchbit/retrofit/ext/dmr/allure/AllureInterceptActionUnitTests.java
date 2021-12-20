@@ -87,8 +87,8 @@ public class AllureInterceptActionUnitTests extends BaseUnitTests {
                     "200 TEST http://localhost/\n" +
                     "Headers:\n" +
                     "  Content-Type: text/plain\n" +
-                    "  X-Request-ID: generated\n" +
                     "  Content-Length: 9\n" +
+                    "  X-Request-ID: generated\n" +
                     "Body: (9-byte body)\n" +
                     "  generated\n"));
         });
