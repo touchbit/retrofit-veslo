@@ -16,8 +16,10 @@
 
 package org.touchbit.retrofit.ext.dmr.util;
 
+import internal.test.utils.OkHttpTestUtils;
 import okhttp3.Headers;
 import okhttp3.MediaType;
+import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -152,5 +154,14 @@ public class ConvertUtilsUnitTests {
         final ContentType contentType = ConvertUtils.getContentType((ResponseBody) null);
         assertThat("", contentType, notNullValue());
     }
+
+    @Test
+    @DisplayName("#getContentType() if parameter 'responseBody' != null -> return ContentType obj")
+    public void test1639987020216() {
+        final Response response = OkHttpTestUtils.getResponse("test", 200, MediaType.get("foo/bar"));
+        final ContentType contentType = ConvertUtils.getContentType(response.body());
+        assertThat("", contentType, is(new ContentType("foo", "bar", "utf-8")));
+    }
+
 
 }
