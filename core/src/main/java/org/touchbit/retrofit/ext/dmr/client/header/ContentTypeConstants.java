@@ -46,6 +46,9 @@ public class ContentTypeConstants {
     public static final ContentType TEXT_HTML_UTF8 = new ContentType(TXT_TYPE, HTML_SUBTYPE, UTF8);
     public static final ContentType NULL = new ContentType(null, null);
 
+    /**
+     * Utility class
+     */
     private ContentTypeConstants() {
         throw new UtilityClassException();
     }

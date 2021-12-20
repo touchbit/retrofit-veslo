@@ -39,6 +39,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @SuppressWarnings("DuplicatedCode")
 public class OkhttpUtils {
 
+    /**
+     * Utility class
+     */
     private OkhttpUtils() {
         throw new UtilityClassException();
     }

@@ -62,7 +62,7 @@ public class AllureDualResponseCallAdapterFactory extends DualResponseCallAdapte
 
     /**
      * Method for getting an instance of the {@link CallAdapter} class
-     * If there is no {@link Step} annotation and the {@param stepInfo} is full,
+     * If there is no {@link Step} annotation and the stepInfo is full,
      * then the call will be wrapped in Allure step
      *
      * @param type              - called method return type

@@ -37,13 +37,16 @@ import java.lang.reflect.Type;
  */
 public class ConvertUtils {
 
+    /**
+     * Utility class
+     */
     private ConvertUtils() {
         throw new UtilityClassException();
     }
 
     /**
      * @param type - model type
-     * @return true if {@param type} is implements the interface {@link IDualResponse}
+     * @return true if type is implements the interface {@link IDualResponse}
      */
     @EverythingIsNonNull
     public static boolean isIDualResponse(final Type type) {

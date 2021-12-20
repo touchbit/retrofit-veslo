@@ -31,10 +31,10 @@ public class BooleanTypeAdapter implements JsonDeserializer<Boolean> {
 
     /**
      * @param jsonElement - The Json data being deserialized
-     * @param typeOfT - The type of the Object to deserialize to
-     * @param context - Context for deserialization
+     * @param typeOfT     - The type of the Object to deserialize to
+     * @param context     - Context for deserialization
      * @return {@link Boolean}
-     * @throws JsonParseException if {@param json} is not Boolean
+     * @throws JsonParseException if json is not Boolean
      */
     public Boolean deserialize(JsonElement jsonElement, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {

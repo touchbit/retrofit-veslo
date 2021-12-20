@@ -20,8 +20,22 @@ import org.touchbit.retrofit.ext.dmr.exception.UtilityClassException;
 
 import java.util.Objects;
 
+/**
+ * Build-in assertion matcher
+ * <p>
+ *
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 20.12.2021
+ */
 public class AssertionMatcher {
 
+    /**
+     * @param reason   - assertion description
+     * @param actual   - actual object
+     * @param expected - expected object
+     * @param <M>      object generic type
+     * @throws AssertionError if actual not equals expected
+     */
     public static <M> void is(String reason, M actual, M expected) {
         if (!Objects.equals(actual, expected)) {
             throw new AssertionError(reason + "\n" +
@@ -30,6 +44,13 @@ public class AssertionMatcher {
         }
     }
 
+    /**
+     * @param reason      - assertion description
+     * @param actual      - actual int value
+     * @param expectedMin - expected min value
+     * @param expectedMax - expected max value
+     * @throws AssertionError if actual not in range
+     */
     public static void inRange(String reason, int actual, int expectedMin, int expectedMax) {
         if (actual < expectedMin || actual > expectedMax) {
             throw new AssertionError(reason + "\n" +
@@ -38,6 +59,11 @@ public class AssertionMatcher {
         }
     }
 
+    /**
+     * @param reason - assertion description
+     * @param actual - actual object
+     * @throws AssertionError if actual is null
+     */
     public static void isNotNull(String reason, Object actual) {
         if (actual == null) {
             throw new AssertionError(reason + "\n" +
@@ -46,6 +72,11 @@ public class AssertionMatcher {
         }
     }
 
+    /**
+     * @param reason - assertion description
+     * @param actual - actual object
+     * @throws AssertionError if actual not null
+     */
     public static void isNull(String reason, Object actual) {
         if (actual != null) {
             throw new AssertionError(reason + "\n" +
@@ -54,6 +85,9 @@ public class AssertionMatcher {
         }
     }
 
+    /**
+     * Utility class
+     */
     private AssertionMatcher() {
         throw new UtilityClassException();
     }

@@ -33,6 +33,9 @@ import java.util.stream.Collectors;
  */
 public class Utils {
 
+    /**
+     * Utility class
+     */
     private Utils() {
         throw new UtilityClassException();
     }

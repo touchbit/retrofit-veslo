@@ -61,7 +61,7 @@ public class CompositeInterceptor implements Interceptor {
 
     /**
      * The sequence of execution of {@link RequestInterceptAction} depends
-     * on the sequence of passing them to the {@param requestActionsChain}
+     * on the sequence of passing them to the requestActionsChain
      *
      * @param requestInterceptActions - sequence of execution of {@link RequestInterceptAction}
      * @return this
@@ -88,7 +88,7 @@ public class CompositeInterceptor implements Interceptor {
 
     /**
      * The sequence of execution of {@link ResponseInterceptAction} depends
-     * on the sequence of passing them to the {@param responseActionsChain}
+     * on the sequence of passing them to the responseActionsChain
      *
      * @param responseInterceptActions - sequence of execution of {@link ResponseInterceptAction}
      * @return this

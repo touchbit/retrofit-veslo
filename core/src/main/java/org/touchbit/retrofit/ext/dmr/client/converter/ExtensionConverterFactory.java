@@ -223,7 +223,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     }
 
     /**
-     * Get {@link RequestBodyConverter} by {@param bodyClass}
+     * Get {@link RequestBodyConverter} by bodyClass
      * from called method annotations ({@link Converters} or {@link RequestConverter})
      *
      * @param bodyClass            - request method body class.
@@ -270,7 +270,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     }
 
     /**
-     * Get {@link RequestBodyConverter} by {@param bodyClass}
+     * Get {@link RequestBodyConverter} by bodyClass
      *
      * @param bodyClass            - request method body class.
      * @param parameterAnnotations - API client called method parameters annotations
@@ -295,7 +295,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     }
 
     /**
-     * Get {@link RequestBodyConverter} by {@param bodyClass} package
+     * Get {@link RequestBodyConverter} by bodyClass package
      *
      * @param bodyClass            - request method body class.
      * @param parameterAnnotations - API client called method parameters annotations
@@ -401,7 +401,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     }
 
     /**
-     * Get {@link ResponseBodyConverter} by {@param bodyClass}
+     * Get {@link ResponseBodyConverter} by bodyClass
      *
      * @param bodyType          - request method body java type.
      * @param methodAnnotations - API client called method annotations
@@ -424,7 +424,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     }
 
     /**
-     * Get {@link ResponseBodyConverter} from {@param bodyClass} package
+     * Get {@link ResponseBodyConverter} from bodyClass package
      *
      * @param bodyType          - response body type.
      * @param methodAnnotations - API client called method annotations
@@ -524,7 +524,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     }
 
     /**
-     * Get {@link ResponseBodyConverter} by {@param bodyClass}
+     * Get {@link ResponseBodyConverter} by bodyClass
      * from called method annotations ({@link Converters} or {@link ResponseConverter})
      *
      * @param bodyType          - request method body java type.
@@ -570,13 +570,13 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     /**
      * Retrieves ExtensionConverter from {@link ResponseConverter} or {@link RequestConverter} annotations (Hereinafter, A).
      * If method A.bodyClasses() returned an empty array, new instance of 'A.converter()' will be returned.
-     * If method A.bodyClasses() returned a non-empty list, a comparison by {@param bodyClass} will be performed,
+     * If method A.bodyClasses() returned a non-empty list, a comparison by bodyClass will be performed,
      * and if there is a match, new instance of A.converter() will be returned otherwise null.
      *
      * @param annotation - {@link ResponseConverter} or {@link RequestConverter} annotation
      * @param bodyType   - model class
      * @return {@link ExtensionConverter} or null
-     * @throws ConvertCallException if {@param annotation} differs from {@link ResponseConverter} or {@link RequestConverter}
+     * @throws ConvertCallException if annotation differs from {@link ResponseConverter} or {@link RequestConverter}
      */
     @Nullable
     @SuppressWarnings("rawtypes")
@@ -610,8 +610,8 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
 
     /**
      * @param converterClass - The class of the object that implements the {@link ExtensionConverter}
-     * @return - new instance of {@param converterClass}
-     * @throws ConvertCallException if there were errors while creating an instance of {@param converterClass}
+     * @return - new instance of converterClass
+     * @throws ConvertCallException if there were errors while creating an instance of converterClass
      */
     @EverythingIsNonNull
     @SuppressWarnings("rawtypes")

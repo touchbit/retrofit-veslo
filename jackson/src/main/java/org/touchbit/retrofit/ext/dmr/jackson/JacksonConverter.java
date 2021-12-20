@@ -50,16 +50,26 @@ public class JacksonConverter<T> implements ExtensionConverter<T> {
     private final ObjectMapper requestObjectMapper;
     private final ObjectMapper responseObjectMapper;
 
+    /**
+     * Default constructor with default request/response jackson object mappers
+     */
     public JacksonConverter() {
         this(new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT),
                 new ObjectMapper().enable(FAIL_ON_NULL_FOR_PRIMITIVES, ACCEPT_EMPTY_STRING_AS_NULL_OBJECT));
     }
 
+    /**
+     * @param requestObjectMapper  - Jackson ObjectMapper for request conversation
+     * @param responseObjectMapper - Jackson ObjectMapper for response conversation
+     */
     public JacksonConverter(ObjectMapper requestObjectMapper, ObjectMapper responseObjectMapper) {
         this.requestObjectMapper = requestObjectMapper;
         this.responseObjectMapper = responseObjectMapper;
     }
 
+    /**
+     * @see ExtensionConverter#requestBodyConverter(Type, Annotation[], Annotation[], Retrofit)
+     */
     @Override
     @EverythingIsNonNull
     public RequestBodyConverter requestBodyConverter(final Type type,
@@ -96,6 +106,9 @@ public class JacksonConverter<T> implements ExtensionConverter<T> {
         };
     }
 
+    /**
+     * @see ExtensionConverter#responseBodyConverter(Type, Annotation[], Retrofit)
+     */
     @Override
     @EverythingIsNonNull
     public ResponseBodyConverter<T> responseBodyConverter(final Type type,

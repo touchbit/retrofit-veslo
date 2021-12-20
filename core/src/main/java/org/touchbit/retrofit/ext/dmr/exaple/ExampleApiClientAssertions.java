@@ -41,6 +41,9 @@ import static org.touchbit.retrofit.ext.dmr.exaple.ExampleApiClientAssertions.As
  */
 public class ExampleApiClientAssertions {
 
+    /**
+     * Utility class
+     */
     private ExampleApiClientAssertions() {
         throw new UtilityClassException();
     }
@@ -364,6 +367,9 @@ public class ExampleApiClientAssertions {
 
     public static class Assertions {
 
+        /**
+         * Utility class
+         */
         private Assertions() {
             throw new UtilityClassException();
         }

@@ -22,6 +22,13 @@ import java.lang.annotation.Target;
 
 import static java.lang.annotation.ElementType.*;
 
+/**
+ * Ignore Jacoco code coverage for annotated targets
+ * <p>
+ *
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 20.12.2021
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({PACKAGE, TYPE, METHOD, CONSTRUCTOR, FIELD, LOCAL_VARIABLE, PARAMETER})
 public @interface ExcludeFromJacocoGeneratedReport {
