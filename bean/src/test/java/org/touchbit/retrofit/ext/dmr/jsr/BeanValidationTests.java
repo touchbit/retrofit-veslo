@@ -33,6 +33,7 @@ import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 
+@SuppressWarnings("ConstantConditions")
 public class BeanValidationTests {
 
     protected static final JakartaMockClient MOCK_CLIENT = TestClientBuilder

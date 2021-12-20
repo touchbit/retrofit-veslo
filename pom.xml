@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.touchbit.retrofit.ext</groupId>
-    <artifactId>dual-response</artifactId>
+    <groupId>org.touchbit.retrofit.veslo</groupId>
+    <artifactId>retrofit-veslo</artifactId>
     <version>1.0.0</version>
     <name>Parent pom for Retrofit extensions with two models in response</name>
     <description>
@@ -21,7 +21,7 @@
         <module>core</module>
         <module>gson</module>
         <module>jackson</module>
-        <module>validator</module>
+        <module>bean</module>
         <module>allure</module>
         <module>internal-test-module</module>
     </modules>
@@ -100,44 +100,44 @@
         <dependencies>
             <!-- project dependencies -->
             <dependency>
-                <groupId>org.touchbit.retrofit.ext</groupId>
-                <artifactId>dual-response-all</artifactId>
+                <groupId>org.touchbit.retrofit.veslo</groupId>
+                <artifactId>all</artifactId>
                 <version>1.0.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>org.touchbit.retrofit.ext</groupId>
-                <artifactId>dual-response-core</artifactId>
+                <groupId>org.touchbit.retrofit.veslo</groupId>
+                <artifactId>core</artifactId>
                 <version>1.0.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>org.touchbit.retrofit.ext</groupId>
-                <artifactId>dual-response-jackson</artifactId>
+                <groupId>org.touchbit.retrofit.veslo</groupId>
+                <artifactId>jackson</artifactId>
                 <version>1.0.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>org.touchbit.retrofit.ext</groupId>
-                <artifactId>dual-response-gson</artifactId>
+                <groupId>org.touchbit.retrofit.veslo</groupId>
+                <artifactId>gson</artifactId>
                 <version>1.0.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>org.touchbit.retrofit.ext</groupId>
-                <artifactId>dual-response-bean-validator</artifactId>
+                <groupId>org.touchbit.retrofit.veslo</groupId>
+                <artifactId>bean</artifactId>
                 <version>1.0.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>org.touchbit.retrofit.ext</groupId>
-                <artifactId>dual-response-allure</artifactId>
+                <groupId>org.touchbit.retrofit.veslo</groupId>
+                <artifactId>allure</artifactId>
                 <version>1.0.0</version>
                 <scope>compile</scope>
             </dependency>
             <!-- project test dependencies -->
             <dependency>
-                <groupId>org.touchbit.retrofit.ext</groupId>
+                <groupId>org.touchbit.retrofit.veslo</groupId>
                 <artifactId>internal-test-module</artifactId>
                 <version>1.0.0</version>
                 <scope>test</scope>

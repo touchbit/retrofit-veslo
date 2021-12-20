@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.touchbit.retrofit.ext</groupId>
-        <artifactId>dual-response</artifactId>
+        <groupId>org.touchbit.retrofit.veslo</groupId>
+        <artifactId>retrofit-veslo</artifactId>
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>dual-response-core</artifactId>
+    <artifactId>core</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
@@ -24,12 +24,17 @@
             <artifactId>jsr305</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.touchbit.retrofit.ext</groupId>
+            <groupId>org.touchbit.retrofit.veslo</groupId>
             <artifactId>internal-test-module</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.12.0</version>
         </dependency>
     </dependencies>
 

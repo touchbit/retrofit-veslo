@@ -6,22 +6,30 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="dual-response-core" />
+        <module name="all" />
+        <module name="core" />
+        <module name="jackson" />
         <module name="internal-test-module" />
-        <module name="dual-response-allure" />
-        <module name="dual-response-gson" />
-        <module name="dual-response-bean-validator" />
-        <module name="dual-response-jackson" />
-        <module name="dual-response-all" />
+        <module name="gson" />
+        <module name="allure" />
+        <module name="bean" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="all-dual-response" target="1.8" />
       <module name="bean-validator" target="1.8" />
       <module name="core-dual-response" target="1.8" />
+      <module name="dual-response-all" target="1.8" />
+      <module name="dual-response-allure" target="1.8" />
+      <module name="dual-response-bean-validator" target="1.8" />
+      <module name="dual-response-core" target="1.8" />
+      <module name="dual-response-gson" target="1.8" />
+      <module name="dual-response-jackson" target="1.8" />
       <module name="dual-response-util" target="1.8" />
       <module name="jackson-dual-response" target="1.8" />
+      <module name="retrofit-dual-response-extension" target="1.8" />
       <module name="util-dual-response" target="1.8" />
+      <module name="veslo" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

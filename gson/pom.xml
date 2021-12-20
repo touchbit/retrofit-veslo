@@ -5,26 +5,26 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.touchbit.retrofit.ext</groupId>
-        <artifactId>dual-response</artifactId>
+        <groupId>org.touchbit.retrofit.veslo</groupId>
+        <artifactId>retrofit-veslo</artifactId>
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>dual-response-gson</artifactId>
+    <artifactId>gson</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>org.touchbit.retrofit.ext</groupId>
-            <artifactId>dual-response-core</artifactId>
+            <groupId>org.touchbit.retrofit.veslo</groupId>
+            <artifactId>core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.touchbit.retrofit.ext</groupId>
+            <groupId>org.touchbit.retrofit.veslo</groupId>
             <artifactId>internal-test-module</artifactId>
         </dependency>
     </dependencies>

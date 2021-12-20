@@ -5,38 +5,38 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.touchbit.retrofit.ext</groupId>
-        <artifactId>dual-response</artifactId>
+        <groupId>org.touchbit.retrofit.veslo</groupId>
+        <artifactId>retrofit-veslo</artifactId>
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>dual-response-all</artifactId>
+    <artifactId>all</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>org.touchbit.retrofit.ext</groupId>
-            <artifactId>dual-response-core</artifactId>
+            <groupId>org.touchbit.retrofit.veslo</groupId>
+            <artifactId>core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.touchbit.retrofit.ext</groupId>
-            <artifactId>dual-response-jackson</artifactId>
+            <groupId>org.touchbit.retrofit.veslo</groupId>
+            <artifactId>jackson</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.touchbit.retrofit.ext</groupId>
-            <artifactId>dual-response-gson</artifactId>
+            <groupId>org.touchbit.retrofit.veslo</groupId>
+            <artifactId>gson</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.touchbit.retrofit.ext</groupId>
-            <artifactId>dual-response-bean-validator</artifactId>
+            <groupId>org.touchbit.retrofit.veslo</groupId>
+            <artifactId>bean</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.touchbit.retrofit.ext</groupId>
-            <artifactId>dual-response-allure</artifactId>
+            <groupId>org.touchbit.retrofit.veslo</groupId>
+            <artifactId>allure</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.touchbit.retrofit.ext</groupId>
+            <groupId>org.touchbit.retrofit.veslo</groupId>
             <artifactId>internal-test-module</artifactId>
             <scope>test</scope>
         </dependency>
