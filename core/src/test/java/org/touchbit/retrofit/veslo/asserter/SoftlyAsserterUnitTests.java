@@ -18,6 +18,7 @@ package org.touchbit.retrofit.veslo.asserter;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.touchbit.retrofit.veslo.exception.BriefAssertionError;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -70,15 +71,15 @@ public class SoftlyAsserterUnitTests {
     @Test
     @DisplayName("#softlyAsserter() assertion call (positive)")
     public void test1639065946626() {
-        assertThrow(() -> SoftlyAsserter.softlyAsserter(asserter -> asserter.softly(() -> assertThat("", 1, is(1)))));
+        SoftlyAsserter.softlyAsserter(asserter -> asserter.softly(() -> assertThat("", 1, is(1))));
     }
 
     @Test
-    @DisplayName("#softlyAsserter() assertion call (positive)")
+    @DisplayName("#softlyAsserter() assertion call (negative)")
     public void test1639065946632() {
         assertThrow(() -> SoftlyAsserter.softlyAsserter(asserter -> asserter
                 .softly(() -> assertThat("test1637484897013", 1, is(2)))))
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("" +
                         "Collected the following errors:\n\n" +
                         "test1637484897013\n" +
@@ -95,11 +96,11 @@ public class SoftlyAsserterUnitTests {
                 "     but: was <1>";
         assertThrow(() -> {
             try (final SoftlyAsserter softlyAsserter = SoftlyAsserter.get()) {
-                softlyAsserter.addErrors(new AssertionError(errMsg));
-                softlyAsserter.addErrors(new AssertionError(errMsg));
+                softlyAsserter.addErrors(new BriefAssertionError(errMsg));
+                softlyAsserter.addErrors(new BriefAssertionError(errMsg));
             }
         })
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("Collected the following errors:\n" +
                         "\n" +
                         "test1637485265947\n" +

@@ -96,9 +96,10 @@ public class StringConverter implements ExtensionConverter<String> {
             @Nullable
             @Override
             public String convert(@Nullable ResponseBody responseBody) throws IOException {
-                if (responseBody != null && responseBody.contentLength() != 0) {
+                final String body = copyBody(responseBody);
+                if (body != null && body.length() != 0) {
                     assertSupportedBodyType(INSTANCE, type, String.class);
-                    return responseBody.string();
+                    return body;
                 }
                 return null;
             }

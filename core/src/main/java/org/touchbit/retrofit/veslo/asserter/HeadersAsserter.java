@@ -53,6 +53,7 @@ public class HeadersAsserter implements IHeadersAsserter {
 
     private final List<Throwable> errors = new ArrayList<>();
     private final Headers headers;
+    private boolean isIgnoreNPE = false;
 
     public <ERR_DTO, SUC_DTO> HeadersAsserter(DualResponse<?, ?> response) {
         this(response.getHeaders());
@@ -248,6 +249,16 @@ public class HeadersAsserter implements IHeadersAsserter {
     @EverythingIsNonNull
     public void addErrors(@Nonnull List<Throwable> throwableList) {
         this.errors.addAll(throwableList);
+    }
+
+    @Override
+    public void ignoreNPE(boolean value) {
+        isIgnoreNPE = value;
+    }
+
+    @Override
+    public boolean isIgnoreNPE() {
+        return isIgnoreNPE;
     }
 
     public HeadersAsserter blame() {

@@ -23,15 +23,15 @@ import okhttp3.OkHttpClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.touchbit.retrofit.veslo.allure.AllureInterceptAction;
-import org.touchbit.retrofit.veslo.client.adapter.DualResponseCallAdapterFactory;
+import org.touchbit.retrofit.veslo.allure.AllureAction;
+import org.touchbit.retrofit.veslo.client.adapter.UniversalCallAdapterFactory;
 import org.touchbit.retrofit.veslo.client.converter.ExtensionConverterFactory;
 import org.touchbit.retrofit.veslo.client.inteceptor.CompositeInterceptor;
-import org.touchbit.retrofit.veslo.client.inteceptor.LoggingInterceptAction;
+import org.touchbit.retrofit.veslo.client.inteceptor.LoggingAction;
 import org.touchbit.retrofit.veslo.client.inteceptor.RequestInterceptAction;
 import org.touchbit.retrofit.veslo.client.inteceptor.ResponseInterceptAction;
 import org.touchbit.retrofit.veslo.gson.GsonDualConverterFactory;
-import org.touchbit.retrofit.veslo.jackson.JacksonDualConverterFactory;
+import org.touchbit.retrofit.veslo.jackson.JacksonConverterFactory;
 import retrofit2.Retrofit;
 
 import java.util.List;
@@ -45,11 +45,11 @@ public class DualResponseRetrofitClientUtilsUnitTests extends BaseUnitTest {
 
     private static final String URL = "http://localhost";
     private static final CompositeInterceptor INTERCEPTOR = new CompositeInterceptor();
-    private static final DualResponseCallAdapterFactory CA_FACTORY = new DualResponseCallAdapterFactory();
-    private static final Class<? extends DualResponseCallAdapterFactory> CA_FACTORY_CLASS = CA_FACTORY.getClass();
+    private static final UniversalCallAdapterFactory CA_FACTORY = new UniversalCallAdapterFactory();
+    private static final Class<? extends UniversalCallAdapterFactory> CA_FACTORY_CLASS = CA_FACTORY.getClass();
     private static final ExtensionConverterFactory EXT_FACTORY = new ExtensionConverterFactory();
-    private static final JacksonDualConverterFactory J_FACTORY = new JacksonDualConverterFactory();
-    private static final Class<? extends JacksonDualConverterFactory> J_FACTORY_CLASS = J_FACTORY.getClass();
+    private static final JacksonConverterFactory J_FACTORY = new JacksonConverterFactory();
+    private static final Class<? extends JacksonConverterFactory> J_FACTORY_CLASS = J_FACTORY.getClass();
     private static final GsonDualConverterFactory G_FACTORY = new GsonDualConverterFactory();
     private static final Class<? extends GsonDualConverterFactory> G_FACTORY_CLASS = G_FACTORY.getClass();
 
@@ -119,9 +119,9 @@ public class DualResponseRetrofitClientUtilsUnitTests extends BaseUnitTest {
             final List<RequestInterceptAction> requestInterceptActions = interceptor.getRequestInterceptActions();
             final List<ResponseInterceptAction> responseInterceptActions = interceptor.getResponseInterceptAction();
             assertThat("", requestInterceptActions,
-                    contains(instanceOf(LoggingInterceptAction.class), instanceOf(AllureInterceptAction.class)));
+                    contains(instanceOf(LoggingAction.class), instanceOf(AllureAction.class)));
             assertThat("", responseInterceptActions,
-                    contains(instanceOf(LoggingInterceptAction.class), instanceOf(AllureInterceptAction.class)));
+                    contains(instanceOf(LoggingAction.class), instanceOf(AllureAction.class)));
             assertThat("", retrofit.callAdapterFactories(), hasItem(instanceOf(CA_FACTORY_CLASS)));
             assertThat("", retrofit.converterFactories(), hasItem(EXT_FACTORY));
         }
@@ -150,9 +150,9 @@ public class DualResponseRetrofitClientUtilsUnitTests extends BaseUnitTest {
             final List<RequestInterceptAction> requestInterceptActions = interceptor.getRequestInterceptActions();
             final List<ResponseInterceptAction> responseInterceptActions = interceptor.getResponseInterceptAction();
             assertThat("", requestInterceptActions,
-                    contains(instanceOf(LoggingInterceptAction.class), instanceOf(AllureInterceptAction.class)));
+                    contains(instanceOf(LoggingAction.class), instanceOf(AllureAction.class)));
             assertThat("", responseInterceptActions,
-                    contains(instanceOf(LoggingInterceptAction.class), instanceOf(AllureInterceptAction.class)));
+                    contains(instanceOf(LoggingAction.class), instanceOf(AllureAction.class)));
             assertThat("", retrofit.callAdapterFactories(), hasItem(instanceOf(CA_FACTORY_CLASS)));
             assertThat("", retrofit.converterFactories(), hasItem(instanceOf(G_FACTORY_CLASS)));
         }
@@ -182,9 +182,9 @@ public class DualResponseRetrofitClientUtilsUnitTests extends BaseUnitTest {
             final List<RequestInterceptAction> requestInterceptActions = interceptor.getRequestInterceptActions();
             final List<ResponseInterceptAction> responseInterceptActions = interceptor.getResponseInterceptAction();
             assertThat("", requestInterceptActions,
-                    contains(instanceOf(LoggingInterceptAction.class), instanceOf(AllureInterceptAction.class)));
+                    contains(instanceOf(LoggingAction.class), instanceOf(AllureAction.class)));
             assertThat("", responseInterceptActions,
-                    contains(instanceOf(LoggingInterceptAction.class), instanceOf(AllureInterceptAction.class)));
+                    contains(instanceOf(LoggingAction.class), instanceOf(AllureAction.class)));
             assertThat("", retrofit.callAdapterFactories(), hasItem(instanceOf(CA_FACTORY_CLASS)));
             assertThat("", retrofit.converterFactories(), hasItem(instanceOf(J_FACTORY_CLASS)));
         }

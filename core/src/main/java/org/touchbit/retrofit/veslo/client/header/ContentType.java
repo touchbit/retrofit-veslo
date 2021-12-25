@@ -24,6 +24,8 @@ import java.util.Objects;
 
 public class ContentType {
 
+    public static final ContentType NULL = new ContentType(null);
+
     private final String type;
     private final String subtype;
     private final String charset;

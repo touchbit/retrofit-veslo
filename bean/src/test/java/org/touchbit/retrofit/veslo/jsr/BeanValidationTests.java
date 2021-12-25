@@ -21,7 +21,8 @@ import internal.test.utils.client.TestClientBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.veslo.client.adapter.DualResponseCallAdapterFactory;
-import org.touchbit.retrofit.veslo.jackson.JacksonDualConverterFactory;
+import org.touchbit.retrofit.veslo.exception.BriefAssertionError;
+import org.touchbit.retrofit.veslo.jackson.JacksonConverterFactory;
 import org.touchbit.retrofit.veslo.jsr.client.JakartaMockClient;
 import org.touchbit.retrofit.veslo.jsr.client.model.UserDTO;
 import org.touchbit.retrofit.veslo.jsr.client.model.UserPassport;
@@ -37,7 +38,7 @@ import static org.hamcrest.Matchers.notNullValue;
 public class BeanValidationTests {
 
     protected static final JakartaMockClient MOCK_CLIENT = TestClientBuilder
-            .build(JakartaMockClient.class, new DualResponseCallAdapterFactory(), new JacksonDualConverterFactory());
+            .build(JakartaMockClient.class, new DualResponseCallAdapterFactory(), new JacksonConverterFactory());
 
     static {
         Locale.setDefault(Locale.ENGLISH);
@@ -65,7 +66,7 @@ public class BeanValidationTests {
         String uuid = UUID.randomUUID().toString();
         assertThrow(() -> MOCK_CLIENT.getUser(200, genUserDTO().firstName(uuid))
                 .assertResponse(response -> response.assertSucBody(UserDTO::assertConsistency)))
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("" +
                         "Collected the following errors:\n\n" +
                         "Model property: UserDTO.firstName\n" +
@@ -82,7 +83,7 @@ public class BeanValidationTests {
                 .assertHttpStatusCodeIs(200)
                 .assertSucBody(UserDTO::assertConsistency));
         assertThrow(runnable)
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("" +
                         "Collected the following errors:\n\n" +
                         "Model property: UserDTO.passport.number\n" +

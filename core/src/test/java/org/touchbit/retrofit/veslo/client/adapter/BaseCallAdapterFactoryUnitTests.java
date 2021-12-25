@@ -190,6 +190,16 @@ public class BaseCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
     public class GetErrorResponseBodyMethodTests {
 
         @Test
+        @DisplayName("All parameters required")
+        public void test1640099550413() {
+            final Response<?> response = mock(Response.class);
+            assertNPE(() -> FACTORY.getErrorResponseBody(null, OBJ_T, AA, RTF), "response");
+            assertNPE(() -> FACTORY.getErrorResponseBody(response, null, AA, RTF), "returnType");
+            assertNPE(() -> FACTORY.getErrorResponseBody(response, OBJ_T, null, RTF), "annotations");
+            assertNPE(() -> FACTORY.getErrorResponseBody(response, OBJ_T, AA, null), "retrofit");
+        }
+
+        @Test
         @DisplayName("Return body if Response.errorBody() present")
         public void test1639176585577() {
             final Response<Object> response = mock(Response.class);

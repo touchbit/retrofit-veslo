@@ -20,6 +20,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import org.touchbit.retrofit.veslo.exception.BriefAssertionError;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,12 +56,12 @@ public interface BeanValidation<DTO> {
             String message = modelInfo + "." + constraintViolation.getPropertyPath() + "\n" +
                     "Expected: " + constraintViolation.getMessage() + "\n" +
                     "  Actual: " + constraintViolation.getInvalidValue() + "\n";
-            errors.add(new AssertionError(message));
+            errors.add(new BriefAssertionError(message));
         }
         if (!errors.isEmpty()) {
             final StringJoiner resultMessage = new StringJoiner("\n");
             errors.forEach(e -> resultMessage.add(e.getMessage()));
-            throw new AssertionError(resultMessage);
+            throw new BriefAssertionError(resultMessage.toString());
         }
         return (DTO) this;
     }

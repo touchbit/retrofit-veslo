@@ -19,6 +19,8 @@ package org.touchbit.retrofit.veslo.client.converter.api;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import okio.Buffer;
+import okio.BufferedSource;
 import org.touchbit.retrofit.veslo.exception.ConverterUnsupportedTypeException;
 import org.touchbit.retrofit.veslo.exception.PrimitiveConvertCallException;
 import org.touchbit.retrofit.veslo.util.ConvertUtils;
@@ -32,6 +34,8 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public interface ExtensionConverter<DTO> {
@@ -161,6 +165,34 @@ public interface ExtensionConverter<DTO> {
      */
     default boolean isForceNullJsonValue(@Nullable String body) {
         return NULL_JSON_VALUE.equals(body);
+    }
+
+    @Nullable
+    default String copyBody(@Nullable ResponseBody responseBody) throws IOException {
+        if (responseBody == null) {
+            return null;
+        }
+        try {
+            final BufferedSource source = responseBody.source();
+            //noinspection ConstantConditions
+            if (source == null) {
+                return null;
+            }
+            source.request(Long.MAX_VALUE);
+            Buffer buffer = source.getBuffer();
+            final MediaType mediaType = responseBody.contentType();
+            if (mediaType != null) {
+                final Charset charset = mediaType.charset();
+                if (charset != null) {
+                    return buffer.clone().readString(charset);
+                }
+            }
+            return buffer.clone().readString(StandardCharsets.UTF_8);
+        } catch (IllegalStateException ignore) {
+            // ignore NoContentResponseBody.source() runtime exception
+            // if http status code = 204 or 205 and Content-Length = -1 or 0
+            return null;
+        }
     }
 
     /**

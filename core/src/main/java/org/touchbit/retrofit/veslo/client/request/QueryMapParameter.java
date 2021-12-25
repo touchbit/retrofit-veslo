@@ -23,7 +23,7 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Annotation for {@link QueryMapVeslo} parameters names
+ * Annotation for {@link ReflectQueryMap} parameters names
  * <p>
  *
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)

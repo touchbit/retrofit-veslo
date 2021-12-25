@@ -52,6 +52,11 @@ public final class ExecutionListener extends SummaryGeneratingListener {
     @Override
     public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
         super.executionFinished(testIdentifier, testExecutionResult);
+        if (testIdentifier.getSource().isPresent() &&
+                testIdentifier.getSource().get().toString().contains("veslo.example.tests.api")) {
+            // log deduplication in example project when running tests from Intellij Idea for whole project
+            return;
+        }
         if (testIdentifier.isTest()) {
             final String displayName = testIdentifier.getDisplayName() == null ? "" : testIdentifier.getDisplayName();
             final TestExecutionResult.Status status = testExecutionResult.getStatus();

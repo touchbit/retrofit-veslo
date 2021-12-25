@@ -95,9 +95,9 @@ public class IntegerConverter implements ExtensionConverter<Integer> {
             @Nullable
             @Override
             public Integer convert(@Nullable ResponseBody responseBody) throws IOException {
-                if (responseBody != null && responseBody.contentLength() != 0) {
-                    assertSupportedBodyType(INSTANCE, type, Integer.class, Integer.TYPE);
-                    final String body = responseBody.string();
+                assertSupportedBodyType(INSTANCE, type, Integer.class, Integer.TYPE);
+                final String body = copyBody(responseBody);
+                if (body != null && body.length() != 0) {
                     try {
                         return Integer.valueOf(body);
                     } catch (Exception e) {

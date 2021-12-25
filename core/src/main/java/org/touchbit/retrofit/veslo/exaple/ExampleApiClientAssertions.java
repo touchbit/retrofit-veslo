@@ -23,7 +23,7 @@ import org.touchbit.retrofit.veslo.asserter.SoftlyAsserter;
 import org.touchbit.retrofit.veslo.client.adapter.UniversalCallAdapterFactory;
 import org.touchbit.retrofit.veslo.client.converter.ExtensionConverterFactory;
 import org.touchbit.retrofit.veslo.client.inteceptor.CompositeInterceptor;
-import org.touchbit.retrofit.veslo.client.inteceptor.LoggingInterceptAction;
+import org.touchbit.retrofit.veslo.client.inteceptor.LoggingAction;
 import org.touchbit.retrofit.veslo.exaple.dto.ErrDTO;
 import org.touchbit.retrofit.veslo.exaple.dto.SucDTO;
 import org.touchbit.retrofit.veslo.exception.UtilityClassException;
@@ -51,8 +51,8 @@ public class ExampleApiClientAssertions {
     protected static ExampleClient apiClient = new Retrofit.Builder()
             .client(new OkHttpClient.Builder()
                     .addInterceptor(new CompositeInterceptor()
-                            .withRequestInterceptActionsChain(LoggingInterceptAction.INSTANCE)
-                            .withResponseInterceptActionsChain(LoggingInterceptAction.INSTANCE))
+                            .withRequestInterceptActionsChain(LoggingAction.INSTANCE)
+                            .withResponseInterceptActionsChain(LoggingAction.INSTANCE))
                     .build())
             .baseUrl("http://localhost")
             .addCallAdapterFactory(new UniversalCallAdapterFactory())

@@ -27,6 +27,7 @@ import org.touchbit.retrofit.veslo.client.response.DualResponse;
 import org.touchbit.retrofit.veslo.client.response.IDualResponse;
 import org.touchbit.retrofit.veslo.exaple.dto.ErrDTO;
 import org.touchbit.retrofit.veslo.exaple.dto.SucDTO;
+import org.touchbit.retrofit.veslo.exception.BriefAssertionError;
 import org.touchbit.retrofit.veslo.util.TripleConsumer;
 
 import java.util.function.BiConsumer;
@@ -78,18 +79,18 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
     public class BlameMethodTests {
 
         @Test
-        @DisplayName("#blame() without AssertionError if no errors")
+        @DisplayName("#blame() without BriefAssertionError if no errors")
         public void test1639254058024() {
             assertThat(new ResponseAsserter<>(RESPONSE, EMPTY_HEADER_ASSERTER).blame(), notNullValue());
         }
 
         @Test
-        @DisplayName("#blame() with AssertionError if has errors")
+        @DisplayName("#blame() with BriefAssertionError if has errors")
         public void test1639254060794() {
             final ResponseAsserter responseAsserter = new ResponseAsserter<>(RESPONSE, EMPTY_HEADER_ASSERTER);
             responseAsserter.addErrors(new RuntimeException("test1639254060794"));
             assertThrow(responseAsserter::blame)
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n\ntest1639254060794");
         }
 
@@ -107,7 +108,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         }
 
         @Test
-        @DisplayName("#assertHeaders(Consumer) AssertionError is not thrown if headers no errors (Closeable)")
+        @DisplayName("#assertHeaders(Consumer) BriefAssertionError is not thrown if headers no errors (Closeable)")
         public void test1639065947474() {
             new ResponseAsserter<>(RESPONSE, EMPTY_HEADER_ASSERTER)
                     .assertHeaders(HeadersAsserter::contentTypeNotPresent)
@@ -115,12 +116,12 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         }
 
         @Test
-        @DisplayName("#assertHeaders(Consumer) AssertionError is not thrown if headers has errors (Closeable)")
+        @DisplayName("#assertHeaders(Consumer) BriefAssertionError is not thrown if headers has errors (Closeable)")
         public void test1639065947484() {
             final ResponseAsserter asserter = new ResponseAsserter<>(RESPONSE, EMPTY_HEADER_ASSERTER)
                     .assertHeaders(HeadersAsserter::connectionIsPresent); // not thrown
             assertThrow(asserter::blame) // explicit throw
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n\n" +
                             "Response header 'Connection'\n" +
                             "Expected: is present\n" +
@@ -159,7 +160,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         public void test1639065947506() {
             final ResponseAsserter asserter = getSucResponseAsserter(500, null);
             assertThrow(() -> asserter.assertSucResponse(200, body -> assertThat("", body, notNullValue())).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n\n" +
                             "HTTP status code\n" +
                             "Expected: is  200\n" +
@@ -184,7 +185,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
             final SucDTO expected = new SucDTO("test1639497019782");
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(500, null);
             assertThrow(() -> asserter.assertSucResponse(200, ResponseAsserterUnitTests::assertSucDTO, expected).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n\n" +
                             "HTTP status code\n" +
                             "Expected: is  200\n" +
@@ -209,7 +210,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
             final SucDTO expected = new SucDTO("test1639497681421");
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(500, null);
             assertThrow(() -> asserter.assertSucResponse(200, (softly, act) -> assertSoftlySucDTO(softly, act, expected)).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n\n" +
                             "HTTP status code\n" +
                             "Expected: is  200\n" +
@@ -234,7 +235,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
             final SucDTO expected = new SucDTO("test1639571731704");
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(500, null);
             assertThrow(() -> asserter.assertSucResponse(200, ResponseAsserterUnitTests::assertSoftlySucDTO, expected).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n\n" +
                             "HTTP status code\n" +
                             "Expected: is  200\n" +
@@ -278,7 +279,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         public void test1639572207597() {
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, null);
             assertThrow(() -> asserter.assertSucBody(act -> assertSucDTO(act, null)).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
                             "Successful body\n" +
@@ -291,7 +292,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         public void test1639574632570() {
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, new SucDTO("foo"));
             assertThrow(() -> asserter.assertSucBody(act -> assertSucDTO(act, new SucDTO("bar"))).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
                             "DTO.message\n" +
@@ -313,7 +314,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
             final SucDTO expected = new SucDTO("test1639572227705");
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, null);
             assertThrow(() -> asserter.assertSucBody(ResponseAsserterUnitTests::assertSucDTO, expected).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
                             "Successful body\n" +
@@ -326,7 +327,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         public void test1639576070070() {
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, new SucDTO("foo"));
             assertThrow(() -> asserter.assertSucBody(ResponseAsserterUnitTests::assertSucDTO, new SucDTO("bar")).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
                             "DTO.message\n" +
@@ -348,7 +349,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
             final SucDTO expected = new SucDTO("test1639572268635");
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, null);
             assertThrow(() -> asserter.assertSucBody((softly, act) -> assertSoftlySucDTO(softly, act, expected)).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
                             "Successful body\n" +
@@ -361,7 +362,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         public void test1639577387233() {
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, new SucDTO("foo"));
             assertThrow(() -> asserter.assertSucBody((softly, act) -> assertSoftlySucDTO(softly, act, new SucDTO("bar"))).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
                             "DTO.message\n" +
@@ -383,7 +384,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
             final SucDTO expected = new SucDTO("test1639572268635");
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, null);
             assertThrow(() -> asserter.assertSucBody(ResponseAsserterUnitTests::assertSoftlySucDTO, expected).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
                             "Successful body\n" +
@@ -396,7 +397,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         public void test1639577513399() {
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, new SucDTO("foo"));
             assertThrow(() -> asserter.assertSucBody(ResponseAsserterUnitTests::assertSoftlySucDTO, new SucDTO("bar")).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
                             "DTO.message\n" +
@@ -422,7 +423,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         public void test1639577968226() {
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, null);
             assertThrow(() -> asserter.assertSucBodyNotNull().blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
                             "Successful body\n" +
@@ -448,7 +449,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         public void test1639577692294() {
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, new SucDTO(""));
             assertThrow(() -> asserter.assertSucBodyIsNull().blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
                             "Successful body\n" +
@@ -474,7 +475,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         public void test1639578072241() {
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(500, null);
             assertThrow(() -> asserter.assertIsSucHttpStatusCode().blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
                             "Successful HTTP status code\n" +
@@ -514,7 +515,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         public void test1639582000279() {
             final ResponseAsserter asserter = getErrResponseAsserter(200, null);
             assertThrow(() -> asserter.assertErrResponse(500, body -> assertThat("", body, notNullValue())).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n\n" +
                             "HTTP status code\n" +
                             "Expected: is  500\n" +
@@ -539,7 +540,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
             final ErrDTO expected = new ErrDTO("test");
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(200, null);
             assertThrow(() -> asserter.assertErrResponse(500, ResponseAsserterUnitTests::assertErrDTO, expected).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n\n" +
                             "HTTP status code\n" +
                             "Expected: is  500\n" +
@@ -564,7 +565,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
             final ErrDTO expected = new ErrDTO("test");
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(200, null);
             assertThrow(() -> asserter.assertErrResponse(500, (softly, act) -> assertSoftlyErrDTO(softly, act, expected)).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n\n" +
                             "HTTP status code\n" +
                             "Expected: is  500\n" +
@@ -589,7 +590,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
             final ErrDTO expected = new ErrDTO("test");
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(200, null);
             assertThrow(() -> asserter.assertErrResponse(500, ResponseAsserterUnitTests::assertSoftlyErrDTO, expected).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n\n" +
                             "HTTP status code\n" +
                             "Expected: is  500\n" +
@@ -633,7 +634,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         public void test1639582029743() {
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, null);
             assertThrow(() -> asserter.assertErrBody(act -> assertErrDTO(act, null)).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
                             "Error body\n" +
@@ -646,7 +647,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         public void test1639582034789() {
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, new ErrDTO("foo"));
             assertThrow(() -> asserter.assertErrBody(act -> assertErrDTO(act, new ErrDTO("bar"))).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
                             "DTO.message\n" +
@@ -668,7 +669,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
             final ErrDTO expected = new ErrDTO("test");
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, null);
             assertThrow(() -> asserter.assertErrBody(ResponseAsserterUnitTests::assertErrDTO, expected).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
                             "Error body\n" +
@@ -681,7 +682,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         public void test1639582047416() {
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, new ErrDTO("foo"));
             assertThrow(() -> asserter.assertErrBody(ResponseAsserterUnitTests::assertErrDTO, new ErrDTO("bar")).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
                             "DTO.message\n" +
@@ -703,7 +704,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
             final ErrDTO expected = new ErrDTO("test");
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, null);
             assertThrow(() -> asserter.assertErrBody((softly, act) -> assertSoftlyErrDTO(softly, act, expected)).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
                             "Error body\n" +
@@ -716,7 +717,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         public void test1639582056530() {
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, new ErrDTO("foo"));
             assertThrow(() -> asserter.assertErrBody((softly, act) -> assertSoftlyErrDTO(softly, act, new ErrDTO("bar"))).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
                             "DTO.message\n" +
@@ -738,7 +739,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
             final ErrDTO expected = new ErrDTO("test");
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, null);
             assertThrow(() -> asserter.assertErrBody(ResponseAsserterUnitTests::assertSoftlyErrDTO, expected).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
                             "Error body\n" +
@@ -751,7 +752,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         public void test1639582064921() {
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, new ErrDTO("foo"));
             assertThrow(() -> asserter.assertErrBody(ResponseAsserterUnitTests::assertSoftlyErrDTO, new ErrDTO("bar")).blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
                             "DTO.message\n" +
@@ -777,7 +778,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         public void test1639582074095() {
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(200, null);
             assertThrow(() -> asserter.assertErrBodyNotNull().blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
                             "Error body\n" +
@@ -803,7 +804,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         public void test1639582081800() {
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(200, new ErrDTO(""));
             assertThrow(() -> asserter.assertErrBodyIsNull().blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
                             "Error body\n" +
@@ -829,7 +830,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         public void test1639582088065() {
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(200, null);
             assertThrow(() -> asserter.assertIsErrHttpStatusCode().blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
                             "Error HTTP status code\n" +
@@ -855,7 +856,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         public void test1639582154391() {
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, null);
             assertThrow(() -> asserter.assertHttpStatusMessageIs("test").blame())
-                    .assertClass(AssertionError.class)
+                    .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
                             "HTTP status message\n" +

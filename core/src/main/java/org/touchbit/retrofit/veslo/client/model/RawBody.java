@@ -17,6 +17,7 @@
 package org.touchbit.retrofit.veslo.client.model;
 
 import org.touchbit.retrofit.veslo.asserter.SoftlyAsserter;
+import org.touchbit.retrofit.veslo.exception.BriefAssertionError;
 import org.touchbit.retrofit.veslo.util.Utils;
 
 import javax.annotation.Nullable;
@@ -59,7 +60,7 @@ public class RawBody {
 
     public RawBody assertBodyIsNotNull() {
         if (isNullBody()) {
-            throw new AssertionError("Response body\n" +
+            throw new BriefAssertionError("Response body\n" +
                     "Expected: is byte array\n" +
                     "     but: was " + Arrays.toString(bodyData) + "\n");
         }
@@ -68,7 +69,7 @@ public class RawBody {
 
     public RawBody assertBodyIsNull() {
         if (!isNullBody()) {
-            throw new AssertionError("Response body\n" +
+            throw new BriefAssertionError("Response body\n" +
                     "Expected: is null\n" +
                     "     but: was array length '" + bodyData.length + "'\n");
         }
@@ -77,7 +78,7 @@ public class RawBody {
 
     public RawBody assertBodyIsNotEmpty() {
         if (isNullBody() || isEmptyBody()) {
-            throw new AssertionError("Response body\n" +
+            throw new BriefAssertionError("Response body\n" +
                     "Expected: is not empty byte array\n" +
                     "     but: was " + Arrays.toString(bodyData) + "\n");
         }
@@ -87,7 +88,7 @@ public class RawBody {
     public RawBody assertBodyIsEmpty() {
         assertBodyIsNotNull();
         if (!isEmptyBody()) {
-            throw new AssertionError("Response body\n" +
+            throw new BriefAssertionError("Response body\n" +
                     "Expected: is empty byte array\n" +
                     "     but: was array length '" + bodyData.length + "'\n");
         }
@@ -103,7 +104,7 @@ public class RawBody {
                 //noinspection ConstantConditions -> assertBodyIsNotNull()
                 if (!string().contains(expected)) {
                     softlyAsserter.softly(() -> {
-                        throw new AssertionError("Response body\n" +
+                        throw new BriefAssertionError("Response body\n" +
                                 "Expected: contains '" + expected + "'\n" +
                                 "     but: does not contain\n");
                     });
@@ -122,7 +123,7 @@ public class RawBody {
                 //noinspection ConstantConditions -> assertBodyIsNotNull()
                 if (!string().toLowerCase().contains(expected.toLowerCase())) {
                     softlyAsserter.softly(() -> {
-                        throw new AssertionError("Response body\n" +
+                        throw new BriefAssertionError("Response body\n" +
                                 "Expected: contains '" + expected + "' (ignore case)\n" +
                                 "     but: does not contain\n");
                     });
@@ -136,7 +137,7 @@ public class RawBody {
         Utils.parameterRequireNonNull(expected, "expected");
         assertBodyIsNotNull();
         if (!expected.equals(string())) {
-            throw new AssertionError("" +
+            throw new BriefAssertionError("" +
                     "Response body\n" +
                     "Expected: '" + expected + "'\n" +
                     "     but: was '" + string() + "'\n");
@@ -148,7 +149,7 @@ public class RawBody {
         Utils.parameterRequireNonNull(expected, "expected");
         assertBodyIsNotNull();
         if (!expected.equalsIgnoreCase(string())) {
-            throw new AssertionError("" +
+            throw new BriefAssertionError("" +
                     "Response body\n" +
                     "Expected: '" + expected + "' (ignore case)\n" +
                     "     but: was '" + string() + "'\n");

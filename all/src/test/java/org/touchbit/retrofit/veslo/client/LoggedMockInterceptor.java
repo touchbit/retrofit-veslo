@@ -19,13 +19,13 @@ package org.touchbit.retrofit.veslo.client;
 import internal.test.utils.client.MockInterceptor;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.touchbit.retrofit.veslo.client.inteceptor.LoggingInterceptAction;
+import org.touchbit.retrofit.veslo.client.inteceptor.LoggingAction;
 
 import java.io.IOException;
 
 public class LoggedMockInterceptor extends MockInterceptor {
 
-    private final LoggingInterceptAction loggingAction = new LoggingInterceptAction();
+    private final LoggingAction loggingAction = new LoggingAction();
 
     @Override
     public void logRequest(Request request) throws IOException {

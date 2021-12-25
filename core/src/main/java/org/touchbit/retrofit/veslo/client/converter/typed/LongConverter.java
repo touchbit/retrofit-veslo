@@ -95,9 +95,9 @@ public class LongConverter implements ExtensionConverter<Long> {
             @Nullable
             @Override
             public Long convert(@Nullable ResponseBody responseBody) throws IOException {
-                if (responseBody != null && responseBody.contentLength() != 0) {
-                    assertSupportedBodyType(INSTANCE, type, Long.class, Long.TYPE);
-                    final String body = responseBody.string();
+                assertSupportedBodyType(INSTANCE, type, Long.class, Long.TYPE);
+                final String body = copyBody(responseBody);
+                if (body != null && body.length() != 0) {
                     try {
                         return Long.valueOf(body);
                     } catch (Exception e) {

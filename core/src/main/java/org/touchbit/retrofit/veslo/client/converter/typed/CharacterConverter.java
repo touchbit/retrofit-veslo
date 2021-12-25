@@ -95,9 +95,9 @@ public class CharacterConverter implements ExtensionConverter<Character> {
             @Nullable
             @Override
             public Character convert(@Nullable ResponseBody responseBody) throws IOException {
-                if (responseBody != null && responseBody.contentLength() != 0) {
-                    assertSupportedBodyType(INSTANCE, type, Character.class, Character.TYPE);
-                    final String body = responseBody.string();
+                assertSupportedBodyType(INSTANCE, type, Character.class, Character.TYPE);
+                final String body = copyBody(responseBody);
+                if (body != null && body.length() != 0) {
                     final int length = body.length();
                     if (length != 1) {
                         throw new ConvertCallException("Character conversion error:\n" +

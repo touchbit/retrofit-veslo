@@ -97,9 +97,9 @@ public class BooleanConverter implements ExtensionConverter<Boolean> {
             @Nullable
             @Override
             public Boolean convert(@Nullable ResponseBody responseBody) throws IOException {
-                if (responseBody != null && responseBody.contentLength() != 0) {
-                    assertSupportedBodyType(INSTANCE, type, Boolean.class, Boolean.TYPE);
-                    final String body = responseBody.string();
+                assertSupportedBodyType(INSTANCE, type, Boolean.class, Boolean.TYPE);
+                final String body = copyBody(responseBody);
+                if (body != null && body.length() != 0) {
                     if (body.equalsIgnoreCase("false") || body.equalsIgnoreCase("true")) {
                         return Boolean.valueOf(body);
                     }

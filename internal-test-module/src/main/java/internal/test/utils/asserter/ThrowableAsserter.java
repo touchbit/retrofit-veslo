@@ -27,16 +27,20 @@ import java.util.function.Function;
 public class ThrowableAsserter {
 
     private static final String INDENT = "    ";
-    private final Throwable throwable;
-    private final String throwableInfo;
+    private Throwable throwable;
+    private String throwableInfo;
 
     public ThrowableAsserter(ThrowableRunnable runnable) {
+        boolean isSuccess = false;
         try {
             runnable.execute();
-            throw new AssertionError("The function call completed without any exceptions being thrown.");
+            isSuccess = true;
         } catch (Throwable t) {
             throwable = t;
             throwableInfo = getThrowableInfo(throwable);
+        }
+        if (isSuccess) {
+            throw new AssertionError("The function call completed without any exceptions being thrown.");
         }
     }
 

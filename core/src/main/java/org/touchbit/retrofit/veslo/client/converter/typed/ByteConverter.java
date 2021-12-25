@@ -95,9 +95,9 @@ public class ByteConverter implements ExtensionConverter<Byte> {
             @Nullable
             @Override
             public Byte convert(@Nullable ResponseBody responseBody) throws IOException {
-                if (responseBody != null && responseBody.contentLength() != 0) {
-                    assertSupportedBodyType(INSTANCE, type, Byte.class, Byte.TYPE);
-                    final String body = responseBody.string();
+                assertSupportedBodyType(INSTANCE, type, Byte.class, Byte.TYPE);
+                final String body = copyBody(responseBody);
+                if (body != null && body.length() != 0) {
                     try {
                         return Byte.valueOf(body);
                     } catch (Exception e) {

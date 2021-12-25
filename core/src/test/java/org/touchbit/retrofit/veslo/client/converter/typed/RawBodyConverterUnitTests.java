@@ -125,7 +125,7 @@ public class RawBodyConverterUnitTests extends BaseCoreUnitTest {
         @DisplayName("return RawBody if response body == null")
         public void test1639674359219() throws IOException {
             final RawBody expected = RawBody.nullable();
-            final RawBody result = CONVERTER.responseBodyConverter(FILE_C, array(), RTF).convert(null);
+            final RawBody result = CONVERTER.responseBodyConverter(RawBody.class, array(), RTF).convert(null);
             assertThat(result, is(expected));
         }
 

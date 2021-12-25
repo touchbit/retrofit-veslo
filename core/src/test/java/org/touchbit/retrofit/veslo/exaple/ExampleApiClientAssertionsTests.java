@@ -26,7 +26,7 @@ import org.touchbit.retrofit.veslo.client.adapter.UniversalCallAdapterFactory;
 import org.touchbit.retrofit.veslo.client.converter.ExtensionConverterFactory;
 import org.touchbit.retrofit.veslo.client.converter.api.ExtensionConverter;
 import org.touchbit.retrofit.veslo.client.converter.typed.RawBodyConverter;
-import org.touchbit.retrofit.veslo.client.inteceptor.LoggingInterceptAction;
+import org.touchbit.retrofit.veslo.client.inteceptor.LoggingAction;
 import org.touchbit.retrofit.veslo.exaple.dto.DTO;
 import org.touchbit.retrofit.veslo.exaple.dto.ErrDTO;
 import org.touchbit.retrofit.veslo.exaple.dto.SucDTO;
@@ -186,7 +186,7 @@ public class ExampleApiClientAssertionsTests extends BaseCoreUnitTest {
 
     public static class LoggedMockInterceptor extends MockInterceptor {
 
-        private final LoggingInterceptAction loggingAction = new LoggingInterceptAction();
+        private final LoggingAction loggingAction = new LoggingAction();
 
         @Override
         public void logRequest(Request request) throws IOException {

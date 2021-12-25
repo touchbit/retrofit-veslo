@@ -257,7 +257,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @DisplayName("Return converter by supported package model")
         public void test1639065949751() {
             final TestsExtensionConverterFactory factory = new TestsExtensionConverterFactory();
-            factory.registerPackageRequestConverter(new TestPackageConverter(), "org.touchbit.retrofit.ext.test.model.pack");
+            factory.registerPackageRequestConverter(new TestPackageConverter(), "internal.test.utils.client.model.pack");
             final RequestBodyConverter converter = factory
                     .getPackageRequestConverter(PackageDTO.class, AA, AA, RTF);
             assertThat("", converter, notNullValue());

@@ -95,9 +95,9 @@ public class ShortConverter implements ExtensionConverter<Short> {
             @Nullable
             @Override
             public Short convert(@Nullable ResponseBody responseBody) throws IOException {
-                if (responseBody != null && responseBody.contentLength() != 0) {
+                final String body = copyBody(responseBody);
+                if (body != null && body.length() != 0) {
                     assertSupportedBodyType(INSTANCE, type, Short.class, Short.TYPE);
-                    final String body = responseBody.string();
                     try {
                         return Short.valueOf(body);
                     } catch (Exception e) {

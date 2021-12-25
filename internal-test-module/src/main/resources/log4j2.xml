@@ -38,7 +38,7 @@
         <Logger name="Framework" level="DEBUG" additivity="false">
             <AppenderRef ref="Framework"/>
         </Logger>
-        <Logger name="org.touchbit.retrofit.ext" level="ALL" additivity="false">
+        <Logger name="org.touchbit.retrofit.veslo" level="ALL" additivity="false">
             <AppenderRef ref="Routing" level="ALL"/>
         </Logger>
     </Loggers>

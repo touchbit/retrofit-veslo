@@ -93,11 +93,12 @@ public class ByteArrayConverter implements ExtensionConverter<Object> {
             @Override
             @Nullable
             public Object convert(@Nullable ResponseBody responseBody) throws IOException {
-                if (responseBody == null) {
+                assertSupportedBodyType(INSTANCE, type, Byte[].class, byte[].class);
+                final String body = copyBody(responseBody);
+                if (body == null) {
                     return null;
                 }
-                assertSupportedBodyType(INSTANCE, type, Byte[].class, byte[].class);
-                final byte[] bytes = responseBody.bytes();
+                final byte[] bytes = body.getBytes();
                 if (type.equals(Byte[].class)) {
                     return Utils.toObjectByteArray(bytes);
                 }

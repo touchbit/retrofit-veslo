@@ -17,6 +17,8 @@
 package org.touchbit.retrofit.veslo.client.response;
 
 import okhttp3.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.touchbit.retrofit.veslo.asserter.IHeadersAsserter;
 import org.touchbit.retrofit.veslo.asserter.IResponseAsserter;
 import org.touchbit.retrofit.veslo.util.Utils;
@@ -24,6 +26,7 @@ import org.touchbit.retrofit.veslo.util.Utils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 @SuppressWarnings("UnusedReturnValue")
@@ -35,6 +38,7 @@ public abstract class BaseDualResponse<SUC_DTO, ERR_DTO, ASSERTER extends IRespo
     private final Response response;
     private final String endpointInfo;
     private final Annotation[] callAnnotations;
+    private Logger logger = LoggerFactory.getLogger(BaseDualResponse.class);
 
     protected BaseDualResponse(final @Nullable SUC_DTO sucDTO,
                                final @Nullable ERR_DTO errDTO,
@@ -56,6 +60,25 @@ public abstract class BaseDualResponse<SUC_DTO, ERR_DTO, ASSERTER extends IRespo
         try (final ASSERTER responseAsserter = getResponseAsserter()) {
             respAsserter.accept(responseAsserter);
         }
+        logger.info("Response check completed without errors.");
+        return this;
+    }
+
+    public BaseDualResponse<SUC_DTO, ERR_DTO, ASSERTER> assertSucResponse(BiConsumer<ASSERTER, SUC_DTO> respAsserter,
+                                                                          SUC_DTO expected) {
+        try (final ASSERTER responseAsserter = getResponseAsserter()) {
+            respAsserter.accept(responseAsserter, expected);
+        }
+        logger.info("Response check completed without errors.");
+        return this;
+    }
+
+    public BaseDualResponse<SUC_DTO, ERR_DTO, ASSERTER> assertErrResponse(BiConsumer<ASSERTER, ERR_DTO> respAsserter,
+                                                                          ERR_DTO expected) {
+        try (final ASSERTER responseAsserter = getResponseAsserter()) {
+            respAsserter.accept(responseAsserter, expected);
+        }
+        logger.info("Response check completed without errors.");
         return this;
     }
 
@@ -97,6 +120,15 @@ public abstract class BaseDualResponse<SUC_DTO, ERR_DTO, ASSERTER extends IRespo
                 "Raw response: " + getResponse() + "\n" +
                 "Call info: '" + getEndpointInfo() + "'\n" +
                 "API method annotations:" + Utils.arrayToPrettyString(getCallAnnotations()));
+    }
+
+    public Logger getLogger() {
+        return logger;
+    }
+
+    public BaseDualResponse<SUC_DTO, ERR_DTO, ASSERTER> setLogger(Logger logger) {
+        this.logger = logger;
+        return this;
     }
 
 }

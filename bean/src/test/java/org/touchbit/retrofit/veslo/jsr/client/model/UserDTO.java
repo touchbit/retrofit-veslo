@@ -16,31 +16,28 @@
 
 package org.touchbit.retrofit.veslo.jsr.client.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import internal.test.utils.model.AdditionalProperties;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.touchbit.retrofit.veslo.jackson.AdditionalProperties;
 import org.touchbit.retrofit.veslo.jsr.BeanValidation;
 
 import java.util.function.Function;
 
-public class UserDTO extends AdditionalProperties implements BeanValidation<UserDTO> {
+import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 
-    @JsonProperty("firstName")
-    @NotNull
-    @Size(min = 1, max = 10)
-    private String firstName;
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@JsonAutoDetect(creatorVisibility = ANY, fieldVisibility = ANY)
+public class UserDTO extends AdditionalProperties<UserDTO> implements BeanValidation<UserDTO> {
 
-    @JsonProperty("lastName")
-    @NotNull
-    @Size(min = 1, max = 10)
-    private String lastName;
+    private @NotNull @Size(min = 1, max = 10) String firstName;
 
-    @JsonProperty("passport")
-    @NotNull
-    @Valid
-    private UserPassport passport;
+    private @NotNull @Size(min = 1, max = 10) String lastName;
+
+    private @NotNull @Valid UserPassport passport;
 
     public String firstName() {
         return firstName;

@@ -17,6 +17,7 @@
 package org.touchbit.retrofit.veslo.client.response;
 
 import okhttp3.Response;
+import org.slf4j.LoggerFactory;
 import org.touchbit.retrofit.veslo.asserter.HeadersAsserter;
 import org.touchbit.retrofit.veslo.asserter.ResponseAsserter;
 
@@ -33,6 +34,7 @@ public class DualResponse<SUC_DTO, ERR_DTO>
                         final @Nonnull String endpointInfo,
                         final @Nonnull Annotation[] callAnnotations) {
         super(sucDTO, errDTO, response, endpointInfo, callAnnotations);
+        setLogger(LoggerFactory.getLogger(DualResponse.class));
     }
 
     @Override

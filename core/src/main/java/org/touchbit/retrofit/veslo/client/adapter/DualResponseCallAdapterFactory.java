@@ -215,8 +215,18 @@ public class DualResponseCallAdapterFactory extends BaseCallAdapterFactory {
         }
         logger.debug("API call completed successfully.");
         logger.debug("Define real values for the error/success response body");
-        final Object sucDTO = getSuccessfulResponseBody(response, successType, methodAnnotations, retrofit);
-        final Object errDTO = getErrorResponseBody(response, errorType, methodAnnotations, retrofit);
+        final Object sucDTO;
+        if (successType == Void.TYPE || successType == Void.class) {
+            sucDTO = null;
+        } else {
+            sucDTO = getSuccessfulResponseBody(response, successType, methodAnnotations, retrofit);
+        }
+        final Object errDTO;
+        if (errorType == Void.TYPE || errorType == Void.class) {
+            errDTO = null;
+        } else {
+            errDTO = getErrorResponseBody(response, errorType, methodAnnotations, retrofit);
+        }
         final IDualResponse<?, ?> result = getDualResponseConsumer()
                 .accept(sucDTO, errDTO, response.raw(), endpointInfo, methodAnnotations);
         logger.debug("IDualResponse created:\n{}", result);

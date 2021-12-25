@@ -18,15 +18,16 @@ package org.touchbit.retrofit.veslo;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import org.touchbit.retrofit.veslo.allure.AllureInterceptAction;
+import org.touchbit.retrofit.veslo.allure.AllureAction;
 import org.touchbit.retrofit.veslo.client.adapter.DualResponseCallAdapterFactory;
 import org.touchbit.retrofit.veslo.client.adapter.JavaTypeCallAdapterFactory;
+import org.touchbit.retrofit.veslo.client.adapter.UniversalCallAdapterFactory;
 import org.touchbit.retrofit.veslo.client.inteceptor.CompositeInterceptor;
-import org.touchbit.retrofit.veslo.client.inteceptor.LoggingInterceptAction;
+import org.touchbit.retrofit.veslo.client.inteceptor.LoggingAction;
 import org.touchbit.retrofit.veslo.client.response.DualResponse;
 import org.touchbit.retrofit.veslo.exception.UtilityClassException;
 import org.touchbit.retrofit.veslo.gson.GsonDualConverterFactory;
-import org.touchbit.retrofit.veslo.jackson.JacksonDualConverterFactory;
+import org.touchbit.retrofit.veslo.jackson.JacksonConverterFactory;
 import org.touchbit.retrofit.veslo.util.Utils;
 import retrofit2.CallAdapter;
 import retrofit2.Converter;
@@ -51,11 +52,11 @@ public class DualResponseRetrofitClientUtils {
      * @param <CLIENT>    - API client type
      * @param clientClass - API client interface class
      * @param baseUrl     - api URL is format schema://domain:port
-     * @return API client implementation with {@link JacksonDualConverterFactory} and default interceptors
+     * @return API client implementation with {@link JacksonConverterFactory} and default interceptors
      */
     @EverythingIsNonNull
     public static <CLIENT> CLIENT createJacksonClient(final Class<CLIENT> clientClass, final String baseUrl) {
-        return buildRetrofit(baseUrl, new JacksonDualConverterFactory()).create(clientClass);
+        return buildRetrofit(baseUrl, new JacksonConverterFactory()).create(clientClass);
     }
 
     /**
@@ -73,7 +74,7 @@ public class DualResponseRetrofitClientUtils {
      * @param <CLIENT>         - API client type
      * @param clientClass      - API client interface class
      * @param baseUrl          - api URL is format schema://domain:port
-     * @param converterFactory - {@link JacksonDualConverterFactory}, {@link GsonDualConverterFactory}, etc.
+     * @param converterFactory - {@link JacksonConverterFactory}, {@link GsonDualConverterFactory}, etc.
      * @return API client implementation with default interceptors
      */
     @EverythingIsNonNull
@@ -89,7 +90,7 @@ public class DualResponseRetrofitClientUtils {
      * @param baseUrl            - api URL is format schema://domain:port
      * @param interceptor        - {@link Interceptor} implementation. For example {@link CompositeInterceptor}
      * @param callAdapterFactory - For example {@link DualResponseCallAdapterFactory} or {@link JavaTypeCallAdapterFactory}
-     * @param converterFactory   - {@link JacksonDualConverterFactory}, {@link GsonDualConverterFactory}, etc.
+     * @param converterFactory   - {@link JacksonConverterFactory}, {@link GsonDualConverterFactory}, etc.
      * @return API client implementation
      */
     @EverythingIsNonNull
@@ -103,12 +104,12 @@ public class DualResponseRetrofitClientUtils {
 
     /**
      * @param baseUrl - api URL is format schema://domain:port
-     * @return {@link Retrofit} with {@link JacksonDualConverterFactory} and default interceptors
+     * @return {@link Retrofit} with {@link JacksonConverterFactory} and default interceptors
      */
     @EverythingIsNonNull
     public static Retrofit buildJacksonRetrofit(final String baseUrl) {
         Utils.parameterRequireNonNull(baseUrl, "baseUrl");
-        return buildRetrofit(baseUrl, new JacksonDualConverterFactory());
+        return buildRetrofit(baseUrl, new JacksonConverterFactory());
     }
 
     /**
@@ -123,7 +124,7 @@ public class DualResponseRetrofitClientUtils {
 
     /**
      * @param baseUrl          - api URL is format schema://domain:port
-     * @param converterFactory - {@link JacksonDualConverterFactory}, {@link GsonDualConverterFactory}, etc.
+     * @param converterFactory - {@link JacksonConverterFactory}, {@link GsonDualConverterFactory}, etc.
      * @return {@link Retrofit} with default interceptors
      */
     @EverythingIsNonNull
@@ -131,19 +132,19 @@ public class DualResponseRetrofitClientUtils {
                                          final Converter.Factory converterFactory) {
         Utils.parameterRequireNonNull(baseUrl, "baseUrl");
         Utils.parameterRequireNonNull(converterFactory, "converterFactory");
-        final LoggingInterceptAction loggingAction = new LoggingInterceptAction();
-        final AllureInterceptAction allureAction = new AllureInterceptAction();
+        final LoggingAction loggingAction = new LoggingAction();
+        final AllureAction allureAction = new AllureAction();
         final CompositeInterceptor compositeInterceptor = new CompositeInterceptor()
                 .withRequestInterceptActionsChain(loggingAction, allureAction)
                 .withResponseInterceptActionsChain(loggingAction, allureAction);
-        return buildRetrofit(baseUrl, compositeInterceptor, new DualResponseCallAdapterFactory(), converterFactory);
+        return buildRetrofit(baseUrl, compositeInterceptor, new UniversalCallAdapterFactory(), converterFactory);
     }
 
     /**
      * @param baseUrl            - api URL is format schema://domain:port
      * @param interceptor        - {@link Interceptor} implementation. For example {@link CompositeInterceptor}
      * @param callAdapterFactory - For example {@link DualResponseCallAdapterFactory} or {@link JavaTypeCallAdapterFactory}
-     * @param converterFactory   - {@link JacksonDualConverterFactory}, {@link GsonDualConverterFactory}, etc.
+     * @param converterFactory   - {@link JacksonConverterFactory}, {@link GsonDualConverterFactory}, etc.
      * @return {@link Retrofit}
      */
     @Nonnull

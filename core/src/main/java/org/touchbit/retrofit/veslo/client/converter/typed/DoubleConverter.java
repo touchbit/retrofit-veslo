@@ -96,9 +96,9 @@ public class DoubleConverter implements ExtensionConverter<Double> {
             @Nullable
             @Override
             public Double convert(@Nullable ResponseBody responseBody) throws IOException {
-                if (responseBody != null && responseBody.contentLength() != 0) {
-                    assertSupportedBodyType(INSTANCE, type, Double.class, Double.TYPE);
-                    final String body = responseBody.string();
+                assertSupportedBodyType(INSTANCE, type, Double.class, Double.TYPE);
+                final String body = copyBody(responseBody);
+                if (body != null && body.length() != 0) {
                     try {
                         return Double.valueOf(body);
                     } catch (Exception e) {

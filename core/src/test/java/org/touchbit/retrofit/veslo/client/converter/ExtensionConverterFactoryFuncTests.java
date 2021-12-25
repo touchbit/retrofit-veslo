@@ -157,7 +157,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         @DisplayName("Successfully converting PackDTO->RequestBody using package converter")
         public void test1639065948853() throws IOException {
             final TestsExtensionConverterFactory factory = new TestsExtensionConverterFactory();
-            factory.registerPackageRequestConverter(new TestPackageConverter(), "org.touchbit.retrofit.ext.test.model.pack");
+            factory.registerPackageRequestConverter(new TestPackageConverter(), "internal.test.utils.client.model.pack");
             final RequestBody dto = factory
                     .requestBodyConverter(RawBody.class, array(), array(), RTF)
                     .convert(new PackageDTO("test1637687959905"));
@@ -314,7 +314,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         public void test1639065949133() throws IOException {
             PackageDTO expected = new PackageDTO("test1637679684417");
             final TestsExtensionConverterFactory factory = new TestsExtensionConverterFactory();
-            factory.registerPackageResponseConverter(new TestPackageConverter(), "org.touchbit.retrofit.ext.test.model.pack");
+            factory.registerPackageResponseConverter(new TestPackageConverter(), "internal.test.utils.client.model.pack");
             final Object dto = factory.responseBodyConverter(PackageDTO.class, array(), RTF)
                     .convert(ResponseBody.create(null, expected.data()));
             assertThat("PackDTO", dto, is(expected));

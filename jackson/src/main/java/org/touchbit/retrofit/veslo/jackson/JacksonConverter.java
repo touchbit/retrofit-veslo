@@ -16,10 +16,10 @@
 
 package org.touchbit.retrofit.veslo.jackson;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -32,11 +32,12 @@ import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
-import static com.fasterxml.jackson.databind.DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT;
 import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES;
+import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
 
 /**
  * Jackson 2 converter
@@ -47,6 +48,7 @@ import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_NULL
  */
 public class JacksonConverter<T> implements ExtensionConverter<T> {
 
+    public static final JacksonConverter<?> INSTANCE = new JacksonConverter<>();
     private final ObjectMapper requestObjectMapper;
     private final ObjectMapper responseObjectMapper;
 
@@ -54,8 +56,8 @@ public class JacksonConverter<T> implements ExtensionConverter<T> {
      * Default constructor with default request/response jackson object mappers
      */
     public JacksonConverter() {
-        this(new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT),
-                new ObjectMapper().enable(FAIL_ON_NULL_FOR_PRIMITIVES, ACCEPT_EMPTY_STRING_AS_NULL_OBJECT));
+        this(new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL).enable(INDENT_OUTPUT),
+                new ObjectMapper().enable(FAIL_ON_NULL_FOR_PRIMITIVES));
     }
 
     /**
@@ -121,14 +123,15 @@ public class JacksonConverter<T> implements ExtensionConverter<T> {
 
             @Override
             @Nullable
-            public T convert(@Nullable ResponseBody body) {
-                if (body == null || body.contentLength() == 0) {
+            public T convert(@Nullable ResponseBody responseBody) throws IOException {
+                final String body = copyBody(responseBody);
+                if (body == null || body.length() == 0) {
                     return null;
                 }
                 try {
                     final ObjectMapper objectMapper = getResponseObjectMapper();
                     final JavaType javaType = objectMapper.constructType(type);
-                    return objectMapper.readerFor(javaType).readValue(body.string());
+                    return objectMapper.readerFor(javaType).readValue(body);
                 } catch (Exception e) {
                     throw new ConvertCallException("\nResponse body not convertible to type " +
                             type + "\n" + e.getMessage(), e);

@@ -47,6 +47,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
     private final List<Throwable> errors = new ArrayList<>();
     private final IDualResponse<SUC_DTO, ERR_DTO> response;
     private final HA headersAsserter;
+    private boolean isIgnoreNPE = false;
 
     /**
      * @param response        - {@link IDualResponse}
@@ -158,6 +159,9 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
         final SUC_DTO actual = getResponse().getSucDTO();
         if (actual != null) {
             softly(() -> assertionConsumer.accept(actual));
+            if (SoftlyAsserter.class.isAssignableFrom(actual.getClass())) {
+                this.addErrors(((SoftlyAsserter) actual).getErrors());
+            }
         }
         return assertSucBodyNotNull().blame();
     }
@@ -461,6 +465,16 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
     @EverythingIsNonNull
     public void addErrors(@Nonnull List<Throwable> throwableList) {
         errors.addAll(throwableList);
+    }
+
+    @Override
+    public void ignoreNPE(boolean value) {
+        isIgnoreNPE = value;
+    }
+
+    @Override
+    public boolean isIgnoreNPE() {
+        return isIgnoreNPE;
     }
 
     /**

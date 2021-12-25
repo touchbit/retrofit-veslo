@@ -78,6 +78,9 @@ public abstract class BaseCallAdapterFactory extends CallAdapter.Factory {
         Utils.parameterRequireNonNull(returnType, "returnType");
         Utils.parameterRequireNonNull(annotations, "annotations");
         Utils.parameterRequireNonNull(retrofit, "retrofit");
+        if (returnType == Void.TYPE || returnType == Void.class) {
+            return null;
+        }
         final String typeName = Utils.getTypeName(returnType);
         logger.debug("Get successful response body model for type {}", typeName);
         try {
@@ -122,7 +125,14 @@ public abstract class BaseCallAdapterFactory extends CallAdapter.Factory {
                                           final @Nonnull Type returnType,
                                           final @Nonnull Annotation[] annotations,
                                           final @Nonnull Retrofit retrofit) {
+        Utils.parameterRequireNonNull(response, "response");
+        Utils.parameterRequireNonNull(returnType, "returnType");
+        Utils.parameterRequireNonNull(annotations, "annotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
         logger.debug("Get error response body model for type {}", returnType);
+        if (returnType == Void.TYPE || returnType == Void.class) {
+            return null;
+        }
         Object dto = null;
         try {
             dto = retrofit.responseBodyConverter(returnType, annotations).convert(response.errorBody());

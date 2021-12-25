@@ -104,12 +104,13 @@ public class FileConverter implements ExtensionConverter<File> {
             @Override
             @Nullable
             public File convert(@Nullable ResponseBody responseBody) throws IOException {
-                if (responseBody == null) {
+                assertSupportedBodyType(INSTANCE, type, File.class);
+                final String body = copyBody(responseBody);
+                if (body == null) {
                     return null;
                 }
-                assertSupportedBodyType(INSTANCE, type, File.class);
                 final Path tempFile = Files.createTempFile(null, null);
-                return Files.write(tempFile, responseBody.bytes()).toFile();
+                return Files.write(tempFile, body.getBytes()).toFile();
             }
 
         };

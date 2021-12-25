@@ -16,12 +16,17 @@
 
 package org.touchbit.retrofit.veslo.client.jackson;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import internal.test.utils.model.AdditionalProperties;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import org.touchbit.retrofit.veslo.jackson.AdditionalProperties;
 
-public class SucDTO extends AdditionalProperties {
+import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 
-    @JsonProperty("msg")
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@JsonAutoDetect(creatorVisibility = ANY, fieldVisibility = ANY)
+public class SucDTO extends AdditionalProperties<SucDTO> {
+
     private String msg;
 
     public String getMsg() {

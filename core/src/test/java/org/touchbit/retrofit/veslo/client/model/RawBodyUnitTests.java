@@ -18,6 +18,7 @@ package org.touchbit.retrofit.veslo.client.model;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.touchbit.retrofit.veslo.exception.BriefAssertionError;
 
 import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -91,7 +92,7 @@ public class RawBodyUnitTests {
     @DisplayName("assertBodyIsEmpty(): An error occurs if the body is blank")
     public void test1639065951919() {
         assertThrow(() -> new RawBody(BLANK_BODY_BYTES).assertBodyIsEmpty())
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("" +
                         "Response body\n" +
                         "Expected: is empty byte array\n" +
@@ -114,7 +115,7 @@ public class RawBodyUnitTests {
     @DisplayName("assertBodyIsNotEmpty(): An error occurs if the body is empty")
     public void test1639065951942() {
         assertThrow(() -> new RawBody(EMPTY_BODY_BYTES).assertBodyIsNotEmpty())
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("" +
                         "Response body\n" +
                         "Expected: is not empty byte array\n" +
@@ -125,7 +126,7 @@ public class RawBodyUnitTests {
     @DisplayName("assertBodyIsNotEmpty(): An error occurs if the body is null")
     public void test1639065951953() {
         assertThrow(() -> new RawBody((byte[]) null).assertBodyIsNotEmpty())
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("" +
                         "Response body\n" +
                         "Expected: is not empty byte array\n" +
@@ -148,7 +149,7 @@ public class RawBodyUnitTests {
     @DisplayName("assertBodyIsNotNull(): An error occurs if the body is null")
     public void test1639065951976() {
         assertThrow(() -> new RawBody((byte[]) null).assertBodyIsNotNull())
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("" +
                         "Response body\n" +
                         "Expected: is byte array\n" +
@@ -171,7 +172,7 @@ public class RawBodyUnitTests {
     @DisplayName("assertBodyIsNull(): An error occurs if the body is empty string")
     public void test1639065951999() {
         assertThrow(() -> new RawBody(EMPTY_BODY_STRING).assertBodyIsNull())
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("" +
                         "Response body\n" +
                         "Expected: is null\n" +
@@ -182,7 +183,7 @@ public class RawBodyUnitTests {
     @DisplayName("assertBodyIsNull(): An error occurs if the body is blank string")
     public void test1639065952010() {
         assertThrow(() -> new RawBody(BLANK_BODY_STRING).assertBodyIsNull())
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("" +
                         "Response body\n" +
                         "Expected: is null\n" +
@@ -199,7 +200,7 @@ public class RawBodyUnitTests {
     @DisplayName("assertBodyContainsStrings(): An error occurs if the body is null")
     public void test1639065952027() {
         assertThrow(() -> new RawBody((byte[]) null).assertStringBodyContains("test1637481386260"))
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("" +
                         "Response body\n" +
                         "Expected: is byte array\n" +
@@ -210,7 +211,7 @@ public class RawBodyUnitTests {
     @DisplayName("assertBodyContainsStrings(): An error occurs if the body is empty")
     public void test1639065952038() {
         assertThrow(() -> new RawBody(EMPTY_BODY_BYTES).assertStringBodyContains("test1637481450008"))
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("" +
                         "Collected the following errors:\n\n" +
                         "Response body\n" +
@@ -222,7 +223,7 @@ public class RawBodyUnitTests {
     @DisplayName("assertBodyContainsStrings(): An error occurs if expected value in another case")
     public void test1639065952050() {
         assertThrow(() -> new RawBody("test1637481553477").assertStringBodyContains("TEST1637481553477"))
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("" +
                         "Collected the following errors:\n\n" +
                         "Response body\n" +
@@ -252,7 +253,7 @@ public class RawBodyUnitTests {
     @DisplayName("assertBodyContainsIgnoreCaseStrings(): An error occurs if the body is null")
     public void test1639065952080() {
         assertThrow(() -> new RawBody((byte[]) null).assertStringBodyContainsIgnoreCase("test1637482417487"))
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("" +
                         "Response body\n" +
                         "Expected: is byte array\n" +
@@ -263,7 +264,7 @@ public class RawBodyUnitTests {
     @DisplayName("assertBodyContainsIgnoreCaseStrings(): An error occurs if the body is empty")
     public void test1639065952091() {
         assertThrow(() -> new RawBody(EMPTY_BODY_BYTES).assertStringBodyContainsIgnoreCase("test1637482421528"))
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("" +
                         "Collected the following errors:\n\n" +
                         "Response body\n" +
@@ -299,7 +300,7 @@ public class RawBodyUnitTests {
     @DisplayName("assertStringBodyIs(): An error occurs if the body is null")
     public void test1639065952127() {
         assertThrow(() -> new RawBody((byte[]) null).assertStringBodyIs("test1637483049766"))
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("Response body\n" +
                         "Expected: is byte array\n" +
                         "     but: was null\n");
@@ -309,7 +310,7 @@ public class RawBodyUnitTests {
     @DisplayName("assertStringBodyIs(): An error occurs if different case")
     public void test1639065952137() {
         assertThrow(() -> new RawBody("test1637483021598").assertStringBodyIs("TEST1637483021598"))
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("Response body\n" +
                         "Expected: 'TEST1637483021598'\n" +
                         "     but: was 'test1637483021598'\n");
@@ -325,7 +326,7 @@ public class RawBodyUnitTests {
     @DisplayName("assertStringBodyIsIgnoreCase(): An error occurs if the body is null")
     public void test1639065952153() {
         assertThrow(() -> new RawBody((byte[]) null).assertStringBodyIsIgnoreCase("test1637483049766"))
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("Response body\n" +
                         "Expected: is byte array\n" +
                         "     but: was null\n");
@@ -335,7 +336,7 @@ public class RawBodyUnitTests {
     @DisplayName("assertStringBodyIsIgnoreCase(): An error occurs if no match")
     public void test1639065952163() {
         assertThrow(() -> new RawBody("test1637483306882").assertStringBodyIsIgnoreCase("test"))
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("Response body\n" +
                         "Expected: 'test' (ignore case)\n" +
                         "     but: was 'test1637483306882'\n");

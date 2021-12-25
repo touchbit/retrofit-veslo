@@ -238,16 +238,13 @@ public class JacksonUnitTests extends BaseUnitTest {
 
     @Test
     @DisplayName("Throw an exception if ResponseBody.body.bytes not readable")
-    public void test1639065954866() throws Exception {
+    public void test1639065954866() {
         final ResponseBody body = mock(ResponseBody.class);
         when(body.contentLength()).thenReturn(Long.MAX_VALUE);
-        when(body.bytes()).thenCallRealMethod();
+        when(body.source()).thenThrow(new RuntimeException("test"));
         assertThrow(() -> responseBodyConverter(ErrorDTO.class).convert(body))
-                .assertClass(ConvertCallException.class)
-                .assertMessageIs("\n" +
-                        "Response body not convertible to type " +
-                        "class org.touchbit.retrofit.veslo.jackson.model.ErrorDTO\n" +
-                        "argument \"src\" is null");
+                .assertClass(RuntimeException.class)
+                .assertMessageContains("test");
     }
 
     @Test

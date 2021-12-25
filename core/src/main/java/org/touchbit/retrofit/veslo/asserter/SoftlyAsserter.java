@@ -16,6 +16,7 @@
 
 package org.touchbit.retrofit.veslo.asserter;
 
+import org.touchbit.retrofit.veslo.exception.BriefAssertionError;
 import org.touchbit.retrofit.veslo.util.ThrowableRunnable;
 import org.touchbit.retrofit.veslo.util.Utils;
 import retrofit2.internal.EverythingIsNonNull;
@@ -40,6 +41,7 @@ public interface SoftlyAsserter extends Closeable {
     static SoftlyAsserter get() {
         return new SoftlyAsserter() {
 
+            private boolean isIgnoreNPE = false;
             private final List<Throwable> list = new ArrayList<>();
 
             @Override
@@ -53,6 +55,17 @@ public interface SoftlyAsserter extends Closeable {
             public void addErrors(@Nonnull List<Throwable> throwableList) {
                 list.addAll(throwableList);
             }
+
+            @Override
+            public void ignoreNPE(boolean value) {
+                isIgnoreNPE = value;
+            }
+
+            @Override
+            public boolean isIgnoreNPE() {
+                return isIgnoreNPE;
+            }
+
         };
     }
 
@@ -79,6 +92,9 @@ public interface SoftlyAsserter extends Closeable {
         try {
             throwableRunnable.execute();
         } catch (Throwable e) {
+            if (e instanceof NullPointerException && isIgnoreNPE()) {
+                return this;
+            }
             addErrors(e);
         }
         return this;
@@ -96,8 +112,12 @@ public interface SoftlyAsserter extends Closeable {
             // Cleaning up redundant header (nested asserts)
             final String result = stringJoiner.toString().replaceAll(header, "");
             errors.clear();
-            throw new AssertionError(header + result);
+            throw new BriefAssertionError(header + result);
         }
     }
+
+    void ignoreNPE(boolean value);
+
+    boolean isIgnoreNPE();
 
 }

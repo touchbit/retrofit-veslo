@@ -98,11 +98,9 @@ public class RawBodyConverter implements ExtensionConverter<RawBody> {
             @Override
             @Nonnull
             public RawBody convert(@Nullable ResponseBody responseBody) throws IOException {
-                if (responseBody == null) {
-                    return RawBody.nullable();
-                }
                 assertSupportedBodyType(INSTANCE, type, RawBody.class);
-                return new RawBody(responseBody.bytes());
+                final String body = copyBody(responseBody);
+                return new RawBody(body);
             }
 
         };

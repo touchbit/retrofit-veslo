@@ -95,9 +95,9 @@ public class FloatConverter implements ExtensionConverter<Float> {
             @Nullable
             @Override
             public Float convert(@Nullable ResponseBody responseBody) throws IOException {
-                if (responseBody != null && responseBody.contentLength() != 0) {
-                    assertSupportedBodyType(INSTANCE, type, Float.class, Float.TYPE);
-                    final String body = responseBody.string();
+                assertSupportedBodyType(INSTANCE, type, Float.class, Float.TYPE);
+                final String body = copyBody(responseBody);
+                if (body != null && body.length() != 0) {
                     try {
                         return Float.valueOf(body);
                     } catch (Exception e) {

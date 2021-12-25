@@ -23,7 +23,7 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Annotation for {@link QueryMapVeslo} nullable parameters values
+ * Annotation for {@link ReflectQueryMap} nullable parameters values
  * <p>
  *
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)

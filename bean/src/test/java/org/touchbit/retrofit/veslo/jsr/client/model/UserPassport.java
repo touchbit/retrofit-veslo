@@ -16,20 +16,22 @@
 
 package org.touchbit.retrofit.veslo.jsr.client.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import internal.test.utils.model.AdditionalProperties;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.Pattern;
+import org.touchbit.retrofit.veslo.jackson.AdditionalProperties;
+
+import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 
 @SuppressWarnings("unused")
-public class UserPassport extends AdditionalProperties {
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@JsonAutoDetect(creatorVisibility = ANY, fieldVisibility = ANY)
+public class UserPassport extends AdditionalProperties<UserDTO> {
 
-    @JsonProperty("series")
-    @Pattern(regexp = "^[0-9]{4}$")
-    private String series;
+    private @Pattern(regexp = "^[0-9]{4}$") String series;
 
-    @JsonProperty("number")
-    @Pattern(regexp = "^[0-9]{6}$")
-    private String number;
+    private @Pattern(regexp = "^[0-9]{6}$") String number;
 
     public String series() {
         return series;
