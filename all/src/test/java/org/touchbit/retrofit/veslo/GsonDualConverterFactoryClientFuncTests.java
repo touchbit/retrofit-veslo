@@ -64,7 +64,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Byte[]: return Byte[] value if body = string")
-        public void test1639065953273() {
+        public void test1640471190412() {
             CLIENT.returnByteArray(OK, STRING_BYTES)
                     .assertResponse(asserter -> asserter
                             .assertHttpStatusCodeIs(OK)
@@ -74,7 +74,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Byte[]: return Byte[] value if unsuccessful status and body = string")
-        public void test1639065953283() {
+        public void test1640471194242() {
             CLIENT.returnByteArray(ERR, STRING_BYTES)
                     .assertResponse(asserter -> asserter
                             .assertHttpStatusCodeIs(ERR)
@@ -84,7 +84,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Byte[]: return Byte[] value if body = <blank string>")
-        public void test1639065953293() {
+        public void test1640471200918() {
             CLIENT.returnByteArray(OK, BLANK_STRING_BYTES)
                     .assertResponse(asserter -> asserter
                             .assertHttpStatusCodeIs(OK)
@@ -94,7 +94,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Byte[]: return empty Byte[] if body is empty (content-length=0)")
-        public void test1639065953303() {
+        public void test1640471202981() {
             CLIENT.returnByteArray(OK, EMPTY_BYTES)
                     .assertResponse(asserter -> asserter
                             .assertHttpStatusCodeIs(OK)
@@ -104,7 +104,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Byte[]: return empty Byte[] if body not present (HTTP status 204 'no content')")
-        public void test1639065953313() {
+        public void test1640471205082() {
             CLIENT.returnByteArray(NO_CONTENT, NULL_BODY_VALUE)
                     .assertResponse(asserter -> asserter
                             .assertHttpStatusCodeIs(NO_CONTENT)
@@ -114,7 +114,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("RawBody: return RawBody if body = string")
-        public void test1639065953333() {
+        public void test1640471209728() {
             RawBody exp = new RawBody(STRING);
             CLIENT.returnRawBody(OK, exp).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
@@ -124,7 +124,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("RawBody: return empty RawBody if body = null")
-        public void test1639065953343() {
+        public void test1640471212031() {
             RawBody exp = RawBody.nullable();
             CLIENT.returnRawBody(OK, exp).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
@@ -134,7 +134,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("RawBody: return RawBody if unsuccessful status and body = string")
-        public void test1639065953353() {
+        public void test1640471214353() {
             RawBody exp = new RawBody(STRING);
             CLIENT.returnRawBody(ERR, exp).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
@@ -144,7 +144,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("RawBody: return empty RawBody if unsuccessful status and body = null")
-        public void test1639065953363() {
+        public void test1640471217228() {
             RawBody exp = RawBody.nullable();
             CLIENT.returnRawBody(ERR, exp).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
@@ -154,7 +154,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("RawBody: return RawBody if body = <blank string>")
-        public void test1639065953373() {
+        public void test1640471219155() {
             RawBody exp = new RawBody(BLANK_STRING);
             CLIENT.returnRawBody(OK, exp).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
@@ -164,7 +164,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("RawBody: return empty RawBody if body is empty (content-length=0)")
-        public void test1639065953383() {
+        public void test1640471223765() {
             RawBody exp = new RawBody(EMPTY_STRING);
             CLIENT.returnRawBody(OK, exp).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
@@ -174,7 +174,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("RawBody: return empty RawBody if body not present (HTTP status 204 'no content')")
-        public void test1639065953393() {
+        public void test1640471226091() {
             CLIENT.returnRawBody(NO_CONTENT, RawBody.nullable()).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBody(BaseUnitTest::assertIs, RawBody.nullable())
@@ -183,7 +183,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("File: return File value if body = string")
-        public void test1639065953402() {
+        public void test1640471228791() {
             final File file = new File("src/test/resources/not_empty.txt");
             final String expectedString = fileToString(file);
             CLIENT.returnFile(OK, file).assertResponse(asserter -> asserter
@@ -194,7 +194,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("File: return File value if unsuccessful status and body = string")
-        public void test1639065953412() {
+        public void test1640471231545() {
             CLIENT.returnFile(ERR, STRING).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
                     .assertSucBodyIsNull()
@@ -203,7 +203,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("File: return File value if body = <blank string>")
-        public void test1639065953420() {
+        public void test1640471235215() {
             CLIENT.returnFile(OK, BLANK_STRING).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(body -> assertThat(fileToString(body), is(BLANK_JSON_STRING)))
@@ -212,7 +212,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("File: return empty File if body is empty (content-length=0)")
-        public void test1639065953428() {
+        public void test1640471237583() {
             CLIENT.returnFile(OK, EMPTY_STRING).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(body -> assertThat(fileToString(body), is(EMPTY_JSON_STRING)))
@@ -221,7 +221,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("File: return empty File if body not present (HTTP status 204 'no content')")
-        public void test1639065953436() {
+        public void test1640471239645() {
             CLIENT.returnFile(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
@@ -230,7 +230,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("ResourceFile: ConvertCallException for response")
-        public void test1639065953444() {
+        public void test1640471244167() {
             assertThrow(() -> CLIENT.returnResourceFile(OK, new ResourceFile("not_empty.txt")))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("It is forbidden to use the ResourceFile type to convert the response body.");
@@ -245,7 +245,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Object: return Object if body present (Jackson converter by content type)")
-        public void test1639065953458() {
+        public void test1640471247184() {
             CLIENT.returnObject(OK, STRING).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, STRING)
@@ -254,7 +254,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("List<DTO>: return List<SucDTO> if body = [SucDTO]")
-        public void test1639143742989() {
+        public void test1640471249476() {
             final SucDTO dto = new SucDTO().setMsg("test1639143742989");
             List<SucDTO> expected = Collections.singletonList(dto);
             CLIENT.returnListJacksonModel(OK, expected).assertResponse(asserter -> asserter
@@ -268,7 +268,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("List<DTO>: return empty List<SucDTO> if body = []")
-        public void test1639145502341() {
+        public void test1640471252838() {
             List<SucDTO> expected = new ArrayList<>();
             CLIENT.returnListJacksonModel(OK, expected).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
@@ -278,7 +278,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("List<DTO>: return List<ErrDTO> if unsuccessful status and body = [ErrDTO]")
-        public void test1639145565214() {
+        public void test1640471256780() {
             final ErrDTO dto = new ErrDTO().setCode(1010);
             List<ErrDTO> expected = Collections.singletonList(dto);
             CLIENT.returnListJacksonModel(ERR, expected).assertResponse(asserter -> asserter
@@ -292,7 +292,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("List<DTO>: ConvertCallException if body = <blank string>")
-        public void test1639150463762() {
+        public void test1640471260092() {
             assertThrow(() -> CLIENT.returnListJacksonModel(OK, BLANK_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("\nResponse body not convertible to type" +
@@ -303,7 +303,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("List<DTO>: return null if body not present (HTTP status 204 'no content')")
-        public void test1639150470209() {
+        public void test1640471262462() {
             CLIENT.returnListJacksonModel(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
@@ -312,7 +312,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("List<SucDTO>: ConvertCallException if body is empty (content-length=0)")
-        public void test1639150478899() {
+        public void test1640471264492() {
             assertThrow(() -> CLIENT.returnListJacksonModel(OK, EMPTY_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("\nResponse body not convertible to type " +
@@ -322,7 +322,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("List: return List<SucDTO> if body = [SucDTO]")
-        public void test1639151212414() {
+        public void test1640471268900() {
             final SucDTO dto = new SucDTO().setMsg("test1639143742989");
             List<SucDTO> expected = Collections.singletonList(dto);
             CLIENT.returnRawList(OK, expected).assertResponse(asserter -> asserter
@@ -337,7 +337,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("List: return empty List<Map> if body = []")
-        public void test1639151371610() {
+        public void test1640471271744() {
             Map<String, Object> dto = new HashMap<>();
             dto.put("code", 1010);
             List<Map> expected = Collections.singletonList(dto);
@@ -349,7 +349,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("List: return List<Map> if unsuccessful status and body = [Map]")
-        public void test1639151386553() {
+        public void test1640471274041() {
             Map<String, Object> dto = new HashMap<>();
             dto.put("code", 1010);
             List<Map> expected = Collections.singletonList(dto);
@@ -365,7 +365,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Map<String, Object>: return Map if body = {msg:foobar}")
-        public void test1639153865914() {
+        public void test1640471278404() {
             Map<String, Object> dto = new HashMap<>();
             dto.put("msg", "foobar");
             CLIENT.returnMapStringObject(OK, dto).assertResponse(asserter -> asserter
@@ -376,7 +376,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Map<String, Object>: return empty Map if body = {}")
-        public void test1639153908319() {
+        public void test1640471281151() {
             Map<String, Object> dto = new HashMap<>();
             CLIENT.returnMapStringObject(OK, dto).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
@@ -386,7 +386,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Map<String, Object>: return Map if unsuccessful status and body = {msg:foobar}")
-        public void test1639154181534() {
+        public void test1640471283451() {
             Map<String, Object> dto = new HashMap<>();
             dto.put("msg", "foobar");
             CLIENT.returnMapStringObject(ERR, dto).assertResponse(asserter -> asserter
@@ -397,7 +397,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Map: return Map if body = {msg:foobar}")
-        public void test1639154235457() {
+        public void test1640471286191() {
             Map<String, Object> dto = new HashMap<>();
             dto.put("msg", "foobar");
             CLIENT.returnRawMap(OK, dto).assertResponse(asserter -> asserter
@@ -408,7 +408,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Map: return empty Map if body = {}")
-        public void test1639154247858() {
+        public void test1640471290521() {
             Map<String, Object> dto = new HashMap<>();
             CLIENT.returnRawMap(OK, dto).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
@@ -418,7 +418,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Map: return Map if unsuccessful status and body = {msg:foobar}")
-        public void test1639154257856() {
+        public void test1640471292410() {
             Map<String, Object> dto = new HashMap<>();
             dto.put("msg", "foobar");
             CLIENT.returnRawMap(ERR, dto).assertResponse(asserter -> asserter
@@ -429,7 +429,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Jackson DTO: return SucDTO if body = present")
-        public void test1639154352270() {
+        public void test1640471294451() {
             final SucDTO sucDTO = new SucDTO().setMsg("foobar");
             CLIENT.returnJacksonModel(OK, sucDTO).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
@@ -439,7 +439,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Jackson DTO: return ErrDTO if unsuccessful status and body = present")
-        public void test1639154394132() {
+        public void test1640471300650() {
             final ErrDTO errDTO = new ErrDTO().setCode(1020);
             CLIENT.returnJacksonModel(ERR, errDTO).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
@@ -449,7 +449,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Jackson DTO: return null if body body not present (HTTP status 204 'no content')")
-        public void test1639158410149() {
+        public void test1640471302713() {
             CLIENT.returnJacksonModel(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
@@ -458,7 +458,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("String: return String value if body = string")
-        public void test1639065953465() {
+        public void test1640471304866() {
             CLIENT.returnString(OK, STRING).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, STRING)
@@ -467,7 +467,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("String: return String if unsuccessful status and body = string")
-        public void test1639065953471() {
+        public void test1640471306863() {
             CLIENT.returnString(ERR, STRING).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
                     .assertSucBodyIsNull()
@@ -476,7 +476,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("String: return String value if body = <blank string>")
-        public void test1639065953477() {
+        public void test1640471311205() {
             CLIENT.returnString(OK, BLANK_STRING).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, BLANK_STRING)
@@ -485,7 +485,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("String: return null if body not present (HTTP status 204 'no content')")
-        public void test1639065953483() {
+        public void test1640471313279() {
             CLIENT.returnString(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
@@ -494,7 +494,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("String: return null if body is empty (content-length=0)")
-        public void test1639065953489() {
+        public void test1640471315642() {
             CLIENT.returnString(OK, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBodyIsNull()
@@ -503,7 +503,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Character: return Character if body = a")
-        public void test1639065953495() {
+        public void test1640471317759() {
             CLIENT.returnCharacter(OK, 'a').assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, 'a')
@@ -512,7 +512,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Character: return Character if unsuccessful status and body = a")
-        public void test1639065953501() {
+        public void test1640471322743() {
             CLIENT.returnCharacter(ERR, 'a').assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
                     .assertErrBody(BaseUnitTest::assertIs, 'a')
@@ -521,7 +521,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Character: return null if body not present (HTTP status 204 'no content')")
-        public void test1639065953507() {
+        public void test1640471325104() {
             CLIENT.returnCharacter(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
@@ -530,7 +530,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Character: ConvertCallException if body is empty (content-length=0)")
-        public void test1639065953513() {
+        public void test1640471328390() {
             assertThrow(() -> CLIENT.returnCharacter(OK, EMPTY_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("\nResponse body not convertible to type class java.lang.Character\n" +
@@ -539,7 +539,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Character: ConvertCallException if body = <blank string>")
-        public void test1639065953519() {
+        public void test1640471331929() {
             assertThrow(() -> CLIENT.returnCharacter(OK, BLANK_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("\nResponse body not convertible to type class java.lang.Character\n" +
@@ -548,7 +548,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Boolean: return Boolean if body = true")
-        public void test1639065953529() {
+        public void test1640471336942() {
             CLIENT.returnBoolean(OK, true).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, true)
@@ -557,7 +557,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Boolean: return Boolean if body = false")
-        public void test1639065953535() {
+        public void test1640471339201() {
             CLIENT.returnBoolean(OK, false).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, false)
@@ -566,7 +566,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Boolean: return Boolean if unsuccessful status and body = false")
-        public void test1639065953541() {
+        public void test1640471341700() {
             CLIENT.returnBoolean(ERR, false).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
                     .assertErrBody(BaseUnitTest::assertIs, false)
@@ -575,7 +575,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Boolean: return null if body not present (HTTP status 204 'no content')")
-        public void test1639065953547() {
+        public void test1640471343971() {
             CLIENT.returnBoolean(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
@@ -584,7 +584,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Boolean: ConvertCallException if body is empty (content-length=0)")
-        public void test1639065953553() {
+        public void test1640471348836() {
             assertThrow(() -> CLIENT.returnBoolean(OK, EMPTY_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("\nResponse body not convertible to type class java.lang.Boolean\n" +
@@ -593,7 +593,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Boolean: return true if body = 1")
-        public void test1639065953559() {
+        public void test1640471351051() {
             CLIENT.returnBoolean(OK, 1).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, true)
@@ -602,7 +602,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Boolean: ConvertCallException if body = <blank string>")
-        public void test1639065953569() {
+        public void test1640471353213() {
             assertThrow(() -> CLIENT.returnBoolean(OK, BLANK_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("\n" +
@@ -612,7 +612,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Byte: return Byte if body = " + Byte.MAX_VALUE)
-        public void test1639065953579() {
+        public void test1640471355558() {
             CLIENT.returnByte(OK, Byte.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, Byte.MAX_VALUE)
@@ -621,7 +621,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Byte: return Byte if unsuccessful status and body = " + Byte.MAX_VALUE)
-        public void test1639065953585() {
+        public void test1640471360453() {
             CLIENT.returnByte(ERR, Byte.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
                     .assertErrBody(BaseUnitTest::assertIs, Byte.MAX_VALUE)
@@ -630,7 +630,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Byte: return null if body not present (HTTP status 204 'no content')")
-        public void test1639065953591() {
+        public void test1640471362738() {
             CLIENT.returnByte(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
@@ -639,7 +639,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Byte: ConvertCallException if body is empty (content-length=0)")
-        public void test1639065953597() {
+        public void test1640471365706() {
             assertThrow(() -> CLIENT.returnByte(OK, EMPTY_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("\nResponse body not convertible to type class java.lang.Byte\n" +
@@ -648,7 +648,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Byte: ConvertCallException if body = <blank string>")
-        public void test1639065953603() {
+        public void test1640471368083() {
             assertThrow(() -> CLIENT.returnByte(OK, BLANK_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("\nResponse body not convertible to type class java.lang.Byte\n" +
@@ -657,7 +657,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Integer: return Integer if body = " + Integer.MAX_VALUE)
-        public void test1639065953613() {
+        public void test1640471374009() {
             CLIENT.returnInteger(OK, Integer.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, Integer.MAX_VALUE)
@@ -666,7 +666,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Integer: return Integer if unsuccessful status and body = " + Integer.MAX_VALUE)
-        public void test1639065953619() {
+        public void test1640471376468() {
             CLIENT.returnInteger(ERR, Integer.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
                     .assertErrBody(BaseUnitTest::assertIs, Integer.MAX_VALUE)
@@ -675,7 +675,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Integer: return null if body not present (HTTP status 204 'no content')")
-        public void test1639065953625() {
+        public void test1640471379010() {
             CLIENT.returnInteger(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
@@ -684,7 +684,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Integer: ConvertCallException if body is empty (content-length=0)")
-        public void test1639065953631() {
+        public void test1640471381231() {
             assertThrow(() -> CLIENT.returnInteger(OK, EMPTY_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("\nResponse body not convertible to type class java.lang.Integer\n" +
@@ -693,7 +693,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Integer: ConvertCallException if body = <blank string>")
-        public void test1639065953637() {
+        public void test1640471386957() {
             assertThrow(() -> CLIENT.returnInteger(OK, BLANK_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("\nResponse body not convertible to type class java.lang.Integer\n" +
@@ -702,7 +702,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Double: return Double if body = " + Double.MAX_VALUE)
-        public void test1639065953647() {
+        public void test1640471389416() {
             CLIENT.returnDouble(OK, Double.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, Double.MAX_VALUE)
@@ -711,7 +711,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Double: return Double if unsuccessful status and body = " + Double.MAX_VALUE)
-        public void test1639065953653() {
+        public void test1640471391836() {
             CLIENT.returnDouble(ERR, Double.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
                     .assertErrBody(BaseUnitTest::assertIs, Double.MAX_VALUE)
@@ -720,7 +720,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Double: return null if body not present (HTTP status 204 'no content')")
-        public void test1639065953659() {
+        public void test1640471394598() {
             CLIENT.returnDouble(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
@@ -729,7 +729,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Double: ConvertCallException if body is empty (content-length=0)")
-        public void test1639065953665() {
+        public void test1640471399384() {
             assertThrow(() -> CLIENT.returnDouble(OK, EMPTY_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("\nResponse body not convertible to type class java.lang.Double\n" +
@@ -738,7 +738,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Double: ConvertCallException if body = '    ' (blank string)")
-        public void test1639065953671() {
+        public void test1640471401681() {
             assertThrow(() -> CLIENT.returnDouble(OK, BLANK_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("\nResponse body not convertible to type class java.lang.Double\n" +
@@ -747,7 +747,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Float: return Float if body = " + Float.MAX_VALUE)
-        public void test1639065953681() {
+        public void test1640471404099() {
             CLIENT.returnFloat(OK, Float.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, Float.MAX_VALUE)
@@ -756,7 +756,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Float: return Float if unsuccessful status and body = " + Float.MAX_VALUE)
-        public void test1639065953687() {
+        public void test1640471406257() {
             CLIENT.returnFloat(ERR, Float.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
                     .assertErrBody(BaseUnitTest::assertIs, Float.MAX_VALUE)
@@ -765,7 +765,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Float: return null if body not present (HTTP status 204 'no content')")
-        public void test1639065953693() {
+        public void test1640471411061() {
             CLIENT.returnFloat(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
@@ -774,7 +774,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Float: ConvertCallException if body is empty (content-length=0)")
-        public void test1639065953699() {
+        public void test1640471413577() {
             assertThrow(() -> CLIENT.returnFloat(OK, EMPTY_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("\nResponse body not convertible to type class java.lang.Float\n" +
@@ -783,7 +783,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Float: ConvertCallException if body = '    ' (blank string)")
-        public void test1639065953705() {
+        public void test1640471416428() {
             assertThrow(() -> CLIENT.returnFloat(OK, BLANK_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("\nResponse body not convertible to type class java.lang.Float\n" +
@@ -792,7 +792,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Long: return Long if body = " + Long.MAX_VALUE)
-        public void test1639065953715() {
+        public void test1640471419266() {
             CLIENT.returnLong(OK, Long.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, Long.MAX_VALUE)
@@ -801,7 +801,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Long: return Long if unsuccessful status and body = " + Long.MAX_VALUE)
-        public void test1639065953721() {
+        public void test1640471424433() {
             CLIENT.returnLong(ERR, Long.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
                     .assertErrBody(BaseUnitTest::assertIs, Long.MAX_VALUE)
@@ -810,7 +810,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Long: return null if body not present (HTTP status 204 'no content')")
-        public void test1639065953727() {
+        public void test1640471426861() {
             CLIENT.returnLong(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
@@ -819,7 +819,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Long: ConvertCallException if body is empty (content-length=0)")
-        public void test1639065953733() {
+        public void test1640471429169() {
             assertThrow(() -> CLIENT.returnLong(OK, EMPTY_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("\nResponse body not convertible to type class java.lang.Long\n" +
@@ -828,7 +828,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Long: ConvertCallException if body = '    ' (blank string)")
-        public void test1639065953739() {
+        public void test1640471431393() {
             assertThrow(() -> CLIENT.returnLong(OK, EMPTY_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("\nResponse body not convertible to type class java.lang.Long\n" +
@@ -837,7 +837,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Short: return Short if body = " + Short.MAX_VALUE)
-        public void test1639065953749() {
+        public void test1640471436297() {
             CLIENT.returnShort(OK, Short.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, Short.MAX_VALUE)
@@ -846,7 +846,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Short: return Short if unsuccessful status and body = " + Short.MAX_VALUE)
-        public void test1639065953755() {
+        public void test1640471438696() {
             CLIENT.returnShort(ERR, Short.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
                     .assertErrBody(BaseUnitTest::assertIs, Short.MAX_VALUE)
@@ -855,7 +855,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Short: return null if body not present (HTTP status 204 'no content')")
-        public void test1639065953761() {
+        public void test1640471441097() {
             CLIENT.returnShort(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
@@ -864,7 +864,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Short: ConvertCallException if body is empty (content-length=0)")
-        public void test1639065953767() {
+        public void test1640471445645() {
             assertThrow(() -> CLIENT.returnShort(OK, EMPTY_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("\nResponse body not convertible to type class java.lang.Short\n" +
@@ -873,7 +873,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Short: ConvertCallException if body = '    ' (blank string)")
-        public void test1639065953773() {
+        public void test1640471449113() {
             assertThrow(() -> CLIENT.returnShort(OK, BLANK_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("\nResponse body not convertible to type class java.lang.Short\n" +

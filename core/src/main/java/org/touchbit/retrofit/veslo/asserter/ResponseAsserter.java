@@ -18,6 +18,7 @@ package org.touchbit.retrofit.veslo.asserter;
 
 import org.touchbit.retrofit.veslo.client.response.IDualResponse;
 import org.touchbit.retrofit.veslo.exaple.ExampleApiClientAssertions;
+import org.touchbit.retrofit.veslo.exception.BriefAssertionError;
 import org.touchbit.retrofit.veslo.util.TripleConsumer;
 import org.touchbit.retrofit.veslo.util.Utils;
 import retrofit2.internal.EverythingIsNonNull;
@@ -223,7 +224,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
 
     /**
      * @return this
-     * @throws AssertionError if HTTP status code not in range 200...299
+     * @throws BriefAssertionError if HTTP status code not in range 200...299
      */
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertIsSucHttpStatusCode() {
         final int code = getResponse().getHttpStatusCode();
@@ -233,7 +234,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
 
     /**
      * @return this
-     * @throws AssertionError if success body is null
+     * @throws BriefAssertionError if success body is null
      */
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertSucBodyNotNull() {
         softly(() -> AssertionMatcher.isNotNull("Successful body", getResponse().getSucDTO()));
@@ -242,7 +243,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
 
     /**
      * @return this
-     * @throws AssertionError if success body is not null
+     * @throws BriefAssertionError if success body is not null
      */
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertSucBodyIsNull() {
         softly(() -> AssertionMatcher.isNull("Successful body", getResponse().getSucDTO()));
@@ -393,7 +394,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
 
     /**
      * @return this
-     * @throws AssertionError if HTTP status code not in range 300...599
+     * @throws BriefAssertionError if HTTP status code not in range 300...599
      */
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertIsErrHttpStatusCode() {
         final int code = getResponse().getHttpStatusCode();
@@ -403,7 +404,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
 
     /**
      * @return this
-     * @throws AssertionError if error body is null
+     * @throws BriefAssertionError if error body is null
      */
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertErrBodyNotNull() {
         softly(() -> AssertionMatcher.isNotNull("Error body", getResponse().getErrDTO()));
@@ -412,7 +413,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
 
     /**
      * @return this
-     * @throws AssertionError if error body is not null
+     * @throws BriefAssertionError if error body is not null
      */
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertErrBodyIsNull() {
         softly(() -> AssertionMatcher.isNull("Error body", getResponse().getErrDTO()));
@@ -421,7 +422,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
 
     /**
      * @return this
-     * @throws AssertionError if unexpected HTTP status code received
+     * @throws BriefAssertionError if unexpected HTTP status code received
      */
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertHttpStatusCodeIs(final int expected) {
         int actual = getResponse().getHttpStatusCode();
@@ -431,7 +432,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
 
     /**
      * @return this
-     * @throws AssertionError if unexpected HTTP status message received
+     * @throws BriefAssertionError if unexpected HTTP status message received
      */
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertHttpStatusMessageIs(final String expected) {
         final String actual = getResponse().getHttpStatusMessage();

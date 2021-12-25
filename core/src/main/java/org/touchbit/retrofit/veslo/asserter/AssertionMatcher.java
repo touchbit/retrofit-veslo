@@ -16,6 +16,7 @@
 
 package org.touchbit.retrofit.veslo.asserter;
 
+import org.touchbit.retrofit.veslo.exception.BriefAssertionError;
 import org.touchbit.retrofit.veslo.exception.UtilityClassException;
 
 import java.util.Objects;
@@ -34,11 +35,11 @@ public class AssertionMatcher {
      * @param actual   - actual object
      * @param expected - expected object
      * @param <M>      object generic type
-     * @throws AssertionError if actual not equals expected
+     * @throws BriefAssertionError if actual not equals expected
      */
     public static <M> void is(String reason, M actual, M expected) {
         if (!Objects.equals(actual, expected)) {
-            throw new AssertionError(reason + "\n" +
+            throw new BriefAssertionError(reason + "\n" +
                     "Expected: is  " + expected + "\n" +
                     "  Actual: was " + actual);
         }
@@ -49,11 +50,11 @@ public class AssertionMatcher {
      * @param actual      - actual int value
      * @param expectedMin - expected min value
      * @param expectedMax - expected max value
-     * @throws AssertionError if actual not in range
+     * @throws BriefAssertionError if actual not in range
      */
     public static void inRange(String reason, int actual, int expectedMin, int expectedMax) {
         if (actual < expectedMin || actual > expectedMax) {
-            throw new AssertionError(reason + "\n" +
+            throw new BriefAssertionError(reason + "\n" +
                     "Expected: in range " + expectedMin + "..." + expectedMax + "\n" +
                     "  Actual: was " + actual);
         }
@@ -62,11 +63,11 @@ public class AssertionMatcher {
     /**
      * @param reason - assertion description
      * @param actual - actual object
-     * @throws AssertionError if actual is null
+     * @throws BriefAssertionError if actual is null
      */
     public static void isNotNull(String reason, Object actual) {
         if (actual == null) {
-            throw new AssertionError(reason + "\n" +
+            throw new BriefAssertionError(reason + "\n" +
                     "Expected: is not null\n" +
                     "  Actual: null");
         }
@@ -75,11 +76,11 @@ public class AssertionMatcher {
     /**
      * @param reason - assertion description
      * @param actual - actual object
-     * @throws AssertionError if actual not null
+     * @throws BriefAssertionError if actual not null
      */
     public static void isNull(String reason, Object actual) {
         if (actual != null) {
-            throw new AssertionError(reason + "\n" +
+            throw new BriefAssertionError(reason + "\n" +
                     "Expected: is null\n" +
                     "  Actual: " + actual);
         }

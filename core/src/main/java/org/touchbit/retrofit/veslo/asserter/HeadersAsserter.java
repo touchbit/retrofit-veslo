@@ -18,6 +18,7 @@ package org.touchbit.retrofit.veslo.asserter;
 
 import okhttp3.Headers;
 import org.touchbit.retrofit.veslo.client.response.DualResponse;
+import org.touchbit.retrofit.veslo.exception.BriefAssertionError;
 import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nonnull;
@@ -210,7 +211,7 @@ public class HeadersAsserter implements IHeadersAsserter {
     public HeadersAsserter assertHeaderNotPresent(final String headerName) {
         final String actual = headers.get(headerName);
         if (actual != null) {
-            this.errors.add(getAssertionError("Response header '" + headerName + "'", "not present", null, actual));
+            this.errors.add(getBriefAssertionError("Response header '" + headerName + "'", "not present", null, actual));
         }
         return this;
     }
@@ -218,7 +219,7 @@ public class HeadersAsserter implements IHeadersAsserter {
     public HeadersAsserter assertHeaderIsPresent(final String headerName) {
         final String actual = headers.get(headerName);
         if (actual == null) {
-            this.errors.add(getAssertionError("Response header '" + headerName + "'", "is present", null, null));
+            this.errors.add(getBriefAssertionError("Response header '" + headerName + "'", "is present", null, null));
         }
         return this;
     }
@@ -226,7 +227,7 @@ public class HeadersAsserter implements IHeadersAsserter {
     public HeadersAsserter assertHeaderIs(final String headerName, final @Nonnull String expected) {
         final String actual = headers.get(headerName);
         if (actual == null || !actual.equalsIgnoreCase(expected)) {
-            this.errors.add(getAssertionError("Response header '" + headerName + "'", "is", expected, actual));
+            this.errors.add(getBriefAssertionError("Response header '" + headerName + "'", "is", expected, actual));
         }
         return this;
     }
@@ -234,7 +235,7 @@ public class HeadersAsserter implements IHeadersAsserter {
     public HeadersAsserter assertHeaderContains(final String headerName, final @Nonnull String expected) {
         final String actual = headers.get(headerName);
         if (actual == null || !actual.trim().toLowerCase().contains(expected.toLowerCase())) {
-            this.errors.add(getAssertionError("Response header '" + headerName + "'", "contains", expected, actual));
+            this.errors.add(getBriefAssertionError("Response header '" + headerName + "'", "contains", expected, actual));
         }
         return this;
     }
@@ -266,11 +267,11 @@ public class HeadersAsserter implements IHeadersAsserter {
         return this;
     }
 
-    protected AssertionError getAssertionError(final String reason,
-                                               final String condition,
-                                               final String expected,
-                                               final String actual) {
-        return new AssertionError(reason + "\n" +
+    protected BriefAssertionError getBriefAssertionError(final String reason,
+                                                         final String condition,
+                                                         final String expected,
+                                                         final String actual) {
+        return new BriefAssertionError(reason + "\n" +
                 "Expected: " + condition + (expected == null ? "" : " '" + expected + "'") + "\n" +
                 "  Actual: " + actual);
     }

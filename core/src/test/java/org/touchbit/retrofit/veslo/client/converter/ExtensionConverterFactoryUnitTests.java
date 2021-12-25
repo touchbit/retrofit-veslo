@@ -684,14 +684,14 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
 
         @Test
         @DisplayName("Required parameters")
-        public void test1639974246442() {
+        public void test1640471514318() {
             assertNPE(() -> getTestFactory().getExtensionConverter(null, Object.class), "annotation");
             assertNPE(() -> getTestFactory().getExtensionConverter(getEndpointInfo(""), null), "bodyType");
         }
 
         @Test
         @DisplayName("return converter if converted classes not specified")
-        public void test1639065949231() {
+        public void test1640471516828() {
             final ResponseConverter responseConverter = getResponseConverter(TestConverter.class);
             final ExtensionConverter<?> converter = getTestFactory().getExtensionConverter(responseConverter, TestDTO.class);
             assertThat("TestConverter", converter, notNullValue());
@@ -700,7 +700,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
 
         @Test
         @DisplayName("return converter if converted classes specified (RawDTO.class)")
-        public void test1639065949240() {
+        public void test1640471519836() {
             final RequestConverter requestConverter = getRequestConverter(TestConverter.class, TestDTO.class);
             final ExtensionConverter<?> converter = getTestFactory().getExtensionConverter(requestConverter, TestDTO.class);
             assertThat("TestConverter", converter, notNullValue());
@@ -709,7 +709,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
 
         @Test
         @DisplayName("return null if converted classes incompatible")
-        public void test1639065949249() {
+        public void test1640471523401() {
             final ResponseConverter responseConverter = getResponseConverter(TestConverter.class, TestDTO.class);
             final ExtensionConverter<?> converter = getTestFactory().getExtensionConverter(responseConverter, OBJ_C);
             assertThat("TestConverter", converter, nullValue());
@@ -717,20 +717,20 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
 
         @Test
         @DisplayName("ConvertCallException being throw if converter=null")
-        public void test1639065949257() {
+        public void test1640471525715() {
             assertThrow(() -> getTestFactory().getExtensionConverter(null, OBJ_C)).assertNPE("annotation");
         }
 
         @Test
         @DisplayName("ConvertCallException being throw if bodyType=null")
-        public void test1639065949263() {
+        public void test1640471529047() {
             final RequestConverter converter = getRequestConverter(TestConverter.class, TestDTO.class);
             assertThrow(() -> getTestFactory().getExtensionConverter(converter, null)).assertNPE("bodyType");
         }
 
         @Test
         @DisplayName("ConvertCallException being throw if unsupported annotation")
-        public void test1639065949270() {
+        public void test1640471531152() {
             final Nullable nullable = new Nullable() {
                 public Class<? extends Annotation> annotationType() {
                     return Nullable.class;
@@ -749,13 +749,13 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
 
         @Test
         @DisplayName("Required parameters")
-        public void test1639974246442() {
+        public void test1640471499107() {
             assertNPE(() -> getTestFactory().newInstance(null), "converterClass");
         }
 
         @Test
         @DisplayName("return new instance if TestConverter.class")
-        public void test1639065949200() {
+        public void test1640471501615() {
             final ExtensionConverter<?> converter = getTestFactory().newInstance(TestConverter.class);
             assertThat("TestConverter", converter, notNullValue());
             assertThat("TestConverter", converter, instanceOf(TestConverter.class));
@@ -763,13 +763,13 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
 
         @Test
         @DisplayName("ConvertCallException being throw if class is null")
-        public void test1639065949208() {
+        public void test1640471504484() {
             assertThrow(() -> getTestFactory().newInstance(null)).assertNPE("converterClass");
         }
 
         @Test
         @DisplayName("ConvertCallException being throw if class has privet constructor")
-        public void test1639065949214() {
+        public void test1640471506711() {
             assertThrow(() -> getTestFactory().newInstance(PrivateConstructorConverter.class))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("" +
@@ -792,14 +792,14 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
 
         @Test
         @DisplayName("Required parameters")
-        public void test1639974246442() {
+        public void test1640471587692() {
             assertNPE(() -> getTestFactory().registerMimeConverter(null, array()), "converter");
             assertNPE(() -> getTestFactory().registerMimeConverter(TestConverter.INSTANCE, null), "supportedContentTypes");
         }
 
         @Test
         @DisplayName("Register request/response MIME converter")
-        public void test1639974577039() {
+        public void test1640471589743() {
             final TestsExtensionConverterFactory testFactory = getTestFactory();
             final ContentType contentType = new ContentType("foo", "bar");
             testFactory.registerMimeConverter(TestConverter.INSTANCE, contentType);
@@ -999,14 +999,14 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
 
         @Test
         @DisplayName("Required parameters")
-        public void test1639975489335() {
+        public void test1640471568202() {
             assertNPE(() -> getTestFactory().registerPackageConverter(null, ""), "converter");
             assertNPE(() -> getTestFactory().registerPackageConverter(TestConverter.INSTANCE, (String) null), "supportedPackageName");
         }
 
         @Test
         @DisplayName("Register request/response package converter for package name")
-        public void test1639975491594() {
+        public void test1640471562938() {
             final TestsExtensionConverterFactory testFactory = getTestFactory();
             final String packageName = OBJ_C.getPackage().getName();
             testFactory.registerPackageConverter(TestConverter.INSTANCE, packageName);
@@ -1016,7 +1016,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
 
         @Test
         @DisplayName("Register request/response package converter for package")
-        public void test1639976021881() {
+        public void test1640471571997() {
             final TestsExtensionConverterFactory testFactory = getTestFactory();
             testFactory.registerPackageConverter(TestConverter.INSTANCE, OBJ_C.getPackage());
             final String packageName = OBJ_C.getPackage().getName();
@@ -1026,7 +1026,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
 
         @Test
         @DisplayName("Register request/response package converter for class package")
-        public void test1639976055249() {
+        public void test1640471575450() {
             final TestsExtensionConverterFactory testFactory = getTestFactory();
             final String packageName = OBJ_C.getPackage().getName();
             testFactory.registerPackageConverter(TestConverter.INSTANCE, OBJ_C);
@@ -1075,7 +1075,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
 
         @Test
         @DisplayName("Required parameters")
-        public void test1639975635302() {
+        public void test1640471545821() {
             assertNPE(() -> getTestFactory().registerPackageResponseConverter(null, array()), "converter");
             assertNPE(() -> getTestFactory().registerPackageResponseConverter(TestConverter.INSTANCE, null), "supportedPackageNames");
             assertNPE(() -> getTestFactory().registerPackageResponseConverter(TestConverter.INSTANCE, array(null, null)), "supportedPackageName");
@@ -1083,7 +1083,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
 
         @Test
         @DisplayName("Register response package converter")
-        public void test1639975637486() {
+        public void test1640471548754() {
             final TestsExtensionConverterFactory testFactory = getTestFactory();
             final String name = OBJ_C.getPackage().getName();
             testFactory.registerPackageResponseConverter(TestConverter.INSTANCE, name);
@@ -1093,7 +1093,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
 
         @Test
         @DisplayName("IllegalArgumentException if invalid package name")
-        public void test1639978830551() {
+        public void test1640471551418() {
             assertThrow(() -> getTestFactory().registerPackageResponseConverter(TestConverter.INSTANCE, "123"))
                     .assertClass(IllegalArgumentException.class)
                     .assertMessageIs("Invalid package name: 123\n" +

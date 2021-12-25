@@ -33,9 +33,10 @@ import java.lang.annotation.Retention;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static internal.test.utils.TestUtils.array;
 import static internal.test.utils.TestUtils.getGenericReturnTypeForMethod;
@@ -157,6 +158,38 @@ public abstract class BaseUnitTest {
         @GET("/api/call")
         Call<Object> call();
 
+    }
+
+    public void assertUniqTestNames() throws IOException {
+        final String rootDir = System.getProperty("user.dir");
+        Set<String> methods = new HashSet<>();
+        Set<String> duplicates = new HashSet<>();
+        final List<Path> testClasses = Files.walk(Paths.get(rootDir))
+                .filter(path -> path.toFile().isFile())
+                .filter(path -> path.toString().contains("/src/test/java"))
+                .filter(path -> path.toString().endsWith("Tests.java"))
+                .collect(Collectors.toList());
+        for (Path testClass : testClasses) {
+            StringJoiner result = new StringJoiner("\n");
+            final List<String> lines = Files.readAllLines(testClass);
+            for (String line : lines) {
+                if (line.contains("void test")) {
+                    Pattern pattern = Pattern.compile(".*(test\\d*).*");
+                    java.util.regex.Matcher matcher = pattern.matcher(line);
+                    if (matcher.find()) {
+                        final String methodName = matcher.group(1);
+                        if (methods.contains(methodName)) {
+                            duplicates.add(methodName);
+                        } else {
+                            methods.add(methodName);
+                        }
+                    }
+                }
+            }
+        }
+        if (!duplicates.isEmpty()) {
+            throw new AssertionError("Duplicate test methods names found: " + duplicates);
+        }
     }
 
 }

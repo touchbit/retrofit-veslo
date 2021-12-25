@@ -20,8 +20,9 @@ import internal.test.utils.asserter.ThrowableAsserter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.veslo.BaseCoreUnitTest;
+import org.touchbit.retrofit.veslo.exception.BriefAssertionError;
 
-@SuppressWarnings({"ObviousNullCheck", "ConstantConditions"})
+@SuppressWarnings({"ConstantConditions"})
 @DisplayName("AssertionMatcher.class unit tests")
 public class AssertionMatcherUnitTests extends BaseCoreUnitTest {
 
@@ -41,7 +42,7 @@ public class AssertionMatcherUnitTests extends BaseCoreUnitTest {
     @DisplayName("#is() negative")
     public void test1639582425697() {
         assertThrow(() -> AssertionMatcher.is("reason", "test", "TEST"))
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("reason\nExpected: is  TEST\n  Actual: was test");
     }
 
@@ -62,7 +63,7 @@ public class AssertionMatcherUnitTests extends BaseCoreUnitTest {
     @DisplayName("#inRange() negative (min)")
     public void test1639582436802() {
         assertThrow(() -> AssertionMatcher.inRange("reason", 0, 1, 2))
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("reason\nExpected: in range 1...2\n  Actual: was 0");
     }
 
@@ -70,7 +71,7 @@ public class AssertionMatcherUnitTests extends BaseCoreUnitTest {
     @DisplayName("#inRange() negative (max)")
     public void test1639582764327() {
         assertThrow(() -> AssertionMatcher.inRange("reason", 3, 1, 2))
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("reason\nExpected: in range 1...2\n  Actual: was 3");
     }
 
@@ -84,7 +85,7 @@ public class AssertionMatcherUnitTests extends BaseCoreUnitTest {
     @DisplayName("#isNotNull() negative")
     public void test1639582444955() {
         assertThrow(() -> AssertionMatcher.isNotNull("reason", null))
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("reason\nExpected: is not null\n  Actual: null");
     }
 
@@ -98,7 +99,7 @@ public class AssertionMatcherUnitTests extends BaseCoreUnitTest {
     @DisplayName("#isNull() negative")
     public void test1639582452324() {
         assertThrow(() -> AssertionMatcher.isNull("reason", "test"))
-                .assertClass(AssertionError.class)
+                .assertClass(BriefAssertionError.class)
                 .assertMessageIs("reason\nExpected: is null\n  Actual: test");
     }
 

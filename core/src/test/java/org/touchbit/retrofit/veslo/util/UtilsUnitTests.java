@@ -116,8 +116,8 @@ public class UtilsUnitTests extends BaseCoreUnitTest {
 
         @Test
         @DisplayName("Convert primitive byte array to object byte array")
-        public void test1639065947886() {
-            byte[] expectedBytes = "test" .getBytes();
+        public void test1640471613990() {
+            byte[] expectedBytes = "test".getBytes();
             assertThat("", Utils.toObjectByteArray(expectedBytes), is(expectedBytes));
         }
 

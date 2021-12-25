@@ -61,7 +61,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Byte[]: return Byte[] value if body = string")
-        public void test1639065953273() {
+        public void test1640470979765() {
             CLIENT.returnByteArray(OK, STRING_BYTES)
                     .assertResponse(asserter -> asserter
                             .assertHttpStatusCodeIs(OK)
@@ -71,7 +71,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Byte[]: return Byte[] value if unsuccessful status and body = string")
-        public void test1639065953283() {
+        public void test1640470982856() {
             CLIENT.returnByteArray(ERR, STRING_BYTES)
                     .assertResponse(asserter -> asserter
                             .assertHttpStatusCodeIs(ERR)
@@ -81,7 +81,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Byte[]: return Byte[] value if body = <blank string>")
-        public void test1639065953293() {
+        public void test1640470985918() {
             CLIENT.returnByteArray(OK, BLANK_STRING_BYTES)
                     .assertResponse(asserter -> asserter
                             .assertHttpStatusCodeIs(OK)
@@ -91,7 +91,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Byte[]: return empty Byte[] if body is empty (content-length=0)")
-        public void test1639065953303() {
+        public void test1640470989115() {
             CLIENT.returnByteArray(OK, EMPTY_BYTES)
                     .assertResponse(asserter -> asserter
                             .assertHttpStatusCodeIs(OK)
@@ -101,7 +101,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Byte[]: return empty Byte[] if body not present (HTTP status 204 'no content')")
-        public void test1639065953313() {
+        public void test1640470991530() {
             CLIENT.returnByteArray(NO_CONTENT, NULL_BODY_VALUE)
                     .assertResponse(asserter -> asserter
                             .assertHttpStatusCodeIs(NO_CONTENT)
@@ -111,7 +111,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("RawBody: return RawBody if body = string")
-        public void test1639065953333() {
+        public void test1640470994499() {
             RawBody exp = new RawBody(STRING);
             CLIENT.returnRawBody(OK, exp).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
@@ -121,7 +121,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("RawBody: return empty RawBody if body = null")
-        public void test1639065953343() {
+        public void test1640470997484() {
             RawBody exp = RawBody.nullable();
             CLIENT.returnRawBody(OK, exp).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
@@ -131,7 +131,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("RawBody: return RawBody if unsuccessful status and body = string")
-        public void test1639065953353() {
+        public void test1640471000069() {
             RawBody exp = new RawBody(STRING);
             CLIENT.returnRawBody(ERR, exp).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
@@ -141,7 +141,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("RawBody: return empty RawBody if unsuccessful status and body = null")
-        public void test1639065953363() {
+        public void test1640471002811() {
             RawBody exp = RawBody.nullable();
             CLIENT.returnRawBody(ERR, exp).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
@@ -151,7 +151,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("RawBody: return RawBody if body = <blank string>")
-        public void test1639065953373() {
+        public void test1640471005555() {
             RawBody exp = new RawBody(BLANK_STRING);
             CLIENT.returnRawBody(OK, exp).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
@@ -161,7 +161,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("RawBody: return empty RawBody if body is empty (content-length=0)")
-        public void test1639065953383() {
+        public void test1640471008412() {
             RawBody exp = new RawBody(EMPTY_STRING);
             CLIENT.returnRawBody(OK, exp).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
@@ -171,7 +171,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("RawBody: return empty RawBody if body not present (HTTP status 204 'no content')")
-        public void test1639065953393() {
+        public void test1640471011546() {
             CLIENT.returnRawBody(NO_CONTENT, RawBody.nullable()).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBody(BaseUnitTest::assertIs, RawBody.nullable())
@@ -180,7 +180,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("File: return File value if body = string")
-        public void test1639065953402() {
+        public void test1640471013941() {
             final File file = new File("src/test/resources/not_empty.txt");
             final String expectedString = fileToString(file);
             CLIENT.returnFile(OK, file).assertResponse(asserter -> asserter
@@ -191,7 +191,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("File: return File value if unsuccessful status and body = string")
-        public void test1639065953412() {
+        public void test1640471016919() {
             CLIENT.returnFile(ERR, STRING).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
                     .assertSucBodyIsNull()
@@ -200,7 +200,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("File: return File value if body = <blank string>")
-        public void test1639065953420() {
+        public void test1640471019427() {
             CLIENT.returnFile(OK, BLANK_STRING).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(body -> assertThat(fileToString(body), is(BLANK_STRING)))
@@ -209,7 +209,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("File: return empty File if body is empty (content-length=0)")
-        public void test1639065953428() {
+        public void test1640471022681() {
             CLIENT.returnFile(OK, EMPTY_STRING).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(body -> assertThat(fileToString(body), is(EMPTY_STRING)))
@@ -218,7 +218,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("File: return empty File if body not present (HTTP status 204 'no content')")
-        public void test1639065953436() {
+        public void test1640471025143() {
             CLIENT.returnFile(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
@@ -227,7 +227,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("ResourceFile: ConvertCallException for response")
-        public void test1639065953444() {
+        public void test1640471028080() {
             assertThrow(() -> CLIENT.returnResourceFile(OK, new ResourceFile("not_empty.txt")))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("It is forbidden to use the ResourceFile type to convert the response body.");
@@ -241,14 +241,14 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Object: ConverterNotFoundException")
-        public void test1639065953458() {
+        public void test1640471032510() {
             assertThrow(() -> CLIENT.returnObject(200, "test1638801870893"))
                     .assertClass(ConverterNotFoundException.class);
         }
 
         @Test
         @DisplayName("String: return String value if body = string")
-        public void test1639065953465() {
+        public void test1640471036071() {
             CLIENT.returnString(OK, STRING).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, STRING)
@@ -257,7 +257,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("String: return String if unsuccessful status and body = string")
-        public void test1639065953471() {
+        public void test1640471038861() {
             CLIENT.returnString(ERR, STRING).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
                     .assertSucBodyIsNull()
@@ -266,7 +266,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("String: return String value if body = <blank string>")
-        public void test1639065953477() {
+        public void test1640471041238() {
             CLIENT.returnString(OK, BLANK_STRING).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, BLANK_STRING)
@@ -275,7 +275,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("String: return null if body not present (HTTP status 204 'no content')")
-        public void test1639065953483() {
+        public void test1640471044212() {
             CLIENT.returnString(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
@@ -284,7 +284,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("String: return null if body is empty (content-length=0)")
-        public void test1639065953489() {
+        public void test1640471046754() {
             CLIENT.returnString(OK, EMPTY_STRING).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBodyIsNull()
@@ -293,7 +293,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Character: return Character if body = a")
-        public void test1639065953495() {
+        public void test1640471049456() {
             CLIENT.returnCharacter(OK, 'a').assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, 'a')
@@ -302,7 +302,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Character: return Character if unsuccessful status and body = a")
-        public void test1639065953501() {
+        public void test1640471052284() {
             CLIENT.returnCharacter(ERR, 'a').assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
                     .assertErrBody(BaseUnitTest::assertIs, 'a')
@@ -311,7 +311,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Character: return null if body not present (HTTP status 204 'no content')")
-        public void test1639065953507() {
+        public void test1640471055480() {
             CLIENT.returnCharacter(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
@@ -320,7 +320,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Character: return null if body is empty (content-length=0)")
-        public void test1639065953513() {
+        public void test1640471058258() {
             CLIENT.returnCharacter(OK, EMPTY_STRING).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBodyIsNull()
@@ -329,7 +329,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Character: ConvertCallException if body = <blank string>")
-        public void test1639065953519() {
+        public void test1640471060270() {
             assertThrow(() -> CLIENT.returnCharacter(OK, BLANK_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("Character conversion error:\n" +
@@ -339,7 +339,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Boolean: return Boolean if body = true")
-        public void test1639065953529() {
+        public void test1640471063017() {
             CLIENT.returnBoolean(OK, true).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, true)
@@ -348,7 +348,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Boolean: return Boolean if body = false")
-        public void test1639065953535() {
+        public void test1640471065285() {
             CLIENT.returnBoolean(OK, false).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, false)
@@ -357,7 +357,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Boolean: return Boolean if unsuccessful status and body = false")
-        public void test1639065953541() {
+        public void test1640471068419() {
             CLIENT.returnBoolean(ERR, false).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
                     .assertErrBody(BaseUnitTest::assertIs, false)
@@ -366,7 +366,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Boolean: return null if body not present (HTTP status 204 'no content')")
-        public void test1639065953547() {
+        public void test1640471071000() {
             CLIENT.returnBoolean(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
@@ -375,7 +375,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Boolean: return null if body is empty (content-length=0)")
-        public void test1639065953553() {
+        public void test1640471074063() {
             CLIENT.returnBoolean(OK, EMPTY_STRING).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBodyIsNull()
@@ -384,7 +384,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Boolean: ConvertCallException if body = 1")
-        public void test1639065953559() {
+        public void test1640471076644() {
             assertThrow(() -> CLIENT.returnBoolean(OK, 1))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("Boolean conversion error:\n" +
@@ -394,7 +394,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Boolean: ConvertCallException if body = <blank string>")
-        public void test1639065953569() {
+        public void test1640471079389() {
             assertThrow(() -> CLIENT.returnBoolean(OK, BLANK_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("Boolean conversion error:\n" +
@@ -404,7 +404,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Byte: return Byte if body = " + Byte.MAX_VALUE)
-        public void test1639065953579() {
+        public void test1640471082228() {
             CLIENT.returnByte(OK, Byte.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, Byte.MAX_VALUE)
@@ -413,7 +413,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Byte: return Byte if unsuccessful status and body = " + Byte.MAX_VALUE)
-        public void test1639065953585() {
+        public void test1640471085043() {
             CLIENT.returnByte(ERR, Byte.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
                     .assertErrBody(BaseUnitTest::assertIs, Byte.MAX_VALUE)
@@ -422,7 +422,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Byte: return null if body not present (HTTP status 204 'no content')")
-        public void test1639065953591() {
+        public void test1640471088829() {
             CLIENT.returnByte(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
@@ -431,7 +431,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Byte: return null if body is empty (content-length=0)")
-        public void test1639065953597() {
+        public void test1640471092108() {
             CLIENT.returnByte(OK, EMPTY_STRING).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBodyIsNull()
@@ -440,7 +440,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Byte: ConvertCallException if body = <blank string>")
-        public void test1639065953603() {
+        public void test1640471094931() {
             assertThrow(() -> CLIENT.returnByte(OK, BLANK_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("Byte conversion error:\n" +
@@ -450,7 +450,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Integer: return Integer if body = " + Integer.MAX_VALUE)
-        public void test1639065953613() {
+        public void test1640471098037() {
             CLIENT.returnInteger(OK, Integer.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, Integer.MAX_VALUE)
@@ -459,7 +459,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Integer: return Integer if unsuccessful status and body = " + Integer.MAX_VALUE)
-        public void test1639065953619() {
+        public void test1640471101158() {
             CLIENT.returnInteger(ERR, Integer.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
                     .assertErrBody(BaseUnitTest::assertIs, Integer.MAX_VALUE)
@@ -468,7 +468,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Integer: return null if body not present (HTTP status 204 'no content')")
-        public void test1639065953625() {
+        public void test1640471103941() {
             CLIENT.returnInteger(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
@@ -477,7 +477,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Integer: return null if body is empty (content-length=0)")
-        public void test1639065953631() {
+        public void test1640471108730() {
             CLIENT.returnInteger(OK, EMPTY_STRING).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBodyIsNull()
@@ -486,7 +486,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Integer: ConvertCallException if body = <blank string>")
-        public void test1639065953637() {
+        public void test1640471111579() {
             assertThrow(() -> CLIENT.returnInteger(OK, BLANK_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("Integer conversion error:\n" +
@@ -496,7 +496,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Double: return Double if body = " + Double.MAX_VALUE)
-        public void test1639065953647() {
+        public void test1640471114462() {
             CLIENT.returnDouble(OK, Double.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, Double.MAX_VALUE)
@@ -505,7 +505,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Double: return Double if unsuccessful status and body = " + Double.MAX_VALUE)
-        public void test1639065953653() {
+        public void test1640471117818() {
             CLIENT.returnDouble(ERR, Double.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
                     .assertErrBody(BaseUnitTest::assertIs, Double.MAX_VALUE)
@@ -514,7 +514,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Double: return null if body not present (HTTP status 204 'no content')")
-        public void test1639065953659() {
+        public void test1640471120217() {
             CLIENT.returnDouble(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
@@ -523,7 +523,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Double: return null if body is empty (content-length=0)")
-        public void test1639065953665() {
+        public void test1640471123052() {
             CLIENT.returnDouble(OK, EMPTY_STRING).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBodyIsNull()
@@ -532,7 +532,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Double: ConvertCallException if body = '    ' (blank string)")
-        public void test1639065953671() {
+        public void test1640471125933() {
             assertThrow(() -> CLIENT.returnDouble(OK, BLANK_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("Double conversion error:\n" +
@@ -542,7 +542,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Float: return Float if body = " + Float.MAX_VALUE)
-        public void test1639065953681() {
+        public void test1640471128257() {
             CLIENT.returnFloat(OK, Float.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, Float.MAX_VALUE)
@@ -551,7 +551,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Float: return Float if unsuccessful status and body = " + Float.MAX_VALUE)
-        public void test1639065953687() {
+        public void test1640471131432() {
             CLIENT.returnFloat(ERR, Float.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
                     .assertErrBody(BaseUnitTest::assertIs, Float.MAX_VALUE)
@@ -560,7 +560,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Float: return null if body not present (HTTP status 204 'no content')")
-        public void test1639065953693() {
+        public void test1640471134385() {
             CLIENT.returnFloat(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
@@ -569,7 +569,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Float: return null if body is empty (content-length=0)")
-        public void test1639065953699() {
+        public void test1640471136764() {
             CLIENT.returnFloat(OK, EMPTY_STRING).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBodyIsNull()
@@ -578,7 +578,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Float: ConvertCallException if body = '    ' (blank string)")
-        public void test1639065953705() {
+        public void test1640471139521() {
             assertThrow(() -> CLIENT.returnFloat(OK, BLANK_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("Float conversion error:\n" +
@@ -588,7 +588,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Long: return Long if body = " + Long.MAX_VALUE)
-        public void test1639065953715() {
+        public void test1640471142619() {
             CLIENT.returnLong(OK, Long.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, Long.MAX_VALUE)
@@ -597,7 +597,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Long: return Long if unsuccessful status and body = " + Long.MAX_VALUE)
-        public void test1639065953721() {
+        public void test1640471144919() {
             CLIENT.returnLong(ERR, Long.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
                     .assertErrBody(BaseUnitTest::assertIs, Long.MAX_VALUE)
@@ -606,7 +606,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Long: return null if body not present (HTTP status 204 'no content')")
-        public void test1639065953727() {
+        public void test1640471147781() {
             CLIENT.returnLong(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
@@ -615,7 +615,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Long: return null if body is empty (content-length=0)")
-        public void test1639065953733() {
+        public void test1640471150626() {
             CLIENT.returnLong(OK, EMPTY_STRING).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBodyIsNull()
@@ -624,7 +624,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Long: ConvertCallException if body = '    ' (blank string)")
-        public void test1639065953739() {
+        public void test1640471153403() {
             assertThrow(() -> CLIENT.returnLong(OK, BLANK_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("Long conversion error:\n" +
@@ -634,7 +634,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Short: return Short if body = " + Short.MAX_VALUE)
-        public void test1639065953749() {
+        public void test1640471156788() {
             CLIENT.returnShort(OK, Short.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBody(BaseUnitTest::assertIs, Short.MAX_VALUE)
@@ -643,7 +643,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Short: return Short if unsuccessful status and body = " + Short.MAX_VALUE)
-        public void test1639065953755() {
+        public void test1640471159673() {
             CLIENT.returnShort(ERR, Short.MAX_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(ERR)
                     .assertErrBody(BaseUnitTest::assertIs, Short.MAX_VALUE)
@@ -652,7 +652,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Short: return null if body not present (HTTP status 204 'no content')")
-        public void test1639065953761() {
+        public void test1640471162559() {
             CLIENT.returnShort(NO_CONTENT, NULL_BODY_VALUE).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(NO_CONTENT)
                     .assertSucBodyIsNull()
@@ -661,7 +661,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Short: return null if body is empty (content-length=0)")
-        public void test1639065953767() {
+        public void test1640471165754() {
             CLIENT.returnShort(OK, EMPTY_STRING).assertResponse(asserter -> asserter
                     .assertHttpStatusCodeIs(OK)
                     .assertSucBodyIsNull()
@@ -670,7 +670,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Short: ConvertCallException if body = '    ' (blank string)")
-        public void test1639065953773() {
+        public void test1640471168910() {
             assertThrow(() -> CLIENT.returnShort(OK, BLANK_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("Short conversion error:\n" +

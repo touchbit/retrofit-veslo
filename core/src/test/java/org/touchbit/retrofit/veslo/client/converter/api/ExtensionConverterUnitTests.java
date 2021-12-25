@@ -233,21 +233,21 @@ public class ExtensionConverterUnitTests extends BaseCoreUnitTest {
 
         @Test
         @DisplayName("return true if body == NULL_JSON_VALUE")
-        public void test1639685180949() {
+        public void test1640471598667() {
             final boolean result = TEST_CONVERTER.isForceNullJsonValue((Object) NULL_JSON_VALUE);
             assertThat(result, is(true));
         }
 
         @Test
         @DisplayName("return false if body == foobar")
-        public void test1639685183809() {
+        public void test1640471600917() {
             final boolean result = TEST_CONVERTER.isForceNullJsonValue((Object) "foobar");
             assertThat(result, is(false));
         }
 
         @Test
         @DisplayName("return false if body == null")
-        public void test1639685186128() {
+        public void test1640471603876() {
             final boolean result = TEST_CONVERTER.isForceNullJsonValue((Object) null);
             assertThat(result, is(false));
         }
