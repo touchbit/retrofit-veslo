@@ -346,7 +346,7 @@ public class OkhttpUtilsUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Get headers if ResponseBody == null")
         public void test1639984743021() {
-            final Response response = OkHttpTestUtils.getResponse(null);
+            final Response response = OkHttpTestUtils.getResponse((String) null);
             final Headers responseHeaders = OkhttpUtils.getResponseHeaders(response);
             assertThat(responseHeaders, notNullValue());
             assertThat(responseHeaders.get("Content-Type"), nullValue());

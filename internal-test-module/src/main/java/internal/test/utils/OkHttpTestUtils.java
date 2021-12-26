@@ -38,30 +38,66 @@ public class OkHttpTestUtils {
         return getResponse("generated");
     }
 
+    public static Response getResponse(Request request) {
+        return getResponse(request, "generated");
+    }
+
+    public static Response getResponse(Request request, Headers headers) {
+        return getResponse(request, "generated", headers);
+    }
+
     public static Response getResponse(String body) {
         return getResponse(body, 200);
+    }
+
+    public static Response getResponse(Request request, String body) {
+        return getResponse(request, body, 200);
+    }
+
+    public static Response getResponse(Request request, String body, Headers headers) {
+        return getResponse(request, body, 200, headers);
     }
 
     public static Response getResponse(int status) {
         return getResponse("body", status);
     }
 
+    public static Response getResponse(Request request, int status) {
+        return getResponse(request, "body", status);
+    }
+
     public static Response getResponse(String body, int status) {
         return getResponse(body, status, body == null ? null : MediaType.get("text/plain"));
     }
 
+    public static Response getResponse(Request request, String body, int status) {
+        return getResponse(request, body, status, body == null ? null : MediaType.get("text/plain"));
+    }
+
+    public static Response getResponse(Request request, String body, int status, Headers headers) {
+        return getResponse(request, body, status, body == null ? null : MediaType.get("text/plain"), headers);
+    }
+
     public static Response getResponse(String body, int status, MediaType mediaType) {
-        final Headers.Builder builder = new Headers.Builder();
+        return getResponse(getRequest(), body, status, mediaType);
+    }
+
+    public static Response getResponse(Request request, String body, int status, MediaType mediaType) {
+        final Headers.Builder hb = new Headers.Builder();
         if (mediaType != null) {
-            builder.add("Content-Type", mediaType.toString());
+            hb.add("Content-Type", mediaType.toString());
         }
         if (body != null) {
-            builder.add("Content-Length", body.length() + "");
+            hb.add("Content-Length", body.length() + "");
         }
-        builder.add("X-Request-ID", "generated");
+        hb.add("X-Request-ID", "generated");
+        return getResponse(request, body, status, mediaType, hb.build());
+    }
+
+    public static Response getResponse(Request request, String body, int status, MediaType mediaType, Headers headers) {
         return new Response.Builder()
-                .request(getRequest())
-                .headers(builder.build())
+                .request(request)
+                .headers(headers)
                 .body(body == null ? null : ResponseBody.create(mediaType, body))
                 .protocol(Protocol.HTTP_1_1)
                 .message("TEST")
@@ -70,15 +106,22 @@ public class OkHttpTestUtils {
     }
 
     public static Request getRequest() {
-        return getRequest(null, "generated");
+        return getRequest("http://localhost", null, "generated", Headers.of());
+    }
+
+    public static Request getRequest(String url, String... headerNamesAndValues) {
+        return getRequest(url, null, "generated", Headers.of(headerNamesAndValues));
     }
 
     public static Request getRequest(MediaType mediaType, String body) {
+        return getRequest("http://localhost", mediaType, body, Headers.of("Content-Type", "text/plain", "X-Request-ID", "generated"));
+    }
+
+    public static Request getRequest(String url, MediaType mediaType, String body, Headers headers) {
         return new Request.Builder()
-                .addHeader("Content-Type", "text/plain")
-                .addHeader("X-Request-ID", "generated")
+                .headers(headers)
                 .post(getRequestBody(mediaType, body))
-                .url("http://localhost")
+                .url(url)
                 .build();
     }
 

@@ -18,8 +18,8 @@ package org.touchbit.retrofit.veslo.client.inteceptor;
 
 import okhttp3.Interceptor.Chain;
 import okhttp3.Request;
+import retrofit2.internal.EverythingIsNonNull;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -38,8 +38,8 @@ public interface RequestInterceptAction {
      * @param chain - {@link Chain}
      * @return {@link Chain}
      */
-    @Nonnull
-    default Chain chainAction(@Nonnull Chain chain) {
+    @EverythingIsNonNull
+    default Chain chainAction(Chain chain) {
         return chain;
     }
 
@@ -50,8 +50,8 @@ public interface RequestInterceptAction {
      * @return {@link Request}
      * @throws IOException - IO errors
      */
-    @Nonnull
-    default Request requestAction(@Nonnull Request request) throws IOException {
+    @EverythingIsNonNull
+    default Request requestAction(Request request) throws IOException {
         return request;
     }
 

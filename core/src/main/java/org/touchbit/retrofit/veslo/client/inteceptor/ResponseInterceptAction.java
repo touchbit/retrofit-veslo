@@ -17,6 +17,7 @@
 package org.touchbit.retrofit.veslo.client.inteceptor;
 
 import okhttp3.Response;
+import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -48,8 +49,8 @@ public interface ResponseInterceptAction {
      * @return {@link Response}
      * @throws IOException - IO errors
      */
-    @Nonnull
-    default Response responseAction(@Nonnull Response response) throws IOException {
+    @EverythingIsNonNull
+    default Response responseAction(Response response) throws IOException {
         return response;
     }
 

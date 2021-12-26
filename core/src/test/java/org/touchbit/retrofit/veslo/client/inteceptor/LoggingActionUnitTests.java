@@ -18,6 +18,7 @@ package org.touchbit.retrofit.veslo.client.inteceptor;
 
 import internal.test.utils.OkHttpTestUtils;
 import internal.test.utils.log.UnitTestLogger;
+import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.junit.jupiter.api.DisplayName;
@@ -45,7 +46,7 @@ public class LoggingActionUnitTests {
     @DisplayName("#requestAction() logging an HTTP request")
     public void test1639065951194() throws IOException {
         UnitTestLogger logger = new UnitTestLogger();
-        final Request request = OkHttpTestUtils.getRequest();
+        final Request request = OkHttpTestUtils.getRequest(MediaType.get("text/plain"), "generated");
         final Request result = new LoggingAction(logger).requestAction(request);
         assertThat("", result, is(request));
         assertThat("", logger.getLogEventCount(), is(1));
