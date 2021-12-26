@@ -16,19 +16,13 @@
 
 package org.touchbit.retrofit.veslo.example.client.transport;
 
-import io.qameta.allure.Allure;
-import org.touchbit.retrofit.veslo.asserter.HeadersAsserter;
-import org.touchbit.retrofit.veslo.asserter.ResponseAsserter;
-import org.touchbit.retrofit.veslo.client.response.BaseDualResponse;
-import org.touchbit.retrofit.veslo.client.response.DualResponse;
+import org.touchbit.retrofit.veslo.allure.AResponse;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
-public class ExampleCustomResponse<SUC_DTO, ERR_DTO> extends DualResponse<SUC_DTO, ERR_DTO> {
+public class ExampleCustomResponse<SUC_DTO, ERR_DTO> extends AResponse<SUC_DTO, ERR_DTO> {
 
     public ExampleCustomResponse(@Nullable SUC_DTO sucDTO,
                                  @Nullable ERR_DTO errDTO,
@@ -36,39 +30,6 @@ public class ExampleCustomResponse<SUC_DTO, ERR_DTO> extends DualResponse<SUC_DT
                                  @Nonnull String endpointInfo,
                                  @Nonnull Annotation[] callAnnotations) {
         super(sucDTO, errDTO, response, endpointInfo, callAnnotations);
-    }
-
-    @Override
-    public BaseDualResponse<SUC_DTO, ERR_DTO, ResponseAsserter<SUC_DTO, ERR_DTO, HeadersAsserter>>
-    assertResponse(Consumer<ResponseAsserter<SUC_DTO, ERR_DTO, HeadersAsserter>> respAsserter) {
-        return step("Check response: " + getEndpointInfo(), () -> super.assertResponse(respAsserter));
-    }
-
-    @Override
-    public BaseDualResponse<SUC_DTO, ERR_DTO, ResponseAsserter<SUC_DTO, ERR_DTO, HeadersAsserter>>
-    assertErrResponse(BiConsumer<ResponseAsserter<SUC_DTO, ERR_DTO, HeadersAsserter>, ERR_DTO> respAsserter,
-                      ERR_DTO expected) {
-        return step("Check error response: " + getEndpointInfo(),
-                () -> super.assertErrResponse(respAsserter, expected));
-    }
-
-    @Override
-    public BaseDualResponse<SUC_DTO, ERR_DTO, ResponseAsserter<SUC_DTO, ERR_DTO, HeadersAsserter>>
-    assertSucResponse(BiConsumer<ResponseAsserter<SUC_DTO, ERR_DTO, HeadersAsserter>, SUC_DTO> respAsserter,
-                      SUC_DTO expected) {
-        return step("Check success response: " + getEndpointInfo(),
-                () -> super.assertSucResponse(respAsserter, expected));
-    }
-
-    private static <T> T step(final String name, final Allure.ThrowableRunnable<T> runnable) {
-        return Allure.step(name, () -> {
-            try {
-                return runnable.run();
-            } catch (Throwable throwable) {
-                Allure.addAttachment("ERROR", throwable.getMessage());
-                throw throwable;
-            }
-        });
     }
 
 }

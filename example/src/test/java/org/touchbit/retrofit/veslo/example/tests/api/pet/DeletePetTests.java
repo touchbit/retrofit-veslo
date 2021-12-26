@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.veslo.example.model.pet.Pet;
 import org.touchbit.retrofit.veslo.example.tests.api.BasePetTest;
 
+import static org.touchbit.retrofit.veslo.example.client.transport.querymap.LoginUserQueryMap.ADMIN;
 import static org.touchbit.retrofit.veslo.example.tests.api.ErrorCodes.code1;
 import static org.touchbit.retrofit.veslo.example.tests.api.ErrorCodes.code200;
 
@@ -30,7 +31,7 @@ public class DeletePetTests extends BasePetTest {
     @Test
     @DisplayName("Successful deleting a pet using an existing identifier")
     public void test1640105249957() {
-        loginTestUser();
+        USER_API.authenticateUser(ADMIN);
         final Pet pet = AddPetTests.addRandomPet();
         PET_API.deletePet(pet.id()).assertSucResponse(this::assertStatus200, code200(pet.id()));
     }
@@ -38,14 +39,14 @@ public class DeletePetTests extends BasePetTest {
     @Test
     @DisplayName("An error is expected when deleting a pet by non-existent identifier")
     public void test1640100570201() {
-        loginTestUser();
+        USER_API.authenticateUser(ADMIN);
         PET_API.deletePet(922137203685775807L).assertErrResponse(this::assertStatus404, code1("Pet not found"));
     }
 
     @Test
     @DisplayName("An error is expected when deleting a pet without authentication token")
     public void test1640446272452() {
-        loginTestUser();
+        USER_API.authenticateUser(ADMIN);
         final Pet pet = AddPetTests.addRandomPet();
         logout();
         PET_API.deletePet(pet.id()).assertResponse(asserter -> asserter
@@ -56,7 +57,7 @@ public class DeletePetTests extends BasePetTest {
     @Test
     @DisplayName("An error is expected when deleting a pet with a pet identifier of non-Long type")
     public void test1640449284033() {
-        loginTestUser();
+        USER_API.authenticateUser(ADMIN);
         PET_API.deletePet("example").assertResponse(asserter -> asserter
                 .assertHttpStatusCodeIs(400)
                 .assertErrBody(this::assertStatusModel, code1("java.lang.NumberFormatException: For input string: \"example\"")));

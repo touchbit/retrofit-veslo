@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.veslo.client.GsonDualConverterFactoryClient;
 import org.touchbit.retrofit.veslo.client.LoggedMockInterceptor;
-import org.touchbit.retrofit.veslo.client.adapter.DualResponseCallAdapterFactory;
+import org.touchbit.retrofit.veslo.client.adapter.UniversalCallAdapterFactory;
 import org.touchbit.retrofit.veslo.client.gson.ErrDTO;
 import org.touchbit.retrofit.veslo.client.gson.SucDTO;
 import org.touchbit.retrofit.veslo.client.model.RawBody;
@@ -55,7 +55,7 @@ public class GsonDualConverterFactoryClientFuncTests extends BaseUnitTest {
             .create(GsonDualConverterFactoryClient.class,
                     "http://localhost",
                     new LoggedMockInterceptor(),
-                    new DualResponseCallAdapterFactory(),
+                    new UniversalCallAdapterFactory(),
                     new GsonDualConverterFactory());
 
     @Nested

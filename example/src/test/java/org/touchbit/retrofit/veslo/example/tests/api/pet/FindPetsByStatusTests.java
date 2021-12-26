@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.touchbit.retrofit.veslo.example.client.transport.querymap.LoginUserQueryMap.ADMIN;
 
 @DisplayName("Find pet by stats: /v2/pet/findByStatus")
 public class FindPetsByStatusTests extends BasePetTest {
@@ -33,7 +34,7 @@ public class FindPetsByStatusTests extends BasePetTest {
     @Test
     @DisplayName("Successfully getting a list of pets by status 'available'")
     public void test1640453029688() {
-        loginTestUser();
+        USER_API.authenticateUser(ADMIN);
         PET_API.findPetsByStatus(PetStatus.available).assertResponse(response -> response
                 .assertHttpStatusCodeIs(200)
                 .assertSucBody(body -> {
@@ -45,7 +46,7 @@ public class FindPetsByStatusTests extends BasePetTest {
     @Test
     @DisplayName("Successfully getting a list of pets by status 'pending'")
     public void test1640454410473() {
-        loginTestUser();
+        USER_API.authenticateUser(ADMIN);
         PET_API.findPetsByStatus(PetStatus.pending).assertResponse(response -> response
                 .assertHttpStatusCodeIs(200)
                 .assertSucBody(body -> {
@@ -57,7 +58,7 @@ public class FindPetsByStatusTests extends BasePetTest {
     @Test
     @DisplayName("Successfully getting a list of pets by status 'sold'")
     public void test1640454419524() {
-        loginTestUser();
+        USER_API.authenticateUser(ADMIN);
         PET_API.findPetsByStatus(PetStatus.sold).assertResponse(response -> response
                 .assertHttpStatusCodeIs(200)
                 .assertSucBody(body -> {
@@ -69,7 +70,7 @@ public class FindPetsByStatusTests extends BasePetTest {
     @Test
     @DisplayName("Successfully getting an empty list of pets by status 'fooBar'")
     public void test1640454480699() {
-        loginTestUser();
+        USER_API.authenticateUser(ADMIN);
         PET_API.findPetsByStatus("fooBar").assertResponse(response -> response
                 .assertHttpStatusCodeIs(200)
                 .assertSucBody(body -> {

@@ -19,7 +19,6 @@ package org.touchbit.retrofit.veslo;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import org.touchbit.retrofit.veslo.allure.AllureAction;
-import org.touchbit.retrofit.veslo.client.adapter.DualResponseCallAdapterFactory;
 import org.touchbit.retrofit.veslo.client.adapter.JavaTypeCallAdapterFactory;
 import org.touchbit.retrofit.veslo.client.adapter.UniversalCallAdapterFactory;
 import org.touchbit.retrofit.veslo.client.inteceptor.CompositeInterceptor;
@@ -89,7 +88,7 @@ public class DualResponseRetrofitClientUtils {
      * @param clientClass        - API client interface class
      * @param baseUrl            - api URL is format schema://domain:port
      * @param interceptor        - {@link Interceptor} implementation. For example {@link CompositeInterceptor}
-     * @param callAdapterFactory - For example {@link DualResponseCallAdapterFactory} or {@link JavaTypeCallAdapterFactory}
+     * @param callAdapterFactory - For example {@link UniversalCallAdapterFactory} or {@link JavaTypeCallAdapterFactory}
      * @param converterFactory   - {@link JacksonConverterFactory}, {@link GsonDualConverterFactory}, etc.
      * @return API client implementation
      */
@@ -143,7 +142,7 @@ public class DualResponseRetrofitClientUtils {
     /**
      * @param baseUrl            - api URL is format schema://domain:port
      * @param interceptor        - {@link Interceptor} implementation. For example {@link CompositeInterceptor}
-     * @param callAdapterFactory - For example {@link DualResponseCallAdapterFactory} or {@link JavaTypeCallAdapterFactory}
+     * @param callAdapterFactory - For example {@link UniversalCallAdapterFactory} or {@link JavaTypeCallAdapterFactory}
      * @param converterFactory   - {@link JacksonConverterFactory}, {@link GsonDualConverterFactory}, etc.
      * @return {@link Retrofit}
      */

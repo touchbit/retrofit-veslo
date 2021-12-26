@@ -20,16 +20,15 @@ import io.qameta.allure.Allure;
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
 import org.slf4j.Logger;
-import org.touchbit.retrofit.veslo.client.adapter.DualResponseCallAdapterFactory;
+import org.touchbit.retrofit.veslo.client.EndpointInfo;
 import org.touchbit.retrofit.veslo.client.adapter.IDualResponseConsumer;
+import org.touchbit.retrofit.veslo.client.adapter.UniversalCallAdapterFactory;
 import org.touchbit.retrofit.veslo.client.response.IDualResponse;
 import org.touchbit.retrofit.veslo.util.Utils;
-import retrofit2.Call;
 import retrofit2.CallAdapter;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 
-import javax.annotation.Nonnull;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
@@ -43,7 +42,7 @@ import java.lang.reflect.Type;
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 01.12.2021
  */
-public class AllureCallAdapterFactory extends DualResponseCallAdapterFactory {
+public class AllureCallAdapterFactory extends UniversalCallAdapterFactory {
 
     public AllureCallAdapterFactory() {
         super();
@@ -61,19 +60,32 @@ public class AllureCallAdapterFactory extends DualResponseCallAdapterFactory {
         super(logger, consumer);
     }
 
+    /**
+     * @param returnType        - called method return type
+     * @param methodAnnotations - list of annotations for the called API method
+     * @param retrofit          - HTTP client
+     * @return a call adapter for {@link IDualResponse} interface
+     */
     @Override
-    public IDualResponse<?, ?> getIDualResponse(@Nonnull Call<Object> call,
-                                                @Nonnull Type successType,
-                                                @Nonnull Type errorType,
-                                                @Nonnull String stepInfo,
-                                                @Nonnull Annotation[] methodAnnotations,
-                                                @Nonnull Retrofit retrofit) {
-        final Step annotation = Utils.getAnnotation(methodAnnotations, Step.class);
-        if (annotation != null || stepInfo.trim().isEmpty()) {
-            return super.getIDualResponse(call, successType, errorType, stepInfo, methodAnnotations, retrofit);
+    @EverythingIsNonNull
+    public CallAdapter<Object, Object> get(final Type returnType,
+                                           final Annotation[] methodAnnotations,
+                                           final Retrofit retrofit) {
+        final Step step = Utils.getAnnotation(methodAnnotations, Step.class);
+        final String endpointInfo = getEndpointInfo(methodAnnotations);
+        if (step != null) {
+            return super.get(returnType, methodAnnotations, retrofit);
         }
-        return Allure.step(stepInfo,
-                () -> super.getIDualResponse(call, successType, errorType, stepInfo, methodAnnotations, retrofit));
+        if (endpointInfo == null || endpointInfo.trim().isEmpty()) {
+            return Allure.step("API call: no description", () -> {
+                Allure.addAttachment("ALLURE_ERROR", "Use annotations to describe the called API method:\n - " +
+                        Description.class + "\n - " + EndpointInfo.class + "\n\n" +
+                        "The @Step annotation value is ignored because it is expected that the step description " +
+                        "will be provided using the aspectj library.");
+                return super.get(returnType, methodAnnotations, retrofit);
+            });
+        }
+        return Allure.step(endpointInfo, () -> super.get(returnType, methodAnnotations, retrofit));
     }
 
     /**
@@ -87,6 +99,10 @@ public class AllureCallAdapterFactory extends DualResponseCallAdapterFactory {
         final Description description = Utils.getAnnotation(methodAnnotations, Description.class);
         if (description != null) {
             return description.value().trim();
+        }
+        final String endpointInfo = super.getEndpointInfo(methodAnnotations);
+        if (endpointInfo != null && !endpointInfo.trim().isEmpty()) {
+            return endpointInfo;
         }
         return "";
     }

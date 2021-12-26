@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.veslo.client.JacksonDualConverterFactoryClient;
 import org.touchbit.retrofit.veslo.client.LoggedMockInterceptor;
-import org.touchbit.retrofit.veslo.client.adapter.DualResponseCallAdapterFactory;
+import org.touchbit.retrofit.veslo.client.adapter.UniversalCallAdapterFactory;
 import org.touchbit.retrofit.veslo.client.jackson.ErrDTO;
 import org.touchbit.retrofit.veslo.client.jackson.SucDTO;
 import org.touchbit.retrofit.veslo.client.model.RawBody;
@@ -55,7 +55,7 @@ public class JacksonConverterFactoryClientFuncTests extends BaseUnitTest {
             .create(JacksonDualConverterFactoryClient.class,
                     "http://localhost",
                     new LoggedMockInterceptor(),
-                    new DualResponseCallAdapterFactory(),
+                    new UniversalCallAdapterFactory(),
                     new JacksonConverterFactory());
 
     @Nested

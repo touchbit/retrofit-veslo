@@ -17,6 +17,7 @@
 package org.touchbit.retrofit.veslo.example.client;
 
 import io.qameta.allure.Description;
+import org.touchbit.retrofit.veslo.example.client.transport.AuthAction;
 import org.touchbit.retrofit.veslo.example.client.transport.ExampleCustomResponse;
 import org.touchbit.retrofit.veslo.example.client.transport.querymap.LoginUserQueryMap;
 import org.touchbit.retrofit.veslo.example.model.Status;
@@ -25,7 +26,7 @@ import retrofit2.http.*;
 
 import java.util.List;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public interface UserApi {
 
     /**
@@ -70,6 +71,25 @@ public interface UserApi {
     @GET("/v2/user/login")
     @Description("Logs user into the system")
     ExampleCustomResponse<Status, Status> loginUser(@QueryMap() LoginUserQueryMap queryMap);
+
+    /**
+     * authenticate user and set authorisation header
+     *
+     * @param namePass user name & password for login (all required)
+     */
+    default void authenticateUser(LoginUserQueryMap namePass) {
+        final Status status = loginUser(namePass)
+                .assertResponse(a -> a.assertHttpStatusCodeIs(200).assertSucBodyNotNull()).getSucDTO();
+        // String token = status.getToken();
+        // For this sample, uses the api key 'special-key'
+        String token = "special-key";
+        AuthAction.setToken(token);
+    }
+
+    default void logout() {
+        logoutUser();
+        AuthAction.removeToken();
+    }
 
     @GET("/v2/user/logout")
     @Description("Logs out current logged in user session")

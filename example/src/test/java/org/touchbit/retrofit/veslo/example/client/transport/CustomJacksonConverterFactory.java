@@ -25,6 +25,7 @@ public class CustomJacksonConverterFactory extends JacksonConverterFactory {
 
     public CustomJacksonConverterFactory() {
         super(LoggerFactory.getLogger(CustomJacksonConverterFactory.class));
+        // Used by JacksonConverter to convert body if Content-Type header not present
         registerMimeConverter(JacksonConverter.INSTANCE, ContentType.NULL);
     }
 

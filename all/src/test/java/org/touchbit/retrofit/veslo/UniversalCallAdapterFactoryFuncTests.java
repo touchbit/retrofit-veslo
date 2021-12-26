@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.veslo.client.DualResponseAdapterFactoryClient;
 import org.touchbit.retrofit.veslo.client.LoggedMockInterceptor;
-import org.touchbit.retrofit.veslo.client.adapter.DualResponseCallAdapterFactory;
+import org.touchbit.retrofit.veslo.client.adapter.UniversalCallAdapterFactory;
 import org.touchbit.retrofit.veslo.client.converter.ExtensionConverterFactory;
 import org.touchbit.retrofit.veslo.client.model.RawBody;
 import org.touchbit.retrofit.veslo.client.model.ResourceFile;
@@ -38,7 +38,7 @@ import static org.touchbit.retrofit.veslo.client.converter.api.ExtensionConverte
 
 @SuppressWarnings("unused")
 @DisplayName("JavaTypeAdapterFactory functional tests")
-public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
+public class UniversalCallAdapterFactoryFuncTests extends BaseUnitTest {
 
     private static final Byte[] EMPTY_BYTES = new Byte[]{};
     private static final String STRING = "string";
@@ -52,7 +52,7 @@ public class DualResponseAdapterFactoryFuncTests extends BaseUnitTest {
             .create(DualResponseAdapterFactoryClient.class,
                     "http://localhost",
                     new LoggedMockInterceptor(),
-                    new DualResponseCallAdapterFactory(),
+                    new UniversalCallAdapterFactory(),
                     new ExtensionConverterFactory());
 
     @Nested

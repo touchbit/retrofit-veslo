@@ -26,7 +26,7 @@ import java.lang.annotation.Annotation;
 
 /**
  * Consumer for {@link BaseDualResponse} constructor
- * Used to add customized {@link BaseDualResponse} instances in the {@link DualResponseCallAdapterFactory}
+ * Used to add customized {@link BaseDualResponse} instances in the {@link UniversalCallAdapterFactory}
  * <p>
  *
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)

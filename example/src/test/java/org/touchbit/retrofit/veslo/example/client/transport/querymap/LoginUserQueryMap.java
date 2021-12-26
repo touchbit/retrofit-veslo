@@ -26,7 +26,7 @@ import org.touchbit.retrofit.veslo.client.request.ReflectQueryMap;
 @Accessors(chain = true, fluent = true)
 public class LoginUserQueryMap extends ReflectQueryMap {
 
-    public static final LoginUserQueryMap TEST_USER = new LoginUserQueryMap().username("test").password("abc123");
+    public static final LoginUserQueryMap ADMIN = new LoginUserQueryMap().username("test").password("abc123");
 
     private Object username;
     private Object password;

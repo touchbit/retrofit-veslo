@@ -17,7 +17,7 @@
 package org.touchbit.retrofit.veslo.example.tests;
 
 import okhttp3.OkHttpClient;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.touchbit.retrofit.veslo.allure.AllureCallAdapterFactory;
 import org.touchbit.retrofit.veslo.asserter.HeadersAsserter;
 import org.touchbit.retrofit.veslo.asserter.ResponseAsserter;
@@ -25,11 +25,9 @@ import org.touchbit.retrofit.veslo.asserter.SoftlyAsserter;
 import org.touchbit.retrofit.veslo.example.client.PetApi;
 import org.touchbit.retrofit.veslo.example.client.StoreApi;
 import org.touchbit.retrofit.veslo.example.client.UserApi;
-import org.touchbit.retrofit.veslo.example.client.transport.AuthAction;
 import org.touchbit.retrofit.veslo.example.client.transport.CustomCompositeInterceptor;
 import org.touchbit.retrofit.veslo.example.client.transport.CustomJacksonConverterFactory;
 import org.touchbit.retrofit.veslo.example.client.transport.ExampleCustomResponse;
-import org.touchbit.retrofit.veslo.example.client.transport.querymap.LoginUserQueryMap;
 import org.touchbit.retrofit.veslo.example.model.Status;
 import retrofit2.Retrofit;
 
@@ -66,22 +64,9 @@ public class BaseTest {
                 .create(clientClass);
     }
 
-    @AfterEach
+    @BeforeEach
     public void logout() {
-        AuthAction.removeToken();
-    }
-
-    protected static void loginTestUser() {
-        loginUser(LoginUserQueryMap.TEST_USER);
-    }
-
-    protected static void loginUser(LoginUserQueryMap namePass) {
-        final Status status = USER_API.loginUser(namePass)
-                .assertResponse(a -> a.assertHttpStatusCodeIs(200).assertSucBodyNotNull()).getSucDTO();
-        // String token = status.getToken();
-        // For this sample, uses the api key 'special-key'
-        String token = "special-key";
-        AuthAction.setToken(token);
+        USER_API.logout();
     }
 
     protected void assertStatus200(ResponseAsserter<Status, ?, HeadersAsserter> asserter, Status expected) {

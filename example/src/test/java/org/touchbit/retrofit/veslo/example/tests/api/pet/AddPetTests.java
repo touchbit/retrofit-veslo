@@ -24,6 +24,7 @@ import org.touchbit.retrofit.veslo.example.tests.api.BasePetTest;
 import java.util.Collections;
 import java.util.Set;
 
+import static org.touchbit.retrofit.veslo.example.client.transport.querymap.LoginUserQueryMap.ADMIN;
 import static org.touchbit.retrofit.veslo.example.tests.api.ErrorCodes.code1;
 import static org.touchbit.retrofit.veslo.example.utils.DataGenerator.generatePet;
 
@@ -31,9 +32,9 @@ import static org.touchbit.retrofit.veslo.example.utils.DataGenerator.generatePe
 public class AddPetTests extends BasePetTest {
 
     @Test
-    @DisplayName("Checking the Pet model contract")
+    @DisplayName("Checking the Pet model contract (PropertyNamingStrategy.SnakeCaseStrategy)")
     public void test1640455066880() {
-        loginTestUser();
+        USER_API.authenticateUser(ADMIN);
         PET_API.addPet(generatePet()).assertResponse(response -> response
                 .assertHttpStatusCodeIs(200)
                 .assertSucBody(body -> body
@@ -44,7 +45,7 @@ public class AddPetTests extends BasePetTest {
     @Test
     @DisplayName("Successful creating a pet using an existing identifier")
     public void test1640069747665() {
-        loginTestUser();
+        USER_API.authenticateUser(ADMIN);
         final Pet expected = generatePet();
         PET_API.addPet(expected).assertResponse(asserter -> asserter
                 .assertHttpStatusCodeIs(200)
@@ -54,16 +55,15 @@ public class AddPetTests extends BasePetTest {
     @Test
     @DisplayName("Successful creating a pet using random identifier")
     public void test1640460353980() {
-        loginTestUser();
+        USER_API.authenticateUser(ADMIN);
         final Pet expected = generatePet();
         PET_API.addPet(expected).assertSucResponse(Pet::assertPetResponse, expected);
     }
 
-
     @Test
     @DisplayName("An error is expected when creating a pet with a Pet.id of non-Long type")
     public void test1640450206604() {
-        loginTestUser();
+        USER_API.authenticateUser(ADMIN);
         final Pet pet = generatePet().id(null).additionalProperty("id", "example");
         PET_API.addPet(pet).assertResponse(asserter -> asserter
                 .assertHttpStatusCodeIs(400)
@@ -73,7 +73,7 @@ public class AddPetTests extends BasePetTest {
     @Test
     @DisplayName("An error is expected when creating a pet with a non-Pet type object (List)")
     public void test1640452385090() {
-        loginTestUser();
+        USER_API.authenticateUser(ADMIN);
         final Set<Pet> pets = Collections.singleton(generatePet());
         PET_API.addPet(pets).assertResponse(asserter -> asserter
                 .assertHttpStatusCodeIs(400)

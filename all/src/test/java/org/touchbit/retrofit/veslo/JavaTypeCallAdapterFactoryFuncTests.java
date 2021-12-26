@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.veslo.client.JavaTypeAdapterFactoryClient;
 import org.touchbit.retrofit.veslo.client.LoggedMockInterceptor;
-import org.touchbit.retrofit.veslo.client.adapter.JavaTypeCallAdapterFactory;
+import org.touchbit.retrofit.veslo.client.adapter.UniversalCallAdapterFactory;
 import org.touchbit.retrofit.veslo.client.converter.ExtensionConverterFactory;
 import org.touchbit.retrofit.veslo.client.model.RawBody;
 import org.touchbit.retrofit.veslo.client.model.ResourceFile;
@@ -52,7 +52,7 @@ public class JavaTypeCallAdapterFactoryFuncTests extends BaseUnitTest {
             .create(JavaTypeAdapterFactoryClient.class,
                     "http://localhost",
                     new LoggedMockInterceptor(),
-                    new JavaTypeCallAdapterFactory(),
+                    new UniversalCallAdapterFactory(),
                     new ExtensionConverterFactory());
 
     @Nested

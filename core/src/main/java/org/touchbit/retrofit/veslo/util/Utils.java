@@ -16,12 +16,14 @@
 
 package org.touchbit.retrofit.veslo.util;
 
+import org.touchbit.retrofit.veslo.client.response.IDualResponse;
 import org.touchbit.retrofit.veslo.exception.UtilityClassException;
 import retrofit2.internal.EverythingIsNonNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Objects;
@@ -159,6 +161,14 @@ public class Utils {
                 .map(Object::toString)
                 .collect(Collectors.joining(delimiter))
                 .trim();
+    }
+
+    public static boolean isIDualResponse(final Type type) {
+        if (type instanceof ParameterizedType) {
+            Class<?> rawClass = (Class<?>) ((ParameterizedType) type).getRawType();
+            return IDualResponse.class.isAssignableFrom(rawClass);
+        }
+        return false;
     }
 
 }

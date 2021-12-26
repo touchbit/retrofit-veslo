@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.veslo.example.model.pet.Pet;
 import org.touchbit.retrofit.veslo.example.tests.api.BasePetTest;
 
+import static org.touchbit.retrofit.veslo.example.client.transport.querymap.LoginUserQueryMap.ADMIN;
 import static org.touchbit.retrofit.veslo.example.tests.api.ErrorCodes.code1;
 
 @DisplayName("GetPetById: /v2/pet/{petId}")
@@ -29,7 +30,7 @@ public class GetPetByIdTests extends BasePetTest {
     @Test
     @DisplayName("Successful getting of a pet info using an existing identifier (created pet)")
     public void test1640068360491() {
-        loginTestUser();
+        USER_API.authenticateUser(ADMIN);
         final Pet expected = addRandomPet();
         PET_API.getPetById(expected.id()).assertResponse(asserter -> asserter
                 .assertHttpStatusCodeIs(200)
@@ -39,7 +40,7 @@ public class GetPetByIdTests extends BasePetTest {
     @Test
     @DisplayName("An error is expected when getting a pet by non-existent identifier (-1)")
     public void test1640059907623() {
-        loginTestUser();
+        USER_API.authenticateUser(ADMIN);
         PET_API.getPetById(-1).assertErrResponse(this::assertStatus404, code1("Pet not found"));
     }
 

@@ -20,7 +20,7 @@ import internal.test.utils.asserter.ThrowableRunnable;
 import internal.test.utils.client.TestClientBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.touchbit.retrofit.veslo.client.adapter.DualResponseCallAdapterFactory;
+import org.touchbit.retrofit.veslo.client.adapter.UniversalCallAdapterFactory;
 import org.touchbit.retrofit.veslo.exception.BriefAssertionError;
 import org.touchbit.retrofit.veslo.jackson.JacksonConverterFactory;
 import org.touchbit.retrofit.veslo.jsr.client.JakartaMockClient;
@@ -38,7 +38,7 @@ import static org.hamcrest.Matchers.notNullValue;
 public class BeanValidationTests {
 
     protected static final JakartaMockClient MOCK_CLIENT = TestClientBuilder
-            .build(JakartaMockClient.class, new DualResponseCallAdapterFactory(), new JacksonConverterFactory());
+            .build(JakartaMockClient.class, new UniversalCallAdapterFactory(), new JacksonConverterFactory());
 
     static {
         Locale.setDefault(Locale.ENGLISH);
