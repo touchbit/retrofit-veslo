@@ -1,23 +1,23 @@
 SUPPORTED REQUEST CONVERTERS:
 Annotated converters:
-org.touchbit.retrofit.veslo.BaseCoreUnitTest$TestConverter
+veslo.BaseCoreUnitTest$TestConverter
     internal.test.utils.client.model.TestDTO
     java.lang.Object
 Raw converters:
-org.touchbit.retrofit.veslo.client.converter.defaults.RawBodyTypeConverter
+veslo.client.converter.defaults.RawBodyTypeConverter
     byte[]
     java.io.File
     java.lang.Byte[]
-    org.touchbit.retrofit.veslo.client.model.RawBody
-    org.touchbit.retrofit.veslo.client.model.ResourceFile
+    veslo.client.model.RawBody
+    veslo.client.model.ResourceFile
 Package converters:
-org.touchbit.retrofit.veslo.BaseCoreUnitTest$TestPackageConverter
+veslo.BaseCoreUnitTest$TestPackageConverter
     internal.test.utils.client.model.pack
 Content type converters:
-org.touchbit.retrofit.veslo.BaseCoreUnitTest$TestConverter
+veslo.BaseCoreUnitTest$TestConverter
     text/plain
 Java type converters:
-org.touchbit.retrofit.veslo.client.converter.defaults.JavaPrimitiveTypeConverter
+veslo.client.converter.defaults.JavaPrimitiveTypeConverter
     boolean
     byte
     char
@@ -26,7 +26,7 @@ org.touchbit.retrofit.veslo.client.converter.defaults.JavaPrimitiveTypeConverter
     int
     long
     short
-org.touchbit.retrofit.veslo.client.converter.defaults.JavaReferenceTypeConverter
+veslo.client.converter.defaults.JavaReferenceTypeConverter
     java.lang.Boolean
     java.lang.Byte
     java.lang.Character

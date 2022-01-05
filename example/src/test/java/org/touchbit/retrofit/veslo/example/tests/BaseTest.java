@@ -18,10 +18,6 @@ package org.touchbit.retrofit.veslo.example.tests;
 
 import okhttp3.OkHttpClient;
 import org.junit.jupiter.api.BeforeEach;
-import org.touchbit.retrofit.veslo.allure.AllureCallAdapterFactory;
-import org.touchbit.retrofit.veslo.asserter.HeadersAsserter;
-import org.touchbit.retrofit.veslo.asserter.ResponseAsserter;
-import org.touchbit.retrofit.veslo.asserter.SoftlyAsserter;
 import org.touchbit.retrofit.veslo.example.client.PetApi;
 import org.touchbit.retrofit.veslo.example.client.StoreApi;
 import org.touchbit.retrofit.veslo.example.client.UserApi;
@@ -30,13 +26,17 @@ import org.touchbit.retrofit.veslo.example.client.transport.CustomJacksonConvert
 import org.touchbit.retrofit.veslo.example.client.transport.ExampleCustomResponse;
 import org.touchbit.retrofit.veslo.example.model.Status;
 import retrofit2.Retrofit;
+import veslo.AllureCallAdapterFactory;
+import veslo.asserter.HeadersAsserter;
+import veslo.asserter.ResponseAsserter;
+import veslo.asserter.SoftlyAsserter;
 
 import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.touchbit.retrofit.veslo.client.TrustSocketHelper.*;
+import static veslo.client.TrustSocketHelper.*;
 
-@SuppressWarnings({"SameParameterValue", "unused"})
+@SuppressWarnings({"SameParameterValue", "unused", "ConstantConditions"})
 public class BaseTest {
 
     private static final String URL = System.getProperty("service_url", "https://petstore.swagger.io/");

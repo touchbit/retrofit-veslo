@@ -28,11 +28,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import org.touchbit.retrofit.veslo.asserter.HeadersAsserter;
-import org.touchbit.retrofit.veslo.asserter.ResponseAsserter;
-import org.touchbit.retrofit.veslo.asserter.SoftlyAsserter;
 import org.touchbit.retrofit.veslo.example.model.AssertableModel;
 import org.touchbit.retrofit.veslo.example.model.Status;
+import veslo.asserter.HeadersAsserter;
+import veslo.asserter.ResponseAsserter;
+import veslo.asserter.SoftlyAsserter;
 
 import java.util.List;
 

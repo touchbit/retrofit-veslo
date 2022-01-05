@@ -22,7 +22,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import org.touchbit.retrofit.veslo.asserter.SoftlyAsserter;
+import veslo.asserter.SoftlyAsserter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

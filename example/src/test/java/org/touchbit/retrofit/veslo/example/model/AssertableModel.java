@@ -17,14 +17,14 @@
 package org.touchbit.retrofit.veslo.example.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.touchbit.retrofit.veslo.exception.BriefAssertionError;
-import org.touchbit.retrofit.veslo.jackson.AdditionalProperties;
-import org.touchbit.retrofit.veslo.jackson.JacksonConverter;
-import org.touchbit.retrofit.veslo.jsr.BeanValidation;
+import veslo.BeanValidation;
+import veslo.BriefAssertionError;
+import veslo.JacksonConverter;
+import veslo.JacksonModelAdditionalProperties;
 
 @SuppressWarnings("unchecked")
 public abstract class AssertableModel<DTO>
-        extends AdditionalProperties<DTO>
+        extends JacksonModelAdditionalProperties<DTO>
         implements BeanValidation<DTO> {
 
     public DTO assertNoAdditionalProperties() {

@@ -18,7 +18,7 @@ package org.touchbit.retrofit.veslo.example.client.transport;
 
 import okhttp3.Headers;
 import okhttp3.Request;
-import org.touchbit.retrofit.veslo.client.inteceptor.RequestInterceptAction;
+import veslo.client.inteceptor.RequestInterceptAction;
 
 import javax.annotation.Nonnull;
 

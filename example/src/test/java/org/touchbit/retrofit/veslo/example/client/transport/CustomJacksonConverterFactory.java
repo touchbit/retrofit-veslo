@@ -17,9 +17,9 @@
 package org.touchbit.retrofit.veslo.example.client.transport;
 
 import org.slf4j.LoggerFactory;
-import org.touchbit.retrofit.veslo.client.header.ContentType;
-import org.touchbit.retrofit.veslo.jackson.JacksonConverter;
-import org.touchbit.retrofit.veslo.jackson.JacksonConverterFactory;
+import veslo.JacksonConverter;
+import veslo.JacksonConverterFactory;
+import veslo.client.header.ContentType;
 
 public class CustomJacksonConverterFactory extends JacksonConverterFactory {
 

@@ -17,9 +17,9 @@
 package org.touchbit.retrofit.veslo.example.client.transport;
 
 import org.slf4j.LoggerFactory;
-import org.touchbit.retrofit.veslo.allure.AllureAction;
-import org.touchbit.retrofit.veslo.client.inteceptor.CompositeInterceptor;
-import org.touchbit.retrofit.veslo.client.inteceptor.LoggingAction;
+import veslo.AllureAction;
+import veslo.client.inteceptor.CompositeInterceptor;
+import veslo.client.inteceptor.LoggingAction;
 
 public class CustomCompositeInterceptor extends CompositeInterceptor {
 

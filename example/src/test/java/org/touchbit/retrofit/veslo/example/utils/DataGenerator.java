@@ -20,7 +20,7 @@ import com.github.javafaker.Faker;
 import org.touchbit.retrofit.veslo.example.model.pet.Category;
 import org.touchbit.retrofit.veslo.example.model.pet.Pet;
 import org.touchbit.retrofit.veslo.example.model.pet.Tag;
-import org.touchbit.retrofit.veslo.exception.UtilityClassException;
+import veslo.UtilityClassException;
 
 import java.util.List;
 import java.util.Locale;

@@ -16,7 +16,7 @@
 
 package org.touchbit.retrofit.veslo.example.client.transport;
 
-import org.touchbit.retrofit.veslo.allure.AResponse;
+import veslo.AResponse;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

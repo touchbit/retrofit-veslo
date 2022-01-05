@@ -28,8 +28,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import org.touchbit.retrofit.veslo.asserter.SoftlyAsserter;
 import org.touchbit.retrofit.veslo.example.model.AssertableModel;
+import veslo.asserter.SoftlyAsserter;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 import static org.assertj.core.api.Assertions.assertThat;

@@ -19,7 +19,7 @@ package org.touchbit.retrofit.veslo.example.client.transport.querymap;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.touchbit.retrofit.veslo.client.request.ReflectQueryMap;
+import veslo.client.request.ReflectQueryMap;
 
 @Getter
 @Setter

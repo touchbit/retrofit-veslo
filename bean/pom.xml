@@ -6,7 +6,7 @@
 
     <parent>
         <groupId>org.touchbit.retrofit.veslo</groupId>
-        <artifactId>retrofit-veslo</artifactId>
+        <artifactId>parent-pom</artifactId>
         <version>1.0.0</version>
     </parent>
 
