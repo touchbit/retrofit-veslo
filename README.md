@@ -170,6 +170,7 @@ Built-in Actions:
 - `LoggingAction` - logs request/response or transport error (see logging implementation in the example module)
 - `CookieAction` - managing cookies headers on a thread
 - `AllureAction` - add request/response attachments to step
+![](.doc/img/AllureReportStep.png?raw=true)
 
 ## Request
 
