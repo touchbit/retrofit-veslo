@@ -20,6 +20,7 @@ import io.qameta.allure.Allure;
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import retrofit2.CallAdapter;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
@@ -45,17 +46,19 @@ import java.lang.reflect.Type;
 public class AllureCallAdapterFactory extends UniversalCallAdapterFactory {
 
     public AllureCallAdapterFactory() {
-        super();
+        //noinspection ConstantConditions (idea inspection bug)
+        super(LoggerFactory.getLogger(AllureCallAdapterFactory.class), AResponse::new);
     }
 
     @EverythingIsNonNull
     public AllureCallAdapterFactory(IDualResponseConsumer<IDualResponse<?, ?>> consumer) {
-        super(consumer);
+        super(LoggerFactory.getLogger(AllureCallAdapterFactory.class), consumer);
     }
 
     @EverythingIsNonNull
     public AllureCallAdapterFactory(Logger logger) {
-        super(logger);
+        //noinspection ConstantConditions (idea inspection bug)
+        super(logger, AResponse::new);
     }
 
     @EverythingIsNonNull

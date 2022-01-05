@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package veslo.exaple.dto;
+package veslo.example.dto;
 
 public interface DTO {
 

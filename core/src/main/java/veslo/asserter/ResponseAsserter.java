@@ -19,7 +19,7 @@ package veslo.asserter;
 import retrofit2.internal.EverythingIsNonNull;
 import veslo.BriefAssertionError;
 import veslo.client.response.IDualResponse;
-import veslo.exaple.ExampleApiClientAssertions;
+import veslo.example.ExampleApiClientAssertions;
 import veslo.util.TripleConsumer;
 import veslo.util.Utils;
 

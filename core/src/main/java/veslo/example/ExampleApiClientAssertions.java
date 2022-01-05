@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package veslo.exaple;
+package veslo.example;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -26,11 +26,11 @@ import veslo.client.adapter.UniversalCallAdapterFactory;
 import veslo.client.converter.ExtensionConverterFactory;
 import veslo.client.inteceptor.CompositeInterceptor;
 import veslo.client.inteceptor.LoggingAction;
-import veslo.exaple.dto.ErrDTO;
-import veslo.exaple.dto.SucDTO;
+import veslo.example.dto.ErrDTO;
+import veslo.example.dto.SucDTO;
 
 import static veslo.asserter.AssertionMatcher.is;
-import static veslo.exaple.ExampleApiClientAssertions.Assertions.*;
+import static veslo.example.ExampleApiClientAssertions.Assertions.*;
 
 /**
  * Response assertion examples

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package veslo.exaple;
+package veslo.example;
 
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 import veslo.client.response.DualResponse;
-import veslo.exaple.dto.ErrDTO;
-import veslo.exaple.dto.SucDTO;
+import veslo.example.dto.ErrDTO;
+import veslo.example.dto.SucDTO;
 
 public interface ExampleClient {
 

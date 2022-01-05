@@ -14,27 +14,25 @@
  * limitations under the License.
  */
 
-package veslo.exaple.dto;
+package veslo.example.dto;
 
 import veslo.asserter.AssertionMatcher;
 import veslo.asserter.SoftlyAsserter;
 import veslo.util.ExcludeFromJacocoGeneratedReport;
 
 @ExcludeFromJacocoGeneratedReport()
-public class SucDTO implements DTO {
+public class ErrDTO implements DTO {
 
     public String msg;
 
-    public SucDTO(String msg) {
+    public ErrDTO(String msg) {
         this.msg = msg;
     }
 
-    @Override
     public String getMsg() {
         return msg;
     }
 
-    @Override
     public void setMsg(String msg) {
         this.msg = msg;
     }
@@ -46,15 +44,15 @@ public class SucDTO implements DTO {
         }
     }
 
-    public void assertDTO(SucDTO expected) {
+    public void assertDTO(ErrDTO expected) {
         try (final SoftlyAsserter asserter = SoftlyAsserter.get()) {
-            asserter.softly(() -> AssertionMatcher.is("SucDTO.message", this.msg, expected.msg));
+            asserter.softly(() -> AssertionMatcher.is("ErrDTO.code", this.msg, expected.msg));
         }
     }
 
     @Override
     public String toString() {
-        return "SucDTO{" +
+        return "ErrDTO{" +
                 "msg='" + msg + '\'' +
                 '}';
     }

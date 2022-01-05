@@ -26,8 +26,8 @@ import veslo.BaseCoreUnitTest;
 import veslo.BriefAssertionError;
 import veslo.client.response.DualResponse;
 import veslo.client.response.IDualResponse;
-import veslo.exaple.dto.ErrDTO;
-import veslo.exaple.dto.SucDTO;
+import veslo.example.dto.ErrDTO;
+import veslo.example.dto.SucDTO;
 import veslo.util.TripleConsumer;
 
 import java.util.function.BiConsumer;

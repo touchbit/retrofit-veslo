@@ -27,7 +27,7 @@ import veslo.BaseCoreUnitTest;
 import veslo.client.adapter.UniversalCallAdapterFactory;
 import veslo.client.converter.ExtensionConverterFactory;
 import veslo.client.response.DualResponse;
-import veslo.exaple.ExampleApiClientAssertionsTests;
+import veslo.example.ExampleApiClientAssertionsTests;
 
 import static org.hamcrest.Matchers.is;
 import static veslo.client.request.QueryParameterCaseRule.SNAKE_CASE;

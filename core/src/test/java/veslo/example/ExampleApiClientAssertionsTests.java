@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package veslo.exaple;
+package veslo.example;
 
 import internal.test.utils.CorruptedTestException;
 import internal.test.utils.client.MockInterceptor;
@@ -30,9 +30,9 @@ import veslo.client.converter.ExtensionConverterFactory;
 import veslo.client.converter.api.ExtensionConverter;
 import veslo.client.converter.typed.RawBodyConverter;
 import veslo.client.inteceptor.LoggingAction;
-import veslo.exaple.dto.DTO;
-import veslo.exaple.dto.ErrDTO;
-import veslo.exaple.dto.SucDTO;
+import veslo.example.dto.DTO;
+import veslo.example.dto.ErrDTO;
+import veslo.example.dto.SucDTO;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
