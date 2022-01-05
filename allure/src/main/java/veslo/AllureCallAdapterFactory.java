@@ -21,6 +21,7 @@ import io.qameta.allure.Description;
 import io.qameta.allure.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import retrofit2.Call;
 import retrofit2.CallAdapter;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
@@ -30,6 +31,7 @@ import veslo.client.adapter.UniversalCallAdapterFactory;
 import veslo.client.response.IDualResponse;
 import veslo.util.Utils;
 
+import javax.annotation.Nonnull;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
@@ -78,20 +80,44 @@ public class AllureCallAdapterFactory extends UniversalCallAdapterFactory {
                                            final Annotation[] methodAnnotations,
                                            final Retrofit retrofit) {
         final Step step = Utils.getAnnotation(methodAnnotations, Step.class);
-        final String endpointInfo = getEndpointInfo(methodAnnotations);
         if (step != null) {
             return super.get(returnType, methodAnnotations, retrofit);
         }
-        if (endpointInfo == null || endpointInfo.trim().isEmpty()) {
-            return Allure.step("API call: no description", () -> {
-                Allure.addAttachment("ALLURE_ERROR", "Use annotations to describe the called API method:\n - " +
-                        Description.class + "\n - " + EndpointInfo.class + "\n\n" +
-                        "The @Step annotation value is ignored because it is expected that the step description " +
-                        "will be provided using the aspectj library.");
-                return super.get(returnType, methodAnnotations, retrofit);
-            });
+        final CallAdapter<Object, Object> adapter = super.get(returnType, methodAnnotations, retrofit);
+        if (adapter == null) {
+            throw new ConvertCallException("Missing CallAdapter for model " + returnType);
         }
-        return Allure.step(endpointInfo, () -> super.get(returnType, methodAnnotations, retrofit));
+        return new CallAdapter<Object, Object>() {
+
+            /**
+             * @return see {@link CallAdapter#responseType()}
+             */
+            @Override
+            @Nonnull
+            public Type responseType() {
+                return adapter.responseType();
+            }
+
+            /**
+             * @param call - see {@link Call}
+             * @return see {@link CallAdapter#adapt(Call)}
+             */
+            @Override
+            public Object adapt(final @Nonnull Call<Object> call) {
+                final String endpointInfo = getEndpointInfo(methodAnnotations);
+                if (endpointInfo == null || endpointInfo.trim().isEmpty()) {
+                    return Allure.step("API call: no description", () -> {
+                        Allure.addAttachment("ALLURE_ERROR", "Use annotations to describe the called API method:\n - " +
+                                Description.class + "\n - " + EndpointInfo.class + "\n\n" +
+                                "The @Step annotation value is ignored because it is expected that the step description " +
+                                "will be provided using the aspectj library.");
+                        return adapter.adapt(call);
+                    });
+                } else {
+                    return Allure.step(endpointInfo, () -> adapter.adapt(call));
+                }
+            }
+        };
     }
 
     /**
