@@ -17,25 +17,13 @@
 package org.touchbit.retrofit.veslo.example.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import veslo.BeanValidation;
-import veslo.BriefAssertionError;
+import veslo.BeanValidationModel;
 import veslo.JacksonConverter;
 import veslo.JacksonModelAdditionalProperties;
 
-@SuppressWarnings("unchecked")
 public abstract class AssertableModel<DTO>
         extends JacksonModelAdditionalProperties<DTO>
-        implements BeanValidation<DTO> {
-
-    public DTO assertNoAdditionalProperties() {
-        if (!additionalProperties().isEmpty()) {
-            final String name = this.getClass().getSimpleName();
-            throw new BriefAssertionError("The presence of extra fields in the model: " + name + "\n" +
-                    "Expected: no extra fields\n" +
-                    "  Actual: " + additionalProperties() + "\n");
-        }
-        return (DTO) this;
-    }
+        implements BeanValidationModel<DTO> {
 
     public String toJsonString() {
         try {
@@ -46,6 +34,5 @@ public abstract class AssertableModel<DTO>
             return toString();
         }
     }
-
 
 }
