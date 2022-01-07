@@ -35,10 +35,6 @@
         </license>
     </licenses>
 
-    <prerequisites>
-        <maven>3.0</maven>
-    </prerequisites>
-
     <scm>
         <connection>scm:git@github.com:touchbit/retrofit-veslo.git</connection>
         <developerConnection>scm:git@github.com:touchbit/retrofit-veslo.git</developerConnection>
@@ -216,6 +212,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.0.0</version>
+            </plugin>
             <!-- test phase -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -225,9 +225,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
+            <!-- verify phase -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
             </plugin>
             <!-- install phase -->
             <plugin>
@@ -269,13 +270,13 @@
                     <executions>
                         <execution>
                             <phase>compile</phase>
+                            <configuration>
+                                <source>${jdk.version}</source>
+                                <target>${jdk.version}</target>
+                                <encoding>${source.encoding}</encoding>
+                            </configuration>
                         </execution>
                     </executions>
-                    <configuration>
-                        <source>${jdk.version}</source>
-                        <target>${jdk.version}</target>
-                        <encoding>${source.encoding}</encoding>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -306,6 +307,59 @@
                             <goals>
                                 <goal>report</goal>
                             </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>3.0.0</version>
+                    <executions>
+                        <execution>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>run</goal>
+                            </goals>
+                            <configuration>
+                                <target>
+                                    <copy todir="${project.build.directory}/classes/META-INF">
+                                        <fileset dir="${project.basedir}/../">
+                                            <include name="LICENSE"/>
+                                            <include name="NOTICE"/>
+                                        </fileset>
+                                    </copy>
+                                </target>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>2.0.0</version>
+                    <executions>
+                        <execution>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>aggregate-add-third-party</goal>
+                            </goals>
+                            <configuration>
+                                <thirdPartyFilename>THIRD-PARTY.txt</thirdPartyFilename>
+                                <outputDirectory>${project.basedir}</outputDirectory>
+                                <sortArtifactByName>true</sortArtifactByName>
+                                <excludedScopes>test,provided</excludedScopes>
+                                <excludedArtifacts>
+                                    (hamcrest|mockito.*|log4j.*|javafaker|junit.*|automaton|generex|objenesis|apiguardian-api|opentest4j|snakeyaml|byte-buddy.*)
+                                </excludedArtifacts>
+                                <licenseMerges>
+                                    <licenseMerge>Apache License, Version 2.0|Apache-2.0</licenseMerge>
+                                    <licenseMerge>Apache License, Version 2.0|Apache 2.0</licenseMerge>
+                                    <licenseMerge>Apache License, Version 2.0|Apache License 2.0</licenseMerge>
+                                    <licenseMerge>Apache License, Version 2.0|The Apache License, Version 2.0
+                                    </licenseMerge>
+                                    <licenseMerge>Apache License, Version 2.0|The Apache Software License, Version 2.0
+                                    </licenseMerge>
+                                </licenseMerges>
+                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
@@ -443,11 +497,6 @@
         </profile>
     </profiles>
     <distributionManagement>
-        <snapshotRepository>
-            <id>sonatype</id>
-            <name>Nexus Snapshot Repository</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </snapshotRepository>
         <repository>
             <id>sonatype</id>
             <name>Nexus Release Repository</name>
