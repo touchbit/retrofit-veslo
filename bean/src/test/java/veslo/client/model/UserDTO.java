@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import veslo.BeanValidation;
+import veslo.BeanValidationModel;
 import veslo.JacksonModelAdditionalProperties;
 
 import java.util.function.Function;
@@ -31,7 +31,7 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @JsonAutoDetect(creatorVisibility = ANY, fieldVisibility = ANY)
-public class UserDTO extends JacksonModelAdditionalProperties<UserDTO> implements BeanValidation<UserDTO> {
+public class UserDTO extends JacksonModelAdditionalProperties<UserDTO> implements BeanValidationModel<UserDTO> {
 
     private @NotNull @Size(min = 1, max = 10) String firstName;
 

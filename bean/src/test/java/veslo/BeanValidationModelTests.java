@@ -33,7 +33,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 
 @SuppressWarnings("ConstantConditions")
-public class BeanValidationTests {
+public class BeanValidationModelTests {
 
     protected static final JakartaMockClient MOCK_CLIENT = TestClientBuilder
             .build(JakartaMockClient.class, new UniversalCallAdapterFactory(), new JacksonConverterFactory());

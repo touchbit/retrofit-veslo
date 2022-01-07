@@ -35,7 +35,7 @@ import java.util.logging.Logger;
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 15.11.2021
  */
-public interface BeanValidation<DTO> {
+public interface BeanValidationModel<DTO> {
 
     /**
      * Method provides an easy way of ensuring that the properties of your JavaBean(s)
