@@ -40,12 +40,12 @@
     </prerequisites>
 
     <scm>
-        <connection>scm:git@github.com:touchbit/retrofit-two-model-response-extension.git</connection>
-        <developerConnection>scm:git@github.com:touchbit/retrofit-two-model-response-extension.git</developerConnection>
-        <url>https://github.com/touchbit/retrofit-two-model-response-extension</url>
+        <connection>scm:git@github.com:touchbit/retrofit-veslo.git</connection>
+        <developerConnection>scm:git@github.com:touchbit/retrofit-veslo.git</developerConnection>
+        <url>https://github.com/touchbit/retrofit-veslo</url>
     </scm>
 
-    <url>https://github.com/touchbit/retrofit-two-model-response-extension</url>
+    <url>https://github.com/touchbit/retrofit-veslo</url>
 
     <developers>
         <developer>
@@ -61,12 +61,12 @@
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/touchbit/retrofit-two-model-response-extension/issues</url>
+        <url>https://github.com/touchbit/retrofit-veslo/issues</url>
     </issueManagement>
 
     <ciManagement>
         <system>GitHub Actions</system>
-        <url>https://github.com/touchbit/retrofit-two-model-response-extension/actions</url>
+        <url>https://github.com/touchbit/retrofit-veslo/actions</url>
     </ciManagement>
 
     <properties>
