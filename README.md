@@ -1,25 +1,64 @@
-# Retrofit Veslo
+# Retrofit Veslo<sup>(paddle)</sup>
 
-This library is intended for testing HTTP API.   
-The main task of the library is to provide the ability to work with two models of the response body from the server for
-positive/negative test cases.  
+![](https://img.shields.io/badge/Java-8%2B-blue?style=plastic&logo=java)
+
+- intended for testing HTTP API using the `rertofit2` library;
+- designed to simplify the development of autotests as much as possible to the detriment of some architectural canons
+  and is designed to qualify a strong junior in test automation;
+- designed with the ability to change the current implementation;
+- ready to use project with autotests is presented in the `example` module;
+- if you want to ask how to do something, or to understand why something isn't working the way you expect it to,
+  use [telegram group](https://t.me/veslo_retrofit);
+
+## Prerequisites
+
+**Client**
+
+- choosing a converter by java type, model package name, `Content-Type` header;
+- converters copies the response body instead of reading the `BufferedSource`;
+- selection of the order of actions of the interceptor separately for Request and Response.;
+- logging interceptor for request/response with two `LoggingEvent`, respectively;
+- exclude the need to add self-signed certificates in java keystore;
+
+**Request**
+
+- using `Object` type for request body in API method (dynamic converter selection);
+- reading request body from file;
+- simplified work with @QueryMap (reflection);
+- specifying the converter for the request via the API method annotation;
+
+**Response**
+
+- work with two response models at once for positive/negative tests;
+- built-in softly assertions engine;
+- writing the response body to a file;
+- specifying the converter for the response via the API method annotation;
+
+**Other**
+
+- soft assertions with auto-close and the option to ignore NPE (`SoftlyAsserter`);
+- ability to add soft assertions to the model for further use in `ResponseAsserter`;
+- examples of using soft assertions for response (`ExampleApiClientAssertions`);
+- jakarta java bean validation for any models (`BeanValidation`);
+- base class with addition properties for jackson2 models (`JacksonModelAdditionalProperties`);
+- allure framework support;
+
 Primitive usage example:
 
 ```java
 public static class ExampleTests {
 
-    private static final ExampleClient CLIENT = buildClient();
-
     public interface ExampleClient {
         @POST("/api/example")
-        DualResponse<SuccessDTO, ErrorDTO> get();
+        DualResponse<Pet, Err> get();
     }
 
+    private static final ExampleClient CLIENT = buildClient();
+
     public void test1639328754881() {
-        SuccessDTO expected = new SuccessDTO("example");
-        CLIENT.get()
+        Pet expected = new Pet().name("example");
         //  Response contains built-in soft assertions for checking the status, headers, and body of the response.
-                .assertResponse(respAsserter -> respAsserter
+        CLIENT.get("id_1").assertResponse(respAsserter -> respAsserter
                 .assertHttpStatusCodeIs(200)
                 .assertHttpStatusMessageIs("OK")
                 .assertHeaders(headersAsserter -> headersAsserter
@@ -28,21 +67,21 @@ public static class ExampleTests {
                         .accessControlAllowOriginIs("*"))
                 .assertSucBody((asserter, actual) -> {
                     asserter.softly(actual::assertConsistency);
-                    asserter.softly(() -> is("SuccessDTO.msg", actual.msg, expected.msg));
+                    asserter.softly(() -> is("SuccessDTO.msg", actual.name, expected.name));
                 }));
     }
 }
 ```
 
-All examples below assume the use of the lombok library (for shorthand)
+All examples below assume the use of the lombok library (for shorthand).
 
 ## Modules (org.touchbit.retrofit.veslo)
 
-- **all** - If you are not confused by unnecessary dependencies in the project
-- **jackson** - working with [Jackson2](https://github.com/FasterXML/jackson) data models
-- **gson** - working with [Gson](https://github.com/google/gson) data models
-- **allure** - build-in steps for API calls with request/response attachments.
-- **bean** - data models with built-in JSR 303 bean validation (hibernate validator).
+- **all** - if you are not confused by unnecessary dependencies in the project;
+- **jackson** - working with [Jackson2](https://github.com/FasterXML/jackson) data models;
+- **gson** - working with [Gson](https://github.com/google/gson) data models;
+- **allure** - build-in steps for API calls with request/response attachments;
+- **bean** - data models with built-in JSR 303 bean validation (hibernate validator);
 
 Example:
 
@@ -73,7 +112,7 @@ public class BaseTest {
                 .client(new OkHttpClient.Builder()
                         // Configure this client to follow redirects (HTTP status 301, 302...).
                         .followRedirects(true)
-                        // for test environment
+                        // instead of adding self signed certificates to the keystore (for test environment)
                         .hostnameVerifier(TRUST_ALL_HOSTNAME)
                         .sslSocketFactory(TRUST_ALL_SSL_SOCKET_FACTORY, TRUST_ALL_CERTS_MANAGER)
                         // Interceptor with your call handling rules
@@ -81,7 +120,7 @@ public class BaseTest {
                         .build())
                 .baseUrl("https://petstore.swagger.io/")
                 .addCallAdapterFactory(new AllureCallAdapterFactory()) // for AResponse<> (with allure steps)
-                // .addCallAdapterFactory(new UniversalCallAdapterFactory()) // for DualResponse<>
+                // .addCallAdapterFactory(new UniversalCallAdapterFactory()) // for DualResponse<> (default)
                 .addConverterFactory(new JacksonConverterFactory())
                 // .addConverterFactory(new GsonConverterFactory())
                 .build()
@@ -92,15 +131,17 @@ public class BaseTest {
 
 ## Converters
 
-The mechanism for converting requests and responses is implemented in the class `ExtensionConverterFactory` from which
-the `JacksonConverterFactory` and `GsonConverterFactory`. You can implement your generic factory by analogy.   
-`ExtensionConverterFactory` allows to use convectors according to the rules in sequence:
+The mechanism for choosing the necessary converter for converting requests and responses is implemented in the classes
+`ExtensionConverterFactory`,` JacksonConverterFactory` and `GsonConverterFactory`. The converter is selected in the
+following sequence:
 
-* by annotations: `@ExtensionConverter`, `@RequestConverter`, `@ResponseConverter`;
+* by annotations: `@Converters`, `@RequestConverter`, `@ResponseConverter`;
 * by raw body types (`RawBody`, `File`, `ResourceFile`, `Byte[]`, `byte[]`);
-* by package name (strict match);
+* by models package name (strict match);
 * by Content-Type header (MIME);
 * by primitive/reference java types (`Byte`, `Character`, `Double`, `Float`, `Integer`, `Long`, `Short`, `String`);
+
+You can implement your generic factory by analogy.
 
 ```java
 public class CustomConverterFactory extends ExtensionConverterFactory {
@@ -108,30 +149,33 @@ public class CustomConverterFactory extends ExtensionConverterFactory {
     public CustomConverterFactory() {
         super(LoggerFactory.getLogger(CustomConverterFactory.class));
         final JacksonConverter<Object> jacksonConverter = new JacksonConverter<>();
-        final CustomRawConverter<Object> rawConverter = new CustomRawConverter<>();
+        // use JacksonConverter for application/json, text/json content type
         registerMimeConverter(jacksonConverter, APP_JSON, APP_JSON_UTF8, TEXT_JSON, TEXT_JSON_UTF8);
+        // use JacksonConverter for Map, List java types
         registerJavaTypeConverter(jacksonConverter, Map.class, List.class);
-        registerRawConverter(rawConverter, CustomRawBody.class);
+        // use custom converter for custom model
+        registerRawConverter(new CustomConverter<>(), CustomBody.class);
+        // use GsonConverter for any models in the package "com.example.model.gson" (strict match)
         registerPackageConverter(new GsonConverter(), "com.example.model.gson");
     }
 
 }
 ```
 
-### Register converter by annotation (force)
+### Register converter by annotation
 
 ```java
 public interface PetApi {
 
     @POST("/v2/pet")
     @RequestConverter(bodyClasses = {Pet.class}, converter = JacksonConverter.class)
-    @ResponseConverter(bodyClasses = {Pet.class, Status.class}, converter = JacksonConverter.class)
+    @ResponseConverter(bodyClasses = {Pet.class, Err.class}, converter = JacksonConverter.class)
     // or array of converters
     @Converters(
             request = {@RequestConverter(bodyClasses = Pet.class, converter = JacksonConverter.class)},
-            response = {@ResponseConverter(bodyClasses = {Pet.class, Status.class}, converter = JacksonConverter.class)}
+            response = {@ResponseConverter(bodyClasses = {Pet.class, Err.class}, converter = JacksonConverter.class)}
     )
-    AResponse<Pet, Status> addPet(@Body Object body);
+    AResponse<Pet, Err> addPet(@Body Object body);
 }
 ```
 
@@ -146,12 +190,13 @@ public interface PetApi {
 
 Interceptor allows you to store multiple request, response and exception actions (handlers).   
 The main feature of this interceptor is the ability to control the sequence of Actions calls for requests and responses,
-which is not available in the base retrofit implementation.   
+which is not available in the base retrofit implementation. In other words, you yourself choose the order of the applied
+Actions separately for Request and Response.      
 Action can implement three interfaces:
 
-- `veslo.client.inteceptor.RequestInterceptAction` for processing `okhttp3.Chain` and `okhttp3.Request`
-- `veslo.client.inteceptor.ResponseInterceptAction` for processing `java.lang.Throwable` and `okhttp3.Response`
-- `veslo.client.inteceptor.InterceptAction` extends `RequestInterceptAction` and `ResponseInterceptAction`
+- `RequestInterceptAction` for processing `okhttp3.Chain` and `okhttp3.Request`
+- `ResponseInterceptAction` for processing `okhttp3.Response` and `java.lang.Throwable` (network errors)
+- `InterceptAction` extends `RequestInterceptAction` and `ResponseInterceptAction`
 
 ```java
 public class CustomCompositeInterceptor extends CompositeInterceptor {
@@ -170,29 +215,23 @@ Built-in Actions:
 - `LoggingAction` - logs request/response or transport error (see logging implementation in the example module)
 - `CookieAction` - managing cookies headers on a thread
 - `AllureAction` - add request/response attachments to step
-![](.doc/img/AllureReportStep.png?raw=true)
+  ![](.doc/img/AllureReportStep.png?raw=true)
 
 ## Request
 
 ### ReflectQueryMap
 
+You can create your own simple QueryMap for queries by inheriting from ReflectQueryMap which allows you to read
+key-value pairs from class variables. This mechanism is in addition to the standard reading of parameters from the `Map`
+.
+
 Client for `LoginUserQueryMap` examples
 
 ```java
 public interface UserApi {
-
-    /**
-     * @param queryMap user name & password for login (all required)
-     */
+    
     @GET("/v2/user/login")
-    @Description("Logs user into the system")
-    ExampleCustomResponse<AuthResult, Status> loginUser(@QueryMap() LoginUserQueryMap queryMap);
-
-    default void authenticateUser(LoginUserQueryMap queryMap) {
-        final AuthResult result = loginUser(queryMap)
-                .assertResponse(a -> a.assertHttpStatusCodeIs(200).assertSucBodyNotNull()).getSucDTO();
-        AuthAction.setToken(result.token());
-    }
+    AResponse<Auth, Err> loginUser(@QueryMap() LoginUserQueryMap queryMap);
 
 }
 ```
@@ -218,10 +257,10 @@ public class LoginUserQueryMap extends ReflectQueryMap {
 
 ```java
 
-@QueryMapParameterRules(caseRule = SNAKE_CASE)
+@QueryMapParameterRules(caseRule = SNAKE_CASE) // by rule
 public class LoginUserQueryMap extends ReflectQueryMap {
 
-    @QueryMapParameter(name = "lastName")
+    @QueryMapParameter(name = "lastName") // explicit name
     private Object username;
     // <...>
 }
@@ -231,10 +270,10 @@ public class LoginUserQueryMap extends ReflectQueryMap {
 
 ```java
 
-@QueryMapParameterRules(nullRule = RULE_NULL_MARKER)
+@QueryMapParameterRules(nullRule = RULE_NULL_MARKER) // for all class variables
 public class LoginUserQueryMap extends ReflectQueryMap {
 
-    @QueryMapParameter(nullRule = RULE_EMPTY_STRING)
+    @QueryMapParameter(nullRule = RULE_EMPTY_STRING) // only for a specific variable 
     private Object password;
     // <...>
 }
@@ -257,38 +296,46 @@ public class LoginUserQueryMap extends ReflectQueryMap {
 
 ### Request data model
 
-The current implementation of converters allows you to use Object as a Body, which allows you to pass as a request body
-an object of any type that is supported by `ExtensionConverterFactory`.
+The current implementation of converters allows you to use Object as a @Body, which allows you to send as a request body
+an object of any type that is supported by `GsonConverterFactory` or `JacksonConverterFactory`. The mechanism works for
+any inheritors of the `ExtensionConverterFactory` class.
 
-Client
+**Client**
 
 ```java
 public interface PetApi {
 
     /**
-     * @param body {@link Pet} object that needs to be added to the store (required)
+     * @param body - {@link Pet} object that needs to be added to the store (required)
      */
     @POST("/v2/pet")
     @Headers({"Content-Type: application/json"})
     @Description("Add a new pet to the store")
-    AResponse<Pet, Status> addPet(@Body Object body);
-
+    AResponse<Pet, Err> addPet(@Body Object body);
+//                                   ^^^^^^
 }
 ```
 
-Usage
+**Request body** (jackson/gson converter)
 
 ```java
 public class AddPetTests extends BasePetTest {
+
     @Test
     public void test1640455066880() {
-        PET_API.addPet(new Pet()); // body -> '{}'
+        PET_API.addPet(new Pet().name("fooBar")); // body -> {"name":"fooBar"}
         // or
-        PET_API.addPet("fooBar"); // body -> '"fooBar"'
+        PET_API.addPet("fooBar"); // body -> "fooBar"
         // or
-        PET_API.addPet(true); // body -> 'true'
+        PET_API.addPet(new RawBody("fooBar")); // body -> fooBar
         // or
-        PET_API.addPet(ExtensionConverter.NULL_JSON_VALUE); // body -> 'null'
+        PET_API.addPet(true); // body -> true
+        // or
+        PET_API.addPet(ExtensionConverter.NULL_JSON_VALUE); // body -> null
+        // or
+        PET_API.addPet(new File("src/test/java/transport/data/PetPositive.json")); // body -> <from file>
+        // or
+        PET_API.addPet(new ResourceFile("PetPositive.json")); // body -> <from project resource file>
     }
 }
 ```
