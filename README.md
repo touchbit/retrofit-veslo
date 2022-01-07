@@ -16,7 +16,7 @@
 
 - choosing a converter by java type, model package name, `Content-Type` header;
 - converters copies the response body instead of reading the `BufferedSource`;
-- selection of the order of actions of the interceptor separately for Request and Response.;
+- selection of the order of actions of the interceptor separately for Request and Response;
 - logging interceptor for request/response with two `LoggingEvent`, respectively;
 - exclude the need to add self-signed certificates in java keystore;
 
@@ -39,7 +39,7 @@
 - soft assertions with auto-close and the option to ignore NPE (`SoftlyAsserter`);
 - ability to add soft assertions to the model for further use in `ResponseAsserter`;
 - examples of using soft assertions for response (`ExampleApiClientAssertions`);
-- jakarta java bean validation for any models (`BeanValidation`);
+- jakarta java bean validation for any models (`BeanValidationModel`);
 - base class with addition properties for jackson2 models (`JacksonModelAdditionalProperties`);
 - allure framework support;
 
@@ -67,7 +67,7 @@ public static class ExampleTests {
                         .accessControlAllowOriginIs("*"))
                 .assertSucBody((asserter, actual) -> {
                     asserter.softly(actual::assertConsistency);
-                    asserter.softly(() -> is("SuccessDTO.msg", actual.name, expected.name));
+                    asserter.softly(() -> is("Pet.name", actual.name, expected.name));
                 }));
     }
 }
@@ -229,7 +229,7 @@ Client for `LoginUserQueryMap` examples
 
 ```java
 public interface UserApi {
-    
+
     @GET("/v2/user/login")
     AResponse<Auth, Err> loginUser(@QueryMap() LoginUserQueryMap queryMap);
 
@@ -306,12 +306,12 @@ any inheritors of the `ExtensionConverterFactory` class.
 public interface PetApi {
 
     /**
-     * @param body - {@link Pet} object that needs to be added to the store (required)
+     * @param pet - Pet model that needs to be added to the store (required)
      */
     @POST("/v2/pet")
     @Headers({"Content-Type: application/json"})
     @Description("Add a new pet to the store")
-    AResponse<Pet, Err> addPet(@Body Object body);
+    AResponse<Pet, Err> addPet(@Body Object pet);
 //                                   ^^^^^^
 }
 ```
@@ -340,3 +340,211 @@ public class AddPetTests extends BasePetTest {
 }
 ```
 
+## Response
+
+The response return type can be presented in the client interface in three options
+
+- `Pet getPet(String id);` where `Pet` is a converted response body. If the API call is completed with the unsuccessful
+  HTTP status code, then the method will return `null`.
+- `DualResponse<Pet, Err> getPet(String id);` Where `Pet` is a converted response body in case of success, and `Err` in
+  case of error.
+- `AResponse<Pet, Err> getPet(String id);` The same as `DualResponse` only with the integration with the Allure
+  framework.
+
+`DualResponse` and `AResponse` inherited from `BaseDualResponse` and includes the following methods:
+
+- `assertResponse(Consumer<ASSERTER> respAsserter)` - to check the response;
+- `assertSucResponse(BiConsumer<ASSERTER, SUC_DTO> respAsserter, SUC_DTO expected)` - to check the success response;
+- `assertErrResponse(BiConsumer<ASSERTER, ERR_DTO> respAsserter, ERR_DTO expected)` - to check the error response;
+- `getErrDTO()` - return error response body model (nullable);
+- `getSucDTO()` - return success response body model (nullable);
+- `getEndpointInfo()` - return API method call info;
+- `getResponse()` - return raw `okhttp3.Response` with readable body;
+- `getCallAnnotations()` - return called API method annotations;
+
+Examples of response assertions can be viewed in classes:
+
+- `veslo.example.ExampleApiClientAssertions`
+- `org.touchbit.retrofit.veslo.example.model.pet.Pet`
+- `org.touchbit.retrofit.veslo.example.tests.BaseTest`
+
+For clarity:
+
+```java
+public class ExampleTest {
+    @Test
+    public void test1640068360491() {
+        final Pet expected = addRandomPet();
+        PET_API.getPetById(expected.id()).assertResponse(asserter -> asserter
+                .assertHttpStatusCodeIs(200)
+                .assertSucBody(actual -> actual.assertPet(expected)));
+    }
+
+    @Test
+    public void test1640460353980() {
+        final Pet expected = generatePet();
+        PET_API.addPet(expected).assertSucResponse(Pet::assertPetResponse, expected);
+    }
+
+    @Test
+    public void test1640059907623() {
+        PET_API.getPetById(-1).assertErrResponse(this::assertStatus404, PET_NOT_FOUND);
+    }
+}
+```
+
+### Custom response
+
+`DualResponse` contains built-in asserters that can be expanded and override. To do this, you need to
+implement `IResponseAsserter` and/or `IHeadersAsserter` and create your `CustomResponse` that should be inherited
+from `BaseDualResponse`. For clarity:
+
+![](.doc/img/CustomDualResponse.png?raw=true)
+
+Next, when creating `retrifit` client, you need to explicitly specify which response should be used when creating an
+instance of `IDualResponse`. Example for `new Retrofit.Builder()`:
+
+- `.addCallAdapterFactory(new UniversalCallAdapterFactory(CustomResponse::new))` - for default call adapter factory
+- `.addCallAdapterFactory(new AllureCallAdapterFactory(CustomResponse::new))` - for allure call adapter factory
+
+## Assertions
+
+### HeadersAsserter
+
+Contains general methods for checking the response headers:
+
+- `assertHeaderNotPresent(String headerName)`
+- `assertHeaderIsPresent(String headerName)`
+- `assertHeaderIs(String headerName, String expected)`
+- `assertHeaderContains(String headerName, String expected)`
+
+Provides similar methods for assert headers:
+
+- Access-Control-Allow-Origin
+- Connection
+- Content-Type
+- Etag
+- Keep-Alive
+- Server
+- Set-Cookie
+- Content-Encoding
+- Transfer-Encoding
+- Vary
+
+### ResponseAsserter
+
+Provides methods for checking HTTP status, Successful/Error response body.
+
+Full description of methods looking in the
+class [veslo.asserter.ResponseAsserter](./core/src/main/java/veslo/asserter/ResponseAsserter.java?raw=true)
+
+### SoftlyAsserter
+
+The interface provides the ability to accumulate errors when asserts failed
+
+```java
+public class Pet {
+
+    private Long id;
+    private Category category;
+
+    public void assertPet(Pet expected) {
+        try (SoftlyAsserter asserter = SoftlyAsserter.get()) {
+            asserter.ignoreNPE(true); // ignore NPE if this.category() return null (row 2)
+            asserter.softly(() -> assertThat(this.category()).as("Pet.category").isNotNull()); // 1
+            asserter.softly(() -> this.category().assertCategory(asserter, expected.category())); // 2
+            asserter.softly(() -> assertThat(this.id()).as("Pet.id").isEqualTo(expected.id())); // 3
+        }
+        // auto-closing throw exception if there are errors
+    }
+
+}
+```
+
+## Models
+
+### RawBody
+
+Raw request/response body. Stores the body in the byte representation.   
+It is more suitable for requests violate the contract. For example, broken JSON.   
+Sensitive to `No Content` responses (HTTP status code 204/205)
+Contains built-in checks:
+
+- `assertBodyIsNotNull()`
+- `assertBodyIsNull()`
+- `assertBodyIsNotEmpty()`
+- `assertBodyIsEmpty()`
+- `assertStringBodyContains(String... expectedStrings)`
+- `assertStringBodyContainsIgnoreCase(String... expectedStrings)`
+- `assertStringBodyIs(String expected)`
+- `assertStringBodyIsIgnoreCase(String expected)`
+
+### ResourceFile
+
+Provides the ability to read files from project resources.   
+Added to more convenient use in the API requests.   
+`PET_API.addPet(new ResourceFile("PetPositive.json"));`
+
+### JacksonModelAdditionalProperties
+
+Allows you to handle the case when the response from the server contains extra fields without throwing an error when
+converting (unlike Gson). Contains a method for checking the absence of extra fields `assertNoAdditionalProperties()`.
+
+```java
+public class Pet extends JacksonModelAdditionalProperties<Pet> {
+
+    private Long id;
+
+}
+```
+
+If the contract has changed and a response has come with new fields, then we can clearly check that the response body
+does not contain extra fields without conversion errors.
+
+```text
+The presence of extra fields in the model: Pet
+Expected: no extra fields
+  Actual: {name=Puffy}
+```
+
+It is recommended to move the checks of the contract into separate tests.
+
+```java
+public class AddPetTests {
+
+    @Test
+    @DisplayName("Pet model complies with API contract")
+    public void test1640455066880() {
+        PET_API.addPet(generatePet()).assertResponse(response -> response
+                .assertHttpStatusCodeIs(200)
+                .assertSucBody(Pet::assertNoAdditionalProperties));
+    }
+}
+```
+
+### BeanValidationModel
+
+Inheriting models from this interface allows you to validate data for compliance with a contract using JSR 303
+annotations. Contains method for assert data consistency `assertConsistency()`.   
+It is recommended to move the checks of the contract into separate tests.
+
+```java
+public class AddPetTests {
+
+    @Test
+    @DisplayName("Pet model complies with API contract")
+    public void test1640455066880() {
+        PET_API.addPet(generatePet()).assertResponse(response -> response
+                .assertHttpStatusCodeIs(200)
+                .assertSucBody(Pet::assertConsistency));
+    }
+}
+```
+
+For clarity:
+
+![](.doc/img/BeanValidationExample.png?raw=true)
+
+---
+Retrofit Veslo   
+Copyright 2021-2022 Retrofit Veslo project authors and contributors.
