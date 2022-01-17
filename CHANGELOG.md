@@ -31,4 +31,4 @@ Change Log
 * **New**: `BooleanGsonTypeAdapter` boolean Gson adapter with support for 1/0 values.
 * **New**: `AllureCallAdapterFactory`, `AResponse` module contains inline steps for API calls.
 * **New**: `AllureAction` for `CompositeInterceptor` adds request/response attachments to a step.
-* **New**: `BeanValidation` interface for data models with built-in JSR 303 bean validation (hibernate validator).
+* **New**: `BeanValidation` interface for data models with built-in JSR 303 bean validation (jakarta bean validator).

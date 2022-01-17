@@ -159,7 +159,7 @@ public class DualResponseRetrofitClientUtils {
         }
         return new Retrofit.Builder()
                 .client(new OkHttpClient.Builder()
-                        .addInterceptor(interceptor)
+                        .addNetworkInterceptor(interceptor)
                         .build())
                 .baseUrl(baseUrl)
                 .addCallAdapterFactory(callAdapterFactory)

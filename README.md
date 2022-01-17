@@ -81,7 +81,7 @@ All examples below assume the use of the lombok library (for shorthand).
 - **jackson** - working with [Jackson2](https://github.com/FasterXML/jackson) data models;
 - **gson** - working with [Gson](https://github.com/google/gson) data models;
 - **allure** - build-in steps for API calls with request/response attachments;
-- **bean** - data models with built-in JSR 303 bean validation (hibernate validator);
+- **bean** - data models with built-in JSR 303 bean validation (jakarta bean validator);
 
 Example:
 
@@ -110,17 +110,25 @@ public class BaseTest {
     private static <CLIENT> CLIENT createJacksonClient(final Class<CLIENT> clientClass) {
         return new Retrofit.Builder()
                 .client(new OkHttpClient.Builder()
-                        // Configure this client to follow redirects (HTTP status 301, 302...).
+                        // Configure this client to follow redirects 
+                        // (HTTP status 301, 302...).
                         .followRedirects(true)
-                        // instead of adding self signed certificates to the keystore (for test environment)
+                        // follow redirects (httpS -> http and http -> httpS)
+                        // (for test environment)
+                        .followSslRedirects(true) 
+                        // instead of adding self signed certificates to the keystore 
+                        // (for test environment)
                         .hostnameVerifier(TRUST_ALL_HOSTNAME)
                         .sslSocketFactory(TRUST_ALL_SSL_SOCKET_FACTORY, TRUST_ALL_CERTS_MANAGER)
-                        // Interceptor with your call handling rules
-                        .addInterceptor(new CustomCompositeInterceptor())
+                        // Interceptor with your call handling rules 
+                        // (include `follow redirects`)
+                        .addNetworkInterceptor(new CustomCompositeInterceptor())
                         .build())
                 .baseUrl("https://petstore.swagger.io/")
-                .addCallAdapterFactory(new AllureCallAdapterFactory()) // for AResponse<> (with allure steps)
-                // .addCallAdapterFactory(new UniversalCallAdapterFactory()) // for DualResponse<> (default)
+                // for AResponse<> (with allure steps)
+                .addCallAdapterFactory(new AllureCallAdapterFactory())
+                // for DualResponse<> (default)
+                // .addCallAdapterFactory(new UniversalCallAdapterFactory())
                 .addConverterFactory(new JacksonConverterFactory())
                 // .addConverterFactory(new GsonConverterFactory())
                 .build()
@@ -181,10 +189,14 @@ public interface PetApi {
 
 ### Raw types converters (built-in)
 
-- **RawBodyConverter** - `AResponse<RawBody, ErrorModel> addPet(RawBody body);`
-- **ByteArrayConverter** - `AResponse<Byte[], ErrorModel> addPet(Byte[] body);`
-- **FileConverter** - `AResponse<File, ErrorModel> addPet(File body);`
-- **ResourceFileConverter** - `AResponse<(not allow for response), ErrorModel> addPet(ResourceFile body);`
+- **RawBodyConverter** - `RawBody` request/response bodies
+  `AResponse<RawBody, ErrorModel> addPet(RawBody body);`
+- **ByteArrayConverter** - `Byte[]/byte[]` request/response bodies
+  `AResponse<Byte[], ErrorModel> addPet(Byte[] body);`
+- **FileConverter** - read/write `File` request/response bodies
+  `AResponse<File, ErrorModel> addPet(File body);`
+- **ResourceFileConverter** - read resource `File` request body (not allowed for response body)
+  `AResponse<Pet, ErrorModel> addPet(ResourceFile body);`
 
 ## CompositeInterceptor
 
@@ -298,7 +310,8 @@ public class LoginUserQueryMap extends ReflectQueryMap {
 
 The current implementation of converters allows you to use Object as a @Body, which allows you to send as a request body
 an object of any type that is supported by `GsonConverterFactory` or `JacksonConverterFactory`. The mechanism works for
-any inheritors of the `ExtensionConverterFactory` class.
+any inheritors of the `ExtensionConverterFactory` class. It is important to use the `@Headers` annotation to
+automatically select the correct converter based on the Content-Type header.
 
 **Client**
 

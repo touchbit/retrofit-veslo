@@ -50,7 +50,7 @@ public class ExampleApiClientAssertions {
 
     protected static ExampleClient apiClient = new Retrofit.Builder()
             .client(new OkHttpClient.Builder()
-                    .addInterceptor(new CompositeInterceptor()
+                    .addNetworkInterceptor(new CompositeInterceptor()
                             .withRequestInterceptActionsChain(LoggingAction.INSTANCE)
                             .withResponseInterceptActionsChain(LoggingAction.INSTANCE))
                     .build())

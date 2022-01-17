@@ -47,7 +47,7 @@ public class ExampleApiClientAssertionsTests extends BaseCoreUnitTest {
         factory.registerPackageConverter(new ExampleExtensionConverter(), SucDTO.class);
         ExampleApiClientAssertions.apiClient = new Retrofit.Builder()
                 .client(new OkHttpClient.Builder()
-                        .addInterceptor(new LoggedMockInterceptor())
+                        .addNetworkInterceptor(new LoggedMockInterceptor())
                         .build())
                 .baseUrl("http://localhost")
                 .addCallAdapterFactory(new UniversalCallAdapterFactory())
