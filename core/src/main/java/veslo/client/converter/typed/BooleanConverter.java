@@ -40,6 +40,9 @@ import java.lang.reflect.Type;
  */
 public class BooleanConverter implements ExtensionConverter<Boolean> {
 
+    /**
+     * {@link BooleanConverter} constant
+     */
     public static final BooleanConverter INSTANCE = new BooleanConverter();
 
     /**

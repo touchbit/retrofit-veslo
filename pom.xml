@@ -7,7 +7,6 @@
     <groupId>org.touchbit.retrofit.veslo</groupId>
     <artifactId>parent-pom</artifactId>
     <version>1.0.0</version>
-    <name>Parent pom for Retrofit extensions with two models in response</name>
     <description>
         The extension is intended for API testing.
         Allows you to work with a response from a HTTP-service,

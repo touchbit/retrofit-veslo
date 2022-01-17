@@ -28,6 +28,9 @@ import veslo.client.converter.typed.*;
  */
 public class JavaReferenceTypeConverter extends BaseAggregatedConverter {
 
+    /**
+     * {@link JavaReferenceTypeConverter} constant
+     */
     public static final JavaReferenceTypeConverter INSTANCE = new JavaReferenceTypeConverter();
 
     public JavaReferenceTypeConverter() {

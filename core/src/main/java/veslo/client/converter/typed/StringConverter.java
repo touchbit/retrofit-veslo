@@ -39,6 +39,9 @@ import java.lang.reflect.Type;
  */
 public class StringConverter implements ExtensionConverter<String> {
 
+    /**
+     * {@link StringConverter} constant
+     */
     public static final StringConverter INSTANCE = new StringConverter();
 
     /**

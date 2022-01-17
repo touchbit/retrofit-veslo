@@ -40,6 +40,9 @@ import java.lang.reflect.Type;
  */
 public class ShortConverter implements ExtensionConverter<Short> {
 
+    /**
+     * {@link ShortConverter} constant
+     */
     public static final ShortConverter INSTANCE = new ShortConverter();
 
     /**

@@ -42,6 +42,9 @@ import java.nio.file.Path;
  */
 public class FileConverter implements ExtensionConverter<File> {
 
+    /**
+     * {@link FileConverter} constant
+     */
     public static final FileConverter INSTANCE = new FileConverter();
 
     /**

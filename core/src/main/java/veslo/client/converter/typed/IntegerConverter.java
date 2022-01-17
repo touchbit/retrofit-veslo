@@ -40,6 +40,9 @@ import java.lang.reflect.Type;
  */
 public class IntegerConverter implements ExtensionConverter<Integer> {
 
+    /**
+     * {@link IntegerConverter} constant
+     */
     public static final IntegerConverter INSTANCE = new IntegerConverter();
 
     /**

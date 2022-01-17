@@ -40,6 +40,9 @@ import java.lang.reflect.Type;
  */
 public class RawBodyConverter implements ExtensionConverter<RawBody> {
 
+    /**
+     * {@link RawBodyConverter} constant
+     */
     public static final RawBodyConverter INSTANCE = new RawBodyConverter();
 
     /**

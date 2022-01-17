@@ -40,6 +40,9 @@ import java.lang.reflect.Type;
  */
 public class ByteConverter implements ExtensionConverter<Byte> {
 
+    /**
+     * {@link ByteConverter} constant
+     */
     public static final ByteConverter INSTANCE = new ByteConverter();
 
     /**

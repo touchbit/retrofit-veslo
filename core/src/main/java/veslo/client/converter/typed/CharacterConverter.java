@@ -40,6 +40,9 @@ import java.lang.reflect.Type;
  */
 public class CharacterConverter implements ExtensionConverter<Character> {
 
+    /**
+     * {@link CharacterConverter} constant
+     */
     public static final CharacterConverter INSTANCE = new CharacterConverter();
 
     /**

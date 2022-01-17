@@ -24,23 +24,49 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Jackson model additional properties base class
+ * Allows you to handle the case when the response from the server contains extra fields without throwing an error when
+ * converting (unlike Gson).
+ * Contains a method for checking the absence of extra fields {@link #assertNoAdditionalProperties()}
+ * <p>
+ *
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 17.01.2022
+ */
 @SuppressWarnings({"unused", "unchecked"})
 public abstract class JacksonModelAdditionalProperties<DTO> {
 
+    /**
+     * additional properties map
+     */
     @JsonIgnore
     private final Map<String, Object> additionalProperties = new HashMap<>();
 
+    /**
+     * @return additional properties map
+     */
     @JsonAnyGetter
     public Map<String, Object> additionalProperties() {
         return additionalProperties;
     }
 
+    /**
+     * @param name  - additional property name
+     * @param value - additional property value
+     * @return this
+     */
     @JsonAnySetter
     public DTO additionalProperty(String name, Object value) {
         additionalProperties.put(name, value);
         return (DTO) this;
     }
 
+    /**
+     * Checks for extra fields in the model
+     *
+     * @return this
+     */
     @JsonIgnore
     public DTO assertNoAdditionalProperties() {
         if (!additionalProperties().isEmpty()) {

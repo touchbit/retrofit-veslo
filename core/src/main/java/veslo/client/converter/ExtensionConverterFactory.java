@@ -78,10 +78,21 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     private final Map<Type, ExtensionConverter<?>> javaTypeResponseConverters = new HashMap<>();
     private final Logger logger;
 
+    /**
+     * Default constructor with class logger
+     */
     public ExtensionConverterFactory() {
         this(LoggerFactory.getLogger(ExtensionConverterFactory.class));
     }
 
+    /**
+     * Converter with default converters:
+     * - {@link RawBodyTypeConverter}
+     * - {@link JavaPrimitiveTypeConverter}
+     * - {@link JavaReferenceTypeConverter}
+     *
+     * @param logger - required Slf4J logger
+     */
     public ExtensionConverterFactory(Logger logger) {
         Utils.parameterRequireNonNull(logger, "logger");
         this.logger = logger;

@@ -38,6 +38,9 @@ import java.lang.reflect.Type;
  */
 public class ByteArrayConverter implements ExtensionConverter<Object> {
 
+    /**
+     * {@link ByteArrayConverter} constant
+     */
     public static final ByteArrayConverter INSTANCE = new ByteArrayConverter();
 
     /**

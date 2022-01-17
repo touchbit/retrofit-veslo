@@ -27,6 +27,9 @@ import veslo.client.converter.typed.*;
  */
 public class JavaPrimitiveTypeConverter extends BaseAggregatedConverter {
 
+    /**
+     * {@link JavaPrimitiveTypeConverter} constant
+     */
     public static final JavaPrimitiveTypeConverter INSTANCE = new JavaPrimitiveTypeConverter();
 
     public JavaPrimitiveTypeConverter() {

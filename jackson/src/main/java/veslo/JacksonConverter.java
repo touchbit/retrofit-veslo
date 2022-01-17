@@ -45,10 +45,21 @@ import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 08.11.2021
  */
-public class JacksonConverter<T> implements ExtensionConverter<T> {
+public class JacksonConverter<DTO> implements ExtensionConverter<DTO> {
 
-    public static final JacksonConverter<?> INSTANCE = new JacksonConverter<>();
+    /**
+     * {@link JacksonConverter} constant
+     */
+    public static final JacksonConverter<Object> INSTANCE = new JacksonConverter<>();
+
+    /**
+     * request body serializer
+     */
     private final ObjectMapper requestObjectMapper;
+
+    /**
+     * response body deserializer
+     */
     private final ObjectMapper responseObjectMapper;
 
     /**
@@ -83,6 +94,12 @@ public class JacksonConverter<T> implements ExtensionConverter<T> {
         Utils.parameterRequireNonNull(retrofit, "retrofit");
         return new RequestBodyConverter() {
 
+            /**
+             * Converting DTO model to their HTTP {@link RequestBody} representation
+             *
+             * @param body - DTO model
+             * @return HTTP {@link RequestBody}
+             */
             @Override
             @Nullable
             public RequestBody convert(@Nonnull Object body) {
@@ -112,17 +129,23 @@ public class JacksonConverter<T> implements ExtensionConverter<T> {
      */
     @Override
     @EverythingIsNonNull
-    public ResponseBodyConverter<T> responseBodyConverter(final Type type,
-                                                          final Annotation[] methodAnnotations,
-                                                          final Retrofit retrofit) {
+    public ResponseBodyConverter<DTO> responseBodyConverter(final Type type,
+                                                            final Annotation[] methodAnnotations,
+                                                            final Retrofit retrofit) {
         Utils.parameterRequireNonNull(type, "type");
         Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
         Utils.parameterRequireNonNull(retrofit, "retrofit");
-        return new ResponseBodyConverter<T>() {
+        return new ResponseBodyConverter<DTO>() {
 
+            /**
+             * Converting HTTP {@link ResponseBody} to their {@link DTO} model representation
+             *
+             * @param responseBody - HTTP {@link ResponseBody}
+             * @return {@link DTO} model representation
+             */
             @Override
             @Nullable
-            public T convert(@Nullable ResponseBody responseBody) throws IOException {
+            public DTO convert(@Nullable ResponseBody responseBody) throws IOException {
                 final String body = copyBody(responseBody);
                 if (body == null || body.length() == 0) {
                     return null;
@@ -139,10 +162,16 @@ public class JacksonConverter<T> implements ExtensionConverter<T> {
         };
     }
 
+    /**
+     * @return request body serializer
+     */
     public ObjectMapper getRequestObjectMapper() {
         return requestObjectMapper;
     }
 
+    /**
+     * @return response body deserializer
+     */
     public ObjectMapper getResponseObjectMapper() {
         return responseObjectMapper;
     }

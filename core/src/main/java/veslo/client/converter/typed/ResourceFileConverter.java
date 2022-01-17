@@ -40,6 +40,9 @@ import java.lang.reflect.Type;
  */
 public class ResourceFileConverter implements ExtensionConverter<ResourceFile> {
 
+    /**
+     * {@link ResourceFileConverter} constant
+     */
     public static final ResourceFileConverter INSTANCE = new ResourceFileConverter();
 
     /**

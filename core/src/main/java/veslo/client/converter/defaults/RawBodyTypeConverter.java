@@ -35,6 +35,9 @@ import java.io.File;
  */
 public class RawBodyTypeConverter extends BaseAggregatedConverter {
 
+    /**
+     * {@link RawBodyTypeConverter} constant
+     */
     public static final RawBodyTypeConverter INSTANCE = new RawBodyTypeConverter();
 
     public RawBodyTypeConverter() {

@@ -40,6 +40,9 @@ import java.lang.reflect.Type;
  */
 public class LongConverter implements ExtensionConverter<Long> {
 
+    /**
+     * {@link LongConverter} constant
+     */
     public static final LongConverter INSTANCE = new LongConverter();
 
     /**

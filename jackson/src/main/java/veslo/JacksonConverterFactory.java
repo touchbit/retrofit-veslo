@@ -20,6 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import veslo.client.converter.ExtensionConverterFactory;
 import veslo.client.converter.api.ExtensionConverter;
+import veslo.client.converter.defaults.JavaPrimitiveTypeConverter;
+import veslo.client.converter.defaults.JavaReferenceTypeConverter;
+import veslo.client.converter.defaults.RawBodyTypeConverter;
 import veslo.util.Utils;
 
 import java.util.List;
@@ -36,18 +39,51 @@ import static veslo.client.header.ContentTypeConstants.*;
  */
 public class JacksonConverterFactory extends ExtensionConverterFactory {
 
+    /**
+     * Default constructor with class logger and converters:
+     * - {@link RawBodyTypeConverter}
+     * - {@link JavaPrimitiveTypeConverter}
+     * - {@link JavaReferenceTypeConverter}
+     * - {@link JacksonConverter}
+     */
     public JacksonConverterFactory() {
-        this(LoggerFactory.getLogger(JacksonConverterFactory.class), new JacksonConverter<>());
+        this(LoggerFactory.getLogger(JacksonConverterFactory.class), JacksonConverter.INSTANCE);
     }
 
+    /**
+     * Converter with converters:
+     * - {@link RawBodyTypeConverter}
+     * - {@link JavaPrimitiveTypeConverter}
+     * - {@link JavaReferenceTypeConverter}
+     * - {@link JacksonConverter}
+     *
+     * @param logger - required Slf4J logger
+     */
     public JacksonConverterFactory(Logger logger) {
-        this(logger, new JacksonConverter<>());
+        this(logger, JacksonConverter.INSTANCE);
     }
 
+    /**
+     * Converter with converters:
+     * - {@link RawBodyTypeConverter}
+     * - {@link JavaPrimitiveTypeConverter}
+     * - {@link JavaReferenceTypeConverter}
+     *
+     * @param jacksonConverter - converter for Gson models
+     */
     public JacksonConverterFactory(ExtensionConverter<Object> jacksonConverter) {
         this(LoggerFactory.getLogger(JacksonConverterFactory.class), jacksonConverter);
     }
 
+    /**
+     * Converter with converters:
+     * - {@link RawBodyTypeConverter}
+     * - {@link JavaPrimitiveTypeConverter}
+     * - {@link JavaReferenceTypeConverter}
+     *
+     * @param jacksonConverter - converter for Gson models
+     * @param logger           - required Slf4J logger
+     */
     public JacksonConverterFactory(Logger logger, ExtensionConverter<Object> jacksonConverter) {
         super(logger);
         Utils.parameterRequireNonNull(jacksonConverter, "jacksonConverter");

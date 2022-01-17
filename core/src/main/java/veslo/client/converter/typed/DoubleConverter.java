@@ -40,6 +40,9 @@ import java.lang.reflect.Type;
  */
 public class DoubleConverter implements ExtensionConverter<Double> {
 
+    /**
+     * {@link DoubleConverter} constant
+     */
     public static final DoubleConverter INSTANCE = new DoubleConverter();
 
     /**

@@ -40,6 +40,9 @@ import java.lang.reflect.Type;
  */
 public class FloatConverter implements ExtensionConverter<Float> {
 
+    /**
+     * {@link FloatConverter} constant
+     */
     public static final FloatConverter INSTANCE = new FloatConverter();
 
     /**

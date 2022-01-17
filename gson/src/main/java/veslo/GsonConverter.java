@@ -21,6 +21,7 @@ import com.google.gson.GsonBuilder;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 import veslo.client.converter.api.ExtensionConverter;
@@ -41,24 +42,54 @@ import static com.google.gson.ToNumberPolicy.LONG_OR_DOUBLE;
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 01.12.2021
  */
-public class GsonConverter<T> implements ExtensionConverter<T> {
+public class GsonConverter<DTO> implements ExtensionConverter<DTO> {
 
-    public final Gson requestGson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
-    public final Gson responseGson = new GsonBuilder()
-            .serializeNulls()
-            .setObjectToNumberStrategy(LONG_OR_DOUBLE)
-            .registerTypeAdapter(Boolean.class, new BooleanGsonTypeAdapter())
-            .registerTypeAdapter(boolean.class, new BooleanGsonTypeAdapter())
-            .create();
+    /**
+     * {@link GsonConverter} constant
+     */
+    public static final GsonConverter<Object> INSTANCE = new GsonConverter<>();
 
-    public Gson getRequestGson() {
-        return requestGson;
+    /**
+     * request body serializer
+     */
+    public final Gson requestGson;
+
+    /**
+     * response body deserializer
+     */
+    public final Gson responseGson;
+
+    /**
+     * Default constructor with default request/response jackson object mappers
+     */
+    public GsonConverter() {
+        this(new GsonBuilder().serializeNulls().setPrettyPrinting().create(),
+                new GsonBuilder()
+                        .serializeNulls()
+                        .setObjectToNumberStrategy(LONG_OR_DOUBLE)
+                        .registerTypeAdapter(Boolean.class, new BooleanGsonTypeAdapter())
+                        .registerTypeAdapter(boolean.class, new BooleanGsonTypeAdapter())
+                        .create());
     }
 
-    public Gson getResponseGson() {
-        return responseGson;
+    /**
+     * Default constructor with default request/response jackson object mappers
+     *
+     * @param requestGson  - request body serializer
+     * @param responseGson - response body deserializer
+     */
+    public GsonConverter(Gson requestGson, Gson responseGson) {
+        this.requestGson = requestGson;
+        this.responseGson = responseGson;
     }
 
+    /**
+     * @param type                 - request method body type.
+     * @param parameterAnnotations - API client called method parameters annotations
+     * @param methodAnnotations    - API client called method annotations
+     * @param retrofit             - see {@link Retrofit}
+     * @return {@link Converter}
+     */
     @Override
     @EverythingIsNonNull
     public RequestBodyConverter requestBodyConverter(final Type type,
@@ -67,6 +98,12 @@ public class GsonConverter<T> implements ExtensionConverter<T> {
                                                      final Retrofit retrofit) {
         return new RequestBodyConverter() {
 
+            /**
+             * Converting DTO model to their HTTP {@link RequestBody} representation
+             *
+             * @param body - DTO model
+             * @return HTTP {@link RequestBody}
+             */
             @Override
             @Nullable
             public RequestBody convert(@Nonnull Object body) {
@@ -89,16 +126,28 @@ public class GsonConverter<T> implements ExtensionConverter<T> {
         };
     }
 
+    /**
+     * @param type              - response body type.
+     * @param methodAnnotations - API client called method annotations
+     * @param retrofit          - see {@link Retrofit}
+     * @return {@link Converter}
+     */
     @Override
     @EverythingIsNonNull
-    public ResponseBodyConverter<T> responseBodyConverter(final Type type,
-                                                          final Annotation[] methodAnnotations,
-                                                          final Retrofit retrofit) {
-        return new ResponseBodyConverter<T>() {
+    public ResponseBodyConverter<DTO> responseBodyConverter(final Type type,
+                                                            final Annotation[] methodAnnotations,
+                                                            final Retrofit retrofit) {
+        return new ResponseBodyConverter<DTO>() {
 
+            /**
+             * Converting HTTP {@link ResponseBody} to their {@link DTO} model representation
+             *
+             * @param body - HTTP {@link ResponseBody}
+             * @return {@link DTO} model representation
+             */
             @Override
             @Nullable
-            public T convert(@Nullable ResponseBody body) {
+            public DTO convert(@Nullable ResponseBody body) {
                 if (body == null || body.contentLength() == 0) {
                     return null;
                 }
@@ -116,6 +165,20 @@ public class GsonConverter<T> implements ExtensionConverter<T> {
                 }
             }
         };
+    }
+
+    /**
+     * @return request body serializer
+     */
+    public Gson getRequestGson() {
+        return requestGson;
+    }
+
+    /**
+     * @return response body deserializer
+     */
+    public Gson getResponseGson() {
+        return responseGson;
     }
 
 }
