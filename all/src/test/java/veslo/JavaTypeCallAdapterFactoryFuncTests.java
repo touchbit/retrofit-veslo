@@ -16,7 +16,6 @@
 
 package veslo;
 
-import internal.test.utils.BaseUnitTest;
 import internal.test.utils.asserter.ThrowableRunnable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -36,7 +35,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static veslo.client.converter.api.ExtensionConverter.NULL_BODY_VALUE;
 
 @DisplayName("JavaTypeAdapterFactory functional tests")
-public class JavaTypeCallAdapterFactoryFuncTests extends BaseUnitTest {
+public class JavaTypeCallAdapterFactoryFuncTests extends BaseFuncTest {
 
     private static final String STRING = "string";
     private static final byte[] STRING_BYTES = STRING.getBytes();
@@ -45,12 +44,11 @@ public class JavaTypeCallAdapterFactoryFuncTests extends BaseUnitTest {
     private static final String BLANK_STRING = "    ";
     private static final byte[] BLANK_STRING_BYTES = BLANK_STRING.getBytes();
     private static final String Q_BLANK_STRING = "'" + BLANK_STRING + "'";
-    private static final JavaTypeAdapterFactoryClient CLIENT = DualResponseRetrofitClientUtils
-            .create(JavaTypeAdapterFactoryClient.class,
-                    "http://localhost",
-                    new LoggedMockInterceptor(),
-                    new UniversalCallAdapterFactory(),
-                    new ExtensionConverterFactory());
+    private static final JavaTypeAdapterFactoryClient CLIENT = buildClient(
+            JavaTypeAdapterFactoryClient.class,
+            new LoggedMockInterceptor(),
+            new UniversalCallAdapterFactory(),
+            new ExtensionConverterFactory());
 
     @Nested
     @DisplayName("API method return Raw type")

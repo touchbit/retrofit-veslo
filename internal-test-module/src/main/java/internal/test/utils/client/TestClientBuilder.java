@@ -26,7 +26,7 @@ public class TestClientBuilder {
     public static <CLI> CLI build(Class<CLI> client, CallAdapter.Factory caf, Converter.Factory cf) {
         return new Retrofit.Builder()
                 .client(new OkHttpClient.Builder()
-                        .addNetworkInterceptor(new MockInterceptor())
+                        .addInterceptor(new MockInterceptor())
                         .build())
                 .baseUrl("http://localhost:15425")
                 .addCallAdapterFactory(caf)

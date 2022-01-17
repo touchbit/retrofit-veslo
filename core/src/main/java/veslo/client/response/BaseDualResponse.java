@@ -40,6 +40,13 @@ public abstract class BaseDualResponse<SUC_DTO, ERR_DTO, ASSERTER extends IRespo
     private final Annotation[] callAnnotations;
     private Logger logger = LoggerFactory.getLogger(BaseDualResponse.class);
 
+    /**
+     * @param sucDTO          - nullable success response DTO
+     * @param errDTO          - nullable error response DTO
+     * @param response        - okhttp raw response
+     * @param endpointInfo    - called method info
+     * @param callAnnotations - called method annotations
+     */
     protected BaseDualResponse(final @Nullable SUC_DTO sucDTO,
                                final @Nullable ERR_DTO errDTO,
                                final @Nonnull Response response,

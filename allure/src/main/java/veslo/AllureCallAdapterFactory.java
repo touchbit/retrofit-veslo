@@ -28,6 +28,7 @@ import retrofit2.internal.EverythingIsNonNull;
 import veslo.client.EndpointInfo;
 import veslo.client.adapter.IDualResponseConsumer;
 import veslo.client.adapter.UniversalCallAdapterFactory;
+import veslo.client.response.BaseDualResponse;
 import veslo.client.response.IDualResponse;
 import veslo.util.Utils;
 
@@ -47,22 +48,35 @@ import java.lang.reflect.Type;
  */
 public class AllureCallAdapterFactory extends UniversalCallAdapterFactory {
 
+    /**
+     * Default constructor with {@link AResponse} return type handling
+     */
     public AllureCallAdapterFactory() {
         //noinspection ConstantConditions (idea inspection bug)
         super(LoggerFactory.getLogger(AllureCallAdapterFactory.class), AResponse::new);
     }
 
+    /**
+     * @param consumer - {@link IDualResponseConsumer} for constructor of {@link BaseDualResponse} heirs
+     */
     @EverythingIsNonNull
     public AllureCallAdapterFactory(IDualResponseConsumer<IDualResponse<?, ?>> consumer) {
         super(LoggerFactory.getLogger(AllureCallAdapterFactory.class), consumer);
     }
 
+    /**
+     * @param logger - required Slf4J logger
+     */
     @EverythingIsNonNull
     public AllureCallAdapterFactory(Logger logger) {
         //noinspection ConstantConditions (idea inspection bug)
         super(logger, AResponse::new);
     }
 
+    /**
+     * @param logger   - required Slf4J logger
+     * @param consumer - {@link IDualResponseConsumer} for constructor of {@link BaseDualResponse} heirs
+     */
     @EverythingIsNonNull
     public AllureCallAdapterFactory(Logger logger, IDualResponseConsumer<IDualResponse<?, ?>> consumer) {
         super(logger, consumer);

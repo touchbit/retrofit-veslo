@@ -28,6 +28,13 @@ import java.lang.annotation.Annotation;
 public class DualResponse<SUC_DTO, ERR_DTO>
         extends BaseDualResponse<SUC_DTO, ERR_DTO, ResponseAsserter<SUC_DTO, ERR_DTO, HeadersAsserter>> {
 
+    /**
+     * @param sucDTO          - nullable success response DTO
+     * @param errDTO          - nullable error response DTO
+     * @param response        - okhttp raw response
+     * @param endpointInfo    - called method info
+     * @param callAnnotations - called method annotations
+     */
     public DualResponse(final @Nullable SUC_DTO sucDTO,
                         final @Nullable ERR_DTO errDTO,
                         final @Nonnull Response response,

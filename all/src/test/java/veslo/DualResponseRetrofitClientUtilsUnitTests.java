@@ -73,7 +73,7 @@ public class DualResponseRetrofitClientUtilsUnitTests extends BaseUnitTest {
         public void test1639065953060() {
             final Retrofit retrofit = buildRetrofit(URL, null, CA_FACTORY, EXT_FACTORY);
             final OkHttpClient client = (OkHttpClient) retrofit.callFactory();
-            final List<Interceptor> interceptors = client.interceptors();
+            final List<Interceptor> interceptors = client.networkInterceptors();
             assertThat("", interceptors.size(), is(0));
             assertThat("", retrofit.callAdapterFactories(), hasItem(CA_FACTORY));
             assertThat("", retrofit.converterFactories(), hasItem(EXT_FACTORY));
@@ -84,7 +84,7 @@ public class DualResponseRetrofitClientUtilsUnitTests extends BaseUnitTest {
         public void test1639065953071() {
             final Retrofit retrofit = buildRetrofit(URL, INTERCEPTOR, CA_FACTORY, EXT_FACTORY);
             final OkHttpClient client = (OkHttpClient) retrofit.callFactory();
-            final List<Interceptor> interceptors = client.interceptors();
+            final List<Interceptor> interceptors = client.networkInterceptors();
             assertThat("", interceptors.size(), is(1));
             assertThat("", interceptors.get(0), is(INTERCEPTOR));
             assertThat("", retrofit.callAdapterFactories(), hasItem(CA_FACTORY));
@@ -109,7 +109,7 @@ public class DualResponseRetrofitClientUtilsUnitTests extends BaseUnitTest {
         public void test1639065953096() {
             final Retrofit retrofit = buildRetrofit(URL, EXT_FACTORY);
             final OkHttpClient client = (OkHttpClient) retrofit.callFactory();
-            final List<Interceptor> interceptors = client.interceptors();
+            final List<Interceptor> interceptors = client.networkInterceptors();
             assertThat("", interceptors.size(), is(1));
             assertThat("", interceptors, hasItem(instanceOf(CompositeInterceptor.class)));
             final CompositeInterceptor interceptor = (CompositeInterceptor) interceptors.get(0);
@@ -140,7 +140,7 @@ public class DualResponseRetrofitClientUtilsUnitTests extends BaseUnitTest {
         public void test1639065953127() {
             final Retrofit retrofit = buildGsonRetrofit(URL);
             final OkHttpClient client = (OkHttpClient) retrofit.callFactory();
-            final List<Interceptor> interceptors = client.interceptors();
+            final List<Interceptor> interceptors = client.networkInterceptors();
             assertThat("", interceptors.size(), is(1));
             assertThat("", interceptors, hasItem(instanceOf(CompositeInterceptor.class)));
             final CompositeInterceptor interceptor = (CompositeInterceptor) interceptors.get(0);
@@ -172,7 +172,7 @@ public class DualResponseRetrofitClientUtilsUnitTests extends BaseUnitTest {
         public void test1639065953159() {
             final Retrofit retrofit = buildJacksonRetrofit(URL);
             final OkHttpClient client = (OkHttpClient) retrofit.callFactory();
-            final List<Interceptor> interceptors = client.interceptors();
+            final List<Interceptor> interceptors = client.networkInterceptors();
             assertThat("", interceptors.size(), is(1));
             assertThat("", interceptors, hasItem(instanceOf(CompositeInterceptor.class)));
             final CompositeInterceptor interceptor = (CompositeInterceptor) interceptors.get(0);

@@ -34,6 +34,9 @@ import java.io.IOException;
  */
 public class AllureAction implements InterceptAction {
 
+    /**
+     * {@link AllureAction} constant
+     */
     public static final AllureAction INSTANCE = new AllureAction();
 
     /**

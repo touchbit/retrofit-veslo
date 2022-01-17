@@ -39,7 +39,7 @@ public class ReflectQueryMapFuncTests extends BaseCoreUnitTest {
 
     public static final Client CLIENT = new Retrofit.Builder()
             .client(new OkHttpClient.Builder()
-                    .addNetworkInterceptor(new ExampleApiClientAssertionsTests.LoggedMockInterceptor())
+                    .addInterceptor(new ExampleApiClientAssertionsTests.LoggedMockInterceptor())
                     .build())
             .baseUrl("http://localhost")
             .addCallAdapterFactory(UniversalCallAdapterFactory.INSTANCE)

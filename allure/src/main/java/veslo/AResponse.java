@@ -38,7 +38,11 @@ import java.util.function.Consumer;
 public class AResponse<SUC_DTO, ERR_DTO> extends DualResponse<SUC_DTO, ERR_DTO> {
 
     /**
-     * @see DualResponse
+     * @param sucDTO          - nullable success response DTO
+     * @param errDTO          - nullable error response DTO
+     * @param response        - okhttp raw response
+     * @param endpointInfo    - called method info
+     * @param callAnnotations - called method annotations
      */
     public AResponse(@Nullable SUC_DTO sucDTO,
                      @Nullable ERR_DTO errDTO,

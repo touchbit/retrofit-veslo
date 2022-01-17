@@ -36,7 +36,7 @@ import static veslo.client.converter.api.ExtensionConverter.NULL_BODY_VALUE;
 
 @SuppressWarnings("unused")
 @DisplayName("JavaTypeAdapterFactory functional tests")
-public class UniversalCallAdapterFactoryFuncTests extends BaseUnitTest {
+public class UniversalCallAdapterFactoryFuncTests extends BaseFuncTest {
 
     private static final Byte[] EMPTY_BYTES = new Byte[]{};
     private static final String STRING = "string";
@@ -46,12 +46,11 @@ public class UniversalCallAdapterFactoryFuncTests extends BaseUnitTest {
     private static final String BLANK_STRING = "    ";
     private static final Byte[] BLANK_STRING_BYTES = Utils.toObjectByteArray(BLANK_STRING);
     private static final String Q_BLANK_STRING = "'" + BLANK_STRING + "'";
-    private static final DualResponseAdapterFactoryClient CLIENT = DualResponseRetrofitClientUtils
-            .create(DualResponseAdapterFactoryClient.class,
-                    "http://localhost",
-                    new LoggedMockInterceptor(),
-                    new UniversalCallAdapterFactory(),
-                    new ExtensionConverterFactory());
+    private static final DualResponseAdapterFactoryClient CLIENT = buildClient(
+            DualResponseAdapterFactoryClient.class,
+            new LoggedMockInterceptor(),
+            new UniversalCallAdapterFactory(),
+            new ExtensionConverterFactory());
 
     @Nested
     @DisplayName("API method return Raw type")

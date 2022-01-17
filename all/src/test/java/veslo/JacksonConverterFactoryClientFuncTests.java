@@ -38,7 +38,7 @@ import static org.hamcrest.Matchers.is;
 import static veslo.client.converter.api.ExtensionConverter.NULL_BODY_VALUE;
 
 @DisplayName("JacksonDualConverterFactory.class functional tests")
-public class JacksonConverterFactoryClientFuncTests extends BaseUnitTest {
+public class JacksonConverterFactoryClientFuncTests extends BaseFuncTest {
 
     private static final Byte[] EMPTY_BYTES = new Byte[]{};
     private static final String STRING = "string";
@@ -49,12 +49,11 @@ public class JacksonConverterFactoryClientFuncTests extends BaseUnitTest {
     private static final String BLANK_STRING = "    ";
     private static final String BLANK_JSON_STRING = "\"    \"";
     private static final Byte[] BLANK_STRING_BYTES = Utils.toObjectByteArray(BLANK_STRING);
-    private static final JacksonDualConverterFactoryClient CLIENT = DualResponseRetrofitClientUtils
-            .create(JacksonDualConverterFactoryClient.class,
-                    "http://localhost",
-                    new LoggedMockInterceptor(),
-                    new UniversalCallAdapterFactory(),
-                    new JacksonConverterFactory());
+    private static final JacksonDualConverterFactoryClient CLIENT = buildClient(
+            JacksonDualConverterFactoryClient.class,
+            new LoggedMockInterceptor(),
+            new UniversalCallAdapterFactory(),
+            new JacksonConverterFactory());
 
     @Nested
     @DisplayName("API method return Raw type")
