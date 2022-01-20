@@ -1,16 +1,10 @@
-# Compiled class file
-*.class
-
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
+.git
 .mtj.tmp/
-
-# Package Files #
+target/
+/all/THIRD-PARTY.txt
+*.class
+*.log
+*.ctxt
 *.jar
 *.war
 *.nar
@@ -18,6 +12,21 @@
 *.zip
 *.tar.gz
 *.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+*.iml
+
+# Intellig idea
+# Default ignored files
+/.idea/shelf/
+/.idea/workspace.xml
+# Editor-based HTTP Client requests
+/.idea/httpRequests/
+# Datasource local storage ignored files
+/.idea/dataSources/
+/.idea/dataSources.local.xml
+# other
+/.idea/dictionaries/
+/.idea/inspectionProfiles/
+/.idea/uiDesigner.xml
+/.idea/jarRepositories.xml
+/.idea/codeStyles

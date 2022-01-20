@@ -1,0 +1,45 @@
+<Configuration>
+    <properties>
+        <property name="base.log.pattern">%d{HH:mm:ss.SSS} %-5level - %m%n</property>
+    </properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%m%n" charset="UTF-8"/>
+        </Console>
+        <File name="Framework" fileName="target/logs/Framework.log" append="false">
+            <PatternLayout pattern="${base.log.pattern}" charset="UTF-8"/>
+        </File>
+        <Routing name="Routing">
+            <Routes pattern="$${ctx:log.file.name}">
+                <Route>
+                    <File name="Routing" fileName="target/logs/${ctx:log.file.name}" append="false">
+                        <PatternLayout pattern="${base.log.pattern}" charset="UTF-8"/>
+                    </File>
+                </Route>
+                <!-- The default route, if ${log.file.name} is not present in the ThreadContext. -->
+                <Route key="${ctx:log.file.name}">
+                    <File name="Default routing" fileName="target/logs/default-routing.log" append="false">
+                        <PatternLayout pattern="${base.log.pattern}" charset="UTF-8"/>
+                    </File>
+                </Route>
+            </Routes>
+        </Routing>
+    </Appenders>
+    <Loggers>
+        <Root level="ALL">
+            <AppenderRef ref="Framework" level="ALL"/>
+        </Root>
+        <Logger name="Console" level="ALL" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="Routing" level="ALL" additivity="false">
+            <AppenderRef ref="Routing"/>
+        </Logger>
+        <Logger name="Framework" level="INFO" additivity="false">
+            <AppenderRef ref="Framework"/>
+        </Logger>
+        <Logger name="veslo" level="INFO" additivity="false">
+            <AppenderRef ref="Routing"/>
+        </Logger>
+    </Loggers>
+</Configuration>

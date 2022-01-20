@@ -1,0 +1,38 @@
+SUPPORTED RESPONSE CONVERTERS:
+Annotated converters:
+veslo.BaseCoreUnitTest$TestConverter
+    internal.test.utils.client.model.TestDTO
+    java.lang.Object
+Raw converters:
+veslo.client.converter.defaults.RawBodyTypeConverter
+    byte[]
+    java.io.File
+    java.lang.Byte[]
+    veslo.client.model.RawBody
+    veslo.client.model.ResourceFile
+Package converters:
+veslo.BaseCoreUnitTest$TestPackageConverter
+    internal.test.utils.client.model.pack
+Content type converters:
+veslo.BaseCoreUnitTest$TestConverter
+    text/plain
+Java type converters:
+veslo.client.converter.defaults.JavaPrimitiveTypeConverter
+    boolean
+    byte
+    char
+    double
+    float
+    int
+    long
+    short
+veslo.client.converter.defaults.JavaReferenceTypeConverter
+    java.lang.Boolean
+    java.lang.Byte
+    java.lang.Character
+    java.lang.Double
+    java.lang.Float
+    java.lang.Integer
+    java.lang.Long
+    java.lang.Short
+    java.lang.String
