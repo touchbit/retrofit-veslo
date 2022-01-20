@@ -7,11 +7,9 @@
     <groupId>org.touchbit.retrofit.veslo</groupId>
     <artifactId>parent-pom</artifactId>
     <version>1.0.0</version>
-    <description>
-        The extension is intended for API testing.
-        Allows you to work with a response from a HTTP-service,
-        which contains two data models (DTO) for processing/checking
-        both positive and negative cases when testing the service.
+    <description>The extension is intended for API testing. Allows you to work with a response from a HTTP-service,
+        which contains two data models (DTO) for processing/checking both positive and negative cases when testing the
+        service.
     </description>
     <packaging>pom</packaging>
 
@@ -276,6 +274,32 @@
                             </configuration>
                         </execution>
                     </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.0.0</version>
+                    <configuration>
+                        <archive>
+                            <index>true</index>
+                            <manifestEntries>
+                                <Built-By>Oleg Shaburov</Built-By>
+                                <X-Compile-Source-JDK>${maven.compiler.source}</X-Compile-Source-JDK>
+                                <X-Compile-Target-JDK>${maven.compiler.target}</X-Compile-Target-JDK>
+                                <Implementation-Title>${project.name} (retrofit veslo)</Implementation-Title>
+                                <Implementation-Description>${project.description}</Implementation-Description>
+                                <Implementation-Version>${project.version}</Implementation-Version>
+                                <Implementation-SymbolicName>${project.groupId}.${project.artifactId}
+                                </Implementation-SymbolicName>
+                                <Implementation-Vendor>Oleg Shaburov</Implementation-Vendor>
+                                <Implementation-Vendor-Id>org.touchbit</Implementation-Vendor-Id>
+                                <Implementation-DocURL>https://github.com/touchbit/retrofit-veslo
+                                </Implementation-DocURL>
+                                <Implementation-License>https://www.apache.org/licenses/LICENSE-2.0.txt
+                                </Implementation-License>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
