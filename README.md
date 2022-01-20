@@ -75,6 +75,17 @@ public static class ExampleTests {
 
 All examples below assume the use of the lombok library (for shorthand).
 
+## Build project and run example tests
+
+```bash
+make ex
+# or
+mvn package -DskipTests=true
+cd ./example 
+mvn test -DskipTests=false -Dmaven.test.failure.ignore=true 
+mvn allure:serve
+```
+
 ## Modules (org.touchbit.retrofit.veslo)
 
 - **all** - if you are not confused by unnecessary dependencies in the project;
@@ -344,7 +355,7 @@ public class AddPetTests extends BasePetTest {
         // or
         PET_API.addPet(true); // body -> true
         // or
-        PET_API.addPet(ExtensionConverter.NULL_JSON_VALUE); // body -> null
+        PET_API.addPet(ExtensionConverter.NULL_JSON_VALUE); // body -> <no body>
         // or
         PET_API.addPet(new File("src/test/java/transport/data/PetPositive.json")); // body -> <from file>
         // or

@@ -43,7 +43,6 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 @JsonAutoDetect(creatorVisibility = ANY, fieldVisibility = ANY)
 public class PetIdUploadImageBody extends AssertableModel<PetIdUploadImageBody> {
 
-    @JsonProperty("additionalMetadata")
     private String additionalMetadata = null;
 
     @JsonProperty("file")

@@ -21,12 +21,10 @@ import org.junit.jupiter.api.Test;
 import org.touchbit.retrofit.veslo.example.model.pet.Pet;
 import org.touchbit.retrofit.veslo.example.tests.api.BasePetTest;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.List;
 
 import static org.touchbit.retrofit.veslo.example.client.transport.querymap.LoginUserQueryMap.ADMIN;
 import static org.touchbit.retrofit.veslo.example.tests.api.ErrorCodes.code1;
-import static org.touchbit.retrofit.veslo.example.utils.DataGenerator.generatePet;
 
 @DisplayName("Add pet: POST /v2/pet")
 public class AddPetTests extends BasePetTest {
@@ -35,7 +33,7 @@ public class AddPetTests extends BasePetTest {
     @DisplayName("Checking the Pet model contract (PropertyNamingStrategy.SnakeCaseStrategy)")
     public void test1640455066880() {
         USER_API.authenticateUser(ADMIN);
-        PET_API.addPet(generatePet()).assertResponse(response -> response
+        PET_API.addPet(Pet.generate()).assertResponse(asserter -> asserter
                 .assertHttpStatusCodeIs(200)
                 .assertSucBody(body -> body
                         .assertNoAdditionalProperties()
@@ -46,7 +44,7 @@ public class AddPetTests extends BasePetTest {
     @DisplayName("Successful creating a pet using an existing identifier")
     public void test1640069747665() {
         USER_API.authenticateUser(ADMIN);
-        final Pet expected = generatePet();
+        final Pet expected = Pet.generate();
         PET_API.addPet(expected).assertResponse(asserter -> asserter
                 .assertHttpStatusCodeIs(200)
                 .assertSucBody((softly, act) -> act.assertPet(asserter, expected)));
@@ -56,7 +54,7 @@ public class AddPetTests extends BasePetTest {
     @DisplayName("Successful creating a pet using random identifier")
     public void test1640460353980() {
         USER_API.authenticateUser(ADMIN);
-        final Pet expected = generatePet();
+        final Pet expected = Pet.generate();
         PET_API.addPet(expected).assertSucResponse(Pet::assertPetResponse, expected);
     }
 
@@ -64,7 +62,7 @@ public class AddPetTests extends BasePetTest {
     @DisplayName("An error is expected when creating a pet with a Pet.id of non-Long type")
     public void test1640450206604() {
         USER_API.authenticateUser(ADMIN);
-        final Pet pet = generatePet().id(null).additionalProperty("id", "example");
+        final Pet pet = Pet.generate().id(null).additionalProperty("id", "example");
         PET_API.addPet(pet).assertResponse(asserter -> asserter
                 .assertHttpStatusCodeIs(400)
                 .assertErrBody(this::assertStatusModel, code1("java.lang.NumberFormatException: For input string: \"example\"")));
@@ -74,7 +72,7 @@ public class AddPetTests extends BasePetTest {
     @DisplayName("An error is expected when creating a pet with a non-Pet type object (List)")
     public void test1640452385090() {
         USER_API.authenticateUser(ADMIN);
-        final Set<Pet> pets = Collections.singleton(generatePet());
+        final List<Pet> pets = Pet.generate(1);
         PET_API.addPet(pets).assertResponse(asserter -> asserter
                 .assertHttpStatusCodeIs(400)
                 .assertErrBody(this::assertStatusModel, code1("An object was expected, but an array was received.")));

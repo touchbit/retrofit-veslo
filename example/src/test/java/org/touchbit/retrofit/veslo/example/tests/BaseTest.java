@@ -21,12 +21,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.touchbit.retrofit.veslo.example.client.PetApi;
 import org.touchbit.retrofit.veslo.example.client.StoreApi;
 import org.touchbit.retrofit.veslo.example.client.UserApi;
-import org.touchbit.retrofit.veslo.example.client.transport.CustomCompositeInterceptor;
-import org.touchbit.retrofit.veslo.example.client.transport.CustomJacksonConverterFactory;
-import org.touchbit.retrofit.veslo.example.client.transport.ExampleCustomResponse;
+import org.touchbit.retrofit.veslo.example.client.transport.PetStoreInterceptor;
 import org.touchbit.retrofit.veslo.example.model.Status;
 import retrofit2.Retrofit;
 import veslo.AllureCallAdapterFactory;
+import veslo.JacksonConverterFactory;
 import veslo.asserter.HeadersAsserter;
 import veslo.asserter.ResponseAsserter;
 import veslo.asserter.SoftlyAsserter;
@@ -36,8 +35,8 @@ import java.util.Locale;
 import static org.assertj.core.api.Assertions.assertThat;
 import static veslo.client.TrustSocketHelper.*;
 
-@SuppressWarnings({"SameParameterValue", "unused", "ConstantConditions"})
-public class BaseTest {
+@SuppressWarnings({"SameParameterValue", "unused"})
+public abstract class BaseTest {
 
     private static final String URL = System.getProperty("service_url", "https://petstore.swagger.io/");
     protected static final PetApi PET_API = createJacksonClient(PetApi.class);
@@ -56,11 +55,13 @@ public class BaseTest {
                         .followSslRedirects(true)
                         .hostnameVerifier(TRUST_ALL_HOSTNAME)
                         .sslSocketFactory(TRUST_ALL_SSL_SOCKET_FACTORY, TRUST_ALL_CERTS_MANAGER)
-                        .addNetworkInterceptor(new CustomCompositeInterceptor())
+                        .addNetworkInterceptor(new PetStoreInterceptor())
                         .build())
                 .baseUrl(URL)
-                .addCallAdapterFactory(new AllureCallAdapterFactory(ExampleCustomResponse::new))
-                .addConverterFactory(new CustomJacksonConverterFactory())
+                .addCallAdapterFactory(new AllureCallAdapterFactory())
+//                .addCallAdapterFactory(new AllureCallAdapterFactory(ExampleCustomResponse::new))
+                .addConverterFactory(new JacksonConverterFactory())
+//                .addConverterFactory(new CustomJacksonConverterFactory())
                 .build()
                 .create(clientClass);
     }

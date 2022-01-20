@@ -16,7 +16,10 @@
 
 package org.touchbit.retrofit.veslo.example.utils;
 
+import io.qameta.allure.Allure;
 import io.qameta.allure.junitplatform.AllureJunitPlatform;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.TestWatcher;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.launcher.TestIdentifier;
@@ -25,15 +28,20 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import java.io.File;
-import java.net.URI;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import static org.junit.platform.engine.TestExecutionResult.Status.*;
 
-public final class JunitExecutionListener extends AllureJunitPlatform {
+public final class JunitExecutionListener
+        extends AllureJunitPlatform
+        implements TestWatcher {
 
     public static final Logger CONSOLE_LOG = LoggerFactory.getLogger("Console");
     public static final Logger ROUTING_LOG = LoggerFactory.getLogger("Routing");
+    public static final Logger FRAMEWORK_LOG = LoggerFactory.getLogger("Framework");
 
     static {
         final String userDir = System.getProperty("user.dir");
@@ -60,7 +68,6 @@ public final class JunitExecutionListener extends AllureJunitPlatform {
             } else {
                 ROUTING_LOG.info("Test started: {}", testIdentifier);
             }
-
         }
     }
 
@@ -83,38 +90,69 @@ public final class JunitExecutionListener extends AllureJunitPlatform {
                                 at = "\n  at " + element;
                             }
                         }
-                        final URI testLogFileUri = getTestLogFileUri();
                         if (isIntellijIdeaConsoleJunitRun()) {
-                            CONSOLE_LOG.error("FAILED: {}\n  {}\n  {}{}\n", displayName, testLogFileUri, err, at);
+                            CONSOLE_LOG.error("FAILED: {}\n  {}\n  {}{}\n", displayName, getTestLogFilePath(), err, at);
                         }
                     } else {
                         if (isIntellijIdeaConsoleJunitRun()) {
-                            CONSOLE_LOG.error("FAILED: {}\n  {}\n", displayName, getTestLogFileUri());
+                            CONSOLE_LOG.error("FAILED: {}\n  {}\n", displayName, getTestLogFilePath());
                         }
                     }
                 }
                 if (status == ABORTED) {
                     if (isIntellijIdeaConsoleJunitRun()) {
-                        CONSOLE_LOG.warn("ABORTED: {}\n  {}\n", displayName, getTestLogFileUri());
+                        CONSOLE_LOG.warn("ABORTED: {}\n  {}\n", displayName, getTestLogFilePath());
                     }
-                    ROUTING_LOG.warn("ABORTED: {}\n  {}\n", displayName, getTestLogFileUri());
+                    ROUTING_LOG.warn("ABORTED: {}\n  {}\n", displayName, getTestLogFilePath());
                 }
                 if (status == SUCCESSFUL) {
                     if (isIntellijIdeaConsoleJunitRun()) {
-                        CONSOLE_LOG.info("SUCCESSFUL: {}\n  {}\n", displayName, getTestLogFileUri());
+                        CONSOLE_LOG.info("SUCCESSFUL: {}\n  {}\n", displayName, getTestLogFilePath());
                     }
-                    ROUTING_LOG.info("SUCCESSFUL: {}\n  {}\n", displayName, getTestLogFileUri());
+                    ROUTING_LOG.info("SUCCESSFUL: {}\n  {}\n", displayName, getTestLogFilePath());
                 }
             }
         }
     }
 
-    public static URI getTestLogFileUri() {
+    @Override
+    public void testDisabled(ExtensionContext context, Optional<String> reason) {
+        addTestLogAttachment();
+    }
+
+    @Override
+    public void testSuccessful(ExtensionContext context) {
+        addTestLogAttachment();
+    }
+
+    @Override
+    public void testAborted(ExtensionContext context, Throwable cause) {
+        addTestLogAttachment();
+    }
+
+    @Override
+    public void testFailed(ExtensionContext context, Throwable cause) {
+        addTestLogAttachment();
+    }
+
+    private void addTestLogAttachment() {
+        File testLogAbsoluteFilePath = getTestLogFilePath().toFile();
+        if (testLogAbsoluteFilePath.exists()) {
+            try {
+                InputStream targetStream = new FileInputStream(testLogAbsoluteFilePath);
+                Allure.addAttachment(testLogAbsoluteFilePath.getName(), targetStream);
+            } catch (Exception e) {
+                FRAMEWORK_LOG.error("Failed to add test log file to allure report", e);
+            }
+        }
+    }
+
+    public static Path getTestLogFilePath() {
         String s = MDC.get("log.file.name");
         if (s == null) {
             s = "default-routing.log";
         }
-        return new File("target/logs/", s).toPath().toAbsolutePath().toUri();
+        return new File("target/logs/", s).toPath().toAbsolutePath();
     }
 
     public static void setTestLogFileName(String testLogFileName) {

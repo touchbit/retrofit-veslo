@@ -18,11 +18,11 @@ package org.touchbit.retrofit.veslo.example.client;
 
 import io.qameta.allure.Description;
 import org.touchbit.retrofit.veslo.example.client.transport.AuthAction;
-import org.touchbit.retrofit.veslo.example.client.transport.ExampleCustomResponse;
 import org.touchbit.retrofit.veslo.example.client.transport.querymap.LoginUserQueryMap;
 import org.touchbit.retrofit.veslo.example.model.Status;
 import org.touchbit.retrofit.veslo.example.model.user.User;
 import retrofit2.http.*;
+import veslo.AResponse;
 
 import java.util.List;
 
@@ -34,28 +34,28 @@ public interface UserApi {
      */
     @POST("/v2/user")
     @Description("Creates user")
-    ExampleCustomResponse<User, Status> createUser(@Body Object body);
+    AResponse<User, Status> createUser(@Body Object body);
 
     /**
      * @param body {@link List<User>} of user object (required)
      */
     @POST("/v2/user/createWithList")
     @Description("Creates list of users")
-    ExampleCustomResponse<List<User>, Status> createUsers(@Body Object body);
+    AResponse<List<User>, Status> createUsers(@Body Object body);
 
     /**
      * @param username - {@link String} name that needs to be deleted (required)
      */
     @DELETE("/v2/user/{username}")
     @Description("Delete user")
-    ExampleCustomResponse<Status, Status> deleteUser(@Path("username") Object username);
+    AResponse<Status, Status> deleteUser(@Path("username") Object username);
 
     /**
      * @param username {@link String} name that needs to be fetched. Use user1 for testing.  (required)
      */
     @GET("/v2/user/{username}")
     @Description("Get user by user name")
-    ExampleCustomResponse<User, Status> getUserByName(@Path("username") Object username);
+    AResponse<User, Status> getUserByName(@Path("username") Object username);
 
     /**
      * @param username {@link String} user name for login (required)
@@ -63,14 +63,14 @@ public interface UserApi {
      */
     @GET("/v2/user/login")
     @Description("Logs user into the system")
-    ExampleCustomResponse<Status, Status> loginUser(@Query("username") Object username, @Query("password") Object password);
+    AResponse<Status, Status> loginUser(@Query("username") Object username, @Query("password") Object password);
 
     /**
      * @param queryMap user name & password for login (all required)
      */
     @GET("/v2/user/login")
     @Description("Logs user into the system")
-    ExampleCustomResponse<Status, Status> loginUser(@QueryMap() LoginUserQueryMap queryMap);
+    AResponse<Status, Status> loginUser(@QueryMap() LoginUserQueryMap queryMap);
 
     /**
      * authenticate user and set authorisation header
@@ -93,7 +93,7 @@ public interface UserApi {
 
     @GET("/v2/user/logout")
     @Description("Logs out current logged in user session")
-    ExampleCustomResponse<Status, Status> logoutUser();
+    AResponse<Status, Status> logoutUser();
 
     /**
      * @param body     Updated {@link User} object (required)
@@ -101,6 +101,6 @@ public interface UserApi {
      */
     @PUT("/v2/user/{username}")
     @Description("Update user by username")
-    ExampleCustomResponse<User, Status> updateUser(@Body Object body, @Path("username") Object username);
+    AResponse<User, Status> updateUser(@Body Object body, @Path("username") Object username);
 
 }

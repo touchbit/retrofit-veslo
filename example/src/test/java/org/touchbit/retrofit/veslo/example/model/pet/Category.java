@@ -17,7 +17,6 @@
 package org.touchbit.retrofit.veslo.example.model.pet;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.Min;
@@ -29,10 +28,15 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.touchbit.retrofit.veslo.example.model.AssertableModel;
+import org.touchbit.retrofit.veslo.example.utils.Generator;
 import veslo.asserter.SoftlyAsserter;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.touchbit.retrofit.veslo.example.utils.StreamUtils.rangeStreamMap;
 
 /**
  * Category
@@ -46,11 +50,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 @JsonAutoDetect(creatorVisibility = ANY, fieldVisibility = ANY)
 public class Category extends AssertableModel<Category> {
 
-    @JsonProperty("id")
     private @NotNull @Min(0) Long id = null;
-
-    @JsonProperty("name")
     private @Size(min = 1, max = 255) String name = null;
+
+    public static List<Category> generate(int count) {
+        return rangeStreamMap(count, Category::generate).collect(Collectors.toList());
+    }
+
+    public static Category generate() {
+        return new Category()
+                .id(Generator.positiveLong())
+                .name(Generator.alphabetical(10));
+    }
 
     public void assertCategory(SoftlyAsserter asserter, Category expected) {
         asserter.ignoreNPE(true);

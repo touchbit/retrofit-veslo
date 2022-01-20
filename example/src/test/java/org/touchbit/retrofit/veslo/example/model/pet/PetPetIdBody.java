@@ -17,7 +17,6 @@
 package org.touchbit.retrofit.veslo.example.model.pet;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.EqualsAndHashCode;
@@ -41,10 +40,7 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 @JsonAutoDetect(creatorVisibility = ANY, fieldVisibility = ANY)
 public class PetPetIdBody extends AssertableModel<PetPetIdBody> {
 
-    @JsonProperty("name")
     private String name = null;
-
-    @JsonProperty("status")
     private String status = null;
 
 }

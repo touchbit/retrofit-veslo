@@ -23,8 +23,6 @@ import org.touchbit.retrofit.veslo.example.tests.BaseTest;
 import java.util.Collections;
 import java.util.List;
 
-import static org.touchbit.retrofit.veslo.example.utils.DataGenerator.generatePet;
-
 public abstract class BasePetTest extends BaseTest {
 
     /**
@@ -33,7 +31,7 @@ public abstract class BasePetTest extends BaseTest {
      * @return generated {@link Pet} (added to the system)
      */
     public static Pet addRandomPet() {
-        final Pet gen = generatePet();
+        final Pet gen = Pet.generate();
         return PET_API.addPet(gen).assertResponse(respAsserter -> respAsserter
                         .assertHttpStatusCodeIs(200)
                         .assertSucBody(Pet::assertConsistency))
@@ -45,7 +43,7 @@ public abstract class BasePetTest extends BaseTest {
      *
      * @return existing {@link Pet} with random {@link PetStatus}
      */
-    protected static Pet findRandomPet() {
+    public static Pet findRandomPet() {
         return findRandomPet(PetStatus.values());
     }
 
@@ -55,7 +53,7 @@ public abstract class BasePetTest extends BaseTest {
      * @param statuses expected {@link PetStatus} array
      * @return existing {@link Pet} with specifying {@link PetStatus} array
      */
-    protected static Pet findRandomPet(PetStatus... statuses) {
+    public static Pet findRandomPet(PetStatus... statuses) {
         final List<Pet> list = PET_API.findPetsByStatus((Object[]) statuses)
                 .assertResponse(respAsserter -> respAsserter
                         .assertHttpStatusCodeIs(200)

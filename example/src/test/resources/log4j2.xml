@@ -35,7 +35,7 @@
         <Logger name="Routing" level="ALL" additivity="false">
             <AppenderRef ref="Routing"/>
         </Logger>
-        <Logger name="Framework" level="DEBUG" additivity="false">
+        <Logger name="Framework" level="INFO" additivity="false">
             <AppenderRef ref="Framework"/>
         </Logger>
         <Logger name="veslo" level="INFO" additivity="false">

@@ -292,13 +292,9 @@ public class JacksonConverterFactoryClientFuncTests extends BaseFuncTest {
         public void test1639150463762() {
             assertThrow(() -> CLIENT.returnListJacksonModel(OK, BLANK_STRING))
                     .assertClass(ConvertCallException.class)
-                    .assertMessageIs("\n" +
+                    .assertMessageContains("\n" +
                             "Response body not convertible to type " +
-                            "java.util.List<veslo.client.jackson.SucDTO>\n" +
-                            "Cannot deserialize instance of " +
-                            "`java.util.ArrayList<veslo.client.jackson.SucDTO>` " +
-                            "out of VALUE_STRING token\n" +
-                            " at [Source: (String)\"\"    \"\"; line: 1, column: 1]");
+                            "java.util.List<veslo.client.jackson.SucDTO>\n");
         }
 
         @Test
@@ -535,13 +531,12 @@ public class JacksonConverterFactoryClientFuncTests extends BaseFuncTest {
         }
 
         @Test
-        @DisplayName("Character: ConvertCallException if body = <blank string>")
+        @DisplayName("Character: return null if body is empty = <blank string>")
         public void test1639065953519() {
-            assertThrow(() -> CLIENT.returnCharacter(OK, BLANK_STRING))
-                    .assertClass(ConvertCallException.class)
-                    .assertMessageIs("\nResponse body not convertible to type class java.lang.Character\n" +
-                            "Cannot deserialize instance of `java.lang.Character` out of VALUE_STRING token\n" +
-                            " at [Source: (String)\"\"    \"\"; line: 1, column: 1]");
+            CLIENT.returnCharacter(OK, BLANK_STRING).assertResponse(asserter -> asserter
+                    .assertHttpStatusCodeIs(OK)
+                    .assertSucBodyIsNull()
+                    .assertErrBodyIsNull());
         }
 
         @Test

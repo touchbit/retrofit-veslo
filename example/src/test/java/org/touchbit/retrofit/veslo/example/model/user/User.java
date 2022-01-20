@@ -17,7 +17,6 @@
 package org.touchbit.retrofit.veslo.example.model.user;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.EqualsAndHashCode;
@@ -41,28 +40,13 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 @JsonAutoDetect(creatorVisibility = ANY, fieldVisibility = ANY)
 public class User extends AssertableModel<User> {
 
-    @JsonProperty("id")
     private Long id = null;
-
-    @JsonProperty("username")
     private String username = null;
-
-    @JsonProperty("firstName")
     private String firstName = null;
-
-    @JsonProperty("lastName")
     private String lastName = null;
-
-    @JsonProperty("email")
     private String email = null;
-
-    @JsonProperty("password")
     private String password = null;
-
-    @JsonProperty("phone")
     private String phone = null;
-
-    @JsonProperty("userStatus")
     private Integer userStatus = null;
 
 }

@@ -30,14 +30,17 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.touchbit.retrofit.veslo.example.model.AssertableModel;
 import org.touchbit.retrofit.veslo.example.model.Status;
+import org.touchbit.retrofit.veslo.example.utils.Generator;
 import veslo.asserter.HeadersAsserter;
 import veslo.asserter.ResponseAsserter;
 import veslo.asserter.SoftlyAsserter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.touchbit.retrofit.veslo.example.utils.StreamUtils.rangeStreamMap;
 
 /**
  * Pet
@@ -58,9 +61,22 @@ public class Pet extends AssertableModel<Pet> {
     private @NotNull @Size(max = 10) List<@Valid Tag> tags;
     private PetStatus status;
 
+    public static List<Pet> generate(int count) {
+        return rangeStreamMap(count, Pet::generate).collect(Collectors.toList());
+    }
+
+    public static Pet generate() {
+        return new Pet()
+                .id(Generator.positiveLong())
+                .name(Generator.animalName())
+                .photoUrls(Generator.urls(1))
+                .tags(Tag.generate(2))
+                .category(Category.generate());
+    }
+
     public static void assertPetResponse(ResponseAsserter<Pet, Status, HeadersAsserter> asserter, Pet expected) {
         asserter.assertHttpStatusCodeIs(200)
-                .assertSucBody((softly, act) -> act.assertPet(asserter, expected)); // first use case
+                .assertSucBody((softly, act) -> act.assertPet(softly, expected)); // first use case
 //              .assertSucBody(pet -> pet.assertPet(expected)); // second use case
     }
 
@@ -76,13 +92,7 @@ public class Pet extends AssertableModel<Pet> {
 
     public void assertPet(Pet expected) {
         try (SoftlyAsserter asserter = SoftlyAsserter.get()) {
-            asserter.ignoreNPE(true);
-            asserter.softly(() -> assertThat(this.id()).as("Pet.id").isEqualTo(expected.id()));
-            asserter.softly(() -> assertThat(this.name()).as("Pet.name").isEqualTo(expected.name()));
-            asserter.softly(() -> assertThat(this.photoUrls()).as("Pet.photoUrls").isEqualTo(expected.photoUrls()));
-            asserter.softly(() -> assertThat(this.tags()).as("Pet.tags").containsAll(expected.tags()));
-            asserter.softly(() -> assertThat(this.category()).as("Pet.category").isNotNull());
-            asserter.softly(() -> this.category().assertCategory(asserter, expected.category()));
+            assertPet(asserter, expected);
         }
     }
 

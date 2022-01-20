@@ -17,7 +17,6 @@
 package org.touchbit.retrofit.veslo.example.model.store;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.EqualsAndHashCode;
@@ -43,16 +42,9 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 @JsonAutoDetect(creatorVisibility = ANY, fieldVisibility = ANY)
 public class Order extends AssertableModel<Order> {
 
-    @JsonProperty("id")
     private Long id = null;
-
-    @JsonProperty("petId")
     private Long petId = null;
-
-    @JsonProperty("quantity")
     private Integer quantity = null;
-
-    @JsonProperty("shipDate")
     private OffsetDateTime shipDate = null;
 
 }

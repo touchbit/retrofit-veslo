@@ -19,14 +19,15 @@ package org.touchbit.retrofit.veslo.example.client.transport;
 import org.slf4j.LoggerFactory;
 import veslo.AllureAction;
 import veslo.client.inteceptor.CompositeInterceptor;
+import veslo.client.inteceptor.CookieAction;
 import veslo.client.inteceptor.LoggingAction;
 
-public class CustomCompositeInterceptor extends CompositeInterceptor {
+public class PetStoreInterceptor extends CompositeInterceptor {
 
-    public CustomCompositeInterceptor() {
-        super(LoggerFactory.getLogger(CustomCompositeInterceptor.class));
-        withRequestInterceptActionsChain(AuthAction.INSTANCE, LoggingAction.INSTANCE, AllureAction.INSTANCE);
-        withResponseInterceptActionsChain(LoggingAction.INSTANCE, AllureAction.INSTANCE);
+    public PetStoreInterceptor() {
+        super(LoggerFactory.getLogger(PetStoreInterceptor.class));
+        withRequestInterceptActionsChain(CookieAction.INSTANCE, AuthAction.INSTANCE, LoggingAction.INSTANCE, AllureAction.INSTANCE);
+        withResponseInterceptActionsChain(LoggingAction.INSTANCE, AllureAction.INSTANCE, CookieAction.INSTANCE);
     }
 
 }

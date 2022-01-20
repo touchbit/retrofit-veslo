@@ -32,4 +32,8 @@ public class ExampleCustomResponse<SUC_DTO, ERR_DTO> extends AResponse<SUC_DTO, 
         super(sucDTO, errDTO, response, endpointInfo, callAnnotations);
     }
 
+    public void someMethod() {
+        // do nothing
+    }
+
 }

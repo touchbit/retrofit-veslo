@@ -36,8 +36,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Accessors(chain = true, fluent = true)
 public class Status extends AssertableModel<Status> {
 
-//    public static final Status a = new Status().code(200).type("unknown").message(message == null ? null : String.valueOf(message))
-
     @JsonProperty("code")
     private Integer code = null;
 

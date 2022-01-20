@@ -19,11 +19,17 @@ package org.touchbit.retrofit.veslo.example.client.transport.querymap;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import veslo.client.request.QueryMapParameterRules;
 import veslo.client.request.ReflectQueryMap;
+
+import static veslo.client.request.QueryParameterCaseRule.CAMEL_CASE;
+import static veslo.client.request.QueryParameterNullValueRule.RULE_IGNORE;
 
 @Getter
 @Setter
 @Accessors(chain = true, fluent = true)
+// for example
+@QueryMapParameterRules(nullRule = RULE_IGNORE, caseRule = CAMEL_CASE)
 public class LoginUserQueryMap extends ReflectQueryMap {
 
     public static final LoginUserQueryMap ADMIN = new LoginUserQueryMap().username("test").password("abc123");
