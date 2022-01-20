@@ -29,7 +29,6 @@
       <module name="dual-response-util" target="1.8" />
       <module name="jackson-dual-response" target="1.8" />
       <module name="retrofit-dual-response-extension" target="1.8" />
-      <module name="retrofit-veslo" target="1.8" />
       <module name="util-dual-response" target="1.8" />
       <module name="veslo" target="1.8" />
     </bytecodeTargetLevel>
