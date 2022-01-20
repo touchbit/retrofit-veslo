@@ -7,10 +7,8 @@
     <groupId>org.touchbit.retrofit.veslo</groupId>
     <artifactId>parent-pom</artifactId>
     <version>1.0.0</version>
-    <description>The extension is intended for API testing. Allows you to work with a response from a HTTP-service,
-        which contains two data models (DTO) for processing/checking both positive and negative cases when testing the
-        service.
-    </description>
+    <name>Retrofit extension for testing</name>
+    <description>The extension is intended for API testing. Allows you to work with a response from a HTTP-service, which contains two data models (DTO) for processing/checking both positive and negative cases when testing the service.</description>
     <packaging>pom</packaging>
 
     <modules>
@@ -287,16 +285,13 @@
                                 <X-Compile-Source-JDK>${maven.compiler.source}</X-Compile-Source-JDK>
                                 <X-Compile-Target-JDK>${maven.compiler.target}</X-Compile-Target-JDK>
                                 <Implementation-Title>${project.name} (retrofit veslo)</Implementation-Title>
-                                <Implementation-Description>${project.description}</Implementation-Description>
                                 <Implementation-Version>${project.version}</Implementation-Version>
-                                <Implementation-SymbolicName>${project.groupId}.${project.artifactId}
-                                </Implementation-SymbolicName>
+                                <Implementation-SymbolicName>${project.groupId}.${project.artifactId}</Implementation-SymbolicName>
                                 <Implementation-Vendor>Oleg Shaburov</Implementation-Vendor>
                                 <Implementation-Vendor-Id>org.touchbit</Implementation-Vendor-Id>
-                                <Implementation-DocURL>https://github.com/touchbit/retrofit-veslo
-                                </Implementation-DocURL>
-                                <Implementation-License>https://www.apache.org/licenses/LICENSE-2.0.txt
-                                </Implementation-License>
+                                <Implementation-DocURL>https://github.com/touchbit/retrofit-veslo</Implementation-DocURL>
+                                <Implementation-License>https://www.apache.org/licenses/LICENSE-2.0.txt</Implementation-License>
+                                <Implementation-Description>${project.description}</Implementation-Description>
                             </manifestEntries>
                         </archive>
                     </configuration>
@@ -370,17 +365,13 @@
                                 <outputDirectory>${project.basedir}</outputDirectory>
                                 <sortArtifactByName>true</sortArtifactByName>
                                 <excludedScopes>test,provided</excludedScopes>
-                                <excludedArtifacts>
-                                    (hamcrest|mockito.*|log4j.*|javafaker|junit.*|automaton|generex|objenesis|apiguardian-api|opentest4j|snakeyaml|byte-buddy.*)
-                                </excludedArtifacts>
+                                <excludedArtifacts>(hamcrest|mockito.*|log4j.*|javafaker|junit.*|automaton|generex|objenesis|apiguardian-api|opentest4j|snakeyaml|byte-buddy.*)</excludedArtifacts>
                                 <licenseMerges>
                                     <licenseMerge>Apache License, Version 2.0|Apache-2.0</licenseMerge>
                                     <licenseMerge>Apache License, Version 2.0|Apache 2.0</licenseMerge>
                                     <licenseMerge>Apache License, Version 2.0|Apache License 2.0</licenseMerge>
-                                    <licenseMerge>Apache License, Version 2.0|The Apache License, Version 2.0
-                                    </licenseMerge>
-                                    <licenseMerge>Apache License, Version 2.0|The Apache Software License, Version 2.0
-                                    </licenseMerge>
+                                    <licenseMerge>Apache License, Version 2.0|The Apache License, Version 2.0</licenseMerge>
+                                    <licenseMerge>Apache License, Version 2.0|The Apache Software License, Version 2.0</licenseMerge>
                                 </licenseMerges>
                             </configuration>
                         </execution>
