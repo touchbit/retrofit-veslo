@@ -1,6 +1,7 @@
 # Retrofit Veslo<sup>(paddle)</sup>
 
 ![](https://img.shields.io/badge/Java-8%2B-blue?style=plastic&logo=java)
+![](https://maven-badges.herokuapp.com/maven-central/org.touchbit.retrofit.veslo/parent-pom/badge.svg?style=plastic)
 
 - intended for testing HTTP API using the `rertofit2` library;
 - designed to simplify the development of autotests as much as possible to the detriment of some architectural canons
@@ -49,7 +50,7 @@ Primitive usage example:
 public static class ExampleTests {
 
     public interface ExampleClient {
-        @POST("/api/example")
+        @GET("/api/example")
         DualResponse<Pet, Err> get();
     }
 
