@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Shaburov Oleg
+ * Copyright 2021-2022 Shaburov Oleg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,30 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import veslo.BeanValidationModel;
 import veslo.JacksonConverter;
 import veslo.JacksonModelAdditionalProperties;
+import veslo.asserter.SoftlyAsserter;
 
+@SuppressWarnings("unchecked")
 public abstract class AssertableModel<DTO>
         extends JacksonModelAdditionalProperties<DTO>
         implements BeanValidationModel<DTO> {
+
+    public abstract DTO match(SoftlyAsserter asserter, String parentName, DTO expected);
+
+    public DTO match(SoftlyAsserter asserter, DTO expected) {
+        return match(asserter, "", expected);
+    }
+
+    public DTO match(DTO expected) {
+        return match("", expected);
+    }
+
+    public DTO match(String parentName, DTO expected) {
+        try (SoftlyAsserter asserter = SoftlyAsserter.get()) {
+            asserter.ignoreNPE(true);
+            match(asserter, parentName, expected);
+        }
+        return (DTO) this;
+    }
 
     public String toJsonString() {
         try {
@@ -33,6 +53,13 @@ public abstract class AssertableModel<DTO>
         } catch (JsonProcessingException ignore) {
             return toString();
         }
+    }
+
+    protected String getName(String parentName, String name) {
+        if (parentName == null || parentName.isEmpty()) {
+            return name;
+        }
+        return parentName + "." + name;
     }
 
 }

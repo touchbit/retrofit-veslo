@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Shaburov Oleg
+ * Copyright 2021-2022 Shaburov Oleg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package org.touchbit.retrofit.veslo.example.client;
 
 import io.qameta.allure.Description;
-import org.touchbit.retrofit.veslo.example.client.transport.AuthAction;
+import org.touchbit.retrofit.veslo.example.client.transport.PetStoreAuthAction;
 import org.touchbit.retrofit.veslo.example.client.transport.querymap.LoginUserQueryMap;
 import org.touchbit.retrofit.veslo.example.model.Status;
 import org.touchbit.retrofit.veslo.example.model.user.User;
@@ -83,12 +83,12 @@ public interface UserApi {
         // String token = status.getToken();
         // For this sample, uses the api key 'special-key'
         String token = "special-key";
-        AuthAction.setToken(token);
+        PetStoreAuthAction.setToken(token);
     }
 
     default void logout() {
         logoutUser();
-        AuthAction.removeToken();
+        PetStoreAuthAction.removeToken();
     }
 
     @GET("/v2/user/logout")

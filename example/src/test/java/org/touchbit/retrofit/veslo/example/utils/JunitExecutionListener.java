@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Shaburov Oleg
+ * Copyright 2021-2022 Shaburov Oleg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import javax.print.DocFlavor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -91,25 +93,25 @@ public final class JunitExecutionListener
                             }
                         }
                         if (isIntellijIdeaConsoleJunitRun()) {
-                            CONSOLE_LOG.error("FAILED: {}\n  {}\n  {}{}\n", displayName, getTestLogFilePath(), err, at);
+                            CONSOLE_LOG.error("FAILED: {}\n  {}\n  {}{}\n", displayName, getTestLogFileURI(), err, at);
                         }
                     } else {
                         if (isIntellijIdeaConsoleJunitRun()) {
-                            CONSOLE_LOG.error("FAILED: {}\n  {}\n", displayName, getTestLogFilePath());
+                            CONSOLE_LOG.error("FAILED: {}\n  {}\n", displayName, getTestLogFileURI());
                         }
                     }
                 }
                 if (status == ABORTED) {
                     if (isIntellijIdeaConsoleJunitRun()) {
-                        CONSOLE_LOG.warn("ABORTED: {}\n  {}\n", displayName, getTestLogFilePath());
+                        CONSOLE_LOG.warn("ABORTED: {}\n  {}\n", displayName, getTestLogFileURI());
                     }
-                    ROUTING_LOG.warn("ABORTED: {}\n  {}\n", displayName, getTestLogFilePath());
+                    ROUTING_LOG.warn("ABORTED: {}\n  {}\n", displayName, getTestLogFileURI());
                 }
                 if (status == SUCCESSFUL) {
                     if (isIntellijIdeaConsoleJunitRun()) {
-                        CONSOLE_LOG.info("SUCCESSFUL: {}\n  {}\n", displayName, getTestLogFilePath());
+                        CONSOLE_LOG.info("SUCCESSFUL: {}\n  {}\n", displayName, getTestLogFileURI());
                     }
-                    ROUTING_LOG.info("SUCCESSFUL: {}\n  {}\n", displayName, getTestLogFilePath());
+                    ROUTING_LOG.info("SUCCESSFUL: {}\n  {}\n", displayName, getTestLogFileURI());
                 }
             }
         }
@@ -145,6 +147,10 @@ public final class JunitExecutionListener
                 FRAMEWORK_LOG.error("Failed to add test log file to allure report", e);
             }
         }
+    }
+
+    public static URI getTestLogFileURI() {
+        return getTestLogFilePath().toUri();
     }
 
     public static Path getTestLogFilePath() {

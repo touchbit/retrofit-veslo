@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Shaburov Oleg
+ * Copyright 2021-2022 Shaburov Oleg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,12 @@ package org.touchbit.retrofit.veslo.example.tests.api.pet;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.touchbit.retrofit.veslo.example.model.Status;
 import org.touchbit.retrofit.veslo.example.model.pet.Pet;
 import org.touchbit.retrofit.veslo.example.tests.api.BasePetTest;
 
 import static org.touchbit.retrofit.veslo.example.client.transport.querymap.LoginUserQueryMap.ADMIN;
-import static org.touchbit.retrofit.veslo.example.tests.api.ErrorCodes.code1;
-import static org.touchbit.retrofit.veslo.example.tests.api.ErrorCodes.code200;
+import static org.touchbit.retrofit.veslo.example.model.Status.*;
 
 @DisplayName("Delete pet: /v2/pet/{petId}")
 public class DeletePetTests extends BasePetTest {
@@ -33,14 +33,14 @@ public class DeletePetTests extends BasePetTest {
     public void test1640105249957() {
         USER_API.authenticateUser(ADMIN);
         final Pet pet = AddPetTests.addRandomPet();
-        PET_API.deletePet(pet.id()).assertSucResponse(this::assertStatus200, code200(pet.id()));
+        PET_API.deletePet(pet.id()).assertSucResponse(Status::assert200, CODE_200.message(pet.id()));
     }
 
     @Test
     @DisplayName("An error is expected when deleting a pet by non-existent identifier")
     public void test1640100570201() {
         USER_API.authenticateUser(ADMIN);
-        PET_API.deletePet(922137203685775807L).assertErrResponse(this::assertStatus404, code1("Pet not found"));
+        PET_API.deletePet(922137203685775807L).assertErrResponse(Status::assert404, CODE_1.message("Pet not found"));
     }
 
     @Test
@@ -49,18 +49,15 @@ public class DeletePetTests extends BasePetTest {
         USER_API.authenticateUser(ADMIN);
         final Pet pet = AddPetTests.addRandomPet();
         logout();
-        PET_API.deletePet(pet.id()).assertResponse(asserter -> asserter
-                .assertHttpStatusCodeIs(401)
-                .assertErrBody(this::assertStatusModel, code1("Access to delete pet requires authentication.")));
+        PET_API.deletePet(pet.id()).assertErrResponse(Status::assert401, CODE_1.message("Requires authentication."));
     }
 
     @Test
     @DisplayName("An error is expected when deleting a pet with a pet identifier of non-Long type")
     public void test1640449284033() {
         USER_API.authenticateUser(ADMIN);
-        PET_API.deletePet("example").assertResponse(asserter -> asserter
-                .assertHttpStatusCodeIs(400)
-                .assertErrBody(this::assertStatusModel, code1("java.lang.NumberFormatException: For input string: \"example\"")));
+        PET_API.deletePet("example").assertErrResponse(Status::assert404,
+                CODE_404.message("java.lang.NumberFormatException: For input string: \"example\""));
     }
 
 }
