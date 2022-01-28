@@ -245,9 +245,7 @@ Built-in Actions:
 
 ### ReflectQueryMap
 
-You can create your own simple QueryMap for queries by inheriting from ReflectQueryMap which allows you to read
-key-value pairs from class variables. This mechanism is in addition to the standard reading of parameters from the `Map`
-.
+You can create your own simple QueryMap for queries by inheriting from ReflectQueryMap which allows you to read key-value pairs from class variables. This mechanism is in addition to the standard reading of parameters from the `Map`.
 
 Client for `LoginUserQueryMap` examples
 
@@ -346,22 +344,24 @@ public interface PetApi {
 ```java
 public class AddPetTests extends BasePetTest {
 
-    @Test
-    public void test1640455066880() {
-        PET_API.addPet(new Pet().name("fooBar")); // body -> {"name":"fooBar"}
-        // or
-        PET_API.addPet("fooBar"); // body -> "fooBar"
-        // or
-        PET_API.addPet(new RawBody("fooBar")); // body -> fooBar
-        // or
-        PET_API.addPet(true); // body -> true
-        // or
-        PET_API.addPet(ExtensionConverter.NULL_JSON_VALUE); // body -> <no body>
-        // or
-        PET_API.addPet(new File("src/test/java/transport/data/PetPositive.json")); // body -> <from file>
-        // or
-        PET_API.addPet(new ResourceFile("PetPositive.json")); // body -> <from project resource file>
-    }
+  @Test
+  public void test1640455066880() {
+    PET_API.addPet(new Pet().name("fooBar")); // body -> {"name":"fooBar"}
+    // or
+    PET_API.addPet("fooBar"); // body -> "fooBar"
+    // or
+    PET_API.addPet(new RawBody("fooBar")); // body -> fooBar
+    // or
+    PET_API.addPet(true); // body -> true
+    // or
+    PET_API.addPet(ExtensionConverter.NULL_JSON_VALUE); // body -> <no body>
+    // or
+    final File file = new File("src/test/java/transport/data/PetPositive.json");
+    PET_API.addPet(file); // body -> <from file>
+    // or
+    final ResourceFile resourceFile = new ResourceFile("PetPositive.json");
+    PET_API.addPet(resourceFile); // body -> <from project resource file>
+  }
 }
 ```
 
