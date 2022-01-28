@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Shaburov Oleg
+ * Copyright 2021-2022 Shaburov Oleg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,20 +22,15 @@ import org.touchbit.retrofit.veslo.example.client.PetApi;
 import org.touchbit.retrofit.veslo.example.client.StoreApi;
 import org.touchbit.retrofit.veslo.example.client.UserApi;
 import org.touchbit.retrofit.veslo.example.client.transport.PetStoreInterceptor;
-import org.touchbit.retrofit.veslo.example.model.Status;
 import retrofit2.Retrofit;
 import veslo.AllureCallAdapterFactory;
 import veslo.JacksonConverterFactory;
-import veslo.asserter.HeadersAsserter;
-import veslo.asserter.ResponseAsserter;
-import veslo.asserter.SoftlyAsserter;
 
 import java.util.Locale;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static veslo.client.TrustSocketHelper.*;
 
-@SuppressWarnings({"SameParameterValue", "unused"})
+@SuppressWarnings({"unused"})
 public abstract class BaseTest {
 
     private static final String URL = System.getProperty("service_url", "https://petstore.swagger.io/");
@@ -44,8 +39,7 @@ public abstract class BaseTest {
     protected static final StoreApi STORE_API = createJacksonClient(StoreApi.class);
 
     static {
-        // localisation (jakarta assertions)
-        Locale.setDefault(Locale.ENGLISH);
+        Locale.setDefault(Locale.ENGLISH); // localisation (jakarta assertions)
     }
 
     private static <CLIENT> CLIENT createJacksonClient(final Class<CLIENT> clientClass) {
@@ -69,28 +63,6 @@ public abstract class BaseTest {
     @BeforeEach
     public void logout() {
         USER_API.logout();
-    }
-
-    protected void assertStatus200(ResponseAsserter<Status, ?, HeadersAsserter> asserter, Status expected) {
-        asserter.assertHttpStatusCodeIs(200)
-                .assertSucBody(this::assertStatusModel, expected);
-    }
-
-    protected void assertStatus404(ResponseAsserter<?, Status, HeadersAsserter> asserter, Status expected) {
-        asserter.assertHttpStatusCodeIs(404)
-                .assertErrBody(this::assertStatusModel, expected);
-    }
-
-    protected void assertStatus(ResponseAsserter<?, Status, HeadersAsserter> asserter, int code, Status expected) {
-        asserter.assertHttpStatusCodeIs(code)
-                .assertErrBody(this::assertStatusModel, expected);
-    }
-
-    protected void assertStatusModel(SoftlyAsserter asserter, Status actual, Status expected) {
-        asserter.softly(() -> assertThat(actual).isNotNull());
-        asserter.softly(() -> assertThat(actual.code()).as("Status.code").isEqualTo(expected.code()));
-        asserter.softly(() -> assertThat(actual.type()).as("Status.type").isEqualTo(expected.type()));
-        asserter.softly(() -> assertThat(actual.message()).as("Status.message").isEqualTo(expected.message()));
     }
 
 }
