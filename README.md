@@ -391,7 +391,6 @@ Examples of response assertions can be viewed in classes:
 
 - `veslo.example.ExampleApiClientAssertions`
 - `org.touchbit.retrofit.veslo.example.model.pet.Pet`
-- `org.touchbit.retrofit.veslo.example.tests.BaseTest`
 
 For clarity:
 

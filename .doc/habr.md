@@ -3,13 +3,15 @@
 
 Статья расскажет о расширении для [square retrofit](https://square.github.io/retrofit/) клиента предназначенного в большей степени для функционального тестирования API. Создан в первую очередь для упрощения и ускорения разработки API тестов. Расширение позволяет использовать сразу две модели данных в ответе от сервера для позитивных и негативных тестов, динамически выбирать нужный конвертер, содержит встроенные мягкие проверки (softly assert) и еще много всяких полезностей.
 
-<anchor>toc</anchor>
+<cut/>
 
-<spoiler title="Весло">
-Весло - специальное приспособление (движитель) в виде узкой лопаты для приведения судов в движение посредством **гребли** (действует по принципу рычага).
+<spoiler title="Почему весло?">
+
+Весло - специальное приспособление (движитель) в виде узкой лопаты для приведения судов (в том числе военных <sup><a href="https://ru.wikipedia.org/wiki/%D0%93%D0%B0%D0%BB%D0%B5%D1%80%D0%B0">галера</a></sup>) в движение посредством гребли (действует по принципу рычага).
+
 </spoiler>
 
-<cut/>
+<anchor>toc</anchor>
 
 ## Содержание
 
@@ -22,8 +24,9 @@
     * <a href="#reflectQueryMapNullRule">Правила обработки `null` (QueryParameterNullValueRule)</a>
     * <a href="#reflectQueryMapCaseRule">Правила наименования параметров (QueryParameterCaseRule)</a>
 * <a href="#responses">Ответы</a>
+  * <a href="#responseasserters">Asserters</a>
+  * <a href="#customresponseassertion">Кастомизация встроенных проверок</a>
 * <a href="#models">Модели</a>
-* <a href="#asserters">Asserters</a>
 * <a href="#converters">Конвертеры</a>
 
 <anchor>prerequisites</anchor>
@@ -37,7 +40,7 @@
 - все должно работать "из коробки" с минимальными телодвижениями;
 - самый лучший тест - однострочный;
 
-Опишу сразу краткий список реализованной функциональности.
+<spoiler title="Список реализованной функциональности">
 
 **Клиент**
 
@@ -69,6 +72,8 @@
 - примеры использования softly asserts для ответа (`ExampleApiClientAssertions`);
 - базовый класс с дополнительными полями для моделей jackson2 (`JacksonModelAdditionalProperties`);
 - jakarta java bean validation (`BeanValidationModel`);
+
+</spoiler>
 
 <spoiler title="Пример использования">
 
@@ -138,7 +143,7 @@ public static class ExampleTests {
 <anchor>client</anchor>
 
 ## Клиент
-Ниже представлен пример создания API клиента с комментариями (копипастнуть и удалить ненужное).
+Ниже представлен пример создания API клиента (копипастнуть и удалить ненужное).
 
 ```java
 public class BaseTest {
@@ -202,27 +207,13 @@ public interface UniversalCallAdapterFactoryClient {
 }
 ```
 
-Так же можно использовать "простые" типы и модели в качестве возвращаемого типа. В случае ошибок (status code 400+) конвертер попытается замапить тело ответа в возвращаемый тип и если не получилось, то вернется `null`. Так же можно использовать примитивы, но **не рекомендуется**.
-Например, если у нас есть API вызов `/api/live` (health check) который возвращает:
-- Строковый `OK/ERROR` -> `String live();`
-- Логический `true/false` -> `Boolean live();`
-- JSON объект -> `LiveProbeModel live()`
-  ```java
-  public interface UniversalCallAdapterFactoryClient {
-    @GET("/api/live")
-    @EndpointInfo("Service liveness probe")
-    LiveProbeModel live();
-  }
-  ```
+Более детальное описание смотреть в разделе <a href="#responses">ответы</a>.
 
 <a href="#toc">К содержанию</a>
 
 <anchor>requests</anchor>
-
 ## Запросы
-
 <anchor>objectRequestBody</anchor>
-
 ### `Object` в качестве тела запроса
 Текущая реализация конвертеров позволяет использовать `Object` в качестве `@Body`, что позволяет отправлять в качестве тела запроса объект любого типа, который поддерживается `GsonConverterFactory` или `JacksonConverterFactory`. Механизм работает для любых наследников класса `ExtensionConverterFactory`. Важно использовать аннотацию `@Headers` для автоматического выбора правильного конвертера на основе заголовка `Content-Type`. Механизм выбора нужного конвертера описан в разделе <a href="#converters">конвертеры</a>.
 
@@ -387,6 +378,61 @@ public class LoginUserQueryMap extends ReflectQueryMap {
 
 <a href="#toc">К содержанию</a>
 
+<anchor>responses</anchor>
+
+## Ответы 
+
+Тип возвращаемого ответа может быть представлен в клиентском интерфейсе в трёх вариантах:
+- `DualResponse<Pet, Err> getPet(String id);`, где `Pet` это конвертированное тело ответа в случае успеха, а `Err` — в случае ошибки.
+- `AResponse<Pet, Err> getPet(String id);` То же, что и `DualResponse`, только с интеграцией с фреймворком Allure.
+- Так же можно использовать модели и "простые" типы в качестве возвращаемого типа. В случае ошибок (status code 400+) конвертер попытается замапить тело ответа в возвращаемый тип и если не получилось, то вернется `null`. Так же можно использовать примитивы, но **не рекомендуется**.
+  Например, если у нас есть API вызов `/api/live` (health check) который возвращает:
+  - Строковый `OK/ERROR` -> `String live();`
+  - Логический `true/false` -> `Boolean live();`
+  - JSON объект -> `LiveProbeModel live()`
+  ```java
+  public interface UniversalCallAdapterFactoryClient {
+    @GET("/api/live")
+    @EndpointInfo("Service liveness probe")
+    LiveProbeModel live();
+  }
+  ```
+
+`DualResponse` и `AResponse` унаследованы от `BaseDualResponse` и включают следующие методы:
+- `assertResponse(Consumer<ASSERTER> respAsserter)` - для проверки ответа от сервера;
+- `assertSucResponse(BiConsumer<ASSERTER, SUC_DTO> respAsserter, SUC_DTO expected)` - для проверки успешного ответа от сервера;
+- `assertErrResponse(BiConsumer<ASSERTER, ERR_DTO> respAsserter, ERR_DTO expected)` - для проверки ошибочного ответа от сервера;
+- `getErrDTO()` - возвращает модель тела ответа в случае ошибки (nullable);
+- `getSucDTO()` - возвращает модель тела ответа в случае успеха (nullable);
+- `getEndpointInfo()` - возвращает информацию о вызове метода API;
+- `getResponse()` - возвращает сырой ответ представленный классом `okhttp3.Response` с читаемым телом;
+- `getCallAnnotations()` - возвращает список аннотаций вызванного клиентского API метода:
+
+<a href="#toc">К содержанию</a>
+
+<anchor>customresponseassertion</anchor>
+
+### Кастомизация встроенных проверок
+
+`DualResponse` содержит встроенные проверки, которые можно расширить и переопределить. Для этого вам нужно реализовать `IResponseAsserter` и/или `IHeadersAsserter`. Далее создать свой `CustomResponse`, который должен быть унаследован от `BaseDualResponse`. В классе `CustomResponse` нужно реализовать методы:
+
+- `public IHeadersAsserter getHeadersAsserter();`
+- `public IResponseAsserter getResponseAsserter();`
+
+<spoiler title="Для наглядности">
+
+![](https://github.com/touchbit/retrofit-veslo/raw/main/.doc/img/CustomDualResponse.png)
+
+</spoiler>
+
+Далее, при создании клиента `retrofit`, вам необходимо явно указать, какой ответ следует использовать при создании экземпляра `CustomResponse`.
+Пример для `new Retrofit.Builder().addCallAdapterFactory(CallAdapter.Factory)` (фабрики библиотеки):
+
+- `new UniversalCallAdapterFactory(CustomResponse::new)` или
+- `new AllureCallAdapterFactory(CustomResponse::new)`
+
+<a href="#toc">К содержанию</a>
+
 <anchor>converters</anchor>
 
 ## Конвертеры
@@ -423,7 +469,8 @@ public class CustomConverterFactory extends ExtensionConverterFactory {
     registerJavaTypeConverter(jacksonConverter, Map.class, List.class);
     // использовать специфический конвертер для специфического типа сырого тела
     registerRawConverter(new CustomConverter<>(), CustomBody.class);
-    // использовать GsonConverter для любой модели из пакета "com.example.model.gson" (строгое соответствие)
+    // использовать GsonConverter для любой модели 
+    // из пакета "com.example.model.gson" (строгое соответствие)
     registerPackageConverter(new GsonConverter(), "com.example.model.gson");
   }
 
