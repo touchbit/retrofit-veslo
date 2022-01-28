@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Shaburov Oleg
+ * Copyright 2021-2022 Shaburov Oleg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.touchbit.retrofit.veslo.example.model.pet;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.Min;
@@ -46,7 +47,7 @@ import static org.touchbit.retrofit.veslo.example.utils.StreamUtils.rangeStreamM
 @ToString
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true, fluent = true)
-@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@JsonNaming(PropertyNamingStrategies.LowerCamelCaseStrategy.class)
 @JsonAutoDetect(creatorVisibility = ANY, fieldVisibility = ANY)
 public class Tag extends AssertableModel<Tag> {
 
@@ -63,10 +64,10 @@ public class Tag extends AssertableModel<Tag> {
                 .name(Generator.alphabetical(10));
     }
 
-    public void assertTag(SoftlyAsserter asserter, Tag expected) {
-        asserter.ignoreNPE(true);
-        asserter.softly(() -> assertThat(this.id()).as("Pet.category.id").isEqualTo(expected.id()));
-        asserter.softly(() -> assertThat(this.name()).as("Pet.category.name").isEqualTo(expected.name()));
+    public Tag match(SoftlyAsserter asserter, String parentName, Tag expected) {
+        asserter.softly(() -> assertThat(this.id()).as(getName(parentName, "tag.id")).isEqualTo(expected.id()));
+        asserter.softly(() -> assertThat(this.name()).as(getName(parentName, "tag.name")).isEqualTo(expected.name()));
+        return this;
     }
 
 }

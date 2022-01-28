@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Shaburov Oleg
+ * Copyright 2021-2022 Shaburov Oleg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,14 @@ package org.touchbit.retrofit.veslo.example.tests.api.pet;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.touchbit.retrofit.veslo.example.model.Status;
 import org.touchbit.retrofit.veslo.example.model.pet.Pet;
 import org.touchbit.retrofit.veslo.example.tests.api.BasePetTest;
 
 import java.util.List;
 
 import static org.touchbit.retrofit.veslo.example.client.transport.querymap.LoginUserQueryMap.ADMIN;
-import static org.touchbit.retrofit.veslo.example.tests.api.ErrorCodes.code1;
+import static org.touchbit.retrofit.veslo.example.model.Status.CODE_1;
 
 @DisplayName("Add pet: POST /v2/pet")
 public class AddPetTests extends BasePetTest {
@@ -35,9 +36,7 @@ public class AddPetTests extends BasePetTest {
         USER_API.authenticateUser(ADMIN);
         PET_API.addPet(Pet.generate()).assertResponse(asserter -> asserter
                 .assertHttpStatusCodeIs(200)
-                .assertSucBody(body -> body
-                        .assertNoAdditionalProperties()
-                        .assertConsistency()));
+                .assertSucBody(body -> body.assertNoAdditionalProperties().assertConsistency()));
     }
 
     @Test
@@ -45,17 +44,17 @@ public class AddPetTests extends BasePetTest {
     public void test1640069747665() {
         USER_API.authenticateUser(ADMIN);
         final Pet expected = Pet.generate();
-        PET_API.addPet(expected).assertResponse(asserter -> asserter
-                .assertHttpStatusCodeIs(200)
-                .assertSucBody((softly, act) -> act.assertPet(asserter, expected)));
-    }
-
-    @Test
-    @DisplayName("Successful creating a pet using random identifier")
-    public void test1640460353980() {
-        USER_API.authenticateUser(ADMIN);
-        final Pet expected = Pet.generate();
-        PET_API.addPet(expected).assertSucResponse(Pet::assertPetResponse, expected);
+        PET_API.addPet(expected).assertResponse(asserter -> asserter             // ----\
+                .assertHttpStatusCodeIs(200)                                     //      |
+                .assertSucBody((softly, act) -> act.match(asserter, expected))); // ----/|
+    }                                                                            //      |
+                                                                                 //      | assertions
+    @Test                                                                        //      |    are
+    @DisplayName("Successful creating a pet using random identifier")            //      | equivalent
+    public void test1640460353980() {                                            //      |
+        USER_API.authenticateUser(ADMIN);                                        //      |
+        final Pet expected = Pet.generate();                                     //      |
+        PET_API.addPet(expected).assertSucResponse(Pet::assertPOST, expected);   // -----|
     }
 
     @Test
@@ -63,9 +62,8 @@ public class AddPetTests extends BasePetTest {
     public void test1640450206604() {
         USER_API.authenticateUser(ADMIN);
         final Pet pet = Pet.generate().id(null).additionalProperty("id", "example");
-        PET_API.addPet(pet).assertResponse(asserter -> asserter
-                .assertHttpStatusCodeIs(400)
-                .assertErrBody(this::assertStatusModel, code1("java.lang.NumberFormatException: For input string: \"example\"")));
+        PET_API.addPet(pet).assertErrResponse(Status::assert400,
+                CODE_1.message("java.lang.NumberFormatException: For input string: \"example\""));
     }
 
     @Test
@@ -73,9 +71,8 @@ public class AddPetTests extends BasePetTest {
     public void test1640452385090() {
         USER_API.authenticateUser(ADMIN);
         final List<Pet> pets = Pet.generate(1);
-        PET_API.addPet(pets).assertResponse(asserter -> asserter
-                .assertHttpStatusCodeIs(400)
-                .assertErrBody(this::assertStatusModel, code1("An object was expected, but an array was received.")));
+        PET_API.addPet(pets).assertErrResponse(Status::assert400,
+                CODE_1.message("An object was expected, but an array was received."));
     }
 
 }

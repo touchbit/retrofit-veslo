@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Shaburov Oleg
+ * Copyright 2021-2022 Shaburov Oleg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package org.touchbit.retrofit.veslo.example.model.pet;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -29,7 +29,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.touchbit.retrofit.veslo.example.model.AssertableModel;
-import org.touchbit.retrofit.veslo.example.model.Status;
 import org.touchbit.retrofit.veslo.example.utils.Generator;
 import veslo.asserter.HeadersAsserter;
 import veslo.asserter.ResponseAsserter;
@@ -50,7 +49,7 @@ import static org.touchbit.retrofit.veslo.example.utils.StreamUtils.rangeStreamM
 @ToString
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true, fluent = true)
-@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@JsonNaming(PropertyNamingStrategies.LowerCamelCaseStrategy.class)
 @JsonAutoDetect(creatorVisibility = ANY, fieldVisibility = ANY)
 public class Pet extends AssertableModel<Pet> {
 
@@ -60,6 +59,30 @@ public class Pet extends AssertableModel<Pet> {
     private @Size(min = 1, max = 255) String name = null;
     private @NotNull @Size(max = 10) List<@Valid Tag> tags;
     private PetStatus status;
+
+    public static void assertGET(ResponseAsserter<Pet, ?, HeadersAsserter> asserter, Pet expected) {
+        asserter.assertHttpStatusCodeIs(200).assertSucBody(actual -> actual.match(expected));
+    }
+
+    public static void assertPOST(ResponseAsserter<Pet, ?, HeadersAsserter> asserter, Pet expected) {
+        asserter.assertHttpStatusCodeIs(200).assertSucBody(actual -> actual.match(expected));
+    }
+
+    public static void assertPATCH(ResponseAsserter<Pet, ?, HeadersAsserter> asserter) {
+        asserter.assertHttpStatusCodeIs(204).assertSucBodyIsNull().assertErrBodyIsNull();
+    }
+
+    @Override
+    public Pet match(SoftlyAsserter asserter, String parentName, Pet expected) {
+        asserter.ignoreNPE(true);
+        asserter.softly(() -> assertThat(this.id()).as(getName(parentName, "pet.id")).isEqualTo(expected.id()));
+        asserter.softly(() -> assertThat(this.name()).as(getName(parentName, "pet.name")).isEqualTo(expected.name()));
+        asserter.softly(() -> assertThat(this.photoUrls()).as(getName(parentName, "pet.photoUrls")).isEqualTo(expected.photoUrls()));
+        asserter.softly(() -> assertThat(this.tags()).as(getName(parentName, "pet.tags")).containsExactlyInAnyOrderElementsOf(expected.tags()));
+        asserter.softly(() -> assertThat(this.category()).as(getName(parentName, "pet.category")).isNotNull());
+        asserter.softly(() -> this.category().match(asserter, "pet", expected.category()));
+        return this;
+    }
 
     public static List<Pet> generate(int count) {
         return rangeStreamMap(count, Pet::generate).collect(Collectors.toList());
@@ -72,28 +95,6 @@ public class Pet extends AssertableModel<Pet> {
                 .photoUrls(Generator.urls(1))
                 .tags(Tag.generate(2))
                 .category(Category.generate());
-    }
-
-    public static void assertPetResponse(ResponseAsserter<Pet, Status, HeadersAsserter> asserter, Pet expected) {
-        asserter.assertHttpStatusCodeIs(200)
-                .assertSucBody((softly, act) -> act.assertPet(softly, expected)); // first use case
-//              .assertSucBody(pet -> pet.assertPet(expected)); // second use case
-    }
-
-    public void assertPet(SoftlyAsserter asserter, Pet expected) {
-        asserter.ignoreNPE(true);
-        asserter.softly(() -> assertThat(this.id()).as("Pet.id").isEqualTo(expected.id()));
-        asserter.softly(() -> assertThat(this.name()).as("Pet.name").isEqualTo(expected.name()));
-        asserter.softly(() -> assertThat(this.photoUrls()).as("Pet.photoUrls").isEqualTo(expected.photoUrls()));
-        asserter.softly(() -> assertThat(this.tags()).as("Pet.tags").containsAll(expected.tags()));
-        asserter.softly(() -> assertThat(this.category()).as("Pet.category").isNotNull());
-        asserter.softly(() -> this.category().assertCategory(asserter, expected.category()));
-    }
-
-    public void assertPet(Pet expected) {
-        try (SoftlyAsserter asserter = SoftlyAsserter.get()) {
-            assertPet(asserter, expected);
-        }
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Shaburov Oleg
+ * Copyright 2021-2022 Shaburov Oleg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ public class PetStoreInterceptor extends CompositeInterceptor {
 
     public PetStoreInterceptor() {
         super(LoggerFactory.getLogger(PetStoreInterceptor.class));
-        withRequestInterceptActionsChain(CookieAction.INSTANCE, AuthAction.INSTANCE, LoggingAction.INSTANCE, AllureAction.INSTANCE);
+        withRequestInterceptActionsChain(CookieAction.INSTANCE, PetStoreAuthAction.INSTANCE, LoggingAction.INSTANCE, AllureAction.INSTANCE);
         withResponseInterceptActionsChain(LoggingAction.INSTANCE, AllureAction.INSTANCE, CookieAction.INSTANCE);
     }
 

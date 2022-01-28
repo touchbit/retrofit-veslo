@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Shaburov Oleg
+ * Copyright 2021-2022 Shaburov Oleg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,12 @@ package org.touchbit.retrofit.veslo.example.tests.api.pet;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.touchbit.retrofit.veslo.example.model.Status;
 import org.touchbit.retrofit.veslo.example.model.pet.Pet;
 import org.touchbit.retrofit.veslo.example.tests.api.BasePetTest;
 
 import static org.touchbit.retrofit.veslo.example.client.transport.querymap.LoginUserQueryMap.ADMIN;
-import static org.touchbit.retrofit.veslo.example.tests.api.ErrorCodes.code1;
+import static org.touchbit.retrofit.veslo.example.model.Status.CODE_1;
 
 @DisplayName("GetPetById: /v2/pet/{petId}")
 public class GetPetByIdTests extends BasePetTest {
@@ -34,14 +35,14 @@ public class GetPetByIdTests extends BasePetTest {
         final Pet expected = addRandomPet();
         PET_API.getPetById(expected.id()).assertResponse(asserter -> asserter
                 .assertHttpStatusCodeIs(200)
-                .assertSucBody(pet -> pet.assertPet(expected)));
+                .assertSucBody(pet -> pet.match(expected)));
     }
 
     @Test
     @DisplayName("An error is expected when getting a pet by non-existent identifier (-1)")
     public void test1640059907623() {
         USER_API.authenticateUser(ADMIN);
-        PET_API.getPetById(-1).assertErrResponse(this::assertStatus404, code1("Pet not found"));
+        PET_API.getPetById(-1).assertErrResponse(Status::assert404, CODE_1.message("Pet not found"));
     }
 
 }

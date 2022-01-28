@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Shaburov Oleg
+ * Copyright 2021-2022 Shaburov Oleg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ import veslo.client.inteceptor.RequestInterceptAction;
 
 import javax.annotation.Nonnull;
 
-public class AuthAction implements RequestInterceptAction {
+public class PetStoreAuthAction implements RequestInterceptAction {
 
-    public static final AuthAction INSTANCE = new AuthAction();
+    public static final PetStoreAuthAction INSTANCE = new PetStoreAuthAction();
     private static final ThreadLocal<String> TOKEN = new ThreadLocal<>();
 
     @Nonnull
