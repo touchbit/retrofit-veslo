@@ -33,7 +33,7 @@ public class DeletePetTests extends BasePetTest {
     public void test1640105249957() {
         USER_API.authenticateUser(ADMIN);
         final Pet pet = AddPetTests.addRandomPet();
-        PET_API.deletePet(pet.id()).assertSucResponse(Status::assert200, CODE_200.message(pet.id()));
+        PET_API.deletePet("10").assertSucResponse(Status::assert200, CODE_200);
     }
 
     @Test

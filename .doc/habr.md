@@ -24,7 +24,8 @@
     * <a href="#reflectQueryMapNullRule">Правила обработки `null` (QueryParameterNullValueRule)</a>
     * <a href="#reflectQueryMapCaseRule">Правила наименования параметров (QueryParameterCaseRule)</a>
 * <a href="#responses">Ответы</a>
-  * <a href="#responseasserters">Asserters</a>
+  * <a href="#responseasserter">Response Asserter</a>
+  * <a href="#headereasserter">Header Asserter</a>
   * <a href="#customresponseassertion">Кастомизация встроенных проверок</a>
 * <a href="#models">Модели</a>
 * <a href="#converters">Конвертеры</a>
@@ -344,7 +345,7 @@ public class LoginUserQueryMap extends ReflectQueryMap {
 
 **QueryParameterNullValueRule**
 
-- RULE_IGNORE - Игнорировать параметры c значением `null`
+- RULE_IGNORE - Игнорировать параметры c значением `null` (по умолчанию)
 - RULE_NULL_MARKER - заменить `null` на `null marker` -> `/api/call?foo=%00`
 - RULE_EMPTY_STRING - заменить `null` на пустую строку -> `/api/call?foo=`
 - RULE_NULL_STRING - заменить `null` на `null` строку -> `/api/call?foo=null`
@@ -370,7 +371,7 @@ public class LoginUserQueryMap extends ReflectQueryMap {
 
 **QueryParameterCaseRule**
 
-- CAMEL_CASE - camelCase
+- CAMEL_CASE - camelCase (по умолчанию)
 - KEBAB_CASE - kebab-case
 - SNAKE_CASE - snake_case
 - DOT_CASE - dot.case
@@ -399,14 +400,113 @@ public class LoginUserQueryMap extends ReflectQueryMap {
   ```
 
 `DualResponse` и `AResponse` унаследованы от `BaseDualResponse` и включают следующие методы:
-- `assertResponse(Consumer<ASSERTER> respAsserter)` - для проверки ответа от сервера;
-- `assertSucResponse(BiConsumer<ASSERTER, SUC_DTO> respAsserter, SUC_DTO expected)` - для проверки успешного ответа от сервера;
-- `assertErrResponse(BiConsumer<ASSERTER, ERR_DTO> respAsserter, ERR_DTO expected)` - для проверки ошибочного ответа от сервера;
+- `assertResponse(Consumer<IResponseAsserter> respAsserter)` - для проверки ответа от сервера;
+- `assertSucResponse(BiConsumer<IResponseAsserter, SUC_DTO> respAsserter, SUC_DTO expected)` - для проверки успешного ответа от сервера;
+- `assertErrResponse(BiConsumer<IResponseAsserter, ERR_DTO> respAsserter, ERR_DTO expected)` - для проверки ошибочного ответа от сервера;
 - `getErrDTO()` - возвращает модель тела ответа в случае ошибки (nullable);
 - `getSucDTO()` - возвращает модель тела ответа в случае успеха (nullable);
 - `getEndpointInfo()` - возвращает информацию о вызове метода API;
 - `getResponse()` - возвращает сырой ответ представленный классом `okhttp3.Response` с читаемым телом;
 - `getCallAnnotations()` - возвращает список аннотаций вызванного клиентского API метода:
+
+Помимо работы с двумя моделями данных в ответе, классы `DualResponse` и `AResponse` предоставляют возможность мягких проверок с автозакрытием (Closeable). Данные методы на вход принимают consumer-функции одним из обязательных аргументов которой является `IResponseAsserter`.
+По умолчанию используется `ResponseAsserter` для классов `DualResponse` и `AResponse`.
+
+Тривиальный пример теста для `assertResponse`
+```java
+public class ExampleTests {
+
+  public void example() {
+    CLIENT.updatePet(new Pet().id(100L).name("example"))
+        .assertResponse(asserter -> asserter
+                .assertHttpStatusCodeIs(204)
+                .assertHttpStatusMessageIs("No Content"));
+  }
+}
+```
+
+Исключение с накопленными ошибками. 
+```text
+veslo.BriefAssertionError: Collected the following errors:
+
+HTTP status code
+Expected: is  204
+  Actual: was 200
+
+HTTP status message
+Expected: is  No Content
+  Actual: was ОК
+```
+
+Методы `assertSucResponse` и `assertErrResponse` однотипные и на вход принимают `IResponseAsserter` и ожидаемую модель для проверки. По большей части они предназначены для выноса проверок в отдельные методы. Пример из `example` модуля:
+
+[![](https://habrastorage.org/webt/xg/xh/6r/xgxh6rt8ahtwtcbaeiiktuojuwg.png)](https://habrastorage.org/webt/xg/xh/6r/xgxh6rt8ahtwtcbaeiiktuojuwg.png)
+
+<a href="#toc">К содержанию</a>
+
+<anchor>responseasserter</anchor>
+
+#### Response Asserter
+Любые наследники класса `BaseDualResponse` содержат в себе встроенные проверки реализующие интерфейс `IResponseAsserter`. Интерфейс `IResponseAsserter` нужен только для Generic типизации в базовом классе и ни к чему не обязывает. Данный класс можно расширить дополнительными проверками или заменить собственной реализацией (смотреть <a href="#customresponseassertion">"кастомизация встроенных проверок"</a>).
+
+**Обычные методы проверки**
+- `assertHttpStatusCodeIs(int)` - точное совпадение `HTTP status code`
+- `assertHttpStatusMessageIs(String)` - точное совпадение `HTTP status message`
+- `assertErrBodyIsNull()` - запрос завершился с ошибкой и тело отсутствует
+- `assertErrBodyNotNull()` - запрос завершился с ошибкой и тело присутствует
+- `assertIsErrHttpStatusCode()` - статус код в промежутке 300...599
+- `assertSucBodyIsNull()` - запрос завершился успешно и тело отсутствует
+- `assertSucBodyNotNull()` - запрос завершился успешно и тело присутствует
+- `assertIsSucHttpStatusCode()` - статус код в промежутке 200...299
+
+**Функциональные методы проверки**   
+Ниже представлены методы, их описание и примеры использования.   
+В примерах функция одна и та же представлена в двух вариантах:   
+`Lambda:` лямбда выражение для наглядности сигнатуры метода;   
+`Reference:` сокращенное представление лямбда выражения;   
+Методов добавил "на все случаи жизни". В примерах я пометил<sup>*</sup> методы, которые рекомендую к использованию.   
+Так же все примеры использования каждого конкретного метода указаны в javadoc класса `ResponseAsserter` и в классе `ExampleApiClientAssertions` в ядре (хоть это и не канонично).    
+
+`assertHeaders(Consumer<IHeadersAsserter>)`   
+ассертер заголовков
+
+`assertSucBody(Consumer<SUC_DTO>)`   
+Метод предоставляет только модель и ее методы   
+
+Пример вызова метода модели без параметров   
+Lambda: `.assertSucBody(pet -> pet.assertConsistency())`   
+Reference: `.assertSucBody(Pet::assertConsistency)`   
+
+Пример для встроенного в модель метода сверки  
+Lambda: `.assertSucBody(pet -> pet.match(expected))`<sup>*</sup>   
+Reference: отсутствует   
+
+`assertSucBody(BiConsumer<SUC_DTO, SUC_DTO>, SUC_DTO)`   
+Предоставляет только actual и expected модели для сверки.   
+Пример для статического метода сверки моделей   
+Lambda: `.assertSucBody((act, exp) -> Asserts.assertPet(act, exp), expected)`   
+Reference: `.assertSucBody(Asserts::assertPet, expected)`   
+
+Пример для встроенного в модель метода сверки моделей   
+Lambda: `.assertSucBody((pet, exp) -> pet.match(exp), expected)`   
+Reference: `.assertSucBody(Pet::match, expected)`<sup>*</sup>   
+
+`assertSucBody(BiConsumer<SoftlyAsserter, SUC_DTO>)`   
+Предоставляет ассертер и actual модель для проверки модели.   
+Пример для статического метода проверки модели   
+Lambda: `.assertSucBody((asserter, act) -> Asserts.assertPet(asserter, act, expected))`   
+Reference: отсутствует   
+
+`assertSucBody(TripleConsumer<SoftlyAsserter, SUC_DTO, SUC_DTO>, SUC_DTO)`   
+Предоставляет ассертер, actual и expected модель для проверки.    
+Lambda: `.assertSucBody((asserter, act, exp) -> Asserts.assertPet(asserter, act, exp), expected)`   
+Reference: `.assertSucBody(Asserts::assertPet, expected)`<sup>*</sup>   
+
+<a href="#toc">К содержанию</a>
+
+<anchor>headerasserter</anchor>
+
+#### Header Asserter
 
 <a href="#toc">К содержанию</a>
 
@@ -510,6 +610,6 @@ public interface PetApi {
 }
 ```
 
-Если поле `bodyClasses` оставить пустым, то конвертер будет применен ко всем моделям из сигнатуры метода. Например `@ResponseConverter(converter = JacksonConverter.class)` будет применен для `Pet` или `Err` моделей в ответе.
+Если поле `bodyClasses` оставить пустым, то конвертер будет применен ко всем моделям из сигнатуры метода. Например `@ResponseConverter(converter = JacksonConverter.class)` будет применен для конвертации тела ответа в модель `Pet` или `Err` (в зависимости от статуса).
 
 <a href="#toc">К содержанию</a>
