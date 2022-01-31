@@ -468,7 +468,7 @@ Expected: is  No Content
 Так же все примеры использования каждого конкретного метода указаны в javadoc класса `ResponseAsserter` и в классе `ExampleApiClientAssertions` в ядре (хоть это и не канонично).    
 
 `assertHeaders(Consumer<IHeadersAsserter>)`   
-ассертер заголовков
+Смотреть раздел <a href="#headerasserter">Header Asserter</a>.
 
 `assertSucBody(Consumer<SUC_DTO>)`   
 Метод предоставляет только модель и ее методы   
@@ -507,6 +507,48 @@ Reference: `.assertSucBody(Asserts::assertPet, expected)`<sup>*</sup>
 <anchor>headerasserter</anchor>
 
 #### Header Asserter
+
+Содержит общие методы проверки заголовков ответа:
+
+- `assertHeaderNotPresent(String headerName)`
+- `assertHeaderIsPresent(String headerName)`
+- `assertHeaderIs(String headerName, String expected)`
+- `assertHeaderContains(String headerName, String expected)`
+
+А так же аналогичные методы проверки для заголовков:
+
+- Access-Control-Allow-Origin
+- Connection
+- Content-Type
+- Etag
+- Keep-Alive
+- Server
+- Set-Cookie
+- Content-Encoding
+- Transfer-Encoding
+- Vary
+
+Пример использования:
+```java
+public static class ExampleTests { 
+  
+  // явно в тесте
+  public void test1639328754881() {
+    CLIENT.get().assertResponse(respAsserter -> respAsserter
+        .assertHeaders(headersAsserter -> headersAsserter
+            .contentTypeIs("application/json; charset=utf-8")
+            .assertHeaderIsPresent("X-Request-Id")
+            .accessControlAllowOriginIs("*")));
+  }
+
+  // или вынести проверку заголовков в отдельный метод
+  public void example1639330184783() {
+    CLIENT.get().assertResponse(respAsserter -> respAsserter
+            .assertHeaders(Asserts::assertHeaders));
+  }
+
+}
+```
 
 <a href="#toc">К содержанию</a>
 
