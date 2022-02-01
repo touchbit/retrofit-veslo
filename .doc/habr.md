@@ -1,7 +1,7 @@
 
 
 
-Статья расскажет о расширении для [square retrofit](https://square.github.io/retrofit/) клиента предназначенного в большей степени для функционального тестирования API. Создан в первую очередь для упрощения и ускорения разработки API тестов. Расширение позволяет использовать сразу две модели данных в ответе от сервера для позитивных и негативных тестов, динамически выбирать нужный конвертер, содержит встроенные мягкие проверки (softly assert) и еще много всяких полезностей.
+Статья расскажет о расширении для HTTP клиента [retrofit](https://square.github.io/retrofit/) предназначенного в большей степени для функционального тестирования API. Создан в первую очередь для упрощения и ускорения разработки API тестов. Расширение позволяет использовать сразу две модели данных в ответе от сервера для позитивных и негативных тестов, динамически выбирать нужный конвертер, содержит встроенные мягкие проверки (softly assert) и еще много всяких полезностей.
 
 <cut/>
 
@@ -34,23 +34,23 @@
 
 ## Предпосылки
 
-Изначально данную библиотеку я начинал писать для себя с целью аккумулирования всех своих наработок связанных с тестированием API. Но на середине пути понял, что данное решение может быть полезно не только мне, что повлияло и на функциональность и на архитектуру решения. Некоторые архитектурные решения могут показаться странными, но важно понимать, что это решение предназначено строго для тестирования и при разработке я руководствовался следующими принципами в ущерб некоторым архитектурным канонам:
+Изначально данную библиотеку я начинал писать для себя с целью аккумулирования всех своих наработок связанных с тестированием API. Но в середине пути понял, что данное решение может быть полезно не только мне, что повлияло и на функциональность и на архитектуру решения. Некоторые архитектурные решения могут показаться странными, но важно понимать, что это решение предназначено строго для тестирования и при разработке я руководствовался следующими принципами в ущерб некоторым архитектурным канонам:
 
 - минимизация порога вхождения (целился в джунов).
 - пользователь может расширить/изменить/поправить текущую реализацию;
 - подключение/переход с минимальными телодвижениями;
 - самый лучший тест - однострочный;
-- надежность (обмазан юнит/функциональными тестами);
+- надежность;
 
-Данная статья получилась не маленькая, так как описывает все фичи библиотеки. Если вы бОльший сторонник чтения кода или вам интереснее посмотреть работоспособность решения или вы вообще не работали с `retrofit`, то милости прошу в [репу](https://github.com/touchbit/retrofit-veslo). Достаточно клонировать репозиторий и можно сразу гонять в идее тесты из модуля `example`. В `example` модуле уже настроена интеграция с allure и логирование каждого автотеста в отдельный лог файл. Стоит учесть, что бОльшая часть тестов падают умышленно для наглядности. По сути, если вам нужно внедрить API тесты, то вы можете взять код из модуля `example`, поправить `pom.xml` (groupId, artifactId), определить API клиент, модели по образу и подобию с существующими, и приступать писать тесты. А если у вас есть вопросы/предложения/критика, то [вот группа в телеге](https://t.me/veslo_retrofit), буду рад.
+Данная статья получилась не маленькая, так как описывает все фичи библиотеки. Если вы бОльший сторонник чтения кода или вам интереснее посмотреть работоспособность решения или вы вообще не работали с `retrofit`, то милости прошу в [репу](https://github.com/touchbit/retrofit-veslo). Достаточно клонировать репозиторий и можно сразу погонять тесты из модуля `example`. В `example` модуле уже настроена интеграция с allure и логирование каждого автотеста в отдельный лог файл. Стоит учесть, что бОльшая часть тестов падают умышленно для наглядности. По сути, если вам нужно внедрить API тесты, то вы можете взять код из модуля `example`, поправить `pom.xml` (groupId, artifactId, комментарии), определить API клиент, модели по образу и подобию с существующими, и приступать писать тесты. А если у вас есть вопросы/предложения/критика, то [вот группа в телеге](https://t.me/veslo_retrofit), буду рад.
 
 <spoiler title="Список реализованной функциональности">
 
 **Клиент**
 
-- динамический выбор конвертера по java type, пакету модели, `Content-Type` заголовку (MIME) или через аннотацию метода API;
-- конвертеры копируют тело ответа вместо вычитывания буфера;
+- динамический выбор конвертера по java type, java пакету, `Content-Type` заголовку (MIME) или через аннотацию метода API;
 - сетевой перехватчик с возможностью выбора последовательности действий применяемых отдельно для запроса и ответа;
+- конвертеры копируют тело ответа вместо вычитывания буфера;
 - исключить необходимость добавления самоподписных сертификатов в java keystore;
 - поддержка allure;
 
@@ -65,7 +65,6 @@
 - работа сразу с двумя моделями ответов для позитивных/негативных тестов;
 - встроенные в ответ softly asserts;
 - fluent API для проверки ответа;
-- использование функциональных интерфейсов для проверки ответа;
 - запись тела ответа в файл;
 
 **Частности**
@@ -176,16 +175,16 @@ public class BaseTest {
 ```
 
 Пояснение методов:
-- `#followRedirects(Boolean)` - автоматический переход по редирект статусам (301, 302...);
-- `#followSslRedirects(Boolean)` - автоматический переход httpS <-> http по редирект статусам (для тестового окружения);
-- `#hostnameVerifier(HostnameVerifier)` - если вызываемый домен не соответствует домену в сертификате (для тестового окружения);
-- `#sslSocketFactory(SSLSocketFactory, X509TrustManager)` - вместо добавления самоподписанных сертификатов в keystore (для тестового окружения);
-- `#addNetworkInterceptor(Interceptor)` - добавление сетевого перехватчика (важно использовать именно этот метод, иначе не будут перехватываться редиректы). `CompositeInterceptor` описан ниже;
-- `#addConverterFactory(Converter.Factory)` - добавить фабрику конвертеров для сериализации/десериализации объектов;
+- `#followRedirects()` - автоматический переход по редирект статусам (301, 302...);
+- `#followSslRedirects()` - автоматический переход httpS <-> http по редирект статусам (для тестового окружения);
+- `#hostnameVerifier()` - если вызываемый домен не соответствует домену в сертификате (для тестового окружения);
+- `#sslSocketFactory()` - вместо добавления самоподписанных сертификатов в keystore (для тестового окружения);
+- `#addNetworkInterceptor()` - добавление сетевого перехватчика (важно использовать именно этот метод, иначе не будут перехватываться редиректы). `CompositeInterceptor` описан ниже;
+- `#addConverterFactory()` - добавить фабрику конвертеров для сериализации/десериализации объектов;
   - `JacksonConverterFactory` для Jackson моделей + конвертеры по умолчанию из `ExtensionConverterFactory`;
   - `GsonConverterFactory` для Gson моделей + конвертеры по умолчанию из `ExtensionConverterFactory`;
   - `ExtensionConverterFactory` для примитивных/ссылочных типов (смотреть раздел <a href="#converters">конвертеры</a>);
-- `#addCallAdapterFactory(CallAdapter.Factory)` - поддержка специфического возвращаемого типа в методе API клиента, отличных от `retrofit2.Call`;
+- `#addCallAdapterFactory()` - поддержка специфического возвращаемого типа в методе API клиента, отличных от `retrofit2.Call`;
   - `UniversalCallAdapterFactory` - фабрика для `DualResponse`;
   - `AllureCallAdapterFactory` - фабрика для `AResponse` с поддержкой allure шагов;
 
@@ -215,10 +214,13 @@ public interface UniversalCallAdapterFactoryClient {
 <a href="#toc">К содержанию</a>
 
 <anchor>requests</anchor>
+
 ## Запросы к серверу
+
 <anchor>objectRequestBody</anchor>
+
 ### `Object` в качестве тела запроса
-Текущая реализация конвертеров позволяет использовать `Object` в качестве `@Body`, что позволяет отправлять в качестве тела запроса объект любого типа, который поддерживается `GsonConverterFactory` или `JacksonConverterFactory`. Механизм работает для любых наследников класса `ExtensionConverterFactory`. Важно использовать аннотацию `@Headers` для автоматического выбора правильного конвертера на основе заголовка `Content-Type`. Механизм выбора нужного конвертера описан в разделе <a href="#converters">конвертеры</a>.
+Текущая реализация конвертеров позволяет использовать `Object` в качестве `@Body`, что позволяет отправлять в качестве тела запроса объект любого типа, который поддерживается `GsonConverterFactory` или `JacksonConverterFactory`. Механизм работает для любых наследников класса `ExtensionConverterFactory`. Важно использовать аннотацию `@Headers` для автоматического выбора правильного конвертера на основе заголовка `Content-Type`. Механизм выбора нужного конвертера для тела запроса описан в разделе <a href="#converters">конвертеры</a>.
 
 ```java
 public interface PetApi {
@@ -232,7 +234,7 @@ public interface PetApi {
 }
 ```
 
-`Object` в сигнатуре метода позволяет отправлять в качестве тела запроса все что заблагорассудится.
+`Object` в сигнатуре метода позволяет отправлять в качестве тела запроса любую ересь.
 
 ```java
 public class AddPetTests extends BasePetTest {
@@ -241,17 +243,23 @@ public class AddPetTests extends BasePetTest {
   public void test1640455066880() {
     // body -> {"name":"fooBar"}
     PET_API.addPet(new Pet().name("fooBar"));
+    
     // body (json string) -> "fooBar"
     PET_API.addPet("fooBar");
+
     // body (string) -> fooBar
     PET_API.addPet(new RawBody("fooBar"));
+
     // body -> true
     PET_API.addPet(true);
+
     // body -> <отсутствует>
     PET_API.addPet(ExtensionConverter.NULL_BODY_VALUE);
+
     // body -> <из файла>
     final File file = new File("src/test/java/transport/data/PetPositive.json");
     PET_API.addPet(file);
+
     // body -> <из файла ресурсов проекта>
     final ResourceFile resourceFile = new ResourceFile("PetPositive.json");
     PET_API.addPet(resourceFile); 
@@ -265,7 +273,7 @@ public class AddPetTests extends BasePetTest {
 
 ### Формирование параметров запроса (ReflectQueryMap)
 
-Вы можете создать свой собственный `@QueryMap` для запросов, унаследовавшись от ReflectQueryMap, который получает пары ключ-значение из переменных класса. Этот механизм является дополнением к стандартной работе с `Map`. От данной реализации может пойти кровь из глаз, но к сожалению разработчики retrofit не предоставили API для кастомизации обработки `@QueryMap`. Ниже представлен пример `QueryMap` с fluent методами с использованием `lombok` библиотеки.
+Вы можете создать свой собственный `@QueryMap` для запросов, унаследовавшись от ReflectQueryMap, который получает пары ключ-значение из переменных класса. Этот механизм является дополнением к стандартной работе с `Map`. От данной реализации может пойти кровь из глаз, но к сожалению разработчики retrofit не предоставили API для кастомизации обработки `@QueryMap`. Ниже представлен лаконичный пример `QueryMap` с fluent методами с использованием `lombok` библиотеки.
 
 **LoginUserQueryMap**
 
@@ -277,7 +285,7 @@ public class LoginUserQueryMap extends ReflectQueryMap {
 
   private Object username;
   private Object password;
-  
+
   // пример заполнения экземпляра
   static {
     new LoginUserQueryMap().username("test").password("abc123");     
@@ -285,7 +293,7 @@ public class LoginUserQueryMap extends ReflectQueryMap {
 }
 ```
 
-**Usage (client)**
+**Использование в клиенте**
 
 ```java
 public interface UserApi {
@@ -302,6 +310,7 @@ public interface UserApi {
 Пример ниже - результат генерации QueryMap по Swagger спецификации.
 Писать подобные классы автоматизатору ручками немножко накладно.
 А вариант наполнения `Map` в тесте я даже не рассматриваю.
+
 ```java
 public class GeneratedQueryMap extends HashMap<String, Object> {
 
@@ -340,10 +349,10 @@ public class GeneratedQueryMap extends HashMap<String, Object> {
 
 **QueryParameterNullValueRule**
 
-- RULE_IGNORE - Игнорировать параметры c значением `null` (по умолчанию)
-- RULE_NULL_MARKER - заменить `null` на `null marker` -> `/api/call?foo=%00`
-- RULE_EMPTY_STRING - заменить `null` на пустую строку -> `/api/call?foo=`
-- RULE_NULL_STRING - заменить `null` на `null` строку -> `/api/call?foo=null`
+- `RULE_IGNORE` - Игнорировать параметры c значением `null` (по умолчанию)
+- `RULE_NULL_MARKER` - заменить `null` на `null marker` -> `/api/call?foo=%00`
+- `RULE_EMPTY_STRING` - заменить `null` на пустую строку -> `/api/call?foo=`
+- `RULE_NULL_STRING` - заменить `null` на `null` строку -> `/api/call?foo=null`
 
 ```java
 // для всех переменных класса
@@ -377,7 +386,7 @@ public class LoginUserQueryMap extends ReflectQueryMap {
 @QueryMapParameterRules(caseRule = SNAKE_CASE)
 public class LoginUserQueryMap extends ReflectQueryMap {
 
-  // имя параметра для определенной переменной
+  // имя параметра запроса для определенной переменной
   @QueryMapParameter(name = "userName")
   private Object username;
 }
@@ -431,9 +440,9 @@ public interface UniversalCallAdapterFactoryClient {
 ```
 
 `DualResponse` и `AResponse` унаследованы от `BaseDualResponse` и включают следующие методы:
-- `assertResponse(Consumer<IResponseAsserter> respAsserter)` - для проверки ответа от сервера;
-- `assertSucResponse(BiConsumer<IResponseAsserter, SUC_DTO> respAsserter, SUC_DTO expected)` - для проверки успешного ответа от сервера;
-- `assertErrResponse(BiConsumer<IResponseAsserter, ERR_DTO> respAsserter, ERR_DTO expected)` - для проверки ошибочного ответа от сервера;
+- `assertResponse()` - для проверки ответа от сервера;
+- `assertSucResponse()` - для проверки успешного ответа от сервера;
+- `assertErrResponse()` - для проверки ошибочного ответа от сервера;
 - `getErrDTO()` - возвращает модель тела ответа в случае ошибки (nullable);
 - `getSucDTO()` - возвращает модель тела ответа в случае успеха (nullable);
 - `getEndpointInfo()` - возвращает информацию о вызове метода API;
@@ -512,7 +521,7 @@ Lambda: `.assertSucBody(pet -> pet.match(expected))`<sup>*</sup>
 Reference: отсутствует   
 
 **`assertSucBody(BiConsumer<SUC_DTO, SUC_DTO>, SUC_DTO)`**   
-Предоставляет только actual и expected модели для сверки.   
+Предоставляет только actual и expected модели для метода сверки.   
 Пример для статического метода сверки моделей   
 Lambda: `.assertSucBody((act, exp) -> Asserts.assertPet(act, exp), expected)`   
 Reference: `.assertSucBody(Asserts::assertPet, expected)`   
@@ -524,12 +533,12 @@ Reference: `.assertSucBody(Pet::match, expected)`<sup>*</sup>
 **`assertSucBody(BiConsumer<SoftlyAsserter, SUC_DTO>)`**   
 Предоставляет ассертер и actual модель для проверки модели.   
 Пример для статического метода проверки модели   
-Lambda: `.assertSucBody((asserter, act) -> Asserts.assertPet(asserter, act, expected))`   
+Lambda: `.assertSucBody((sa, act) -> Asserts.assertPet(sa, act, expected))`   
 Reference: отсутствует   
 
 **`assertSucBody(TripleConsumer<SoftlyAsserter, SUC_DTO, SUC_DTO>, SUC_DTO)`**   
 Предоставляет ассертер, actual и expected модель для проверки.    
-Lambda: `.assertSucBody((asserter, act, exp) -> Asserts.assertPet(asserter, act, exp), expected)`   
+Lambda: `.assertSucBody((sa, act, exp) -> Asserts.assertPet(sa, act, exp), expected)`   
 Reference: `.assertSucBody(Asserts::assertPet, expected)`<sup>*</sup>   
 
 <a href="#toc">К содержанию</a>
@@ -586,10 +595,10 @@ public static class ExampleTests {
 
 ### Кастомизация встроенных проверок
 
-`DualResponse` содержит встроенные проверки, которые можно расширить и переопределить. Для этого вам нужно реализовать `IResponseAsserter` и/или `IHeadersAsserter`. Далее создать свой `CustomResponse`, который должен быть унаследован от `BaseDualResponse`. В классе `CustomResponse` нужно реализовать методы:
+`DualResponse` содержит встроенные проверки, которые можно расширить или переопределить. Для этого вам нужно создать свой `CustomResponse`, который должен быть унаследован от `BaseDualResponse` и реализовать в нем методы:
 
-- `public IHeadersAsserter getHeadersAsserter();`
-- `public IResponseAsserter getResponseAsserter();`
+- `public IHeadersAsserter getHeadersAsserter();` где `IHeadersAsserter` реализация ассертера для заголовков. Лучше унаследоваться от `HeadersAsserter`.
+- `public IResponseAsserter getResponseAsserter();` где `IResponseAsserter` реализация ассертера для всего ответа от сервера. Лучше унаследоваться от `ResponseAsserter`.
 
 <spoiler title="Для наглядности">
 
@@ -598,10 +607,28 @@ public static class ExampleTests {
 </spoiler>
 
 Далее, при создании клиента `retrofit`, вам необходимо явно указать, какой ответ следует использовать при создании экземпляра `CustomResponse`.
-Пример для `new Retrofit.Builder().addCallAdapterFactory(CallAdapter.Factory)` (фабрики библиотеки):
+Для `new Retrofit.Builder().addCallAdapterFactory(CallAdapter.Factory)`:
 
 - `new UniversalCallAdapterFactory(CustomResponse::new)` или
 - `new AllureCallAdapterFactory(CustomResponse::new)`
+
+Данный подход позволит вам вынести пул однотипных методов проверок ответов в отдельную реализацию `IResponseAsserter`.
+Например `PetStoreAsserter`:
+
+```java
+public static class ExampleTests { 
+    
+  public void test1639328754881() {
+    Pet expected = CLIENT.addPet(Pet.generate());
+    CLIENT.getPet(expected.getId())
+            // по аналогии с assertResponse(Consumer)
+            .assertResponse(asserter -> asserter.assertGetPet(expected)) 
+            // или assertSucResponse(BiConsumer, SUC_DTO)
+            .assertResponse(PetStoreAsserter::assertGetPet, expected);
+  }
+
+}
+```
 
 <a href="#toc">К содержанию</a>
 
@@ -618,14 +645,14 @@ public static class ExampleTests {
 * по `Content-Type` заголовку (MIME);
 * по примитивному/ссылочному java типу (`Byte`, `Character`, `Double`, `Float`, `Integer`, `Long`, `Short`, `String`);
 
-Примеры использования встроенных java type конвертеров
+Примеры для различных java типов
 - `AResponse<String, String> addPet(@Body String body);`
 - `AResponse<RawBody, Err> addPet(@Body RawBody body);`
 - `AResponse<Byte[], Err> addPet(@Body byte[] body);`
 - `AResponse<File, Err> addPet(@Body File body);`
 - `AResponse<Pet, Err> addPet(@Body ResourceFile body);` (только для запросов)
 
-По аналогии с существующими фабриками Вы можете реализовать свою универсальную фабрику.
+По аналогии с существующими фабриками `JacksonConverterFactory` и `GsonConverterFactory` Вы можете реализовать свою универсальную фабрику и зарегистрировать или перерегистрировать конвертеры под ваши нужды.
 
 ```java
 public class CustomConverterFactory extends ExtensionConverterFactory {
@@ -633,14 +660,19 @@ public class CustomConverterFactory extends ExtensionConverterFactory {
   public CustomConverterFactory() {
     super(LoggerFactory.getLogger(CustomConverterFactory.class));
     final JacksonConverter<Object> jacksonConverter = new JacksonConverter<>();
+    
     // использовать JacksonConverter для application/json, text/json
     registerMimeConverter(jacksonConverter, APP_JSON, APP_JSON_UTF8, TEXT_JSON, TEXT_JSON_UTF8);
+    
     // использовать JacksonConverter если `Content-Type` не передан 
     registerMimeConverter(jacksonConverter, ContentType.NULL);
+    
     // использовать JacksonConverter для Map, List типов
     registerJavaTypeConverter(jacksonConverter, Map.class, List.class);
+    
     // использовать специфический конвертер для специфического типа сырого тела
     registerRawConverter(new CustomConverter<>(), CustomBody.class);
+    
     // использовать GsonConverter для любой модели 
     // из пакета "com.example.model.gson" (строгое соответствие)
     registerPackageConverter(new GsonConverter(), "com.example.model.gson");
@@ -649,7 +681,7 @@ public class CustomConverterFactory extends ExtensionConverterFactory {
 }
 ```
 
-При осуществлении запросов содержащих тело, предполагается наличие аннотации `retrofit2.http.Headers` c заголовком `Content-Type`. 
+При осуществлении **запросов** содержащих тело, предполагается наличие аннотации `retrofit2.http.Headers` c заголовком `Content-Type`. 
 
 ```java
 public interface PetApi {
@@ -664,8 +696,10 @@ public interface PetApi {
 public interface PetApi {
   @GET("/api/example")
   AResponse<Pet, Err> get(@HeaderMap Map<String, String> headers);
+  // не перехватываются   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }
 ```
+
 К сожалению это особенность реализации retrofit и у нас нет возможности получить значение переменной метода.
 В таком случае можно создать свой конвертер по аналогии с примером `CustomConverterFactory` с указанием конвертера для пакета или java типа;
 Так же можно явно указать конвертер при помощи аннотации `@RequestConverter`, `@ResponseConverter`;
@@ -677,11 +711,12 @@ public interface PetApi {
     @POST("/v2/pet")
     @RequestConverter(bodyClasses = {Pet.class}, converter = JacksonConverter.class)
     @ResponseConverter(bodyClasses = {Pet.class, Err.class}, converter = JacksonConverter.class)
-    AResponse<Pet, Err> addPet(@Body Object body);
-    
+    AResponse<Pet, Err> addPet(@Body Object body, @HeaderMap Map<String, String> headers);
+
 }
 ```
 
-Если поле `bodyClasses` оставить пустым, то конвертер будет применен ко всем моделям из сигнатуры метода. Например `@ResponseConverter(converter = JacksonConverter.class)` будет применен для конвертации тела ответа в модель `Pet` или `Err` (в зависимости от статуса).
+Если поле `bodyClasses` оставить пустым, то конвертер будет применен ко всем моделям из сигнатуры метода. 
+Например `@ResponseConverter(converter = JacksonConverter.class)` будет применен для конвертации тела ответа в модель `Pet` или `Err` (в зависимости от статуса).
 
 <a href="#toc">К содержанию</a>
