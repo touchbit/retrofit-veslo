@@ -1,17 +1,15 @@
 ---
-name: Bug report about: A reproducible problem title: ''
-labels: bug assignees: ''
+name: Bug report
+about: A reproducible problem
+title: 'ConvertCallException: No content to map due to end-of-input'
+labels: bug
+assignees: shaburov
 
 ---
-Descriptions in English and Russian are allowed. The error description should contain answers to the questions what ?,
-where ?, provided ?, what was expected? and the actual problem in the form of a stack trace and/or a screenshot and/or
-an incorrect state message. Indicate the version of this library as well as the retrofit and okhttp3 libraries. It is
-desirable to attach the result of calling the command `mvn dependency: tree` or` gradle -q dependencies`.
 
-Допускается описание на английском и русском языках. Описание ошибки должно содержать ответы на вопросы что?, где?, при
-условии?, что ожидалось? и фактическую проблему в виде стэктрэйса и/или скриншота и/или сообщения о некорректном
-состоянии. Указать версию данной библиотеки а так же библиотек retrofit и okhttp3. Желательно приложить результат вызова
-команды `mvn dependency:tree` или `gradle -q dependencies`.
+Descriptions in English and Russian are allowed. The error description should contain answers to the questions what ?, where ?, provided ?, what was expected? and the actual problem in the form of a stack trace and/or a screenshot and/or an incorrect state message. Indicate the version of this library as well as the retrofit and okhttp3 libraries. It is desirable to attach the result of calling the command `mvn dependency: tree` or` gradle -q dependencies`.
+
+Допускается описание на английском и русском языках. Описание ошибки должно содержать ответы на вопросы что?, где?, при условии?, что ожидалось? и фактическую проблему в виде стэктрэйса и/или скриншота и/или сообщения о некорректном состоянии. Указать версию данной библиотеки а так же библиотек retrofit и okhttp3. Желательно приложить результат вызова команды `mvn dependency:tree` или `gradle -q dependencies`.
 
 Example/Пример:
 > **Title:** MismatchedInputException: No content to map due to end-of-input
