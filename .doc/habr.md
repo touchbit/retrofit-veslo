@@ -742,6 +742,28 @@ public static class ExampleTests {
 
 <a href="#toc">К содержанию</a>
 
+<anchor>anchor_ResourceFile</anchor>
+
+## ResourceFile модель
+
+Предоставляет возможность чтения файлов из ресурсов проекта.  
+Добавлено для более удобного использования в запросах API для тех, кому приходится мучиться с файлами.   
+Имеет встроенные проверки на существование файла и его читабельность.  
+В скором времени появится [небольшая доработка](https://github.com/touchbit/retrofit-veslo/issues/4) с возможностью модификации текстовых файлов через fluent API.   
+
+```java
+public class AddPetTests extends BasePetTest {
+
+  @Test
+  public void test1640455066880() {
+    final ResourceFile resourceFile = new ResourceFile("PetPositive.json");
+    PET_API.addPet(resourceFile); 
+  }
+}
+```
+
+<a href="#toc">К содержанию</a>
+
 <anchor>converters</anchor>
 
 ## Конвертеры
