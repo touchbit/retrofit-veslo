@@ -764,6 +764,78 @@ public class AddPetTests extends BasePetTest {
 
 <a href="#toc">К содержанию</a>
 
+<anchor>anchor_Jackson2Model</anchor>
+
+## Jackson2 модели
+
+На момент статьи речь идет о `Jackson2` версии `2.13.1`.   
+В отличие от Gson библиотека `Jackson2` позволяет обрабатывать случай, когда ответ от сервера содержит лишние поля, не выдавая ошибку при конвертации.   
+Именно по этой причине я **настоятельно** рекомендую использовать `Jackson2` для ваших json/yaml моделей.  
+
+Обработка лишних полей уже реализована в классе `JacksonModelAdditionalProperties` и вам достаточно унаследовать модель от этого класса.
+Если контракт изменился и пришел ответ с новыми полями, то мы можем это проверить при помощи базового метода `assertNoAdditionalProperties()`.
+
+```text
+The presence of extra fields in the model: Pet
+Expected: no extra fields
+  Actual: {nickname=Puffy}
+```
+
+Рекомендуется вынести проверки контракта в отдельные тесты.
+
+```java
+public class AddPetTests {
+
+    @Test
+    @DisplayName("Pet model complies with API contract")
+    public void test1640455066880() {
+        PET_API.addPet(generatePet()).assertResponse(response -> response
+                .assertHttpStatusCodeIs(200)
+                .assertSucBody(Pet::assertNoAdditionalProperties));
+    }
+}
+```
+
+Так же `additionalProperties` позволяют отправлять "битые" данные. Например, в модели `Pet` у нас есть поле `id` с типом `Long` и мы ходим проверить, как себя поведет сервер, если отправить число большее чем `Long.MAX_VALUE` или строку вместо `Long`.
+
+```java
+public class AddPetTests {
+
+  @Test 
+  public void test1640455066881() {
+    Pet pet = generatePet();
+    // id > Long.MAX_VALUE
+    pet.id(null).additionalProperty("id", new BigInteger(Long.MAX_VALUE + "000"));
+    // id != Long
+    pet.id(null).additionalProperty("id", "fooBar");
+    PET_API.addPet(pet);
+  }
+}
+```
+
+Кто-то скажет, что преимущество Gson в том, что не надо использовать аннотации для каждого поля. Однако `Jackson2` такую возможность тоже предоставляет, но только не по умолчанию. Чтоб не вешать на каждое поле аннотацию `@JsonProperty` достаточно навесить на класс аннотацию `@JsonAutoDetect(creatorVisibility = ANY, fieldVisibility = ANY)`. Так же мы можем управлять правилами наименования полей при помощи аннотации `@JsonNaming(PropertyNamingStrategies.LowerCamelCaseStrategy.class)`.
+
+Ниже пример модели с использованием lombok библиотеки (рекомендую такой подход).
+
+```java
+// копипастный блок с аннотациями
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode(callSuper = true)
+@Accessors(chain = true, fluent = true)
+@JsonNaming(PropertyNamingStrategies.LowerCamelCaseStrategy.class)
+@JsonAutoDetect(creatorVisibility = ANY, fieldVisibility = ANY)
+public class Tag extends JacksonModelAdditionalProperties<Tag> {
+
+    private Long id = null;
+    private String name = null;
+
+}
+```
+
+<a href="#toc">К содержанию</a>
+
 <anchor>converters</anchor>
 
 ## Конвертеры
