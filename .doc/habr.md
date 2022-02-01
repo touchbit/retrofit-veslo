@@ -11,31 +11,32 @@
 
 </spoiler>
 
-<anchor>toc</anchor>
+<anchor>anchor_TOC</anchor>
 
 ## Содержание
 
-* <a href="#prerequisites">Предпосылки</a>
-* <a href="#modules">Модули</a>
-* <a href="#client">Клиент</a>
-  * <a href="#CompositeInterceptor">Сетевой перехватчик (CompositeInterceptor)</a>
-* <a href="#requests">Запросы к серверу</a>
-  * <a href="#objectRequestBody">Object в качестве тела запроса</a>
-  * <a href="#reflectQueryMap">Формирование параметров запроса (ReflectQueryMap)</a>
-     * <a href="#reflectQueryMapNullRule">Правила обработки 'null' (QueryParameterNullValueRule)</a>
-     * <a href="#reflectQueryMapCaseRule">Правила наименования параметров (QueryParameterCaseRule)</a>
-* <a href="#responses">Ответы от сервера</a>
-  * <a href="#responseasserter">Response Asserter</a>
-  * <a href="#headereasserter">Header Asserter</a>
-  * <a href="#customresponseassertion">Кастомизация встроенных проверок</a>
-* <a href="#models">Модели</a>
+* <a href="#anchor_Prerequisites">Предпосылки</a>
+* <a href="#anchor_Modules">Модули</a>
+* <a href="#anchor_Client">Клиент</a>
+  * <a href="#anchor_CompositeInterceptor">Сетевой перехватчик (CompositeInterceptor)</a>
+* <a href="#anchor_Requests">Запросы к серверу</a>
+  * <a href="#anchor_ObjectRequestBody">Object в качестве тела запроса</a>
+  * <a href="#anchor_ReflectQueryMap">Формирование параметров запроса (ReflectQueryMap)</a>
+     * <a href="#anchor_QueryParameterNullValueRule">Правила обработки 'null' (QueryParameterNullValueRule)</a>
+     * <a href="#anchor_QueryParameterCaseRule">Правила наименования параметров (QueryParameterCaseRule)</a>
+* <a href="#anchor_Responses">Ответы от сервера</a>
+  * <a href="#anchor_ResponseAsserter">Response Asserter</a>
+  * <a href="#anchor_HeaderAsserter">Header Asserter</a>
+  * <a href="#anchor_BodyAsserter">Body Asserter</a>
+  * <a href="#anchor_CustomResponseAssertion">Кастомизация встроенных проверок</a>
+* <a href="#anchor_Models">Модели</a>
   * <a href="#anchor_RawBody">RawBody</a>
   * <a href="#anchor_ResourceFile">ResourceFile</a>
   * <a href="#anchor_Jackson2Model">Jackson2 модели</a>
   * <a href="#anchor_BeanValidationModel">Jakarta Bean Validation</a>
-* <a href="#converters">Конвертеры</a>
+* <a href="#anchor_Converters">Конвертеры</a>
 
-<anchor>prerequisites</anchor>
+<anchor>anchor_Prerequisites</anchor>
 
 ## Предпосылки
 
@@ -75,7 +76,7 @@
 **Частности**
 
 - softly asserts с автоматическим закрытием и возможностью игнорирования NPE (`SoftlyAsserter`);
-- добавление проверок в модель для удобного использования в `ResponseAsserter`;
+- добавление проверок в модель для удобного использования в `anchor_ResponseAsserter`;
 - примеры использования softly asserts для ответа (`ExampleApiClientAssertions`);
 - базовый класс с дополнительными полями для моделей jackson2 (`JacksonModelAdditionalProperties`);
 - jakarta java bean validation (`BeanValidationModel`);
@@ -121,9 +122,9 @@ public static class ExampleTests {
 
 </spoiler>
 
-<a href="#toc">К содержанию</a>
+<a href="#anchor_TOC">К содержанию</a>
 
-<anchor>modules</anchor>
+<anchor>anchor_Modules</anchor>
 
 ## Модули
 
@@ -145,9 +146,9 @@ public static class ExampleTests {
 </dependency>
 ```
 
-<a href="#toc">К содержанию</a>
+<a href="#anchor_TOC">К содержанию</a>
 
-<anchor>client</anchor>
+<anchor>anchor_Client</anchor>
 
 ## Клиент
 Ниже представлен пример создания API клиента (копипастнуть и удалить ненужное).
@@ -184,16 +185,16 @@ public class BaseTest {
 - `#followSslRedirects()` - автоматический переход httpS <-> http по редирект статусам (для тестового окружения);
 - `#hostnameVerifier()` - если вызываемый домен не соответствует домену в сертификате (для тестового окружения);
 - `#sslSocketFactory()` - вместо добавления самоподписанных сертификатов в keystore (для тестового окружения);
-- `#addNetworkInterceptor()` - добавление сетевого перехватчика (важно использовать именно этот метод, иначе не будут перехватываться редиректы). `CompositeInterceptor` описан <a href="#CompositeInterceptor">тут</a>;
+- `#addNetworkInterceptor()` - добавление сетевого перехватчика (важно использовать именно этот метод, иначе не будут перехватываться редиректы). `CompositeInterceptor` описан <a href="#anchor_CompositeInterceptor">тут</a>;
 - `#addConverterFactory()` - добавить фабрику конвертеров для сериализации/десериализации объектов;
   - `JacksonConverterFactory` для Jackson моделей + конвертеры по умолчанию из `ExtensionConverterFactory`;
   - `GsonConverterFactory` для Gson моделей + конвертеры по умолчанию из `ExtensionConverterFactory`;
-  - `ExtensionConverterFactory` для примитивных/ссылочных типов (смотреть раздел <a href="#converters">конвертеры</a>);
+  - `ExtensionConverterFactory` для примитивных/ссылочных типов (смотреть раздел <a href="#anchor_Converters">конвертеры</a>);
 - `#addCallAdapterFactory()` - поддержка специфического возвращаемого типа в методе API клиента, отличных от `retrofit2.Call`;
   - `UniversalCallAdapterFactory` - фабрика для `DualResponse`;
   - `AllureCallAdapterFactory` - фабрика для `AResponse` с поддержкой allure шагов;
 
-Если вы хотите использовать allure, то нужно добавить в зависимости allure модуль. В таком случае возвращаемый класс будет `veslo.AResponse`. Так же нужно реализовать и добавить в okhttp клиент (`#addNetworkInterceptor()`) свой собственный `CompositeInterceptor` и зарегистрировать `AllureAction.INSTANCE` как в <a href="#CompositeInterceptorExample">примере</a>.   
+Если вы хотите использовать allure, то нужно добавить в зависимости allure модуль. В таком случае возвращаемый класс будет `veslo.AResponse`. Так же нужно реализовать и добавить в okhttp клиент (`#addNetworkInterceptor()`) свой собственный `CompositeInterceptor` и зарегистрировать `AllureAction.INSTANCE` как в <a href="#anchor_CompositeInterceptorExample">примере</a>.   
 Настоятельно рекомендуется использовать аннотацию `io.qameta.allure.Description`.   
 
 ```java
@@ -214,11 +215,11 @@ public interface UniversalCallAdapterFactoryClient {
 }
 ```
 
-Более детальное описание смотреть в разделе "<a href="#responses">Ответы от сервера</a>".
+Более детальное описание смотреть в разделе "<a href="#anchor_Responses">Ответы от сервера</a>".
 
-<a href="#toc">К содержанию</a>
+<a href="#anchor_TOC">К содержанию</a>
 
-<anchor>CompositeInterceptor</anchor>
+<anchor>anchor_CompositeInterceptor</anchor>
 
 ## Сетевой перехватчик (CompositeInterceptor)
 
@@ -296,16 +297,16 @@ Body: (78-byte body)
 
 </spoiler>
 
-<a href="#toc">К содержанию</a>
+<a href="#anchor_TOC">К содержанию</a>
 
-<anchor>requests</anchor>
+<anchor>anchor_Requests</anchor>
 
 ## Запросы к серверу
 
-<anchor>objectRequestBody</anchor>
+<anchor>anchor_ObjectRequestBody</anchor>
 
 ### `Object` в качестве тела запроса
-Текущая реализация конвертеров позволяет использовать `Object` в качестве `@Body`, что позволяет отправлять в качестве тела запроса объект любого типа, который поддерживается `GsonConverterFactory` или `JacksonConverterFactory`. Механизм работает для любых наследников класса `ExtensionConverterFactory`. Важно использовать аннотацию `@Headers` для автоматического выбора правильного конвертера на основе заголовка `Content-Type`. Механизм выбора нужного конвертера для тела запроса описан в разделе <a href="#converters">конвертеры</a>.
+Текущая реализация конвертеров позволяет использовать `Object` в качестве `@Body`, что позволяет отправлять в качестве тела запроса объект любого типа, который поддерживается `GsonConverterFactory` или `JacksonConverterFactory`. Механизм работает для любых наследников класса `ExtensionConverterFactory`. Важно использовать аннотацию `@Headers` для автоматического выбора правильного конвертера на основе заголовка `Content-Type`. Механизм выбора нужного конвертера для тела запроса описан в разделе <a href="#anchor_Converters">конвертеры</a>.
 
 ```java
 public interface PetApi {
@@ -352,9 +353,9 @@ public class AddPetTests extends BasePetTest {
 }
 ```
 
-<a href="#toc">К содержанию</a>
+<a href="#anchor_TOC">К содержанию</a>
 
-<anchor>reflectQueryMap</anchor>
+<anchor>anchor_ReflectQueryMap</anchor>
 
 ### Формирование параметров запроса (ReflectQueryMap)
 
@@ -424,9 +425,9 @@ public class GeneratedQueryMap extends HashMap<String, Object> {
 
 </spoiler>
 
-<a href="#toc">К содержанию</a>
+<a href="#anchor_TOC">К содержанию</a>
 
-<anchor>reflectQueryMapNullRule</anchor>
+<anchor>anchor_QueryParameterNullValueRule</anchor>
 
 #### ReflectQueryMap - управление правилами обработки null значений
 
@@ -450,9 +451,9 @@ public class LoginUserQueryMap extends ReflectQueryMap {
 }
 ```
 
-<a href="#toc">К содержанию</a>
+<a href="#anchor_TOC">К содержанию</a>
 
-<anchor>reflectQueryMapCaseRule</anchor>
+<anchor>anchor_QueryParameterCaseRule</anchor>
 
 #### ReflectQueryMap - управление правилами наименования параметров
 
@@ -477,9 +478,9 @@ public class LoginUserQueryMap extends ReflectQueryMap {
 }
 ```
 
-<a href="#toc">К содержанию</a>
+<a href="#anchor_TOC">К содержанию</a>
 
-<anchor>responses</anchor>
+<anchor>anchor_Responses</anchor>
 
 ## Ответы от сервера
 
@@ -534,8 +535,8 @@ public interface Client {
 - `getResponse()` - возвращает сырой ответ представленный классом `okhttp3.Response` с читаемым телом;
 - `getCallAnnotations()` - возвращает список аннотаций вызванного клиентского API метода:
 
-Помимо работы с двумя моделями данных в ответе, классы `DualResponse` и `AResponse` предоставляют возможность мягких проверок с автозакрытием (Closeable). Данные методы на вход принимают consumer-функции одним из обязательных аргументов которой является `IResponseAsserter`.
-По умолчанию используется `ResponseAsserter` для классов `DualResponse` и `AResponse`.
+Помимо работы с двумя моделями данных в ответе, классы `DualResponse` и `AResponse` предоставляют возможность мягких проверок с автозакрытием (Closeable). Данные методы на вход принимают consumer-функции одним из обязательных аргументов которой является `Ianchor_ResponseAsserter`.
+По умолчанию используется `anchor_ResponseAsserter` для классов `DualResponse` и `AResponse`.
 
 Тривиальный пример теста для `assertResponse`
 ```java
@@ -563,16 +564,16 @@ Expected: is  No Content
   Actual: was ОК
 ```
 
-Методы `assertSucResponse` и `assertErrResponse` однотипные и на вход принимают `IResponseAsserter` и ожидаемую модель для проверки. По большей части они предназначены для выноса проверок в отдельные методы. Пример из `example` модуля:
+Методы `assertSucResponse` и `assertErrResponse` однотипные и на вход принимают `Ianchor_ResponseAsserter` и ожидаемую модель для проверки. По большей части они предназначены для выноса проверок в отдельные методы. Пример из `example` модуля:
 
 [![](https://habrastorage.org/webt/xg/xh/6r/xgxh6rt8ahtwtcbaeiiktuojuwg.png)](https://habrastorage.org/webt/xg/xh/6r/xgxh6rt8ahtwtcbaeiiktuojuwg.png)
 
-<a href="#toc">К содержанию</a>
+<a href="#anchor_TOC">К содержанию</a>
 
-<anchor>responseasserter</anchor>
+<anchor>anchor_ResponseAsserter</anchor>
 
 #### Response Asserter
-Любые наследники класса `BaseDualResponse` содержат в себе встроенные проверки реализующие интерфейс `IResponseAsserter`. По умолчанию используется `ResponseAsserter` который можно расширить дополнительными проверками или заменить собственной реализацией (смотреть <a href="#customresponseassertion">"кастомизация встроенных проверок"</a>).
+Любые наследники класса `BaseDualResponse` содержат в себе встроенные проверки реализующие интерфейс `Ianchor_ResponseAsserter`. По умолчанию используется `anchor_ResponseAsserter` который можно расширить дополнительными проверками или заменить собственной реализацией (смотреть <a href="#anchor_CustomResponseAssertion">"кастомизация встроенных проверок"</a>).
 
 **Обычные методы проверки**
 - `assertHttpStatusCodeIs(int)` - точное совпадение `HTTP status code`
@@ -591,10 +592,10 @@ Expected: is  No Content
 - `Lambda:` лямбда выражение для наглядности сигнатуры метода;   
 - `Reference:` сокращенное представление лямбда выражения;   
 
-Методов добавил "на все случаи жизни". В примерах я пометил звездочкой методы, которые рекомендую к использованию. Так же все примеры использования каждого конкретного метода указаны в javadoc класса `ResponseAsserter` и в классе `ExampleApiClientAssertions` в ядре (хоть это и не канонично).    
+Методов добавил "на все случаи жизни". В примерах я пометил звездочкой методы, которые рекомендую к использованию. Так же все примеры использования каждого конкретного метода указаны в javadoc класса `anchor_ResponseAsserter` и в классе `ExampleApiClientAssertions` в ядре (хоть это и не канонично).    
 
 **`assertHeaders(Consumer<IHeadersAsserter>)`**   
-Смотреть раздел <a href="#headerasserter">Header Asserter</a>.
+Смотреть раздел <a href="#anchor_HeaderAsserter">Header Asserter</a>.
 
 **`assertSucBody(Consumer<SUC_DTO>)`**   
 Метод предоставляет только модель и ее методы   
@@ -628,9 +629,9 @@ Reference: отсутствует
 Lambda: `.assertSucBody((sa, act, exp) -> Asserts.assertPet(sa, act, exp), expected)`   
 Reference: `.assertSucBody(Asserts::assertPet, expected)`<sup>*</sup>   
 
-<a href="#toc">К содержанию</a>
+<a href="#anchor_TOC">К содержанию</a>
 
-<anchor>headerasserter</anchor>
+<anchor>anchor_HeaderAsserter</anchor>
 
 #### Header Asserter
 
@@ -676,16 +677,16 @@ public static class ExampleTests {
 }
 ```
 
-<a href="#toc">К содержанию</a>
+<a href="#anchor_TOC">К содержанию</a>
 
-<anchor>customresponseassertion</anchor>
+<anchor>anchor_CustomResponseAssertion</anchor>
 
 ### Кастомизация встроенных проверок
 
 `DualResponse` содержит встроенные проверки, которые можно расширить или переопределить. Для этого вам нужно создать свой `CustomResponse`, который должен быть унаследован от `BaseDualResponse` и реализовать в нем методы:
 
 - `public IHeadersAsserter getHeadersAsserter();` где `IHeadersAsserter` реализация ассертера для заголовков. Лучше унаследоваться от `HeadersAsserter`.
-- `public IResponseAsserter getResponseAsserter();` где `IResponseAsserter` реализация ассертера для всего ответа от сервера. Лучше унаследоваться от `ResponseAsserter`.
+- `public Ianchor_ResponseAsserter getanchor_ResponseAsserter();` где `Ianchor_ResponseAsserter` реализация ассертера для всего ответа от сервера. Лучше унаследоваться от `anchor_ResponseAsserter`.
 
 <spoiler title="Для наглядности">
 
@@ -699,7 +700,7 @@ public static class ExampleTests {
 - `new UniversalCallAdapterFactory(CustomResponse::new)` или
 - `new AllureCallAdapterFactory(CustomResponse::new)`
 
-Данный подход позволит вам вынести пул однотипных методов проверок ответов в отдельную реализацию `IResponseAsserter`.
+Данный подход позволит вам вынести пул однотипных методов проверок ответов в отдельную реализацию `Ianchor_ResponseAsserter`.
 Например `PetStoreAsserter`:
 
 ```java
@@ -716,9 +717,9 @@ public static class ExampleTests {
 }
 ```
 
-<a href="#toc">К содержанию</a>
+<a href="#anchor_TOC">К содержанию</a>
 
-<anchor>models</anchor>
+<anchor>anchor_Models</anchor>
 
 ## Модели
 
@@ -740,7 +741,7 @@ public static class ExampleTests {
 - `assertStringBodyIs(String expected)`
 - `assertStringBodyIsIgnoreCase(String expected)`
 
-<a href="#toc">К содержанию</a>
+<a href="#anchor_TOC">К содержанию</a>
 
 <anchor>anchor_ResourceFile</anchor>
 
@@ -762,7 +763,7 @@ public class AddPetTests extends BasePetTest {
 }
 ```
 
-<a href="#toc">К содержанию</a>
+<a href="#anchor_TOC">К содержанию</a>
 
 <anchor>anchor_Jackson2Model</anchor>
 
@@ -834,7 +835,7 @@ public class Tag extends JacksonModelAdditionalProperties<Tag> {
 }
 ```
 
-<a href="#toc">К содержанию</a>
+<a href="#anchor_TOC">К содержанию</a>
 
 <anchor>anchor_BeanValidationModel</anchor>
 
@@ -861,9 +862,9 @@ public class AddPetTests {
 
 [![](https://habrastorage.org/webt/jo/xd/qe/joxdqemtiw9qg2ubbgivup2nida.png)](https://habrastorage.org/webt/jo/xd/qe/joxdqemtiw9qg2ubbgivup2nida.png)
 
-<a href="#toc">К содержанию</a>
+<a href="#anchor_TOC">К содержанию</a>
 
-<anchor>converters</anchor>
+<anchor>anchor_Converters</anchor>
 
 ## Конвертеры
 
@@ -950,4 +951,4 @@ public interface PetApi {
 Если поле `bodyClasses` оставить пустым, то конвертер будет применен ко всем моделям из сигнатуры метода. 
 Например `@ResponseConverter(converter = JacksonConverter.class)` будет применен для конвертации тела ответа в модель `Pet` или `Err` (в зависимости от статуса).
 
-<a href="#toc">К содержанию</a>
+<a href="#anchor_TOC">К содержанию</a>
