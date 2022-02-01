@@ -18,12 +18,12 @@
 * <a href="#prerequisites">Предпосылки</a>
 * <a href="#modules">Модули</a>
 * <a href="#client">Клиент</a>
-* <a href="#requests">Запросы</a>
+* <a href="#requests">Запросы к серверу</a>
   * <a href="#objectRequestBody">Object в качестве тела запроса</a>
   * <a href="#reflectQueryMap">Формирование параметров запроса (ReflectQueryMap)</a>
-    * <a href="#reflectQueryMapNullRule">Правила обработки `null` (QueryParameterNullValueRule)</a>
-    * <a href="#reflectQueryMapCaseRule">Правила наименования параметров (QueryParameterCaseRule)</a>
-* <a href="#responses">Ответы</a>
+     * <a href="#reflectQueryMapNullRule">Правила обработки 'null' (QueryParameterNullValueRule)</a>
+     * <a href="#reflectQueryMapCaseRule">Правила наименования параметров (QueryParameterCaseRule)</a>
+* <a href="#responses">Ответы от сервера</a>
   * <a href="#responseasserter">Response Asserter</a>
   * <a href="#headereasserter">Header Asserter</a>
   * <a href="#customresponseassertion">Кастомизация встроенных проверок</a>
@@ -36,10 +36,13 @@
 
 Изначально данную библиотеку я начинал писать для себя с целью аккумулирования всех своих наработок связанных с тестированием API. Но на середине пути понял, что данное решение может быть полезно не только мне, что повлияло и на функциональность и на архитектуру решения. Некоторые архитектурные решения могут показаться странными, но важно понимать, что это решение предназначено строго для тестирования и при разработке я руководствовался следующими принципами в ущерб некоторым архитектурным канонам:
 
-- минимизация порога знаний в java (целился в джунов);
-- расширяемость/изменяемость текущей реализации;
-- все должно работать "из коробки" с минимальными телодвижениями;
+- минимизация порога вхождения (целился в джунов).
+- пользователь может расширить/изменить/поправить текущую реализацию;
+- подключение/переход с минимальными телодвижениями;
 - самый лучший тест - однострочный;
+- надежность (обмазан юнит/функциональными тестами);
+
+Данная статья получилась не маленькая, так как описывает все фичи библиотеки. Если вы бОльший сторонник чтения кода или вам интереснее посмотреть работоспособность решения или вы вообще не работали с `retrofit`, то милости прошу в [репу](https://github.com/touchbit/retrofit-veslo). Достаточно клонировать репозиторий и можно сразу гонять в идее тесты из модуля `example`. В `example` модуле уже настроена интеграция с allure и логирование каждого автотеста в отдельный лог файл. Стоит учесть, что бОльшая часть тестов падают умышленно для наглядности. По сути, если вам нужно внедрить API тесты, то вы можете взять код из модуля `example`, поправить `pom.xml` (groupId, artifactId), определить API клиент, модели по образу и подобию с существующими, и приступать писать тесты. А если у вас есть вопросы/предложения/критика, то [вот группа в телеге](https://t.me/veslo_retrofit), буду рад.
 
 <spoiler title="Список реализованной функциональности">
 
@@ -48,7 +51,6 @@
 - динамический выбор конвертера по java type, пакету модели, `Content-Type` заголовку (MIME) или через аннотацию метода API;
 - конвертеры копируют тело ответа вместо вычитывания буфера;
 - сетевой перехватчик с возможностью выбора последовательности действий применяемых отдельно для запроса и ответа;
-- перехватчик для логирования запроса и ответа пишет два `LoggingEvent` соответственно (вместо `okhttp3.logging.HttpLoggingInterceptor`);
 - исключить необходимость добавления самоподписных сертификатов в java keystore;
 - поддержка allure;
 
@@ -56,7 +58,7 @@
 
 - использование `Object type` для тела запроса в API методе (динамический выбор конвертера в рантайме);
 - упрощенная работа с `@QueryMap` (reflection);
-- чтение тела запроса из файла
+- чтение тела запроса из файла;
 
 **Ответы**
 
@@ -208,12 +210,12 @@ public interface UniversalCallAdapterFactoryClient {
 }
 ```
 
-Более детальное описание смотреть в разделе <a href="#responses">ответы</a>.
+Более детальное описание смотреть в разделе "<a href="#responses">Ответы от сервера</a>".
 
 <a href="#toc">К содержанию</a>
 
 <anchor>requests</anchor>
-## Запросы
+## Запросы к серверу
 <anchor>objectRequestBody</anchor>
 ### `Object` в качестве тела запроса
 Текущая реализация конвертеров позволяет использовать `Object` в качестве `@Body`, что позволяет отправлять в качестве тела запроса объект любого типа, который поддерживается `GsonConverterFactory` или `JacksonConverterFactory`. Механизм работает для любых наследников класса `ExtensionConverterFactory`. Важно использовать аннотацию `@Headers` для автоматического выбора правильного конвертера на основе заголовка `Content-Type`. Механизм выбора нужного конвертера описан в разделе <a href="#converters">конвертеры</a>.
@@ -229,6 +231,8 @@ public interface PetApi {
   //                               ^^^^^^
 }
 ```
+
+`Object` в сигнатуре метода позволяет отправлять в качестве тела запроса все что заблагорассудится.
 
 ```java
 public class AddPetTests extends BasePetTest {
@@ -261,7 +265,7 @@ public class AddPetTests extends BasePetTest {
 
 ### Формирование параметров запроса (ReflectQueryMap)
 
-Вы можете создать свой собственный `@QueryMap` для запросов, унаследовавшись от ReflectQueryMap, который позволяет вам считывать пары ключ-значение из переменных класса. Этот механизм является дополнением к стандартной работе с `Map`. От данной реализации может пойти кровь из глаз, но к сожалению разработчики retrofit не предоставили API для кастомизации обработки `@QueryMap`. Ниже представлен пример `QueryMap` с fluent методами с использованием `lombok` библиотеки.
+Вы можете создать свой собственный `@QueryMap` для запросов, унаследовавшись от ReflectQueryMap, который получает пары ключ-значение из переменных класса. Этот механизм является дополнением к стандартной работе с `Map`. От данной реализации может пойти кровь из глаз, но к сожалению разработчики retrofit не предоставили API для кастомизации обработки `@QueryMap`. Ниже представлен пример `QueryMap` с fluent методами с использованием `lombok` библиотеки.
 
 **LoginUserQueryMap**
 
@@ -330,7 +334,16 @@ public class GeneratedQueryMap extends HashMap<String, Object> {
 
 <anchor>reflectQueryMapNullRule</anchor>
 
-#### Управление правилами обработки null значений (QueryParameterNullValueRule)
+#### ReflectQueryMap - управление правилами обработки null значений
+
+На практике сталкивался, когда параметры запроса должны передаться в обязательном порядке и становился вопрос, как передавать `null` значение. `ReflectQueryMap` позволяет задать правило обработки `null` значений.
+
+**QueryParameterNullValueRule**
+
+- RULE_IGNORE - Игнорировать параметры c значением `null` (по умолчанию)
+- RULE_NULL_MARKER - заменить `null` на `null marker` -> `/api/call?foo=%00`
+- RULE_EMPTY_STRING - заменить `null` на пустую строку -> `/api/call?foo=`
+- RULE_NULL_STRING - заменить `null` на `null` строку -> `/api/call?foo=null`
 
 ```java
 // для всех переменных класса
@@ -343,20 +356,21 @@ public class LoginUserQueryMap extends ReflectQueryMap {
 }
 ```
 
-**QueryParameterNullValueRule**
-
-- RULE_IGNORE - Игнорировать параметры c значением `null` (по умолчанию)
-- RULE_NULL_MARKER - заменить `null` на `null marker` -> `/api/call?foo=%00`
-- RULE_EMPTY_STRING - заменить `null` на пустую строку -> `/api/call?foo=`
-- RULE_NULL_STRING - заменить `null` на `null` строку -> `/api/call?foo=null`
-
 <a href="#toc">К содержанию</a>
 
 <anchor>reflectQueryMapCaseRule</anchor>
 
-#### Управление правилами наименования параметров (QueryParameterCaseRule)
+#### ReflectQueryMap - управление правилами наименования параметров
 
 По умолчанию используется имя переменной класса, но вы можете задать правило конвертации имен параметров запроса для всего класса, а так же явно задать имя параметра.
+
+**QueryParameterCaseRule**
+
+- CAMEL_CASE - camelCase (по умолчанию)
+- KEBAB_CASE - kebab-case
+- SNAKE_CASE - snake_case
+- DOT_CASE - dot.case
+- PASCAL_CASE - PascalCase
 
 ```java
 // для всех переменных класса будет применен snake_case
@@ -369,35 +383,52 @@ public class LoginUserQueryMap extends ReflectQueryMap {
 }
 ```
 
-**QueryParameterCaseRule**
-
-- CAMEL_CASE - camelCase (по умолчанию)
-- KEBAB_CASE - kebab-case
-- SNAKE_CASE - snake_case
-- DOT_CASE - dot.case
-- PASCAL_CASE - PascalCase
-
 <a href="#toc">К содержанию</a>
 
 <anchor>responses</anchor>
 
-## Ответы 
+## Ответы от сервера
 
-Тип возвращаемого ответа может быть представлен в клиентском интерфейсе в трёх вариантах:
-- `DualResponse<Pet, Err> getPet(String id);`, где `Pet` это конвертированное тело ответа в случае успеха, а `Err` — в случае ошибки.
-- `AResponse<Pet, Err> getPet(String id);` То же, что и `DualResponse`, только с интеграцией с фреймворком Allure.
-- Так же можно использовать модели и "простые" типы в качестве возвращаемого типа. В случае ошибок (status code 400+) конвертер попытается замапить тело ответа в возвращаемый тип и если не получилось, то вернется `null`. Так же можно использовать примитивы, но **не рекомендуется**.
-  Например, если у нас есть API вызов `/api/live` (health check) который возвращает:
-  - Строковый `OK/ERROR` -> `String live();`
-  - Логический `true/false` -> `Boolean live();`
-  - JSON объект -> `LiveProbeModel live()`
-  ```java
-  public interface UniversalCallAdapterFactoryClient {
-    @GET("/api/live")
-    @EndpointInfo("Service liveness probe")
-    LiveProbeModel live();
-  }
-  ```
+Тип возвращаемого ответа может быть представлен в клиентском интерфейсе в трёх вариантах:   
+
+`DualResponse<Pet, Err>`, где 
+- `Pet` модель ответа в случае успеха;
+- `Err` модель ответа случае ошибки;
+
+```java
+public interface DualResponseClient {
+
+  @GET("/api/pet")
+  @EndpointInfo("Get pet by ID")
+  DualResponse<Pet, Err> getPet(String id);
+}
+```
+
+`AResponse<Pet, Err>` То же, что и `DualResponse`, только с allure интеграцией.
+
+```java
+public interface AResponseClient {
+
+  @GET("/api/pet")
+  @EndpointInfo("Get pet by ID")
+  AResponse<Pet, Err> getPet(String id);
+}
+```
+
+Так же можно использовать модели и "простые" типы в качестве возвращаемого типа. В случае ошибок (status code 400+) конвертер попытается замапить тело ответа в возвращаемый тип и если не получилось, то вернется `null`. Так же можно использовать примитивы, но **не рекомендуется**.   
+Например, если у нас есть API вызов `/api/live` (health check) который возвращает:
+- Строковый `OK/ERROR` -> `String live();`
+- Логический `true/false` -> `Boolean live();`
+- JSON объект -> `LiveProbeModel live()`
+
+```java
+public interface UniversalCallAdapterFactoryClient {
+
+  @GET("/api/live")
+  @EndpointInfo("Service liveness probe")
+  LiveProbeModel live();
+}
+```
 
 `DualResponse` и `AResponse` унаследованы от `BaseDualResponse` и включают следующие методы:
 - `assertResponse(Consumer<IResponseAsserter> respAsserter)` - для проверки ответа от сервера;
@@ -462,15 +493,14 @@ Expected: is  No Content
 **Функциональные методы проверки**   
 Ниже представлены методы, их описание и примеры использования.   
 В примерах функция одна и та же представлена в двух вариантах:   
-`Lambda:` лямбда выражение для наглядности сигнатуры метода;   
-`Reference:` сокращенное представление лямбда выражения;   
-Методов добавил "на все случаи жизни". В примерах я пометил<sup>*</sup> методы, которые рекомендую к использованию.   
-Так же все примеры использования каждого конкретного метода указаны в javadoc класса `ResponseAsserter` и в классе `ExampleApiClientAssertions` в ядре (хоть это и не канонично).    
+- `Lambda:` лямбда выражение для наглядности сигнатуры метода;   
+- `Reference:` сокращенное представление лямбда выражения;   
+Методов добавил "на все случаи жизни". В примерах я пометил<sup>*</sup> методы, которые рекомендую к использованию. Так же все примеры использования каждого конкретного метода указаны в javadoc класса `ResponseAsserter` и в классе `ExampleApiClientAssertions` в ядре (хоть это и не канонично).    
 
-`assertHeaders(Consumer<IHeadersAsserter>)`   
+**`assertHeaders(Consumer<IHeadersAsserter>)`**   
 Смотреть раздел <a href="#headerasserter">Header Asserter</a>.
 
-`assertSucBody(Consumer<SUC_DTO>)`   
+**`assertSucBody(Consumer<SUC_DTO>)`**   
 Метод предоставляет только модель и ее методы   
 
 Пример вызова метода модели без параметров   
@@ -481,7 +511,7 @@ Reference: `.assertSucBody(Pet::assertConsistency)`
 Lambda: `.assertSucBody(pet -> pet.match(expected))`<sup>*</sup>   
 Reference: отсутствует   
 
-`assertSucBody(BiConsumer<SUC_DTO, SUC_DTO>, SUC_DTO)`   
+**`assertSucBody(BiConsumer<SUC_DTO, SUC_DTO>, SUC_DTO)`**   
 Предоставляет только actual и expected модели для сверки.   
 Пример для статического метода сверки моделей   
 Lambda: `.assertSucBody((act, exp) -> Asserts.assertPet(act, exp), expected)`   
@@ -491,13 +521,13 @@ Reference: `.assertSucBody(Asserts::assertPet, expected)`
 Lambda: `.assertSucBody((pet, exp) -> pet.match(exp), expected)`   
 Reference: `.assertSucBody(Pet::match, expected)`<sup>*</sup>   
 
-`assertSucBody(BiConsumer<SoftlyAsserter, SUC_DTO>)`   
+**`assertSucBody(BiConsumer<SoftlyAsserter, SUC_DTO>)`**   
 Предоставляет ассертер и actual модель для проверки модели.   
 Пример для статического метода проверки модели   
 Lambda: `.assertSucBody((asserter, act) -> Asserts.assertPet(asserter, act, expected))`   
 Reference: отсутствует   
 
-`assertSucBody(TripleConsumer<SoftlyAsserter, SUC_DTO, SUC_DTO>, SUC_DTO)`   
+**`assertSucBody(TripleConsumer<SoftlyAsserter, SUC_DTO, SUC_DTO>, SUC_DTO)`**   
 Предоставляет ассертер, actual и expected модель для проверки.    
 Lambda: `.assertSucBody((asserter, act, exp) -> Asserts.assertPet(asserter, act, exp), expected)`   
 Reference: `.assertSucBody(Asserts::assertPet, expected)`<sup>*</sup>   
