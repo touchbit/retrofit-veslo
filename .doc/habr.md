@@ -836,6 +836,33 @@ public class Tag extends JacksonModelAdditionalProperties<Tag> {
 
 <a href="#toc">К содержанию</a>
 
+<anchor>anchor_BeanValidationModel</anchor>
+
+## Jakarta Bean Validation
+
+Наследование моделей от интерфейса `BeanValidationModel` позволяет проверять данные на соответствие контракту с помощью аннотаций (спецификации) JSR 303 (метод `assertConsistency()`).
+
+Рекомендуется вынести проверки контракта в отдельный тест.
+
+```java
+public class AddPetTests {
+
+    @Test
+    @DisplayName("Pet model complies with API contract")
+    public void test1640455066880() {
+        PET_API.addPet(generatePet()).assertResponse(response -> response
+                .assertHttpStatusCodeIs(200)
+                .assertSucBody(Pet::assertConsistency));
+    }
+}
+```
+
+Пример модели c JSR 303 аннотациями и исключения
+
+[![](https://habrastorage.org/webt/jo/xd/qe/joxdqemtiw9qg2ubbgivup2nida.png)](https://habrastorage.org/webt/jo/xd/qe/joxdqemtiw9qg2ubbgivup2nida.png)
+
+<a href="#toc">К содержанию</a>
+
 <anchor>converters</anchor>
 
 ## Конвертеры
