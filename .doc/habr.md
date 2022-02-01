@@ -40,7 +40,7 @@
 
 ## Предпосылки
 
-Изначально данную библиотеку я начинал писать для себя с целью аккумулирования всех своих наработок связанных с тестированием API. Но в середине пути понял, что данное решение может быть полезно не только мне, что повлияло и на функциональность и на архитектуру решения. Некоторые архитектурные решения могут показаться странными, но важно понимать, что это решение предназначено строго для тестирования и при разработке я руководствовался следующими принципами в ущерб некоторым архитектурным канонам:
+Изначально данную библиотеку я начинал писать для себя с целью аккумулирования своих наработок связанных с тестированием API. Но в середине пути понял, что данное решение может быть полезно не только мне, что повлияло и на функциональность и на архитектуру решения. Некоторые архитектурные решения могут показаться странными, но важно понимать, что это решение предназначено строго для тестирования и при разработке я руководствовался следующими принципами в ущерб некоторым архитектурным канонам:
 
 - минимизация порога вхождения (целился в джунов).
 - пользователь может расширить/изменить/поправить текущую реализацию;
@@ -48,7 +48,7 @@
 - самый лучший тест - однострочный;
 - надежность;
 
-Данная статья получилась не маленькая, так как описывает почти все фичи библиотеки. Если вы бОльший сторонник чтения кода или вам интереснее посмотреть работоспособность решения или вы вообще не работали с `retrofit`, то милости прошу в [репу](https://github.com/touchbit/retrofit-veslo). Достаточно клонировать репозиторий и можно сразу погонять тесты из модуля `example`. В `example` модуле уже настроена интеграция с allure и логирование каждого автотеста в отдельный лог файл. Стоит учесть, что бОльшая часть тестов падают умышленно для наглядности. По сути, если вам нужно внедрить API тесты, то вы можете взять код из модуля `example`, поправить `pom.xml` (groupId, artifactId, комментарии), определить API клиент, модели по образу и подобию с существующими, и приступать писать тесты. А если у вас есть вопросы/предложения/критика, то [вот группа в телеге](https://t.me/veslo_retrofit), буду рад.
+Данная статья получилась не маленькая, так как описывает почти все фичи библиотеки. Если вы больший сторонник чтения кода или вам интереснее посмотреть работоспособность решения или вы вообще не работали с `retrofit`, то милости прошу в [репу](https://github.com/touchbit/retrofit-veslo). Достаточно клонировать репозиторий и можно сразу погонять тесты из модуля `example` (java 8+, maven 3+). В `example` модуле уже настроена интеграция с allure и логирование каждого автотеста в отдельный лог файл. Стоит учесть, что бОльшая часть тестов падают умышленно для наглядности. По сути, если вам нужно внедрить API тесты, то вы можете взять код из модуля `example`, поправить `pom.xml` (groupId, artifactId, комментарии), определить API клиент, модели по образу и подобию с существующими, и приступать писать тесты. А если у вас есть вопросы/предложения/критика, то [вот группа в телеге](https://t.me/veslo_retrofit), буду рад.
 
 <spoiler title="Список реализованной функциональности">
 
@@ -76,7 +76,7 @@
 **Частности**
 
 - softly asserts с автоматическим закрытием и возможностью игнорирования NPE (`SoftlyAsserter`);
-- добавление проверок в модель для удобного использования в `anchor_ResponseAsserter`;
+- добавление проверок в модель для удобного использования в `ResponseAsserter`;
 - примеры использования softly asserts для ответа (`ExampleApiClientAssertions`);
 - базовый класс с дополнительными полями для моделей jackson2 (`JacksonModelAdditionalProperties`);
 - jakarta java bean validation (`BeanValidationModel`);
@@ -535,8 +535,8 @@ public interface Client {
 - `getResponse()` - возвращает сырой ответ представленный классом `okhttp3.Response` с читаемым телом;
 - `getCallAnnotations()` - возвращает список аннотаций вызванного клиентского API метода:
 
-Помимо работы с двумя моделями данных в ответе, классы `DualResponse` и `AResponse` предоставляют возможность мягких проверок с автозакрытием (Closeable). Данные методы на вход принимают consumer-функции одним из обязательных аргументов которой является `Ianchor_ResponseAsserter`.
-По умолчанию используется `anchor_ResponseAsserter` для классов `DualResponse` и `AResponse`.
+Помимо работы с двумя моделями данных в ответе, классы `DualResponse` и `AResponse` предоставляют возможность мягких проверок с автозакрытием (Closeable). Данные методы на вход принимают consumer-функции одним из обязательных аргументов которой является `IResponseAsserter`.
+По умолчанию используется `ResponseAsserter` для классов `DualResponse` и `AResponse`.
 
 Тривиальный пример теста для `assertResponse`
 ```java
@@ -564,7 +564,7 @@ Expected: is  No Content
   Actual: was ОК
 ```
 
-Методы `assertSucResponse` и `assertErrResponse` однотипные и на вход принимают `Ianchor_ResponseAsserter` и ожидаемую модель для проверки. По большей части они предназначены для выноса проверок в отдельные методы. Пример из `example` модуля:
+Методы `assertSucResponse` и `assertErrResponse` однотипные и на вход принимают `IResponseAsserter` и ожидаемую модель для проверки. По большей части они предназначены для выноса проверок в отдельные методы. Пример из `example` модуля:
 
 [![](https://habrastorage.org/webt/xg/xh/6r/xgxh6rt8ahtwtcbaeiiktuojuwg.png)](https://habrastorage.org/webt/xg/xh/6r/xgxh6rt8ahtwtcbaeiiktuojuwg.png)
 
@@ -573,7 +573,7 @@ Expected: is  No Content
 <anchor>anchor_ResponseAsserter</anchor>
 
 #### Response Asserter
-Любые наследники класса `BaseDualResponse` содержат в себе встроенные проверки реализующие интерфейс `Ianchor_ResponseAsserter`. По умолчанию используется `anchor_ResponseAsserter` который можно расширить дополнительными проверками или заменить собственной реализацией (смотреть <a href="#anchor_CustomResponseAssertion">"кастомизация встроенных проверок"</a>).
+Любые наследники класса `BaseDualResponse` содержат в себе встроенные проверки реализующие интерфейс `IResponseAsserter`. По умолчанию используется `ResponseAsserter` который можно расширить дополнительными проверками или заменить собственной реализацией (смотреть <a href="#anchor_CustomResponseAssertion">"кастомизация встроенных проверок"</a>).
 
 **Обычные методы проверки**
 - `assertHttpStatusCodeIs(int)` - точное совпадение `HTTP status code`
@@ -592,7 +592,7 @@ Expected: is  No Content
 - `Lambda:` лямбда выражение для наглядности сигнатуры метода;   
 - `Reference:` сокращенное представление лямбда выражения;   
 
-Методов добавил "на все случаи жизни". В примерах я пометил звездочкой методы, которые рекомендую к использованию. Так же все примеры использования каждого конкретного метода указаны в javadoc класса `anchor_ResponseAsserter` и в классе `ExampleApiClientAssertions` в ядре (хоть это и не канонично).    
+Методов добавил "на все случаи жизни". В примерах я пометил звездочкой методы, которые рекомендую к использованию. Так же все примеры использования каждого конкретного метода указаны в javadoc класса `ResponseAsserter` и в классе `ExampleApiClientAssertions` в ядре (хоть это и не канонично).    
 
 **`assertHeaders(Consumer<IHeadersAsserter>)`**   
 Смотреть раздел <a href="#anchor_HeaderAsserter">Header Asserter</a>.
@@ -679,14 +679,83 @@ public static class ExampleTests {
 
 <a href="#anchor_TOC">К содержанию</a>
 
+<anchor>anchor_BodyAsserter</anchor>
+
+### Body Asserter
+
+Я рекомендую выносить проверки в модель это и удобно и логично. Мыслю так: если у нас в модели есть метод `equals(Object)` для проверки равенства, то почему бы не иметь метод `match(Model)` для проверки соответствия? По-моему, звучит здраво, да и выглядит неплохо. Особенно, если через интерфейс сделать.
+
+```java
+public class Category implements AssertableModel<Category> {
+
+    private Long id = null;
+    private String name = null;
+
+    @Override
+    public Category match(Category expected) {
+        try (final SoftlyAsserter asserter = SoftlyAsserter.get()) {
+            asserter.softly(() -> assertThat(this.id()).as("category.id").isNotNull().isPositive());
+            asserter.softly(() -> assertThat(this.name()).as("category.name").isEqualTo(expected.name()));
+        }
+        return this;
+    }
+
+}
+
+public interface AssertableModel<DTO> {
+
+  DTO match(DTO expected);
+
+}
+```
+
+В результате мы можем проверять тело ответа вот так:
+- `.assertSucBody(actual -> actual.match(expected))`
+- `.assertSucBody(Category::match, expected)`
+
+Если вам не хочется заморачиваться с <a href="#anchor_CustomResponseAssertion">кастомизацией встроенных проверок</a>, то в принципе можно вынести в модель и проверку всего ответа, если у вас обычный CRUD (отличный повод плюнуть автору в лицо за такую рекомендацию).
+
+Проверка будет выглядеть вот так:
+`.assertSucResponse(Category::assertPOST, expected);`
+
+```java
+public class Category implements AssertableModel<Category> {
+
+  private Long id = null;
+  private String name = null;
+
+  @Override
+  public Category match(Category expected) {
+      // collapsed
+  }
+
+  public static void assertGET(ResponseAsserter<Category, ?, HeadersAsserter> asserter,
+                               Category expected) {
+    asserter.assertHttpStatusCodeIs(200).assertSucBody(actual -> actual.match(expected));
+  }
+
+  public static void assertPOST(ResponseAsserter<Category, ?, HeadersAsserter> asserter, 
+                                Category expected) {
+    asserter.assertHttpStatusCodeIs(200).assertSucBody(actual -> actual.match(expected));
+  }
+
+  public static void assertPATCH(ResponseAsserter<Category, ?, HeadersAsserter> asserter) {
+    asserter.assertHttpStatusCodeIs(204).assertSucBodyIsNull().assertErrBodyIsNull();
+  }
+
+}
+```
+
+<a href="#anchor_TOC">К содержанию</a>
+
 <anchor>anchor_CustomResponseAssertion</anchor>
 
 ### Кастомизация встроенных проверок
 
 `DualResponse` содержит встроенные проверки, которые можно расширить или переопределить. Для этого вам нужно создать свой `CustomResponse`, который должен быть унаследован от `BaseDualResponse` и реализовать в нем методы:
 
+- `public IResponseAsserter getResponseAsserter();` где `IResponseAsserter` реализация ассертера для всего ответа от сервера. Лучше унаследоваться от `ResponseAsserter`.
 - `public IHeadersAsserter getHeadersAsserter();` где `IHeadersAsserter` реализация ассертера для заголовков. Лучше унаследоваться от `HeadersAsserter`.
-- `public Ianchor_ResponseAsserter getanchor_ResponseAsserter();` где `Ianchor_ResponseAsserter` реализация ассертера для всего ответа от сервера. Лучше унаследоваться от `anchor_ResponseAsserter`.
 
 <spoiler title="Для наглядности">
 
@@ -694,13 +763,13 @@ public static class ExampleTests {
 
 </spoiler>
 
-Далее, при создании клиента `retrofit`, вам необходимо явно указать, какой ответ следует использовать при создании экземпляра `CustomResponse`.
-Для `new Retrofit.Builder().addCallAdapterFactory(CallAdapter.Factory)`:
+Далее, при создании клиента `retrofit`, вам необходимо явно указать, какой ответ следует использовать при создании экземпляра `CustomResponse`.   
+Для `new Retrofit.Builder().addCallAdapterFactory(CallAdapter.Factory)`:   
 
-- `new UniversalCallAdapterFactory(CustomResponse::new)` или
-- `new AllureCallAdapterFactory(CustomResponse::new)`
+- `new UniversalCallAdapterFactory(CustomResponse::new)` default
+- `new AllureCallAdapterFactory(CustomResponse::new)` allure
 
-Данный подход позволит вам вынести пул однотипных методов проверок ответов в отдельную реализацию `Ianchor_ResponseAsserter`.
+Данный подход позволит вам вынести пул однотипных методов проверок ответов в отдельную реализацию `IResponseAsserter`.
 Например `PetStoreAsserter`:
 
 ```java
