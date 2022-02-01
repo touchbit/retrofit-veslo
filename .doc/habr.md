@@ -29,6 +29,10 @@
   * <a href="#headereasserter">Header Asserter</a>
   * <a href="#customresponseassertion">Кастомизация встроенных проверок</a>
 * <a href="#models">Модели</a>
+  * <a href="#anchor_RawBody">RawBody</a>
+  * <a href="#anchor_ResourceFile">ResourceFile</a>
+  * <a href="#anchor_Jackson2Model">Jackson2 модели</a>
+  * <a href="#anchor_BeanValidationModel">Jakarta Bean Validation</a>
 * <a href="#converters">Конвертеры</a>
 
 <anchor>prerequisites</anchor>
@@ -711,6 +715,30 @@ public static class ExampleTests {
   }
 }
 ```
+
+<a href="#toc">К содержанию</a>
+
+<anchor>models</anchor>
+
+## Модели
+
+<anchor>anchor_RawBody</anchor>
+
+## RawBody модель
+
+`RawBody` может применяться для запросов и ответов. Хранит тело в байтовом представлении.   
+Позволяет отправлять строку "как есть" в обход MIME конвертеров. В большей степени подходит для запросов, нарушающих контракт. Например, битый JSON.   
+Не чувствителен к ответам без тела (HTTP status code 204/205). Т.е. при использовании в ответах от сервера, не может быть null (формируется всегда).   
+Содержит встроенные проверки:  
+
+- `assertBodyIsNotNull()`
+- `assertBodyIsNull()`
+- `assertBodyIsNotEmpty()`
+- `assertBodyIsEmpty()`
+- `assertStringBodyContains(String... expectedStrings)`
+- `assertStringBodyContainsIgnoreCase(String... expectedStrings)`
+- `assertStringBodyIs(String expected)`
+- `assertStringBodyIsIgnoreCase(String expected)`
 
 <a href="#toc">К содержанию</a>
 
