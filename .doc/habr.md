@@ -18,6 +18,7 @@
 * <a href="#prerequisites">Предпосылки</a>
 * <a href="#modules">Модули</a>
 * <a href="#client">Клиент</a>
+  * <a href="#CompositeInterceptor">Сетевой перехватчик (CompositeInterceptor)</a>
 * <a href="#requests">Запросы к серверу</a>
   * <a href="#objectRequestBody">Object в качестве тела запроса</a>
   * <a href="#reflectQueryMap">Формирование параметров запроса (ReflectQueryMap)</a>
@@ -42,7 +43,7 @@
 - самый лучший тест - однострочный;
 - надежность;
 
-Данная статья получилась не маленькая, так как описывает все фичи библиотеки. Если вы бОльший сторонник чтения кода или вам интереснее посмотреть работоспособность решения или вы вообще не работали с `retrofit`, то милости прошу в [репу](https://github.com/touchbit/retrofit-veslo). Достаточно клонировать репозиторий и можно сразу погонять тесты из модуля `example`. В `example` модуле уже настроена интеграция с allure и логирование каждого автотеста в отдельный лог файл. Стоит учесть, что бОльшая часть тестов падают умышленно для наглядности. По сути, если вам нужно внедрить API тесты, то вы можете взять код из модуля `example`, поправить `pom.xml` (groupId, artifactId, комментарии), определить API клиент, модели по образу и подобию с существующими, и приступать писать тесты. А если у вас есть вопросы/предложения/критика, то [вот группа в телеге](https://t.me/veslo_retrofit), буду рад.
+Данная статья получилась не маленькая, так как описывает почти все фичи библиотеки. Если вы бОльший сторонник чтения кода или вам интереснее посмотреть работоспособность решения или вы вообще не работали с `retrofit`, то милости прошу в [репу](https://github.com/touchbit/retrofit-veslo). Достаточно клонировать репозиторий и можно сразу погонять тесты из модуля `example`. В `example` модуле уже настроена интеграция с allure и логирование каждого автотеста в отдельный лог файл. Стоит учесть, что бОльшая часть тестов падают умышленно для наглядности. По сути, если вам нужно внедрить API тесты, то вы можете взять код из модуля `example`, поправить `pom.xml` (groupId, artifactId, комментарии), определить API клиент, модели по образу и подобию с существующими, и приступать писать тесты. А если у вас есть вопросы/предложения/критика, то [вот группа в телеге](https://t.me/veslo_retrofit), буду рад.
 
 <spoiler title="Список реализованной функциональности">
 
@@ -179,7 +180,7 @@ public class BaseTest {
 - `#followSslRedirects()` - автоматический переход httpS <-> http по редирект статусам (для тестового окружения);
 - `#hostnameVerifier()` - если вызываемый домен не соответствует домену в сертификате (для тестового окружения);
 - `#sslSocketFactory()` - вместо добавления самоподписанных сертификатов в keystore (для тестового окружения);
-- `#addNetworkInterceptor()` - добавление сетевого перехватчика (важно использовать именно этот метод, иначе не будут перехватываться редиректы). `CompositeInterceptor` описан ниже;
+- `#addNetworkInterceptor()` - добавление сетевого перехватчика (важно использовать именно этот метод, иначе не будут перехватываться редиректы). `CompositeInterceptor` описан <a href="#CompositeInterceptor">тут</a>;
 - `#addConverterFactory()` - добавить фабрику конвертеров для сериализации/десериализации объектов;
   - `JacksonConverterFactory` для Jackson моделей + конвертеры по умолчанию из `ExtensionConverterFactory`;
   - `GsonConverterFactory` для Gson моделей + конвертеры по умолчанию из `ExtensionConverterFactory`;
@@ -188,8 +189,8 @@ public class BaseTest {
   - `UniversalCallAdapterFactory` - фабрика для `DualResponse`;
   - `AllureCallAdapterFactory` - фабрика для `AResponse` с поддержкой allure шагов;
 
-Если вы хотите использовать allure, то нужно добавить в зависимости allure модуль.
-В таком случае возвращаемый класс будет `veslo.AResponse`. Так же настоятельно рекомендуется использовать аннотацию `io.qameta.allure.Description`.
+Если вы хотите использовать allure, то нужно добавить в зависимости allure модуль. В таком случае возвращаемый класс будет `veslo.AResponse`. Так же нужно реализовать и добавить в okhttp клиент (`#addNetworkInterceptor()`) свой собственный `CompositeInterceptor` и зарегистрировать `AllureAction.INSTANCE` как в <a href="#CompositeInterceptorExample">примере</a>.   
+Настоятельно рекомендуется использовать аннотацию `io.qameta.allure.Description`.   
 
 ```java
 public interface AllureCallAdapterFactoryClient {
@@ -199,7 +200,7 @@ public interface AllureCallAdapterFactoryClient {
 }
 ```
 
-Иначе возвращаемый класс будет `veslo.client.response.DualResponse`. Так же настоятельно рекомендуется использовать аннотацию `veslo.client.EndpointInfo`.
+Если вам allure не нужен, то возвращаемый класс будет `veslo.client.response.DualResponse`. Так же настоятельно рекомендуется использовать аннотацию `veslo.client.EndpointInfo`.
 
 ```java
 public interface UniversalCallAdapterFactoryClient {
@@ -210,6 +211,86 @@ public interface UniversalCallAdapterFactoryClient {
 ```
 
 Более детальное описание смотреть в разделе "<a href="#responses">Ответы от сервера</a>".
+
+<a href="#toc">К содержанию</a>
+
+<anchor>CompositeInterceptor</anchor>
+
+## Сетевой перехватчик (CompositeInterceptor)
+
+Главной особенностью `CompositeInterceptor` является возможность управления последовательностью вызовов обработчиков (далее `Action`) для запросов и ответов, что недоступно в базовой реализации `retrofit`. Другими словами, вы сами выбираете порядок применяемых `Action` отдельно для Запроса и Ответа.   
+`Action` может реализовывать три интерфейса:   
+
+- `RequestInterceptAction` для обработки `okhttp3.Chain` и `okhttp3.Request`
+- `ResponseInterceptAction` для обработки `okhttp3.Response` и `java.lang.Throwable` (сетевые ошибки)
+- `InterceptAction` включает в себя `RequestInterceptAction` и `ResponseInterceptAction`
+
+<anchor>CompositeInterceptorExample</anchor>
+
+```java
+public class PetStoreInterceptor extends CompositeInterceptor {
+
+    public PetStoreInterceptor() {
+        super(LoggerFactory.getLogger(PetStoreInterceptor.class));
+        // строгий порядок обработки запросов
+        withRequestInterceptActionsChain(
+                AuthAction.INSTANCE,
+                CookieAction.INSTANCE,
+                LoggingAction.INSTANCE, 
+                AllureAction.INSTANCE);
+        // строгий порядок обработки ответов
+        withResponseInterceptActionsChain(
+                LoggingAction.INSTANCE,
+                AllureAction.INSTANCE,
+                CookieAction.INSTANCE);
+    }
+}
+```
+
+Существующие actions:
+
+`CookieAction` - управление cookie-заголовками в потоке;   
+`LoggingAction` - логирует запрос/ответ или транспортную ошибку двумя `LogEvent`;   
+
+<spoiler title="Пример из лог файла">
+
+```text
+03:40:37.675 INFO  - API call: Logs user into the system
+03:40:37.680 INFO  - REQUEST:
+GET https://petstore.swagger.io/v2/user/login?password=abc123&username=test
+Headers:
+  Host: petstore.swagger.io
+  Connection: Keep-Alive
+  Accept-Encoding: gzip
+  User-Agent: okhttp/3.14.9
+Body: (absent)
+
+03:40:37.831 INFO  - RESPONSE:
+200 https://petstore.swagger.io/v2/user/login?password=abc123&username=test
+Headers:
+  date: Tue, 01 Feb 2022 00:40:37 GMT
+  content-type: application/json
+  access-control-allow-origin: *
+  access-control-allow-methods: GET, POST, DELETE, PUT
+  access-control-allow-headers: Content-Type, api_key, Authorization
+  x-expires-after: Tue Feb 01 01:40:37 UTC 2022
+  x-rate-limit: 5000
+  server: Jetty(9.2.9.v20150224)
+  Content-Length: -1
+Body: (78-byte body)
+  {"code":200,"type":"unknown","message":"logged in user session:1643676037840"}
+
+```
+
+</spoiler>
+
+`AllureAction` - добавляет в шаг вложения запроса и ответа;   
+
+<spoiler title="Пример allure отчета">
+
+[![](https://habrastorage.org/webt/qg/ub/6t/qgub6tsi7xxvdowijfe20u82ioc.png)](https://habrastorage.org/webt/qg/ub/6t/qgub6tsi7xxvdowijfe20u82ioc.png)
+
+</spoiler>
 
 <a href="#toc">К содержанию</a>
 
@@ -431,7 +512,7 @@ public interface AResponseClient {
 - JSON объект -> `LiveProbeModel live()`
 
 ```java
-public interface UniversalCallAdapterFactoryClient {
+public interface Client {
 
   @GET("/api/live")
   @EndpointInfo("Service liveness probe")
@@ -487,7 +568,7 @@ Expected: is  No Content
 <anchor>responseasserter</anchor>
 
 #### Response Asserter
-Любые наследники класса `BaseDualResponse` содержат в себе встроенные проверки реализующие интерфейс `IResponseAsserter`. Интерфейс `IResponseAsserter` нужен только для Generic типизации в базовом классе и ни к чему не обязывает. Данный класс можно расширить дополнительными проверками или заменить собственной реализацией (смотреть <a href="#customresponseassertion">"кастомизация встроенных проверок"</a>).
+Любые наследники класса `BaseDualResponse` содержат в себе встроенные проверки реализующие интерфейс `IResponseAsserter`. По умолчанию используется `ResponseAsserter` который можно расширить дополнительными проверками или заменить собственной реализацией (смотреть <a href="#customresponseassertion">"кастомизация встроенных проверок"</a>).
 
 **Обычные методы проверки**
 - `assertHttpStatusCodeIs(int)` - точное совпадение `HTTP status code`
@@ -501,10 +582,12 @@ Expected: is  No Content
 
 **Функциональные методы проверки**   
 Ниже представлены методы, их описание и примеры использования.   
-В примерах функция одна и та же представлена в двух вариантах:   
+В примерах функция одна и та же и представлена в двух вариантах:  
+
 - `Lambda:` лямбда выражение для наглядности сигнатуры метода;   
 - `Reference:` сокращенное представление лямбда выражения;   
-Методов добавил "на все случаи жизни". В примерах я пометил<sup>*</sup> методы, которые рекомендую к использованию. Так же все примеры использования каждого конкретного метода указаны в javadoc класса `ResponseAsserter` и в классе `ExampleApiClientAssertions` в ядре (хоть это и не канонично).    
+
+Методов добавил "на все случаи жизни". В примерах я пометил звездочкой методы, которые рекомендую к использованию. Так же все примеры использования каждого конкретного метода указаны в javadoc класса `ResponseAsserter` и в классе `ExampleApiClientAssertions` в ядре (хоть это и не канонично).    
 
 **`assertHeaders(Consumer<IHeadersAsserter>)`**   
 Смотреть раздел <a href="#headerasserter">Header Asserter</a>.
@@ -602,7 +685,7 @@ public static class ExampleTests {
 
 <spoiler title="Для наглядности">
 
-![](https://github.com/touchbit/retrofit-veslo/raw/main/.doc/img/CustomDualResponse.png)
+[![](https://habrastorage.org/webt/8v/dy/-k/8vdy-kp5hkjo3rcohz13-0ppegu.png)](https://habrastorage.org/webt/8v/dy/-k/8vdy-kp5hkjo3rcohz13-0ppegu.png)
 
 </spoiler>
 
@@ -621,12 +704,11 @@ public static class ExampleTests {
   public void test1639328754881() {
     Pet expected = CLIENT.addPet(Pet.generate());
     CLIENT.getPet(expected.getId())
-            // по аналогии с assertResponse(Consumer)
-            .assertResponse(asserter -> asserter.assertGetPet(expected)) 
-            // или assertSucResponse(BiConsumer, SUC_DTO)
-            .assertResponse(PetStoreAsserter::assertGetPet, expected);
+        // по аналогии с assertResponse(Consumer)
+        .assertResponse(asserter -> asserter.assertGetPet(expected)) 
+        // или assertSucResponse(BiConsumer, SUC_DTO)
+        .assertResponse(PetStoreAsserter::assertGetPet, expected);
   }
-
 }
 ```
 
