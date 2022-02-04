@@ -1,15 +1,15 @@
 ---
-name: Feature request about: Suggest an idea title: ''
-labels: enhancement assignees: ''
+name: Feature request
+about: Suggest an idea
+title: Support okhttp3.Response return type
+labels: enhancement
+assignees: shaburov
 
 ---
-Descriptions in English and Russian are allowed. Describe one or more use cases for the new functionality. If this is a
-fundamentally new mechanism or an extension of existing functions, then attach an example code as you see the mechanics
-of using.
 
-Допускается описание на английском и русском языках. Опишите один или несколько вариантов использования новой функции.
-Если это принципиально новый механизм или расширение существующих функций, приложите пример кода, как вы видите механизм
-использования.
+Descriptions in English and Russian are allowed. Describe one or more use cases for the new functionality. If this is a fundamentally new mechanism or an extension of existing functions, then attach an example code as you see the mechanics of using.
+
+Допускается описание на английском и русском языках. Опишите один или несколько вариантов использования новой функции. Если это принципиально новый механизм или расширение существующих функций, приложите пример кода, как вы видите механизм использования.
 
 Example/Пример:
 > **Title:** Support okhttp3.Response return type

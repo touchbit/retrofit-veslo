@@ -34,10 +34,7 @@
         <maven.compiler.target>${jdk.version}</maven.compiler.target>
         <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
         <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
-        <!-- remove --><skipTests>true</skipTests>
-        <junit.jupiter.version>5.8.2</junit.jupiter.version>
-        <junit.platform.version>1.8.2</junit.platform.version>
-        <allure.version>2.17.2</allure.version>
+        <!-- remove --> <skipTests>true</skipTests>
     </properties>
 
     <dependencies>
@@ -62,19 +59,19 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.jupiter.version}</version>
+            <version>5.8.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <version>${junit.jupiter.version}</version>
+            <version>5.8.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-launcher</artifactId>
-            <version>${junit.platform.version}</version>
+            <version>1.8.2</version>
             <scope>test</scope>
         </dependency>
         <!-- START asserters (unnecessary delete) -->
@@ -100,7 +97,7 @@
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-junit5</artifactId>
-            <version>${allure.version}</version>
+            <version>2.17.2</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -134,7 +131,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M5</version>
                 <configuration>
-                    <!-- remove --><skip>${skipTests}</skip>
+                    <!-- remove --> <skip>${skipTests}</skip>
                     <forkNode implementation="org.apache.maven.plugin.surefire.extensions.SurefireForkNodeFactory"/>
                     <properties>
                         <configurationParameters>
@@ -154,7 +151,7 @@
                 <artifactId>allure-maven</artifactId>
                 <version>2.10.0</version>
                 <configuration>
-                    <reportVersion>${allure.version}</reportVersion>
+                    <reportVersion>2.17.2</reportVersion>
                     <reportDirectory>${project.build.directory}/allure-report</reportDirectory>
                     <installDirectory>${project.build.directory}/.allure</installDirectory>
                 </configuration>
