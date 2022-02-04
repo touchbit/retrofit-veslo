@@ -3,6 +3,8 @@
 ![](https://img.shields.io/badge/Java-8%2B-blue?style=plastic&logo=java)
 ![](https://maven-badges.herokuapp.com/maven-central/org.touchbit.retrofit.veslo/parent-pom/badge.svg?style=plastic)
 
+Описание на русском языке смотреть [тут](https://habr.com/ru/post/647499/).
+
 - intended for testing HTTP API using the `rertofit2` library;
 - designed to simplify the development of autotests as much as possible to the detriment of some architectural canons
   and is designed to qualify a strong junior in test automation;
