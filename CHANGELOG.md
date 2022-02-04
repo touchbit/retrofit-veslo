@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+## Version 1.0.1
+
+* **Update** slf4j-api version from 1.7.32 to 1.7.35
+
 ## Version 1.0.0
 
 * **New**: `JavaTypeCallAdapterFactory` to convert the response body to primitive or reference java types
