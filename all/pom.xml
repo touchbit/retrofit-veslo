@@ -7,12 +7,15 @@
     <parent>
         <groupId>org.touchbit.retrofit.veslo</groupId>
         <artifactId>parent-pom</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
     </parent>
 
     <artifactId>all</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
+    <name>Veslo all modules in one</name>
+    <description>Includes all project modules (org.touchbit.retrofit.veslo). Added for those who are not confused by extra dependencies in the project (see Managed Dependencies).</description>
+    <url>https://github.com/touchbit/retrofit-veslo</url>
 
     <dependencies>
         <dependency>
