@@ -3,7 +3,10 @@ Change Log
 
 ## Version 1.0.1
 
-* **Update** slf4j-api version from 1.7.32 to 1.7.35
+* **New** utility classes for building test clients: 
+  `TestClient`, `JacksonTestClient`, `GsonTestClient`, `Veslo4Test`
+* **Change** packaging for `all` module changed from `pom` to `jar`
+* **Update** up slf4j-api version from 1.7.32 to 1.7.35
 
 ## Version 1.0.0
 

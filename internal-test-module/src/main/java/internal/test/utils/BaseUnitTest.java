@@ -192,4 +192,11 @@ public abstract class BaseUnitTest {
         }
     }
 
+    protected interface Client {
+
+        @GET("/api/call")
+        String call();
+
+    }
+
 }
