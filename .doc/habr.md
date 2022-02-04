@@ -95,7 +95,7 @@ public static class ExampleTests {
     DualResponse<Pet, Err> get(@Query("id") String id);
   }
 
-  private static final ExampleClient CLIENT = buildClient();
+  private static final ExampleClient CLIENT = buildClient(ExampleClient.class);
 
   // Пример теста с выносом проверок (для примера в модель)
   public void test1639328754880() {
@@ -158,9 +158,9 @@ public static class ExampleTests {
 ```java
 public class BaseTest {
 
-  protected static final PetApi PET_API = createJacksonClient(PetApi.class);
+  protected static final PetApi PET_API = buildClient(PetApi.class);
 
-  private static <C> C createJacksonClient(final Class<C> cliClass) {
+  private static <C> C buildClient(final Class<C> cliClass) {
     return new Retrofit.Builder()
         .client(new OkHttpClient.Builder()
             .followRedirects(true)
@@ -237,20 +237,22 @@ public interface UniversalCallAdapterFactoryClient {
 ```java
 public class PetStoreInterceptor extends CompositeInterceptor {
 
-    public PetStoreInterceptor() {
-        super(LoggerFactory.getLogger(PetStoreInterceptor.class));
-        // строгий порядок обработки запросов
-        withRequestInterceptActionsChain(
-                AuthAction.INSTANCE,
-                CookieAction.INSTANCE,
-                LoggingAction.INSTANCE, 
-                AllureAction.INSTANCE);
-        // строгий порядок обработки ответов
-        withResponseInterceptActionsChain(
-                LoggingAction.INSTANCE,
-                AllureAction.INSTANCE,
-                CookieAction.INSTANCE);
-    }
+  public PetStoreInterceptor() {
+    super(LoggerFactory.getLogger(PetStoreInterceptor.class));
+    
+    // строгий порядок обработки запросов
+    withRequestInterceptActionsChain(
+            AuthAction.INSTANCE,
+            CookieAction.INSTANCE,
+            LoggingAction.INSTANCE, 
+            AllureAction.INSTANCE);
+    
+    // строгий порядок обработки ответов
+    withResponseInterceptActionsChain(
+            LoggingAction.INSTANCE,
+            AllureAction.INSTANCE,
+            CookieAction.INSTANCE);
+  }
 }
 ```
 
