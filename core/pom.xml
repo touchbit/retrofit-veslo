@@ -7,12 +7,15 @@
     <parent>
         <groupId>org.touchbit.retrofit.veslo</groupId>
         <artifactId>parent-pom</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
     </parent>
 
     <artifactId>core</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
+    <name>Veslo Core Module</name>
+    <description>The core implementation of the Retrofit-Veslo library. For more information see the project documentation: https://github.com/touchbit/retrofit-veslo</description>
+    <url>https://github.com/touchbit/retrofit-veslo</url>
 
     <dependencies>
         <dependency>
