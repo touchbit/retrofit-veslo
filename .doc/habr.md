@@ -27,6 +27,7 @@
      * <a href="#anchor_QueryParameterNullValueRule">Правила обработки 'null' (QueryParameterNullValueRule)</a>
      * <a href="#anchor_QueryParameterCaseRule">Правила наименования параметров (QueryParameterCaseRule)</a>
 * <a href="#anchor_Responses">Ответы от сервера</a>
+  * <a href="#anchor_SoftlyAsserter">Softly Asserter</a>
   * <a href="#anchor_ResponseAsserter">Response Asserter</a>
   * <a href="#anchor_HeaderAsserter">Header Asserter</a>
   * <a href="#anchor_BodyAsserter">Body Asserter</a>
@@ -51,7 +52,7 @@
 - самый лучший тест - однострочный;
 - пиши для людей, а не для себя;
 
-Данная статья получилась не маленькая, так как описывает почти все фичи библиотеки. Если вы больший сторонник чтения кода или вам интереснее посмотреть работоспособность решения или вы вообще не работали с `retrofit`, то милости прошу в [репу](https://github.com/touchbit/retrofit-veslo). Достаточно клонировать репозиторий и можно сразу погонять тесты из модуля `example` (java 8+). В `example` модуле уже настроена интеграция с allure и логирование каждого автотеста в **отдельный лог файл**. Стоит учесть, что бОльшая часть тестов падают умышленно для наглядности. По сути, если вам нужно внедрить API тесты, то вы можете взять код из модуля `example`, поправить `pom.xml` (groupId, artifactId, комментарии), определить API клиент, модели по образу и подобию с существующими, и приступать писать тесты. А если у вас есть вопросы/предложения/критика, то [вот группа в телеге](https://t.me/veslo_retrofit), буду рад.
+Данная статья получилась не маленькая, так как описывает почти все фичи библиотеки. Если вы больший сторонник чтения кода или вам интереснее посмотреть работоспособность решения, то милости прошу в [репу](https://github.com/touchbit/retrofit-veslo). Достаточно клонировать репозиторий и можно сразу [погонять](https://github.com/touchbit/retrofit-veslo#build-project-and-run-example-tests) тесты из модуля `example` (java 8+). В `example` модуле уже настроена интеграция с allure и логирование каждого автотеста в **отдельный лог файл**. Стоит учесть, что бОльшая часть тестов падают умышленно для наглядности. По сути, если вам нужно внедрить API тесты, то вы можете взять код из модуля `example`, поправить `pom.xml` (groupId, artifactId, комментарии), определить API клиент, модели по образу и подобию с существующими, и приступать писать тесты. А если у вас есть вопросы/предложения/критика, то [вот группа в телеге](https://t.me/veslo_retrofit), буду рад.
 
 <spoiler title="Список реализованной функциональности">
 
@@ -191,6 +192,8 @@ public class BaseTest {
 }
 ```
 
+<anchor>anchor_ClientMethodDescription</anchor>
+
 Пояснение методов:
 - `#followRedirects()` - автоматический переход по редирект статусам (301, 302...);
 - `#followSslRedirects()` - автоматический переход httpS <-> http по редирект статусам;
@@ -200,7 +203,7 @@ public class BaseTest {
 - `#addConverterFactory()` - добавить фабрику конвертеров для сериализации/десериализации объектов;
   - `JacksonConverterFactory` для Jackson моделей + конвертеры по умолчанию из `ExtensionConverterFactory`;
   - `GsonConverterFactory` для Gson моделей + конвертеры по умолчанию из `ExtensionConverterFactory`;
-  - `ExtensionConverterFactory` для примитивных/ссылочных типов (смотреть раздел <a href="#anchor_Converters">конвертеры</a>);
+  - `ExtensionConverterFactory` для примитивных/ссылочных "простых" типов (смотреть раздел <a href="#anchor_Converters">конвертеры</a>);
 - `#addCallAdapterFactory()` - поддержка специфического возвращаемого типа в методе API клиента, отличных от `retrofit2.Call`;
   - `UniversalCallAdapterFactory` - фабрика для `DualResponse`;
   - `AllureCallAdapterFactory` - фабрика для `AResponse` с поддержкой allure шагов;
@@ -249,14 +252,14 @@ public class PetStoreInterceptor extends CompositeInterceptor {
   public PetStoreInterceptor() {
     super(LoggerFactory.getLogger(PetStoreInterceptor.class));
     
-    // строгий порядок обработки запросов
+    // строгий порядок обработки запроса
     withRequestInterceptActionsChain(
             AuthAction.INSTANCE,
             CookieAction.INSTANCE,
             LoggingAction.INSTANCE, 
             AllureAction.INSTANCE);
     
-    // строгий порядок обработки ответов
+    // строгий порядок обработки ответа
     withResponseInterceptActionsChain(
             LoggingAction.INSTANCE,
             AllureAction.INSTANCE,
@@ -372,7 +375,7 @@ public class AddPetTests extends BasePetTest {
 
 ### Формирование параметров запроса (ReflectQueryMap)
 
-Вы можете создать свой собственный `@QueryMap` для запросов, унаследовавшись от ReflectQueryMap, который получает пары ключ-значение из переменных класса. Этот механизм является дополнением к стандартной работе с `Map`. От данной реализации может пойти кровь из глаз, но к сожалению разработчики retrofit не предоставили API для кастомизации обработки `@QueryMap`. Ниже представлен лаконичный пример `QueryMap` с fluent методами с использованием `lombok` библиотеки.
+Вы можете создать свой собственный `@QueryMap` для запросов, унаследовавшись от ReflectQueryMap, который получает пары ключ-значение из переменных класса. Этот механизм является дополнением к стандартной работе с `Map`. Если посмотреть реализацию `ReflectQueryMap`, то может пойти кровь из глаз, но к сожалению разработчики retrofit не предоставили API для кастомизации обработки `@QueryMap`. Ниже представлен лаконичный пример `QueryMap` с fluent методами с использованием `lombok` библиотеки.
 
 **LoginUserQueryMap**
 
@@ -401,6 +404,7 @@ public interface UserApi {
   @Description("Logs user into the system")
   AResponse<Suc, Err> login(@QueryMap() LoginUserQueryMap queryMap);
   //                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  //                        /v2/user/login?password=abc123&username=test
 }
 ```
 
@@ -503,6 +507,8 @@ public class LoginUserQueryMap extends ReflectQueryMap {
 - `Pet` модель ответа в случае успеха;
 - `Err` модель ответа случае ошибки;
 
+`DualResponse` обрабатывается `UniversalCallAdapterFactory` (смотреть раздел "<a href="#anchor_ClientMethodDescription">Клиент</a>").   
+
 ```java
 public interface DualResponseClient {
 
@@ -512,7 +518,8 @@ public interface DualResponseClient {
 }
 ```
 
-`AResponse<Pet, Err>` То же, что и `DualResponse`, только с allure интеграцией.
+`AResponse<Pet, Err>` То же, что и `DualResponse`, только с allure интеграцией.   
+`AResponse` обрабатывается `AllureCallAdapterFactory` (смотреть раздел "<a href="#anchor_ClientMethodDescription">Клиент</a>").   
 
 ```java
 public interface AResponseClient {
@@ -523,7 +530,7 @@ public interface AResponseClient {
 }
 ```
 
-Так же можно использовать модели и "простые" типы в качестве возвращаемого типа. В случае ошибок (status code 400+) конвертер попытается замапить тело ответа в возвращаемый тип и если не получилось, то вернется `null`. Так же можно использовать примитивы, но **не рекомендуется**.   
+Так же можно использовать модели и "простые" типы в качестве возвращаемого типа. В случае ошибок (status code 400+) конвертер попытается замапить тело ответа в возвращаемый тип и если не получилось, то вернется `null`.   
 Например, если у нас есть API вызов `/api/live` (health check) который возвращает:
 - Строковый `OK/ERROR` -> `String live();`
 - Логический `true/false` -> `Boolean live();`
@@ -583,6 +590,61 @@ Expected: is  No Content
 
 <a href="#anchor_TOC">К содержанию</a>
 
+<anchor>anchor_SoftlyAsserter</anchor>
+
+#### Softly Asserter
+
+Механизм мягких проверок в ответе от сервера реализован при помощи интерфейса `SoftlyAsserter`, который в свою очередь реализует интерфейс `AutoCloseable`.   
+Это позволяет использовать `try-with-resources` оператор который гарантирует вызов метода `close()`. При вызове метода `close()` происходит "склеивание" накопленных исключений и бросок финального `AssertionError`.   
+
+```java
+public class Example {
+    
+  @Test
+  public void test1643976548733() {
+    try (SoftlyAsserter asserter = SoftlyAsserter.get()) {
+      // сохраняем исключение
+      asserter.softly(() -> { assert 1 == 0; });
+      // сохраняем исключение
+      asserter.softly(() -> { assert 1 != 1; }); 
+    } // автоматически вызывается SoftlyAsserter.close()
+  }
+}
+```
+
+Метод `softly()` на вход принимает функциональный интерфейс `ThrowableRunnable` который предполагает возможность возникновение любых ошибок.   
+Т.е. `softly(() -> { любой код запущенный тут })` и бросивший `Throwable` не прервет исполнение. `SoftlyAsserter` сохранит в себе брошенный `Throwable` до окончания выполнения `try-with-resources` блока или пока **явно** не будет вызван метод `.close()`.
+
+Пример использования с `hamcrest`
+
+```java
+public class Example {
+    
+  @Test
+  public void test1643977714496() {
+    try (SoftlyAsserter asserter = SoftlyAsserter.get()) {
+      asserter.softly(() -> assertThat("Body", "act", is("exp")));
+    }
+  }
+}
+```
+
+Так же `SoftlyAsserter` содержит одноименный статический метод с встроенным `try-with-resources` блоком.
+
+```java
+public class Example {
+    
+  @Test
+  public void test1643978036764() {
+    softlyAsserter(asserter -> asserter
+        .softly(() -> assertThat("Body", "act", is("exp")))
+        .softly(() -> assertThat("Body", 1, is(2))));
+  }
+}
+```
+
+<a href="#anchor_TOC">К содержанию</a>
+
 <anchor>anchor_ResponseAsserter</anchor>
 
 #### Response Asserter
@@ -599,7 +661,11 @@ Expected: is  No Content
 - `assertIsSucHttpStatusCode()` - статус код в промежутке 200...299
 
 **Функциональные методы проверки**   
-Ниже представлены методы, их описание и примеры использования.   
+
+- `assertSucBody()` - проверяем модель (объект) успешного ответа;
+- `assertErrBody()` - проверяем модель (объект) ответа в случае ошибки;
+
+Ниже представлены методы, описание и примеры использования для `assertSucBody()`.   
 В примерах функция одна и та же и представлена в двух вариантах:  
 
 - `Lambda:` лямбда выражение для наглядности сигнатуры метода;   
@@ -640,7 +706,7 @@ Reference: отсутствует
 **`assertSucBody(TripleConsumer<SoftlyAsserter, SUC_DTO, SUC_DTO>, SUC_DTO)`**   
 Предоставляет ассертер, actual и expected модель для проверки.    
 Lambda: `.assertSucBody((sa, act, exp) -> Asserts.assertPet(sa, act, exp), expected)`   
-Reference: `.assertSucBody(Asserts::assertPet, expected)`<sup>*</sup>   
+Reference: `.assertSucBody(Asserts::assertPet, expected)`<sup>*</sup>
 
 <a href="#anchor_TOC">К содержанию</a>
 
@@ -776,8 +842,8 @@ public class Category implements AssertableModel<Category> {
 
 </spoiler>
 
-Далее, при создании клиента `retrofit`, вам необходимо явно указать, какой ответ следует использовать при создании экземпляра `IDualResponse`.   
-Для `new Retrofit.Builder().addCallAdapterFactory(CallAdapter.Factory)`:   
+Далее, при создании <a href="#anchor_Client">клиента</a> retrofit, вам необходимо явно указать, какой ответ следует использовать при создании экземпляра `IDualResponse`.   
+Метод `.addCallAdapterFactory(CallAdapter.Factory)`:   
 
 - `new UniversalCallAdapterFactory(CustomResponse::new)` default
 - `new AllureCallAdapterFactory(CustomResponse::new)` allure
@@ -826,7 +892,7 @@ public static class ExampleTests {
 
 `RawBody` может применяться для запросов и ответов. Хранит тело в байтовом представлении.   
 Позволяет отправлять строку "как есть" в обход MIME конвертеров. В большей степени подходит для запросов, нарушающих контракт. Например, битый JSON.   
-Не чувствителен к ответам без тела (HTTP status code 204/205). Т.е. при использовании в ответах от сервера, не может быть null (формируется всегда).   
+Не чувствителен к ответам без тела (HTTP status code 204/205). Т.е. при использовании в ответах от сервера, не может быть `null` (формируется всегда).   
 Содержит встроенные проверки:  
 
 - `assertBodyIsNotNull()`
@@ -870,8 +936,8 @@ public class AddPetTests extends BasePetTest {
 В отличие от Gson библиотека `Jackson2` позволяет обрабатывать случай, когда ответ от сервера содержит лишние поля, не выдавая ошибку при конвертации.   
 Именно по этой причине я **настоятельно** рекомендую использовать `Jackson2` для ваших json/yaml моделей.  
 
-Обработка лишних полей уже реализована в классе `JacksonModelAdditionalProperties` и вам достаточно унаследовать модель от этого класса.
-Если контракт изменился и пришел ответ с новыми полями, то мы можем это проверить при помощи базового метода `assertNoAdditionalProperties()`.
+Обработка лишних полей уже реализована в классе `JacksonModelAdditionalProperties` и вам достаточно унаследовать модель от этого класса.   
+Если контракт изменился и пришел ответ с новыми полями, то мы можем это проверить при помощи базового метода `assertNoAdditionalProperties()` и получить **вменяемую** ошибку.   
 
 ```text
 The presence of extra fields in the model: Pet
@@ -1048,6 +1114,65 @@ public interface PetApi {
 Если поле `bodyClasses` оставить пустым, то конвертер будет применен ко всем моделям из сигнатуры метода. 
 Например `@ResponseConverter(converter = JacksonConverter.class)` будет применен для конвертации тела ответа в модель `Pet` или `Err` (в зависимости от статуса).
 
+В случае, если конвертер не найден, то будет брошен `ConverterNotFoundException` следующего содержания:
+
+```text
+veslo.ConverterNotFoundException: Converter not found
+Transport event: RESPONSE
+Content-Type: null
+DTO type: class org.touchbit.retrofit.veslo.example.model.Status
+
+SUPPORTED RESPONSE CONVERTERS:
+<Список встроенных конвертеров>
+<Смотреть спойлер ниже>
+```
+
+Из исключения видно, что конвертер не найден при попытке конвертации тела ответа в класс `org.touchbit.retrofit.veslo.example.model.Status`. Это json модель, однако заголовок `Content-Type` в ответе отсутствует (`null`). Можем заводить баг на отсутствие MIME заголовка. Если это ожидаемое поведение (такое тоже бывает), то в вашем `CustomConverterFactory` нужно дополнительно зарегистрировать `JacksonConverter` для конвертации тела ответа, если `Content-Type` отсутствует:   
+`registerMimeConverter(JacksonConverter.INSTANCE, ContentType.NULL);`.
+
+<spoiler title="Список встроенных конвертеров в `JacksonConverterFactory` (для примера)">
+
+```text
+Raw converters:
+  veslo.client.converter.defaults.RawBodyTypeConverter
+      byte[]
+      java.io.File
+      java.lang.Byte[]
+      veslo.client.model.RawBody
+      veslo.client.model.ResourceFile
+Content type converters:
+  veslo.JacksonConverter
+      application/json
+      application/json; charset=utf-8
+      text/json
+      text/json; charset=utf-8
+Java type converters:
+  veslo.JacksonConverter
+      java.util.List
+      java.util.Map
+  veslo.client.converter.defaults.JavaPrimitiveTypeConverter
+      boolean
+      byte
+      char
+      double
+      float
+      int
+      long
+      short
+  veslo.client.converter.defaults.JavaReferenceTypeConverter
+      java.lang.Boolean
+      java.lang.Byte
+      java.lang.Character
+      java.lang.Double
+      java.lang.Float
+      java.lang.Integer
+      java.lang.Long
+      java.lang.Short
+      java.lang.String
+```
+
+</spoiler>
+
 <a href="#anchor_TOC">К содержанию</a>
 
 <anchor>anchor_Finally</anchor>
@@ -1073,12 +1198,13 @@ public interface PetApi {
 15. Писать подобные решения возможно будучи безработным (как раз поэтому и написал).
 
 Разработка данной библиотеки с учетом реализации, автотестов, документации, примеров и данной статьи заняло примерно 2 месяца чистого рабочего времени. И это определенно не предел, так как продукт будет в дальнейшем развиваться в силу моей сферы деятельности и позиции.   
-Из глобальных планов - добавить конвертер для xml и protobuf, продумать удобную работу с SOAP конвертом.   
-Если у вас есть идеи как можно улучшить данное решение, то прошу [сюда](https://github.com/touchbit/retrofit-veslo/issues).
+Из глобальных планов - добавить конвертер для xml и protobuf, продумать удобную работу с SOAP конвертом и сделать видео гайд.   
+Если у вас есть идеи как можно улучшить данное решение, то прошу [сюда](https://github.com/touchbit/retrofit-veslo/issues).   
+Если вы хотите позаимствовать себе какие-то части данной библиотеки, то не стесняйтесь, так как библиотека распространяется под лицензией [Apache License Version 2.0](https://github.com/touchbit/retrofit-veslo/blob/main/LICENSE).   
 
 Напоследок список возможно полезных ресурсов:
 
-- [Автор сего чтива](https://shaburov.github.io/)
+- [Автор сего решения](https://shaburov.github.io/)
 - [Git репозиторий: retrofit-veslo](https://github.com/touchbit/retrofit-veslo)
 - [Maven central: retrofit-veslo](https://mvnrepository.com/artifact/org.touchbit.retrofit.veslo)
 - [TG группа: Veslo Q&A (retrofit)](https://t.me/veslo_retrofit)
