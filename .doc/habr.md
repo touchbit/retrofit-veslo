@@ -39,6 +39,8 @@
   * <a href="#anchor_BeanValidationModel">Jakarta Bean Validation</a>
 * <a href="#anchor_Converters">Конвертеры</a>
 * <a href="#anchor_Usefulness">Полезности</a>
+  * <a href="#anchor_UsefulnessLogging">Лог-файл для каждого теста</a>
+  * <a href="#anchor_UsefulnessLiveTemplates">Шаблонизация тестовых методов</a>
 * <a href="#anchor_Finally">В заключение</a>
 
 <anchor>anchor_Prerequisites</anchor>
@@ -1280,9 +1282,44 @@ Body: (209-byte body)
 
 </spoiler>
 
-Шаблон тестового класса/метода
+<anchor>anchor_UsefulnessLiveTemplates</anchor>
 
+<spoiler title="Шаблонизация тестовых методов">
 
+Прежде чем писать автотесты, я предпочитаю накидать чек-лист. В самом простом варианте, это текстовый файл вида:
+
+```text
+Успешное аутентификация пользователя в магазине, если статус пользователя 'NEW'
+Успешное аутентификация пользователя в магазине, если статус пользователя 'UNCONFIRMED'
+Успешное аутентификация пользователя в магазине, если статус пользователя 'MEMBER'
+Ошибка (403) при аутентификации пользователя в магазине, если статус пользователя 'BLOCKED'
+Ошибка (400) при аутентификации пользователя в магазине, если username не передан
+```
+
+Кто-то скажет `многабуков`, но я предпочитаю предельную ясность в отчете и в логах теста.
+
+Для ускорения создания тест-метода я использую `LiveTemplates` (IntelliJ IDEA). Копирую строку из чек-листа и набираю в классе аббревиатуру нужного шаблона. Далее по шаблону создается тестовый метод, который я уже реализую. Выглядит это вот так:   
+[![](https://habrastorage.org/webt/n0/nx/86/n0nx86tplplqjow5casy8mcvx6a.gif)](https://habrastorage.org/webt/fd/n7/ky/fdn7kymbug3mq5iozdtscu80j0c.gif)
+
+Сам шаблон выглядит вот так:   
+[![](https://habrastorage.org/webt/45/cb/i6/45cbi6ip2x5pr044mltk6m86ud8.png)](https://habrastorage.org/webt/45/cb/i6/45cbi6ip2x5pr044mltk6m86ud8.png)
+
+Тело шаблона:   
+```text
+@org.junit.jupiter.api.Test
+@org.junit.jupiter.api.DisplayName("$DESCRIPTION$")
+public void test$ID$() {
+    $END$
+}
+```
+
+Настройки шаблона:   
+```text
+DESCRIPTION - clipboard()
+ID - groovyScript("return new Date().getTime();")
+```
+
+</spoiler>
 
 <a href="#anchor_TOC">К содержанию</a>
 
