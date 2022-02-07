@@ -19,8 +19,6 @@
 
 * <a href="#anchor_Prerequisites">Предпосылки</a>
 * <a href="#anchor_Modules">Модули</a>
-* <a href="#anchor_Client">Клиент</a>
-  * <a href="#anchor_CompositeInterceptor">Сетевой перехватчик (CompositeInterceptor)</a>
 * <a href="#anchor_Requests">Запросы к серверу</a>
   * <a href="#anchor_ObjectRequestBody">Object в качестве тела запроса</a>
   * <a href="#anchor_ReflectQueryMap">Формирование параметров запроса (ReflectQueryMap)</a>
@@ -37,6 +35,8 @@
   * <a href="#anchor_ResourceFile">ResourceFile</a>
   * <a href="#anchor_Jackson2Model">Jackson2 модели</a>
   * <a href="#anchor_BeanValidationModel">Jakarta Bean Validation</a>
+* <a href="#anchor_Client">Клиент</a>
+  * <a href="#anchor_CompositeInterceptor">Сетевой перехватчик (CompositeInterceptor)</a>
 * <a href="#anchor_Converters">Конвертеры</a>
 * <a href="#anchor_Usefulness">Полезности</a>
   * <a href="#anchor_UsefulnessLogging">Лог-файл для каждого теста</a>
@@ -54,44 +54,10 @@
 - пользователь может расширить/изменить/поправить текущую реализацию;
 - подключение/переход с минимальными телодвижениями;
 - самый лучший тест - однострочный;
-- пиши для людей, а не для себя;
 
-Данная статья получилась не маленькая, так как описывает почти все фичи библиотеки. Если вы больший сторонник чтения кода или вам интереснее посмотреть работоспособность решения, то милости прошу в [репу](https://github.com/touchbit/retrofit-veslo). Достаточно клонировать репозиторий и можно сразу [погонять](https://github.com/touchbit/retrofit-veslo#build-project-and-run-example-tests) тесты из модуля `example` (java 8+). В `example` модуле уже настроена интеграция с allure и логирование каждого автотеста в **отдельный лог файл**. Стоит учесть, что бОльшая часть тестов падают умышленно для наглядности. По сути, если вам нужно внедрить API тесты, то вы можете взять код из модуля `example`, поправить `pom.xml` (groupId, artifactId, комментарии), определить API клиент, модели по образу и подобию с существующими, и приступать писать тесты. А если у вас есть вопросы/предложения/критика, то [вот группа в телеге](https://t.me/veslo_retrofit), буду рад.
+Данная статья получилась не маленькая, так как описывает почти все фичи библиотеки. Если вы больший сторонник чтения кода или вам интереснее посмотреть работоспособность решения, то милости прошу в [репу](https://github.com/touchbit/retrofit-veslo). Достаточно клонировать репозиторий и можно сразу [погонять](https://github.com/touchbit/retrofit-veslo#build-project-and-run-example-tests) тесты из модуля `example` (java 8+).
 
-<spoiler title="Список реализованной функциональности">
-
-**Клиент**
-
-- динамический выбор конвертера по java type, java пакету, `Content-Type` заголовку (MIME) или через аннотацию метода API;
-- сетевой перехватчик с возможностью выбора последовательности действий применяемых отдельно для запроса и ответа;
-- конвертеры копируют тело ответа вместо вычитывания буфера;
-- исключить необходимость добавления самоподписных сертификатов в java keystore;
-- поддержка allure;
-
-**Запросы**
-
-- использование `Object type` для тела запроса в API методе (динамический выбор конвертера в рантайме);
-- упрощенная работа с `@QueryMap` (reflection);
-- чтение тела запроса из файла;
-
-**Ответы**
-
-- работа сразу с двумя моделями ответов для позитивных/негативных тестов;
-- встроенные в ответ softly asserts;
-- fluent API для проверки ответа;
-- запись тела ответа в файл;
-
-**Частности**
-
-- softly asserts с автоматическим закрытием и возможностью игнорирования NPE (`SoftlyAsserter`);
-- добавление проверок в модель для удобного использования в `ResponseAsserter`;
-- примеры использования softly asserts для ответа (`ExampleApiClientAssertions`);
-- базовый класс с дополнительными полями для моделей jackson2 (`JacksonModelAdditionalProperties`);
-- jakarta java bean validation (`BeanValidationModel`);
-
-</spoiler>
-
-<spoiler title="Пример использования">
+<spoiler title="Наглядный пример использования">
 
 ```java
 public static class ExampleTests {
@@ -103,16 +69,17 @@ public static class ExampleTests {
 
   private static final ExampleClient CLIENT = buildClient(ExampleClient.class);
 
-  // Пример теста с выносом проверок (для примера в модель)
+  // Пример теста с выносом проверок в отдельный метод
   public void test1639328754880() {
     final Pet expected = new Pet().name("example");
-    CLIENT.get("id_1").assertSucResponse(Pet::assertGET, expected);
+    CLIENT.get("id_1").assertSucResponse(Asserter::assertGetPet, expected);
   }
 
   // Пример теста с проверкой непосредственно в тесте
   public void test1639328754881() {
     final Pet expected = new Pet().name("example");
-    // Ответ содержит встроенные softly asserts для проверки статуса, заголовков и тела ответа. 
+    // Ответ содержит встроенные softly asserts 
+    // для проверки статуса, заголовков и тела ответа. 
     CLIENT.get("id_1").assertResponse(respAsserter -> respAsserter
         .assertHttpStatusCodeIs(200)
         .assertHttpStatusMessageIs("OK")
@@ -130,6 +97,13 @@ public static class ExampleTests {
 
 </spoiler>
 
+
+<spoiler title="Про модуль 'example'">
+
+В `example` модуле уже настроена интеграция с allure и логирование каждого автотеста в **отдельный лог файл**. Стоит учесть, что бОльшая часть тестов падают умышленно для наглядности. По сути, если вам нужно внедрить API тесты, то вы можете взять код из модуля `example`, поправить `pom.xml` (groupId, artifactId, комментарии), определить API клиент, модели по образу и подобию с существующими, и приступать писать тесты.
+
+</spoiler>
+
 <a href="#anchor_TOC">К содержанию</a>
 
 <anchor>anchor_Modules</anchor>
@@ -141,7 +115,7 @@ public static class ExampleTests {
 - **gson** - работа с [Gson](https://github.com/google/gson) моделями;
 - **allure** - встроенные шаги для вызовов API с вложениями запроса/ответа;
 - **bean** - модели данных со встроенной JSR 303 валидацией (jakarta bean validator);
-- **core** - ядро решения. На `compile` уровне подтягивается при использовании модулей `all`, `jackson`, `gson`, `allure`;
+- **core** - ядро решения. Подтягивается с модулями `all`, `jackson`, `gson`, `allure`;
 
 Пример:
 
@@ -156,169 +130,6 @@ public static class ExampleTests {
 
 <a href="#anchor_TOC">К содержанию</a>
 
-<anchor>anchor_Client</anchor>
-
-## Клиент
-
-Для более удобного создания тестового клиента добавлены вспомогательные классы:
-
-- `TestClient` - из модуля `core`. Ничего не знает про jackson, gson и allure.
-- `JacksonTestClient` - из модуля `jackson`. Строит клиент с jackson конвертером. Ничего не знает про allure.
-- `GsonTestClient`- из модуля `gson`. Строит клиент с gson конвертером. Ничего не знает про allure.
-- `Veslo4Test` - из модуля `all`. Содержит методы построения клиентов для различных конвертеров с/без allure интеграцией.
-
-Ниже представлен пример метода для создания API клиента (копипастнуть и удалить ненужное).
-
-```java
-public class BaseTest {
-
-  protected static final PetApi PET_API = buildClient(PetApi.class);
-
-  private static <C> C buildClient(final Class<C> cliClass) {
-    return new Retrofit.Builder()
-        .client(new OkHttpClient.Builder()
-            .followRedirects(true)
-            .followSslRedirects(true) 
-            .hostnameVerifier(TRUST_ALL_HOSTNAME)
-            .sslSocketFactory(TRUST_ALL_SSL_SOCKET_FACTORY, TRUST_ALL_CERTS_MANAGER)
-            .addNetworkInterceptor(new CompositeInterceptor())
-            .build())
-        .baseUrl("https://petstore.swagger.io/")
-        .addCallAdapterFactory(new AllureCallAdapterFactory())
-        // или
-        .addCallAdapterFactory(new UniversalCallAdapterFactory())
-        .addConverterFactory(new JacksonConverterFactory())
-        // или    
-        .addConverterFactory(new GsonConverterFactory())
-        .build()
-        .create(cliClass);
-  }
-}
-```
-
-<anchor>anchor_ClientMethodDescription</anchor>
-
-Пояснение методов:
-- `#followRedirects()` - автоматический переход по редирект статусам (301, 302...);
-- `#followSslRedirects()` - автоматический переход httpS <-> http по редирект статусам;
-- `#hostnameVerifier()` - если вызываемый домен не соответствует домену в сертификате (для тестового окружения);
-- `#sslSocketFactory()` - вместо добавления самоподписанных сертификатов в keystore (для тестового окружения);
-- `#addNetworkInterceptor()` - добавление сетевого перехватчика (важно использовать именно этот метод, иначе не будут перехватываться редиректы). `CompositeInterceptor` описан <a href="#anchor_CompositeInterceptor">тут</a>;
-- `#addConverterFactory()` - добавить фабрику конвертеров для сериализации/десериализации объектов;
-  - `JacksonConverterFactory` для Jackson моделей + конвертеры по умолчанию из `ExtensionConverterFactory`;
-  - `GsonConverterFactory` для Gson моделей + конвертеры по умолчанию из `ExtensionConverterFactory`;
-  - `ExtensionConverterFactory` для примитивных/ссылочных "простых" типов (смотреть раздел <a href="#anchor_Converters">конвертеры</a>);
-- `#addCallAdapterFactory()` - поддержка специфического возвращаемого типа в методе API клиента, отличных от `retrofit2.Call`;
-  - `UniversalCallAdapterFactory` - фабрика для `DualResponse`;
-  - `AllureCallAdapterFactory` - фабрика для `AResponse` с поддержкой allure шагов;
-
-Если вы хотите использовать allure, то нужно добавить в зависимости allure модуль. В таком случае возвращаемый класс будет `veslo.AResponse`. Так же нужно реализовать и добавить в okhttp клиент (`#addNetworkInterceptor()`) свой собственный `CompositeInterceptor` и зарегистрировать `AllureAction.INSTANCE` как в <a href="#anchor_CompositeInterceptorExample">примере</a>.   
-Настоятельно рекомендуется использовать аннотацию `io.qameta.allure.Description`.   
-
-```java
-public interface AllureCallAdapterFactoryClient {
-    @GET("/api/example")
-    @Description("Get pet")
-    AResponse<Pet, Err> get();
-}
-```
-
-Если вам allure не нужен, то возвращаемый класс будет `veslo.client.response.DualResponse`. Так же настоятельно рекомендуется использовать аннотацию `veslo.client.EndpointInfo`.
-
-```java
-public interface UniversalCallAdapterFactoryClient {
-    @GET("/api/example")
-    @EndpointInfo("Get pet")
-    DualResponse<Pet, Err> get();
-}
-```
-
-Более детальное описание смотреть в разделе "<a href="#anchor_Responses">Ответы от сервера</a>".
-
-<a href="#anchor_TOC">К содержанию</a>
-
-<anchor>anchor_CompositeInterceptor</anchor>
-
-## Сетевой перехватчик (CompositeInterceptor)
-
-Главной особенностью `CompositeInterceptor` является возможность управления последовательностью вызовов обработчиков (далее `Action`) для запросов и ответов, что недоступно в базовой реализации `retrofit`. Другими словами, вы сами выбираете порядок применяемых `Action` отдельно для Запроса и Ответа.   
-`Action` может реализовывать три интерфейса:   
-
-- `RequestInterceptAction` для обработки `okhttp3.Chain` и `okhttp3.Request`
-- `ResponseInterceptAction` для обработки `okhttp3.Response` и `java.lang.Throwable` (сетевые ошибки)
-- `InterceptAction` включает в себя `RequestInterceptAction` и `ResponseInterceptAction`
-
-<anchor>CompositeInterceptorExample</anchor>
-
-```java
-public class PetStoreInterceptor extends CompositeInterceptor {
-
-  public PetStoreInterceptor() {
-    super(LoggerFactory.getLogger(PetStoreInterceptor.class));
-    
-    // строгий порядок обработки запроса
-    withRequestInterceptActionsChain(
-            AuthAction.INSTANCE,
-            CookieAction.INSTANCE,
-            LoggingAction.INSTANCE, 
-            AllureAction.INSTANCE);
-    
-    // строгий порядок обработки ответа
-    withResponseInterceptActionsChain(
-            LoggingAction.INSTANCE,
-            AllureAction.INSTANCE,
-            CookieAction.INSTANCE);
-  }
-}
-```
-
-Существующие actions:
-
-`CookieAction` - управление cookie-заголовками в потоке;   
-`LoggingAction` - логирует запрос/ответ или транспортную ошибку двумя `LogEvent`;   
-
-<spoiler title="Пример из лог файла">
-
-```text
-03:40:37.675 INFO  - API call: Logs user into the system
-03:40:37.680 INFO  - REQUEST:
-GET https://petstore.swagger.io/v2/user/login?password=abc123&username=test
-Headers:
-  Host: petstore.swagger.io
-  Connection: Keep-Alive
-  Accept-Encoding: gzip
-  User-Agent: okhttp/3.14.9
-Body: (absent)
-
-03:40:37.831 INFO  - RESPONSE:
-200 https://petstore.swagger.io/v2/user/login?password=abc123&username=test
-Headers:
-  date: Tue, 01 Feb 2022 00:40:37 GMT
-  content-type: application/json
-  access-control-allow-origin: *
-  access-control-allow-methods: GET, POST, DELETE, PUT
-  access-control-allow-headers: Content-Type, api_key, Authorization
-  x-expires-after: Tue Feb 01 01:40:37 UTC 2022
-  x-rate-limit: 5000
-  server: Jetty(9.2.9.v20150224)
-  Content-Length: -1
-Body: (78-byte body)
-  {"code":200,"type":"unknown","message":"logged in user session:1643676037840"}
-
-```
-
-</spoiler>
-
-`AllureAction` - добавляет в шаг вложения запроса и ответа;   
-
-<spoiler title="Пример allure отчета">
-
-[![](https://habrastorage.org/webt/qg/ub/6t/qgub6tsi7xxvdowijfe20u82ioc.png)](https://habrastorage.org/webt/qg/ub/6t/qgub6tsi7xxvdowijfe20u82ioc.png)
-
-</spoiler>
-
-<a href="#anchor_TOC">К содержанию</a>
-
 <anchor>anchor_Requests</anchor>
 
 ## Запросы к серверу
@@ -326,7 +137,7 @@ Body: (78-byte body)
 <anchor>anchor_ObjectRequestBody</anchor>
 
 ### `Object` в качестве тела запроса
-Текущая реализация конвертеров позволяет использовать `Object` в качестве `@Body`, что позволяет отправлять в качестве тела запроса объект любого типа, который поддерживается `GsonConverterFactory` или `JacksonConverterFactory`. Механизм работает для любых наследников класса `ExtensionConverterFactory`. Важно использовать аннотацию `@Headers` для автоматического выбора правильного конвертера на основе заголовка `Content-Type`. Механизм выбора нужного конвертера для тела запроса описан в разделе <a href="#anchor_Converters">конвертеры</a>.
+Текущая реализация конвертеров позволяет использовать `Object` тип в `@Body` запроса. Механизм работает для любых наследников класса `ExtensionConverterFactory`. Для json моделей важно использовать аннотацию `@Headers` для автоматического выбора нужного конвертера на основе заголовка `Content-Type`. Механизм выбора нужного конвертера для тела запроса описан в разделе <a href="#anchor_Converters">конвертеры</a>.
 
 ```java
 public interface PetApi {
@@ -340,7 +151,7 @@ public interface PetApi {
 }
 ```
 
-`Object` в сигнатуре метода позволяет отправлять в качестве тела запроса любую ересь.
+`Object` позволяет отправлять в качестве тела запроса любую ересь.
 
 ```java
 public class AddPetTests extends BasePetTest {
@@ -379,7 +190,7 @@ public class AddPetTests extends BasePetTest {
 
 ### Формирование параметров запроса (ReflectQueryMap)
 
-Вы можете создать свой собственный `@QueryMap` для запросов, унаследовавшись от ReflectQueryMap, который получает пары ключ-значение из переменных класса. Этот механизм является дополнением к стандартной работе с `Map`. Если посмотреть реализацию `ReflectQueryMap`, то может пойти кровь из глаз, но к сожалению разработчики retrofit не предоставили API для кастомизации обработки `@QueryMap`. Ниже представлен лаконичный пример `QueryMap` с fluent методами с использованием `lombok` библиотеки.
+Вы можете создать свой собственный `@QueryMap` для запросов, унаследовавшись от ReflectQueryMap, который получает пары ключ-значение **из переменных класса**. Этот механизм является дополнением к стандартной работе с `Map`. Если посмотреть реализацию `ReflectQueryMap`, то может пойти кровь из глаз, но к сожалению разработчики retrofit не предоставили API для кастомизации обработки `@QueryMap`. Ниже представлен лаконичный пример `QueryMap` с fluent методами с использованием `lombok` библиотеки.
 
 **LoginUserQueryMap**
 
@@ -452,7 +263,7 @@ public class GeneratedQueryMap extends HashMap<String, Object> {
 
 #### ReflectQueryMap - управление правилами обработки null значений
 
-На практике сталкивался, когда параметры запроса должны передаваться в обязательном порядке и становился вопрос, как передавать `null` значение. `ReflectQueryMap` позволяет задать правило обработки `null` значений.
+`ReflectQueryMap` позволяет задать правило обработки `null` значений.
 
 **QueryParameterNullValueRule**
 
@@ -511,7 +322,7 @@ public class LoginUserQueryMap extends ReflectQueryMap {
 - `Pet` модель ответа в случае успеха;
 - `Err` модель ответа случае ошибки;
 
-`DualResponse` обрабатывается `UniversalCallAdapterFactory` (смотреть раздел "<a href="#anchor_ClientMethodDescription">Клиент</a>").   
+`DualResponse` обрабатывается `UniversalCallAdapterFactory` (смотреть подробности в разделе "<a href="#anchor_ClientMethodDescription">Клиент</a>").   
 
 ```java
 public interface DualResponseClient {
@@ -523,7 +334,7 @@ public interface DualResponseClient {
 ```
 
 `AResponse<Pet, Err>` То же, что и `DualResponse`, только с allure интеграцией.   
-`AResponse` обрабатывается `AllureCallAdapterFactory` (смотреть раздел "<a href="#anchor_ClientMethodDescription">Клиент</a>").   
+`AResponse` обрабатывается `AllureCallAdapterFactory` (смотреть подробности в разделе "<a href="#anchor_ClientMethodDescription">Клиент</a>").   
 
 ```java
 public interface AResponseClient {
@@ -616,7 +427,7 @@ public class Example {
 }
 ```
 
-Метод `softly()` на вход принимает функциональный интерфейс `ThrowableRunnable` который предполагает возможность возникновение любых ошибок.   
+Метод `softly()` на вход принимает функциональный интерфейс `ThrowableRunnable` который предполагает возможность возникновения любых ошибок.   
 Т.е. `softly(() -> { любой код запущенный тут })` и бросивший `Throwable` не прервет исполнение. `SoftlyAsserter` сохранит в себе брошенный `Throwable` до окончания выполнения `try-with-resources` блока или пока **явно** не будет вызван метод `.close()`.
 
 Пример использования с `hamcrest`
@@ -936,7 +747,7 @@ public class AddPetTests extends BasePetTest {
 
 ## Jackson2 модели
 
-На момент статьи речь идет о `Jackson2` версии `2.13.1`.   
+На момент написания статьи речь идет о `Jackson2` версии `2.13.1`.   
 В отличие от Gson библиотека `Jackson2` позволяет обрабатывать случай, когда ответ от сервера содержит лишние поля, не выдавая ошибку при конвертации.   
 Именно по этой причине я **настоятельно** рекомендую использовать `Jackson2` для ваших json/yaml моделей.  
 
@@ -1031,6 +842,179 @@ public class AddPetTests {
 
 <a href="#anchor_TOC">К содержанию</a>
 
+<anchor>anchor_Client</anchor>
+
+## Клиент
+
+Для удобного создания тестового клиента добавлены вспомогательные классы:
+
+- `TestClient` - из модуля `core`. Ничего не знает про jackson, gson и allure.
+- `JacksonTestClient` - из модуля `jackson`. Строит клиент с jackson конвертером. Ничего не знает про allure.
+- `GsonTestClient`- из модуля `gson`. Строит клиент с gson конвертером. Ничего не знает про allure.
+- `Veslo4Test` - из модуля `all`. Содержит методы построения клиентов для различных конвертеров.
+
+Тестовый клиент по умолчанию 
+- следует по редиректам, в том числе https -> http
+- игнорирует ошибки сертификата
+  - несоответствия домена
+  - самоподписной сертификат
+  - протухший сертификат
+- `CompositeInterceptor` с/без allure интеграцией (`Veslo4Test`)
+
+<anchor>anchor_ClientMethodDescription</anchor>
+
+<spoiler title="Более подробное описание тестового клиента">
+
+Ниже представлен пример метода для создания API клиента (копипастнуть и удалить ненужное).
+
+```java
+public class BaseTest {
+
+  protected static final PetApi PET_API = buildClient(PetApi.class);
+
+  private static <C> C buildClient(final Class<C> cliClass) {
+    return new Retrofit.Builder()
+        .client(new OkHttpClient.Builder()
+            .followRedirects(true)
+            .followSslRedirects(true) 
+            .hostnameVerifier(TRUST_ALL_HOSTNAME)
+            .sslSocketFactory(TRUST_ALL_SSL_SOCKET_FACTORY, TRUST_ALL_CERTS_MANAGER)
+            .addNetworkInterceptor(new CompositeInterceptor())
+            .build())
+        .baseUrl("https://petstore.swagger.io/")
+        .addCallAdapterFactory(new AllureCallAdapterFactory())
+        // или
+        .addCallAdapterFactory(new UniversalCallAdapterFactory())
+        .addConverterFactory(new JacksonConverterFactory())
+        // или    
+        .addConverterFactory(new GsonConverterFactory())
+        .build()
+        .create(cliClass);
+  }
+}
+```
+
+Пояснение методов:
+- `#followRedirects()` - автоматический переход по редирект статусам (301, 302...);
+- `#followSslRedirects()` - автоматический переход httpS <-> http по редирект статусам;
+- `#hostnameVerifier()` - если вызываемый домен не соответствует домену в сертификате (для тестового окружения);
+- `#sslSocketFactory()` - вместо добавления самоподписанных сертификатов в keystore (для тестового окружения);
+- `#addNetworkInterceptor()` - добавление сетевого перехватчика (важно использовать именно этот метод, иначе не будут перехватываться редиректы). `CompositeInterceptor` описан <a href="#anchor_CompositeInterceptor">тут</a>;
+- `#addConverterFactory()` - добавить фабрику конвертеров для сериализации/десериализации объектов;
+  - `JacksonConverterFactory` для Jackson моделей + конвертеры по умолчанию из `ExtensionConverterFactory`;
+  - `GsonConverterFactory` для Gson моделей + конвертеры по умолчанию из `ExtensionConverterFactory`;
+  - `ExtensionConverterFactory` для примитивных/ссылочных "простых" типов (смотреть раздел <a href="#anchor_Converters">конвертеры</a>);
+- `#addCallAdapterFactory()` - поддержка специфического возвращаемого типа в методе API клиента, отличных от `retrofit2.Call`;
+  - `UniversalCallAdapterFactory` - фабрика для `DualResponse`;
+  - `AllureCallAdapterFactory` - фабрика для `AResponse` с поддержкой allure шагов;
+
+Если вы хотите использовать allure, то нужно добавить в зависимости allure модуль. В таком случае возвращаемый класс будет `veslo.AResponse`. Так же нужно реализовать и добавить в okhttp клиент (`#addNetworkInterceptor()`) свой собственный `CompositeInterceptor` и зарегистрировать `AllureAction.INSTANCE` как в <a href="#anchor_CompositeInterceptorExample">примере</a>.   
+Настоятельно рекомендуется использовать аннотацию `io.qameta.allure.Description`.
+
+```java
+public interface AllureCallAdapterFactoryClient {
+    @GET("/api/example")
+    @Description("Get pet")
+    AResponse<Pet, Err> get();
+}
+```
+
+Если вам allure не нужен, то возвращаемый класс будет `veslo.client.response.DualResponse`. Так же настоятельно рекомендуется использовать аннотацию `veslo.client.EndpointInfo`.
+
+```java
+public interface UniversalCallAdapterFactoryClient {
+    @GET("/api/example")
+    @EndpointInfo("Get pet")
+    DualResponse<Pet, Err> get();
+}
+```
+
+</spoiler>
+
+<a href="#anchor_TOC">К содержанию</a>
+
+<anchor>anchor_CompositeInterceptor</anchor>
+
+## Сетевой перехватчик (CompositeInterceptor)
+
+Главной особенностью `CompositeInterceptor` является возможность управления последовательностью вызовов обработчиков (далее `Action`) для запросов и ответов, что недоступно в базовой реализации `retrofit`. Другими словами, вы сами выбираете порядок применяемых `Action` отдельно для Запроса и Ответа.   
+`Action` может реализовывать три интерфейса:
+
+- `RequestInterceptAction` для обработки `okhttp3.Chain` и `okhttp3.Request`
+- `ResponseInterceptAction` для обработки `okhttp3.Response` и `java.lang.Throwable` (сетевые ошибки)
+- `InterceptAction` включает в себя `RequestInterceptAction` и `ResponseInterceptAction`
+
+<anchor>CompositeInterceptorExample</anchor>
+
+```java
+public class PetStoreInterceptor extends CompositeInterceptor {
+
+  public PetStoreInterceptor() {
+    super(LoggerFactory.getLogger(PetStoreInterceptor.class));
+    
+    // строгий порядок обработки запроса
+    withRequestInterceptActionsChain(
+            AuthAction.INSTANCE,
+            CookieAction.INSTANCE,
+            LoggingAction.INSTANCE, 
+            AllureAction.INSTANCE);
+    
+    // строгий порядок обработки ответа
+    withResponseInterceptActionsChain(
+            LoggingAction.INSTANCE,
+            AllureAction.INSTANCE,
+            CookieAction.INSTANCE);
+  }
+}
+```
+
+Существующие actions:
+
+`CookieAction` - управление cookie-заголовками в потоке;   
+`LoggingAction` - логирует запрос/ответ или транспортную ошибку двумя `LogEvent`;
+
+<spoiler title="Пример из лог файла">
+
+```text
+03:40:37.675 INFO  - API call: Logs user into the system
+03:40:37.680 INFO  - REQUEST:
+GET https://petstore.swagger.io/v2/user/login?password=abc123&username=test
+Headers:
+  Host: petstore.swagger.io
+  Connection: Keep-Alive
+  Accept-Encoding: gzip
+  User-Agent: okhttp/3.14.9
+Body: (absent)
+
+03:40:37.831 INFO  - RESPONSE:
+200 https://petstore.swagger.io/v2/user/login?password=abc123&username=test
+Headers:
+  date: Tue, 01 Feb 2022 00:40:37 GMT
+  content-type: application/json
+  access-control-allow-origin: *
+  access-control-allow-methods: GET, POST, DELETE, PUT
+  access-control-allow-headers: Content-Type, api_key, Authorization
+  x-expires-after: Tue Feb 01 01:40:37 UTC 2022
+  x-rate-limit: 5000
+  server: Jetty(9.2.9.v20150224)
+  Content-Length: -1
+Body: (78-byte body)
+  {"code":200,"type":"unknown","message":"logged in user session:1643676037840"}
+
+```
+
+</spoiler>
+
+`AllureAction` - добавляет в шаг вложения запроса и ответа;
+
+<spoiler title="Пример allure отчета">
+
+[![](https://habrastorage.org/webt/qg/ub/6t/qgub6tsi7xxvdowijfe20u82ioc.png)](https://habrastorage.org/webt/qg/ub/6t/qgub6tsi7xxvdowijfe20u82ioc.png)
+
+</spoiler>
+
+<a href="#anchor_TOC">К содержанию</a>
+
 <anchor>anchor_Converters</anchor>
 
 ## Конвертеры
@@ -1084,25 +1068,23 @@ public class CustomConverterFactory extends ExtensionConverterFactory {
 
 ```java
 public interface PetApi {
-  @GET("/api/example")
+  @POST("/api/example")
   @Headers({"Content-Type: application/json"})
-  AResponse<Pet, Err> get();
+  AResponse<Pet, Err> addPet(@Body() Object pet);
 }
 ```
 
 Если у вас `Content-Type` заголовок заполняются в рантайме через мапку, то фабрика **не найдет конвертер** для MIME типа.
 ```java
 public interface PetApi {
-  @GET("/api/example")
-  AResponse<Pet, Err> get(@HeaderMap Map<String, String> headers);
-  // не перехватываются   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  @POST("/api/example")
+  AResponse<Pet, Err> addPet(@HeaderMap Map<String, String> headers, @Body() Object pet);
+  // не перехватываются      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }
 ```
 
-К сожалению это особенность реализации `retrofit` и у нас нет возможности получить значение переменной метода.
-В таком случае можно создать свой конвертер по аналогии с примером `CustomConverterFactory` с указанием конвертера для пакета или java типа;
-Так же можно явно указать конвертер при помощи аннотации `@RequestConverter`, `@ResponseConverter`;
-Данная функция как раз добавлена для обработки частных случаев, когда фабрика не может определить какой конвертер использовать.
+К сожалению это особенность реализации `retrofit` и у нас нет возможности получить значение переменной метода. В таком случае можно создать свой конвертер по аналогии с примером `CustomConverterFactory` с указанием конвертера для пакета или java типа.
+Так же можно явно указать конвертер при помощи аннотации `@RequestConverter`, `@ResponseConverter`. Данная функция как раз добавлена для обработки частных случаев, когда фабрика не может определить какой конвертер использовать.
 
 ```java
 public interface PetApi {
@@ -1131,7 +1113,7 @@ SUPPORTED RESPONSE CONVERTERS:
 <Смотреть спойлер ниже>
 ```
 
-Из исключения видно, что конвертер не найден при попытке конвертации тела ответа в класс `org.touchbit.retrofit.veslo.example.model.Status`. Это json модель, однако заголовок `Content-Type` в ответе отсутствует (`null`). Можем заводить баг на отсутствие MIME заголовка. Если это ожидаемое поведение (такое тоже бывает), то в вашем `CustomConverterFactory` нужно дополнительно зарегистрировать `JacksonConverter` для конвертации тела ответа, если `Content-Type` отсутствует:   
+Из исключения видно, что конвертер не найден при попытке конвертации тела ответа в класс `org.touchbit.retrofit.veslo.example.model.Status`. Это json модель, однако заголовок `Content-Type` в ответе отсутствует (`null`). Можем заводить баг на отсутствие MIME заголовка. Если это ожидаемое поведение (такое тоже бывает), то в вашем `CustomConverterFactory` нужно дополнительно зарегистрировать `JacksonConverter` для конвертации тела ответа, если заголовок `Content-Type` отсутствует:   
 `registerMimeConverter(JacksonConverter.INSTANCE, ContentType.NULL);`.
 
 <spoiler title="Список встроенных конвертеров в `JacksonConverterFactory` (для примера)">
