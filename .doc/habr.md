@@ -41,6 +41,7 @@
 * <a href="#anchor_Usefulness">Полезности</a>
   * <a href="#anchor_UsefulnessLogging">Лог-файл для каждого теста</a>
   * <a href="#anchor_UsefulnessLiveTemplates">Шаблонизация тестовых методов</a>
+  * <a href="#anchor_UsefulnessPlugins">Плагины IntelliJ IDEA</a>
 * <a href="#anchor_Finally">В заключение</a>
 
 <anchor>anchor_Prerequisites</anchor>
@@ -1193,8 +1194,7 @@ Java type converters:
 
 <spoiler title="Пример лога теста">
 
-Пример лог файла теста `AddPetTests.test1640455066880()`
-
+Пример лог файла теста `AddPetTests.test1640455066880()`   
 ```text
 14:38:04.786 INFO  - Test started: Checking the Pet model contract (PropertyNamingStrategy.SnakeCaseStrategy)
 14:38:05.962 INFO  - API call: Logs user into the system
@@ -1272,12 +1272,10 @@ Body: (209-byte body)
 
 </spoiler>
 
-При запуске теста в Intellij IDEA вы получите следующий вывод в случае падения
-
+При запуске теста в Intellij IDEA вы получите следующий вывод в случае падения    
 [![](https://habrastorage.org/webt/ez/fj/u4/ezfju4fb9pg_fowurwadhylmlam.png)](https://habrastorage.org/webt/ez/fj/u4/ezfju4fb9pg_fowurwadhylmlam.png)
 
-Так же в `JunitExecutionListener` реализовано добавление лога теста в allure отчет. Смотреть метод `addTestLogAttachment()`.
-
+Так же в `JunitExecutionListener` реализовано добавление лога теста в allure отчет. Смотреть метод `addTestLogAttachment()`.   
 [![](https://habrastorage.org/webt/7y/nv/ns/7ynvnsvoy7hneulnpnobtr-vh78.png)](https://habrastorage.org/webt/7y/nv/ns/7ynvnsvoy7hneulnpnobtr-vh78.png)
 
 </spoiler>
@@ -1296,7 +1294,7 @@ Body: (209-byte body)
 Ошибка (400) при аутентификации пользователя в магазине, если username не передан
 ```
 
-Кто-то скажет `многабуков`, но я предпочитаю предельную ясность в отчете и в логах теста.
+Кто-то скажет `многабуков`, но я сторонник предельной ясности в отчете и в логах теста.
 
 Для ускорения создания тест-метода я использую `LiveTemplates` (IntelliJ IDEA). Копирую строку из чек-листа и набираю в классе аббревиатуру нужного шаблона. Далее по шаблону создается тестовый метод, который я уже реализую. Выглядит это вот так:   
 [![](https://habrastorage.org/webt/n0/nx/86/n0nx86tplplqjow5casy8mcvx6a.gif)](https://habrastorage.org/webt/fd/n7/ky/fdn7kymbug3mq5iozdtscu80j0c.gif)
@@ -1318,6 +1316,46 @@ public void test$ID$() {
 DESCRIPTION - clipboard()
 ID - groovyScript("return new Date().getTime();")
 ```
+
+</spoiler>
+
+<anchor>anchor_UsefulnessPlugins</anchor>
+
+<spoiler title="Плагины IntelliJ IDEA">
+
+**RoboPOJOGenerator**   
+[Homepage](https://plugins.jetbrains.com/plugin/8634-robopojogenerator)   
+Генерирует POJO классы по JSON структуре под различные фрэймворки.   
+File -> New -> Generate POJO from JSON   
+[![](https://habrastorage.org/webt/p9/9k/g2/p99kg2mex26fgqctkhq63zi8qek.png)](https://habrastorage.org/webt/p9/9k/g2/p99kg2mex26fgqctkhq63zi8qek.png)
+
+**String Manipulation**   
+[Homepage](https://plugins.jetbrains.com/plugin/2162-string-manipulation)   
+Мощнейший плагин по форматированию строк. Возможности просто колоссальные. Больше примеров смотрите на странице плагина.   
+[![](https://habrastorage.org/webt/kw/ck/_z/kwck_z3t5ct4xwsnxgrsykfxqxs.gif)](https://habrastorage.org/webt/kw/ck/_z/kwck_z3t5ct4xwsnxgrsykfxqxs.gif)   
+
+[![](https://habrastorage.org/webt/x9/sz/cs/x9szcspxzqs5b-pucbzefz6fwcq.gif)](https://habrastorage.org/webt/x9/sz/cs/x9szcspxzqs5b-pucbzefz6fwcq.gif)   
+
+<spoiler title="Рекомендуется настройка хоткеев">
+
+[![](https://habrastorage.org/webt/jj/cs/av/jjcsavmmkrrep6ppl9efr_tpqok.png)](https://habrastorage.org/webt/jj/cs/av/jjcsavmmkrrep6ppl9efr_tpqok.png)
+
+</spoiler>
+
+**Rainbow Brackets**   
+[Homepage](https://plugins.jetbrains.com/plugin/10080-rainbow-brackets)   
+Цветовая дифференциация переменных, скобок, тегов и т.д.
+[![](https://habrastorage.org/webt/zx/h6/sv/zxh6svlpm1oevhxkygxm3w5akgg.png)](https://habrastorage.org/webt/zx/h6/sv/zxh6svlpm1oevhxkygxm3w5akgg.png)
+
+**Archive Browser**   
+[Homepage](https://plugins.jetbrains.com/plugin/9491-archive-browser)   
+Позволяет просматривать архивы непосредственно в проекте.   
+[![](https://habrastorage.org/webt/be/2v/pk/be2vpkqjqawsmhcz35js2u2be38.png)](https://habrastorage.org/webt/be/2v/pk/be2vpkqjqawsmhcz35js2u2be38.png)
+
+**Fluent setter generator**   
+[Homepage](https://plugins.jetbrains.com/plugin/7903-fluent-setter-generator)      
+Старенький, но все еще безотказно работающий генератор fluent сеттеров. Это на случай, если вы все еще не пользуетесь lombok.   
+[![](https://habrastorage.org/webt/uw/md/jw/uwmdjwgih5avtb5gsyykkczppcu.gif)](https://habrastorage.org/webt/uw/md/jw/uwmdjwgih5avtb5gsyykkczppcu.gif)
 
 </spoiler>
 
@@ -1343,18 +1381,18 @@ ID - groovyScript("return new Date().getTime();")
 12. С лицензированием кода не все так просто, но процедура разовая.
 13. Пиши примеры и документацию как для дефективных, потом сам себе спасибо скажешь.
 14. Фиксируй идеи в трекере, а не на бумажке, иначе любимый питомец бумажку съест.
-15. Писать подобные решения возможно будучи безработным (как раз поэтому и написал).
+15. Писать подобные решения возможно скорее будучи безработным (как раз поэтому и написал).
 
 Разработка данной библиотеки с учетом реализации, автотестов, документации, примеров и данной статьи заняло примерно 2 месяца чистого рабочего времени. И это определенно не предел, так как продукт будет в дальнейшем развиваться в силу моей сферы деятельности и позиции.   
 Из глобальных планов - добавить конвертер для xml и protobuf, продумать удобную работу с SOAP конвертом и сделать видео гайд.   
 Если у вас есть идеи как можно улучшить данное решение, то прошу [сюда](https://github.com/touchbit/retrofit-veslo/issues).   
-Если вы хотите позаимствовать себе какие-то части данной библиотеки, то не стесняйтесь, так как библиотека распространяется под лицензией [Apache License Version 2.0](https://github.com/touchbit/retrofit-veslo/blob/main/LICENSE).   
+Если вы хотите позаимствовать себе какие-то части данной библиотеки, то не стесняйтесь, так как библиотека распространяется под лицензией [Apache 2.0](https://github.com/touchbit/retrofit-veslo/blob/main/LICENSE).   
 
 Напоследок список возможно полезных ресурсов:
 
 - [Автор сего решения](https://shaburov.github.io/)
-- [Git репозиторий: retrofit-veslo](https://github.com/touchbit/retrofit-veslo)
-- [Maven central: retrofit-veslo](https://mvnrepository.com/artifact/org.touchbit.retrofit.veslo)
+- [Git репозиторий проекта](https://github.com/touchbit/retrofit-veslo)
+- [Проект в maven central](https://mvnrepository.com/artifact/org.touchbit.retrofit.veslo)
 - [TG группа: Veslo Q&A (retrofit)](https://t.me/veslo_retrofit)
 - [TG группа: QA — Automation](https://t.me/qa_automation)
 - [TG группа: QA — русскоговорящее сообщество](https://t.me/qa_ru)
