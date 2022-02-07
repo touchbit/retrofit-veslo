@@ -38,6 +38,7 @@
   * <a href="#anchor_Jackson2Model">Jackson2 модели</a>
   * <a href="#anchor_BeanValidationModel">Jakarta Bean Validation</a>
 * <a href="#anchor_Converters">Конвертеры</a>
+* <a href="#anchor_Usefulness">Полезности</a>
 * <a href="#anchor_Finally">В заключение</a>
 
 <anchor>anchor_Prerequisites</anchor>
@@ -1172,6 +1173,116 @@ Java type converters:
 ```
 
 </spoiler>
+
+<a href="#anchor_TOC">К содержанию</a>
+
+<anchor>anchor_Usefulness</anchor>
+
+## Полезности
+
+<anchor>anchor_UsefulnessLogging</anchor>
+
+<spoiler title="Логирование каждого теста в отдельный лог файл">
+
+В модуле `example` реализовано логирование каждого теста в отдельный лог файл. Это предполагает уникальные имена тестовых методов. Я использую `LiveTemplates` (об этом ниже) для создания тестовых методов в формате `test<timestamp>`, например `test1640455066880()`. Я всегда использую аннотацию `@DisplayName("")` с вменяемым описанием теста, чтобы как раз не пыжиться с названием тестового метода в классе. Если вы не сторонних наименования тестов в подобном формате, то можно дополнительно использовать пакет тестового класса в имени файла лога. Смотреть метод `JunitExecutionListener.executionStarted()`.   
+Детально вдаваться в подробности реализации логирования я не буду, но готовое решение вы можете копипастнуть из модуля `example` и модифицировать под свои нужды.   
+
+[![](https://habrastorage.org/webt/vq/jh/ys/vqjhysyzsx3jklt3tw6tef3d4a0.png)](https://habrastorage.org/webt/vq/jh/ys/vqjhysyzsx3jklt3tw6tef3d4a0.png)
+
+<spoiler title="Пример лога теста">
+
+Пример лог файла теста `AddPetTests.test1640455066880()`
+
+```text
+14:38:04.786 INFO  - Test started: Checking the Pet model contract (PropertyNamingStrategy.SnakeCaseStrategy)
+14:38:05.962 INFO  - API call: Logs user into the system
+14:38:05.974 INFO  - REQUEST:
+GET https://petstore.swagger.io/v2/user/login?password=abc123&username=test
+Headers:
+  Host: petstore.swagger.io
+  Connection: Keep-Alive
+  Accept-Encoding: gzip
+  User-Agent: okhttp/3.14.9
+Body: (absent)
+
+14:38:06.112 INFO  - RESPONSE:
+200 https://petstore.swagger.io/v2/user/login?password=abc123&username=test
+Headers:
+  date: Fri, 04 Feb 2022 11:38:06 GMT
+  content-type: application/json
+  access-control-allow-origin: *
+  access-control-allow-methods: GET, POST, DELETE, PUT
+  access-control-allow-headers: Content-Type, api_key, Authorization
+  x-expires-after: Fri Feb 04 12:38:06 UTC 2022
+  x-rate-limit: 5000
+  server: Jetty(9.2.9.v20150224)
+  Content-Length: -1
+Body: (78-byte body)
+  {"code":200,"type":"unknown","message":"logged in user session:1643974686051"}
+
+14:38:06.115 INFO  - Response check completed without errors.
+14:38:06.206 INFO  - API call: Add a new pet to the store
+14:38:06.817 INFO  - REQUEST:
+POST https://petstore.swagger.io/v2/pet
+Headers:
+  Content-Type: application/json
+  Content-Length: 291
+  Host: petstore.swagger.io
+  Connection: Keep-Alive
+  Accept-Encoding: gzip
+  User-Agent: okhttp/3.14.9
+  api_key: special-key
+Body: (291-byte body)
+  {
+    "id" : 496977483,
+    "photoUrls" : [ "www.shelba-bogisich.co.uk" ],
+    "category" : {
+      "id" : 1082547212,
+      "name" : "erjtrtczfi"
+    },
+    "name" : "gorilla",
+    "tags" : [ {
+      "id" : 1231521466,
+      "name" : "ybabllzaxw"
+    }, {
+      "id" : 2012930363,
+      "name" : "vgobbqhmxu"
+    } ]
+  }
+
+14:38:07.132 INFO  - RESPONSE:
+200 https://petstore.swagger.io/v2/pet
+Headers:
+  date: Fri, 04 Feb 2022 11:38:07 GMT
+  content-type: application/json
+  access-control-allow-origin: *
+  access-control-allow-methods: GET, POST, DELETE, PUT
+  access-control-allow-headers: Content-Type, api_key, Authorization
+  server: Jetty(9.2.9.v20150224)
+  Content-Length: -1
+Body: (209-byte body)
+  {"id":496977483,"category":{"id":1082547212,"name":"erjtrtczfi"},"name":"gorilla","photoUrls":["www.shelba-bogisich.co.uk"],"tags":[{"id":1231521466,"name":"ybabllzaxw"},{"id":2012930363,"name":"vgobbqhmxu"}]}
+
+14:38:07.306 INFO  - Response check completed without errors.
+14:38:07.386 INFO  - SUCCESSFUL: Checking the Pet model contract (PropertyNamingStrategy.SnakeCaseStrategy)
+  file:///Users/ra/repo/src/github.com/touchbit/retrofit-veslo/example/target/logs/test/test1640455066880.log
+```
+
+</spoiler>
+
+При запуске теста в Intellij IDEA вы получите следующий вывод в случае падения
+
+[![](https://habrastorage.org/webt/ez/fj/u4/ezfju4fb9pg_fowurwadhylmlam.png)](https://habrastorage.org/webt/ez/fj/u4/ezfju4fb9pg_fowurwadhylmlam.png)
+
+Так же в `JunitExecutionListener` реализовано добавление лога теста в allure отчет. Смотреть метод `addTestLogAttachment()`.
+
+[![](https://habrastorage.org/webt/7y/nv/ns/7ynvnsvoy7hneulnpnobtr-vh78.png)](https://habrastorage.org/webt/7y/nv/ns/7ynvnsvoy7hneulnpnobtr-vh78.png)
+
+</spoiler>
+
+Шаблон тестового класса/метода
+
+
 
 <a href="#anchor_TOC">К содержанию</a>
 
