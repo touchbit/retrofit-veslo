@@ -1,6 +1,9 @@
 # Retrofit Veslo<sup>(paddle)</sup>
 
 ![](https://img.shields.io/badge/Java-8%2B-blue?style=plastic&logo=java)
+![](https://maven-badges.herokuapp.com/maven-central/org.touchbit.retrofit.veslo/parent-pom/badge.svg?style=plastic)
+
+Описание на русском языке смотреть [тут](https://habr.com/ru/post/647499/).
 
 - intended for testing HTTP API using the `rertofit2` library;
 - designed to simplify the development of autotests as much as possible to the detriment of some architectural canons
@@ -49,7 +52,7 @@ Primitive usage example:
 public static class ExampleTests {
 
     public interface ExampleClient {
-        @POST("/api/example")
+        @GET("/api/example")
         DualResponse<Pet, Err> get();
     }
 
@@ -244,9 +247,7 @@ Built-in Actions:
 
 ### ReflectQueryMap
 
-You can create your own simple QueryMap for queries by inheriting from ReflectQueryMap which allows you to read
-key-value pairs from class variables. This mechanism is in addition to the standard reading of parameters from the `Map`
-.
+You can create your own simple QueryMap for queries by inheriting from ReflectQueryMap which allows you to read key-value pairs from class variables. This mechanism is in addition to the standard reading of parameters from the `Map`.
 
 Client for `LoginUserQueryMap` examples
 
@@ -345,22 +346,24 @@ public interface PetApi {
 ```java
 public class AddPetTests extends BasePetTest {
 
-    @Test
-    public void test1640455066880() {
-        PET_API.addPet(new Pet().name("fooBar")); // body -> {"name":"fooBar"}
-        // or
-        PET_API.addPet("fooBar"); // body -> "fooBar"
-        // or
-        PET_API.addPet(new RawBody("fooBar")); // body -> fooBar
-        // or
-        PET_API.addPet(true); // body -> true
-        // or
-        PET_API.addPet(ExtensionConverter.NULL_JSON_VALUE); // body -> <no body>
-        // or
-        PET_API.addPet(new File("src/test/java/transport/data/PetPositive.json")); // body -> <from file>
-        // or
-        PET_API.addPet(new ResourceFile("PetPositive.json")); // body -> <from project resource file>
-    }
+  @Test
+  public void test1640455066880() {
+    PET_API.addPet(new Pet().name("fooBar")); // body -> {"name":"fooBar"}
+    // or
+    PET_API.addPet("fooBar"); // body -> "fooBar"
+    // or
+    PET_API.addPet(new RawBody("fooBar")); // body -> fooBar
+    // or
+    PET_API.addPet(true); // body -> true
+    // or
+    PET_API.addPet(ExtensionConverter.NULL_JSON_VALUE); // body -> <no body>
+    // or
+    final File file = new File("src/test/java/transport/data/PetPositive.json");
+    PET_API.addPet(file); // body -> <from file>
+    // or
+    final ResourceFile resourceFile = new ResourceFile("PetPositive.json");
+    PET_API.addPet(resourceFile); // body -> <from project resource file>
+  }
 }
 ```
 
@@ -390,7 +393,6 @@ Examples of response assertions can be viewed in classes:
 
 - `veslo.example.ExampleApiClientAssertions`
 - `org.touchbit.retrofit.veslo.example.model.pet.Pet`
-- `org.touchbit.retrofit.veslo.example.tests.BaseTest`
 
 For clarity:
 
