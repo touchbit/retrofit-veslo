@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 import static internal.test.utils.TestUtils.array;
 import static internal.test.utils.TestUtils.getGenericReturnTypeForMethod;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 @SuppressWarnings({"unused", "rawtypes"})
 public abstract class BaseUnitTest {
@@ -119,6 +120,10 @@ public abstract class BaseUnitTest {
 
     public static <DTO> void assertIs(DTO actual, DTO expected) {
         assertThat(actual, is(expected));
+    }
+
+    public static <DTO> void assertNotNull(DTO actual) {
+        assertThat(actual, notNullValue());
     }
 
     protected Annotation[] getAnyAnnotations() {

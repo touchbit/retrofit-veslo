@@ -17,6 +17,9 @@
 package veslo;
 
 import internal.test.utils.BaseUnitTest;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,14 +28,19 @@ import veslo.client.LoggedMockInterceptor;
 import veslo.client.adapter.UniversalCallAdapterFactory;
 import veslo.client.converter.ExtensionConverterFactory;
 import veslo.client.model.RawBody;
+import veslo.client.model.ReplaceAll;
+import veslo.client.model.ReplaceableTextFile;
 import veslo.client.model.ResourceFile;
 import veslo.util.Utils;
 
 import java.io.File;
+import java.lang.reflect.Field;
 
 import static internal.test.utils.client.MockInterceptor.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.is;
 import static veslo.client.converter.api.ExtensionConverter.NULL_BODY_VALUE;
+import static veslo.client.model.ReplaceableTextFile.TextFileType.RESOURCE_FILE;
 
 @SuppressWarnings("unused")
 @DisplayName("JavaTypeAdapterFactory functional tests")
@@ -251,6 +259,27 @@ public class UniversalCallAdapterFactoryFuncTests extends BaseFuncTest {
                     .assertSucBody(BaseUnitTest::assertIs, STRING)
                     .assertErrBodyIsNull());
         }
+
+        @Test
+        @DisplayName("String: return String value if body = string")
+        public void test1644945734479() {
+            final Notes notes = new Notes().to("1").from("2").bodyContent("3");
+            String expected = "" +
+                    "<note>\n" +
+                    "    <to>1</to>\n" +
+                    "    <from>2</from>\n" +
+                    "    <heading>Reminder</heading>\n" +
+                    "    <body>\n" +
+                    "        <content>3</content>\n" +
+                    "        <status>DRAFT</status>\n" +
+                    "    </body>\n" +
+                    "</note>";
+            CLIENT.returnString(OK, notes.toString()).assertResponse(asserter -> asserter
+                    .assertHttpStatusCodeIs(OK)
+                    .assertSucBody(BaseUnitTest::assertIs, expected)
+                    .assertErrBodyIsNull());
+        }
+
 
         @Test
         @DisplayName("String: return String if unsuccessful status and body = string")
@@ -673,6 +702,28 @@ public class UniversalCallAdapterFactoryFuncTests extends BaseFuncTest {
                     .assertMessageIs("Short conversion error:\n" +
                             "expected short number in range -32768...32767\n" +
                             "but was " + Q_BLANK_STRING);
+        }
+
+    }
+
+    @Getter
+    @Setter
+    @Accessors(chain = true, fluent = true)
+    public static final class Notes extends ReplaceableTextFile {
+
+        @ReplaceAll(regex = "\\[note.to]")
+        private String to;
+        @ReplaceAll(regex = "replace_note_from")
+        private String from;
+        @ReplaceAll(regex = "\\{note_body_content}")
+        private String bodyContent;
+
+        public Notes() {
+            super(RESOURCE_FILE, "Notes.xml", UTF_8);
+        }
+
+        public String getReplacement(final Field field) {
+            return super.getReplacement(field);
         }
 
     }
