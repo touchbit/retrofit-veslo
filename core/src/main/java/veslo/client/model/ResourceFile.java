@@ -17,10 +17,14 @@
 package veslo.client.model;
 
 import veslo.ResourceFileException;
+import veslo.util.Utils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
@@ -29,10 +33,18 @@ import java.net.URL;
 public class ResourceFile {
 
     private final String resourceRelativePath;
+    private final Charset charset;
 
     public ResourceFile(String resourceRelativePath) {
+        this(resourceRelativePath, UTF_8);
+    }
+
+    public ResourceFile(String resourceRelativePath, Charset charset) {
+        Utils.parameterRequireNonNull(resourceRelativePath, "resourceRelativePath");
+        Utils.parameterRequireNonNull(charset, "charset");
         requireExists(resourceRelativePath);
         this.resourceRelativePath = resourceRelativePath;
+        this.charset = charset;
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -52,7 +64,11 @@ public class ResourceFile {
 
     @Override
     public String toString() {
-        return new String(getBytes());
+        return new String(getBytes(), charset);
+    }
+
+    public static String resourceToString(String resourceRelativePath, Charset charset) {
+        return new ResourceFile(resourceRelativePath, charset).toString();
     }
 
     public static String resourceToString(String resourceRelativePath) {

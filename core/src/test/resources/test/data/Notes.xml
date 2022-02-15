@@ -1,0 +1,9 @@
+<note>
+    <to>[note.to]</to>
+    <from>replace_note_from</from>
+    <heading>Reminder</heading>
+    <body>
+        <content>{note_body_content}</content>
+        <status>DRAFT</status>
+    </body>
+</note>

@@ -16,21 +16,22 @@
 
 package veslo.client.model;
 
+import internal.test.utils.BaseUnitTest;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import veslo.ResourceFileException;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@DisplayName("ResourceFile tests")
-public class ResourceFileUnitTests {
+@DisplayName("ResourceFile.class unit tests")
+public class ResourceFileUnitTests extends BaseUnitTest {
 
     @Test
     @DisplayName("Successfully instantiating class where resource file exists")
@@ -52,41 +53,67 @@ public class ResourceFileUnitTests {
                 .assertMessageIs("Resource not exists: test/data/test1637486983022.txt");
     }
 
-    @Test
-    @DisplayName("getBytes() successful read of an existing resource file")
-    public void test1639065952276() {
-        final byte[] bytes = new ResourceFile("test/data/test1637487087922.txt").getBytes();
-        assertThat("", new String(bytes), is("test1637487087922"));
+    @Nested
+    @DisplayName("#getBytes() method tests")
+    public class GetBytesMethodTests {
+
+        @Test
+        @DisplayName("Successful read of an existing resource file")
+        public void test1639065952276() {
+            final byte[] bytes = new ResourceFile("test/data/test1637487087922.txt").getBytes();
+            assertThat("", new String(bytes), is("test1637487087922"));
+        }
+
+        @Test
+        @DisplayName("ResourceFileException if file non-existent")
+        public void test1639065952283() {
+            final ResourceFile resourceFile = mock(ResourceFile.class);
+            when(resourceFile.getResourceRelativePath()).thenReturn("test/data/test1637487260260");
+            when(resourceFile.getClassLoader()).thenCallRealMethod();
+            when(resourceFile.getBytes()).thenCallRealMethod();
+            assertThrow(resourceFile::getBytes)
+                    .assertClass(ResourceFileException.class)
+                    .assertMessageIs("Resource not exists: test/data/test1637487260260");
+        }
+
+        @Test
+        @DisplayName("ResourceFileException if file not readable")
+        public void test1639065952295() throws IOException {
+            final ResourceFile resourceFile = mock(ResourceFile.class);
+            final InputStream inputStream = mock(InputStream.class);
+            final ClassLoader classLoader = mock(ClassLoader.class);
+
+            when(inputStream.available()).thenThrow(new IOException("test1637545665265"));
+            when(classLoader.getResourceAsStream("/test/data/test1637545665265")).thenReturn(inputStream);
+            when(resourceFile.getResourceRelativePath()).thenReturn("/test/data/test1637545665265");
+            when(resourceFile.getClassLoader()).thenReturn(classLoader);
+            when(resourceFile.getBytes()).thenCallRealMethod();
+
+            assertThrow(resourceFile::getBytes)
+                    .assertClass(ResourceFileException.class)
+                    .assertMessageIs("Resource not readable: /test/data/test1637545665265");
+        }
+
     }
 
-    @Test
-    @DisplayName("getBytes() error reading non-existent file")
-    public void test1639065952283() {
-        final ResourceFile resourceFile = mock(ResourceFile.class);
-        when(resourceFile.getResourceRelativePath()).thenReturn("test/data/test1637487260260");
-        when(resourceFile.getClassLoader()).thenCallRealMethod();
-        when(resourceFile.getBytes()).thenCallRealMethod();
-        assertThrow(resourceFile::getBytes)
-                .assertClass(ResourceFileException.class)
-                .assertMessageIs("Resource not exists: test/data/test1637487260260");
-    }
+    @Nested
+    @DisplayName("#resourceToString() method tests")
+    public class ResourceToStringMethodTests {
 
-    @Test
-    @DisplayName("getBytes() error reading not readable file")
-    public void test1639065952295() throws IOException {
-        final ResourceFile resourceFile = mock(ResourceFile.class);
-        final InputStream inputStream = mock(InputStream.class);
-        final ClassLoader classLoader = mock(ClassLoader.class);
+        @Test
+        @DisplayName("Read file with encoding")
+        public void test1644935769834() {
+            final String actual = ResourceFile.resourceToString("test/data/test1637486628431.txt", UTF_8);
+            assertIs(actual, "test1637486628431");
+        }
 
-        when(inputStream.available()).thenThrow(new IOException("test1637545665265"));
-        when(classLoader.getResourceAsStream("/test/data/test1637545665265")).thenReturn(inputStream);
-        when(resourceFile.getResourceRelativePath()).thenReturn("/test/data/test1637545665265");
-        when(resourceFile.getClassLoader()).thenReturn(classLoader);
-        when(resourceFile.getBytes()).thenCallRealMethod();
+        @Test
+        @DisplayName("Read file without encoding")
+        public void test1644940907323() {
+            final String actual = ResourceFile.resourceToString("test/data/test1637486628431.txt");
+            assertIs(actual, "test1637486628431");
+        }
 
-        assertThrow(resourceFile::getBytes)
-                .assertClass(ResourceFileException.class)
-                .assertMessageIs("Resource not readable: /test/data/test1637545665265");
     }
 
 }

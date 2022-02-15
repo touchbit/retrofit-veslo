@@ -1,6 +1,9 @@
 Change Log
 ==========
 
+* **New** Reading and modifying text files through a helper class `ReplaceableTextFile`
+* **Change** `ResourceFile` - added charset support
+
 ## Version 1.0.1
 
 * **New** utility classes for building test clients: 
