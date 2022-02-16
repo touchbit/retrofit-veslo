@@ -233,4 +233,25 @@ public class BaseCoreUnitTest extends BaseUnitTest {
         return RetrofitTestUtils.getCallMethodAnnotations("Content-Type: " + value);
     }
 
+    protected static final class TestToStringConverter implements ExtensionConverter<String> {
+
+        public static final TestToStringConverter INSTANCE = new TestToStringConverter();
+
+        @Override
+        @EverythingIsNonNull
+        public RequestBodyConverter requestBodyConverter(final Type type,
+                                                         final Annotation[] parameterAnnotations,
+                                                         final Annotation[] methodAnnotations,
+                                                         final Retrofit retrofit) {
+            return body -> createRequestBody(methodAnnotations, body.toString());
+        }
+
+        public ResponseBodyConverter<String> responseBodyConverter(final Type type,
+                                                                   final Annotation[] methodAnnotations,
+                                                                   final Retrofit retrofit) {
+            return responseBody -> type.toString();
+        }
+
+    }
+
 }

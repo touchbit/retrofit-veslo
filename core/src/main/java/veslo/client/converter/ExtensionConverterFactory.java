@@ -18,6 +18,7 @@ package veslo.client.converter;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import org.apache.commons.lang3.reflect.TypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import retrofit2.Retrofit;
@@ -68,6 +69,8 @@ import static veslo.util.ConvertUtils.isIDualResponse;
  */
 public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
 
+    private final Map<Class<? extends Annotation>, ExtensionConverter<?>> modelAnnotationRequestConverters = new HashMap<>();
+    private final Map<Class<? extends Annotation>, ExtensionConverter<?>> modelAnnotationResponseConverters = new HashMap<>();
     private final Map<String, ExtensionConverter<?>> packageRequestConverters = new HashMap<>();
     private final Map<String, ExtensionConverter<?>> packageResponseConverters = new HashMap<>();
     private final Map<Type, ExtensionConverter<?>> rawRequestConverters = new HashMap<>();
@@ -137,9 +140,12 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
                 final String bodyTypeName = Utils.getTypeName(bodyClass);
                 logger.debug("Definition of request converter for type {}", bodyTypeName);
                 try {
-                    RequestBodyConverter converter = getRequestConverterFromAnnotation(bodyClass, pA, mA, rtf);
+                    RequestBodyConverter converter = getRequestConverterFromCallAnnotation(bodyClass, pA, mA, rtf);
                     if (converter == null) {
                         converter = getRawRequestConverter(bodyClass, pA, mA, rtf);
+                    }
+                    if (converter == null) {
+                        converter = getModelAnnotationRequestConverter(bodyClass, pA, mA, rtf);
                     }
                     if (converter == null) {
                         converter = getPackageRequestConverter(bodyClass, pA, mA, rtf);
@@ -196,9 +202,12 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
                 final String bodyTypeName = Utils.getTypeName(bodyType);
                 logger.debug("Definition of response converter for type: {}", bodyTypeName);
                 try {
-                    ResponseBodyConverter<?> converter = getResponseConverterFromAnnotation(bodyType, mA, rtf);
+                    ResponseBodyConverter<?> converter = getResponseConverterFromCallAnnotation(bodyType, mA, rtf);
                     if (converter == null) {
                         converter = getRawResponseConverter(bodyType, mA, rtf);
+                    }
+                    if (converter == null) {
+                        converter = getModelAnnotationResponseConverter(bodyType, mA, rtf);
                     }
                     if (converter == null) {
                         converter = getPackageResponseConverter(bodyType, mA, rtf);
@@ -244,10 +253,10 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      * @return {@link RequestBodyConverter} or null
      */
     @Nullable
-    protected RequestBodyConverter getRequestConverterFromAnnotation(@Nonnull final Class<?> bodyClass,
-                                                                     @Nonnull final Annotation[] parameterAnnotations,
-                                                                     @Nonnull final Annotation[] methodAnnotations,
-                                                                     @Nonnull final Retrofit retrofit) {
+    protected RequestBodyConverter getRequestConverterFromCallAnnotation(@Nonnull final Class<?> bodyClass,
+                                                                         @Nonnull final Annotation[] parameterAnnotations,
+                                                                         @Nonnull final Annotation[] methodAnnotations,
+                                                                         @Nonnull final Retrofit retrofit) {
         Utils.parameterRequireNonNull(bodyClass, "bodyClass");
         Utils.parameterRequireNonNull(parameterAnnotations, "parameterAnnotations");
         Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
@@ -299,10 +308,35 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
         Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
         Utils.parameterRequireNonNull(retrofit, "retrofit");
         final ExtensionConverter<?> converter = getRawRequestConverters().get(bodyClass);
-        if (converter != null) {
-            return converter.requestBodyConverter(bodyClass, parameterAnnotations, methodAnnotations, retrofit);
-        }
-        return null;
+        return converter == null ? null :
+                converter.requestBodyConverter(bodyClass, parameterAnnotations, methodAnnotations, retrofit);
+    }
+
+    /**
+     * Get {@link RequestBodyConverter} by bodyClass annotations
+     *
+     * @param bodyClass            - request method body class.
+     * @param parameterAnnotations - API client called method parameters annotations
+     * @param methodAnnotations    - API client called method annotations
+     * @param retrofit             - see {@link Retrofit}
+     * @return {@link RequestBodyConverter} or null
+     */
+    @Nullable
+    public RequestBodyConverter getModelAnnotationRequestConverter(@Nonnull final Class<?> bodyClass,
+                                                                   @Nonnull final Annotation[] parameterAnnotations,
+                                                                   @Nonnull final Annotation[] methodAnnotations,
+                                                                   @Nonnull final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(bodyClass, "bodyClass");
+        Utils.parameterRequireNonNull(parameterAnnotations, "parameterAnnotations");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
+        return getModelAnnotationRequestConverters().entrySet().stream()
+                .filter(e -> bodyClass.isAnnotationPresent(e.getKey()))
+                .map(Map.Entry::getValue)
+                .map(c -> c.requestBodyConverter(bodyClass, parameterAnnotations, methodAnnotations, retrofit))
+                // always contains one value or null
+                .findFirst()
+                .orElse(null);
     }
 
     /**
@@ -328,10 +362,8 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
             return null;
         }
         final ExtensionConverter<?> converter = getPackageRequestConverters().get(aPackage.getName());
-        if (converter != null) {
-            return converter.requestBodyConverter(bodyClass, parameterAnnotations, methodAnnotations, retrofit);
-        }
-        return null;
+        return converter == null ? null :
+                converter.requestBodyConverter(bodyClass, parameterAnnotations, methodAnnotations, retrofit);
     }
 
     /**
@@ -355,10 +387,8 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
         Utils.parameterRequireNonNull(retrofit, "retrofit");
         final ContentType contentType = ConvertUtils.getContentType(methodAnnotations);
         final ExtensionConverter<?> converter = getMimeRequestConverters().get(contentType);
-        if (converter != null) {
-            return converter.requestBodyConverter(bodyClass, parameterAnnotations, methodAnnotations, retrofit);
-        }
-        return null;
+        return converter == null ? null :
+                converter.requestBodyConverter(bodyClass, parameterAnnotations, methodAnnotations, retrofit);
     }
 
     /**
@@ -380,10 +410,8 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
         Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
         Utils.parameterRequireNonNull(retrofit, "retrofit");
         final ExtensionConverter<?> converter = getJavaTypeRequestConverters().get(bodyClass);
-        if (converter != null) {
-            return converter.requestBodyConverter(bodyClass, parameterAnnotations, methodAnnotations, retrofit);
-        }
-        return null;
+        return converter == null ? null :
+                converter.requestBodyConverter(bodyClass, parameterAnnotations, methodAnnotations, retrofit);
     }
 
     /**
@@ -402,13 +430,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     @EverythingIsNonNull
     protected Type getResponseBodyType(Type type) {
         Utils.parameterRequireNonNull(type, "type");
-        final Type bodyType;
-        if (isIDualResponse(type)) {
-            bodyType = getParameterUpperBound(0, (ParameterizedType) type);
-        } else {
-            bodyType = type;
-        }
-        return bodyType;
+        return isIDualResponse(type) ? getParameterUpperBound(0, (ParameterizedType) type) : type;
     }
 
     /**
@@ -427,11 +449,34 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
         Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
         Utils.parameterRequireNonNull(retrofit, "retrofit");
         final Map<Type, ExtensionConverter<?>> rawConverters = getRawResponseConverters();
-        final ExtensionConverter<?> rawConverter = rawConverters.get(bodyType);
-        if (rawConverter != null) {
-            return rawConverter.responseBodyConverter(bodyType, methodAnnotations, retrofit);
-        }
-        return null;
+        final ExtensionConverter<?> converter = rawConverters.get(bodyType);
+        return converter == null ? null : converter.responseBodyConverter(bodyType, methodAnnotations, retrofit);
+    }
+
+    /**
+     * Get {@link ResponseBodyConverter} by bodyClass annotation
+     *
+     * @param bodyType          - request method body java type.
+     * @param methodAnnotations - API client called method annotations
+     * @param retrofit          - see {@link Retrofit}
+     * @return {@link ResponseBodyConverter} or null
+     */
+    @Nullable
+    protected ResponseBodyConverter<?> getModelAnnotationResponseConverter(@Nonnull final Type bodyType,
+                                                                           @Nonnull final Annotation[] methodAnnotations,
+                                                                           @Nonnull final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(bodyType, "bodyType");
+        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(retrofit, "retrofit");
+        Class<?> bodyClass = TypeUtils.getRawType(bodyType, null);
+        return bodyClass == null ? null :
+                getModelAnnotationRequestConverters().entrySet().stream()
+                        .filter(e -> bodyClass.isAnnotationPresent(e.getKey()))
+                        .map(Map.Entry::getValue)
+                        .map(c -> c.responseBodyConverter(bodyClass, methodAnnotations, retrofit))
+                        // always contains one value or null
+                        .findFirst()
+                        .orElse(null);
     }
 
     /**
@@ -544,9 +589,9 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      * @return {@link ResponseBodyConverter} or null
      */
     @Nullable
-    protected ResponseBodyConverter<?> getResponseConverterFromAnnotation(@Nonnull final Type bodyType,
-                                                                          @Nonnull final Annotation[] methodAnnotations,
-                                                                          @Nonnull final Retrofit retrofit) {
+    protected ResponseBodyConverter<?> getResponseConverterFromCallAnnotation(@Nonnull final Type bodyType,
+                                                                              @Nonnull final Annotation[] methodAnnotations,
+                                                                              @Nonnull final Retrofit retrofit) {
         Utils.parameterRequireNonNull(bodyType, "bodyType");
         Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
         Utils.parameterRequireNonNull(retrofit, "retrofit");
@@ -824,13 +869,73 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     }
 
     /**
+     * Add request/response converter for specified model annotations
+     *
+     * @param converter                - Converter implementing interface {@link ExtensionConverter}
+     * @param supportedModelAnnotation - annotated model supported by the {@link ExtensionConverter}
+     */
+    @EverythingIsNonNull
+    public void registerModelAnnotationConverter(final ExtensionConverter<?> converter,
+                                                 final Class<? extends Annotation> supportedModelAnnotation) {
+        Utils.parameterRequireNonNull(converter, "converter");
+        Utils.parameterRequireNonNull(supportedModelAnnotation, "supportedModelAnnotation");
+        registerModelAnnotationRequestConverter(converter, supportedModelAnnotation);
+        registerModelAnnotationResponseConverter(converter, supportedModelAnnotation);
+    }
+
+    /**
+     * @return Map of request model annotations converters where key - model annotation, value - {@link ExtensionConverter}
+     */
+    @Nonnull
+    public Map<Class<? extends Annotation>, ExtensionConverter<?>> getModelAnnotationRequestConverters() {
+        return modelAnnotationRequestConverters;
+    }
+
+    /**
+     * Add request converter for specified model annotations
+     *
+     * @param converter                - Converter implementing interface {@link ExtensionConverter}
+     * @param supportedModelAnnotation - annotated model supported by the {@link ExtensionConverter}
+     */
+    @EverythingIsNonNull
+    public void registerModelAnnotationRequestConverter(final ExtensionConverter<?> converter,
+                                                        final Class<? extends Annotation> supportedModelAnnotation) {
+        Utils.parameterRequireNonNull(converter, "converter");
+        Utils.parameterRequireNonNull(supportedModelAnnotation, "supportedModelAnnotation");
+        getModelAnnotationRequestConverters().put(supportedModelAnnotation, converter);
+    }
+
+    /**
+     * @return Map of response model annotations converters where key - model annotation, value - {@link ExtensionConverter}
+     */
+    @Nonnull
+    public Map<Class<? extends Annotation>, ExtensionConverter<?>> getModelAnnotationResponseConverters() {
+        return modelAnnotationResponseConverters;
+    }
+
+    /**
+     * Add response converter for specified model annotations
+     *
+     * @param converter                - Converter implementing interface {@link ExtensionConverter}
+     * @param supportedModelAnnotation - annotated model supported by the {@link ExtensionConverter}
+     */
+    @EverythingIsNonNull
+    public void registerModelAnnotationResponseConverter(final ExtensionConverter<?> converter,
+                                                         final Class<? extends Annotation> supportedModelAnnotation) {
+        Utils.parameterRequireNonNull(converter, "converter");
+        Utils.parameterRequireNonNull(supportedModelAnnotation, "supportedModelAnnotation");
+        getModelAnnotationResponseConverters().put(supportedModelAnnotation, converter);
+    }
+
+    /**
      * Add converter for specified package names
      *
      * @param converter             - Converter implementing interface {@link ExtensionConverter}
      * @param supportedPackageNames - array list of package names supported by the {@link ExtensionConverter}
      */
     @EverythingIsNonNull
-    public void registerPackageConverter(ExtensionConverter<?> converter, String... supportedPackageNames) {
+    public void registerPackageConverter(final ExtensionConverter<?> converter,
+                                         final String... supportedPackageNames) {
         Utils.parameterRequireNonNull(converter, "converter");
         Utils.parameterRequireNonNull(supportedPackageNames, "supportedPackageNames");
         registerPackageRequestConverter(converter, supportedPackageNames);
@@ -844,7 +949,8 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      * @param supportedPackages - array list of packages supported by the {@link ExtensionConverter}
      */
     @EverythingIsNonNull
-    public void registerPackageConverter(ExtensionConverter<?> converter, Package... supportedPackages) {
+    public void registerPackageConverter(final ExtensionConverter<?> converter,
+                                         final Package... supportedPackages) {
         Utils.parameterRequireNonNull(converter, "converter");
         Utils.parameterRequireNonNull(supportedPackages, "supportedPackages");
         final String[] packageNames = Arrays.stream(supportedPackages)
@@ -861,7 +967,8 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      * @param supportedPackageClasses - array list of class packages supported by the {@link ExtensionConverter}
      */
     @EverythingIsNonNull
-    public void registerPackageConverter(ExtensionConverter<?> converter, Class<?>... supportedPackageClasses) {
+    public void registerPackageConverter(final ExtensionConverter<?> converter,
+                                         final Class<?>... supportedPackageClasses) {
         Utils.parameterRequireNonNull(converter, "converter");
         Utils.parameterRequireNonNull(supportedPackageClasses, "supportedPackageClasses");
         final Package[] packages = Arrays.stream(supportedPackageClasses)
@@ -886,7 +993,8 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      * @param supportedPackageNames - array list of package names supported by the {@link ExtensionConverter}
      */
     @EverythingIsNonNull
-    public void registerPackageRequestConverter(ExtensionConverter<?> converter, String... supportedPackageNames) {
+    public void registerPackageRequestConverter(final ExtensionConverter<?> converter,
+                                                final String... supportedPackageNames) {
         Utils.parameterRequireNonNull(converter, "converter");
         Utils.parameterRequireNonNull(supportedPackageNames, "supportedPackageNames");
         for (String supportedPackageName : supportedPackageNames) {
@@ -911,7 +1019,8 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      * @param supportedPackageNames - array list of package names supported by the {@link ExtensionConverter}
      */
     @EverythingIsNonNull
-    public void registerPackageResponseConverter(ExtensionConverter<?> converter, String... supportedPackageNames) {
+    public void registerPackageResponseConverter(final ExtensionConverter<?> converter,
+                                                 final String... supportedPackageNames) {
         Utils.parameterRequireNonNull(converter, "converter");
         Utils.parameterRequireNonNull(supportedPackageNames, "supportedPackageNames");
         for (String supportedPackageName : supportedPackageNames) {
@@ -924,7 +1033,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     /**
      * @param packageName - DTO model package name
      */
-    protected void assertPackageName(String packageName) {
+    protected void assertPackageName(final String packageName) {
         Utils.parameterRequireNonNull(packageName, "packageName");
         String regexp = "^[a-zA-Z_]+(:?[a-zA-Z0-9_]*)?+(\\.[a-zA-Z_][a-zA-Z0-9_]*)*$";
         if (!packageName.matches(regexp)) {
@@ -941,7 +1050,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      * @return Map where key - request DTO class name, value - Converter class
      */
     @Nonnull
-    protected Map<String, Type> getAnnotatedRequestConverters(@Nullable final Annotation[] mA) {
+    protected Map<String, Type> getCallMethodAnnotationRequestConverters(@Nullable final Annotation[] mA) {
         Map<String, Type> result = new HashMap<>();
         List<RequestConverter> requestConverters = new ArrayList<>();
         final Converters converters = Utils.getAnnotation(mA, Converters.class);
@@ -972,7 +1081,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      * @return Map where key - response DTO class name, value - Converter class
      */
     @Nonnull
-    protected Map<String, Type> getAnnotatedResponseConverters(@Nullable final Annotation[] mA) {
+    protected Map<String, Type> getCallMethodAnnotationResponseConverters(@Nullable final Annotation[] mA) {
         Map<String, Type> result = new HashMap<>();
         List<ResponseConverter> responseConverters = new ArrayList<>();
         final Converters converters = Utils.getAnnotation(mA, Converters.class);
@@ -1011,17 +1120,21 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
         final Map<ContentType, ExtensionConverter<?>> mime;
         final Map<Type, ExtensionConverter<?>> javaType;
         if (transportEvent == REQUEST) {
-            annotated = getAnnotatedRequestConverters(mA);
             raw = getRawRequestConverters();
             pack = getPackageRequestConverters();
             mime = getMimeRequestConverters();
             javaType = getJavaTypeRequestConverters();
+            annotated = getCallMethodAnnotationRequestConverters(mA);
+            annotated.putAll(getModelAnnotationRequestConverters().entrySet().stream()
+                    .collect(Collectors.toMap(e -> "@" + e.getKey().getName(), e -> e.getValue().getClass())));
         } else {
-            annotated = getAnnotatedResponseConverters(mA);
             raw = getRawResponseConverters();
             pack = getPackageResponseConverters();
             mime = getMimeResponseConverters();
             javaType = getJavaTypeResponseConverters();
+            annotated = getCallMethodAnnotationResponseConverters(mA);
+            annotated.putAll(getModelAnnotationResponseConverters().entrySet().stream()
+                    .collect(Collectors.toMap(e -> "@" + e.getKey().getName(), e -> e.getValue().getClass())));
         }
         return "SUPPORTED " + transportEvent + " CONVERTERS:\n" +
                 buildSummary("Annotated converters:", annotated, Type::getTypeName, p -> p) + "\n" +
