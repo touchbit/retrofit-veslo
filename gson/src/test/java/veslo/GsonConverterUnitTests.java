@@ -17,6 +17,7 @@
 package veslo;
 
 import com.google.gson.JsonSyntaxException;
+import internal.test.utils.BaseUnitTest;
 import internal.test.utils.OkHttpTestUtils;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -37,8 +38,6 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 import static internal.test.utils.TestUtils.array;
-import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -48,7 +47,7 @@ import static veslo.client.header.ContentTypeConstants.*;
 
 @SuppressWarnings({"rawtypes", "ConstantConditions", "unchecked"})
 @DisplayName("GsonConverter class tests")
-public class GsonConverterUnitTests {
+public class GsonConverterUnitTests extends BaseUnitTest {
 
     private static final Retrofit RTF = mock(Retrofit.class);
     private static final Annotation[] AA = array();

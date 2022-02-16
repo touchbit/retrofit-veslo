@@ -23,6 +23,7 @@ import veslo.client.converter.api.ExtensionConverter;
 import veslo.client.converter.defaults.JavaPrimitiveTypeConverter;
 import veslo.client.converter.defaults.JavaReferenceTypeConverter;
 import veslo.client.converter.defaults.RawBodyTypeConverter;
+import veslo.util.Utils;
 
 import java.util.List;
 import java.util.Map;
@@ -68,10 +69,10 @@ public class GsonConverterFactory extends ExtensionConverterFactory {
      * - {@link JavaPrimitiveTypeConverter}
      * - {@link JavaReferenceTypeConverter}
      *
-     * @param gsonConverter - converter for Gson models
+     * @param converter - converter for Gson models
      */
-    public GsonConverterFactory(ExtensionConverter<Object> gsonConverter) {
-        this(LoggerFactory.getLogger(GsonConverterFactory.class), gsonConverter);
+    public GsonConverterFactory(ExtensionConverter<Object> converter) {
+        this(LoggerFactory.getLogger(GsonConverterFactory.class), converter);
     }
 
     /**
@@ -80,13 +81,15 @@ public class GsonConverterFactory extends ExtensionConverterFactory {
      * - {@link JavaPrimitiveTypeConverter}
      * - {@link JavaReferenceTypeConverter}
      *
-     * @param gsonConverter - converter for Gson models
-     * @param logger        - required Slf4J logger
+     * @param converter - converter for Gson models
+     * @param logger    - required Slf4J logger
      */
-    public GsonConverterFactory(Logger logger, ExtensionConverter<Object> gsonConverter) {
+    public GsonConverterFactory(Logger logger, ExtensionConverter<Object> converter) {
         super(logger);
-        registerMimeConverter(gsonConverter, APP_JSON, APP_JSON_UTF8, TEXT_JSON, TEXT_JSON_UTF8);
-        registerJavaTypeConverter(gsonConverter, Map.class, List.class);
+        Utils.parameterRequireNonNull(converter, "converter");
+        registerMimeConverter(converter, APP_JSON, APP_JSON_UTF8, TEXT_JSON, TEXT_JSON_UTF8);
+        registerJavaTypeConverter(converter, Map.class, List.class);
+        registerModelAnnotationConverter(converter, GsonModel.class);
     }
 
 }

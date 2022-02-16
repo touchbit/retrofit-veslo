@@ -145,16 +145,16 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
     }
 
     @Nested
-    @DisplayName("#getRequestConverterFromAnnotation() method tests")
+    @DisplayName("#getRequestConverterFromCallAnnotation() method tests")
     public class GetRequestConverterFromAnnotationMethodTests {
 
         @Test
         @DisplayName("All parameters required")
         public void test1639943236693() {
-            assertNPE(() -> getTestFactory().getRequestConverterFromAnnotation(null, AA, AA, RTF), "bodyClass");
-            assertNPE(() -> getTestFactory().getRequestConverterFromAnnotation(OBJ_C, null, AA, RTF), "parameterAnnotations");
-            assertNPE(() -> getTestFactory().getRequestConverterFromAnnotation(OBJ_C, AA, null, RTF), "methodAnnotations");
-            assertNPE(() -> getTestFactory().getRequestConverterFromAnnotation(OBJ_C, AA, AA, null), "retrofit");
+            assertNPE(() -> getTestFactory().getRequestConverterFromCallAnnotation(null, AA, AA, RTF), "bodyClass");
+            assertNPE(() -> getTestFactory().getRequestConverterFromCallAnnotation(OBJ_C, null, AA, RTF), "parameterAnnotations");
+            assertNPE(() -> getTestFactory().getRequestConverterFromCallAnnotation(OBJ_C, AA, null, RTF), "methodAnnotations");
+            assertNPE(() -> getTestFactory().getRequestConverterFromCallAnnotation(OBJ_C, AA, AA, null), "retrofit");
         }
 
         @Test
@@ -162,7 +162,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639065949591() {
             final RequestConverter requestConverter = getRequestConverter(TestConverter.class, TestDTO.class);
             final RequestBodyConverter converter = getTestFactory()
-                    .getRequestConverterFromAnnotation(TestDTO.class, AA, array(requestConverter), RTF);
+                    .getRequestConverterFromCallAnnotation(TestDTO.class, AA, array(requestConverter), RTF);
             assertThat("Converter", converter, isA(RequestBodyConverter.class));
         }
 
@@ -171,7 +171,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639065949601() {
             final RequestConverter requestConverter = getRequestConverter(TestConverter.class, Objects.class);
             final RequestBodyConverter converter = getTestFactory()
-                    .getRequestConverterFromAnnotation(TestDTO.class, AA, array(requestConverter), RTF);
+                    .getRequestConverterFromCallAnnotation(TestDTO.class, AA, array(requestConverter), RTF);
             assertThat("Converter", converter, nullValue());
         }
 
@@ -183,7 +183,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             };
             final Converters converters = BaseCoreUnitTest.getConverters(new ResponseConverter[]{}, requestConverters);
             final RequestBodyConverter converter = getTestFactory()
-                    .getRequestConverterFromAnnotation(TestDTO.class, AA, array(converters), RTF);
+                    .getRequestConverterFromCallAnnotation(TestDTO.class, AA, array(converters), RTF);
             assertThat("Converter", converter, nullValue());
         }
 
@@ -193,7 +193,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             final RequestConverter[] requestConverters = array(getRequestConverter(TestConverter.class));
             final Converters converters = BaseCoreUnitTest.getConverters(new ResponseConverter[]{}, requestConverters);
             final RequestBodyConverter converter = getTestFactory()
-                    .getRequestConverterFromAnnotation(TestDTO.class, AA, array(converters), RTF);
+                    .getRequestConverterFromCallAnnotation(TestDTO.class, AA, array(converters), RTF);
             assertThat("Converter", converter, isA(RequestBodyConverter.class));
         }
 
@@ -203,7 +203,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             final RequestConverter[] requestConverters = array(getRequestConverter(TestConverter.class, TestDTO.class));
             final Converters converters = BaseCoreUnitTest.getConverters(new ResponseConverter[]{}, requestConverters);
             final RequestBodyConverter converter = getTestFactory()
-                    .getRequestConverterFromAnnotation(TestDTO.class, AA, array(converters), RTF);
+                    .getRequestConverterFromCallAnnotation(TestDTO.class, AA, array(converters), RTF);
             assertThat("Converter", converter, isA(RequestBodyConverter.class));
         }
 
@@ -212,7 +212,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639065949624() {
             final Converters converters = BaseCoreUnitTest.getConverters(new ResponseConverter[]{}, new RequestConverter[]{});
             final RequestBodyConverter requestConverterFromAnnotation = getTestFactory()
-                    .getRequestConverterFromAnnotation(OBJ_C, AA, array(converters), RTF);
+                    .getRequestConverterFromCallAnnotation(OBJ_C, AA, array(converters), RTF);
             assertThat("Converter", requestConverterFromAnnotation, nullValue());
         }
 
@@ -220,7 +220,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @DisplayName("return null if annotations not present")
         public void test1639942661747() {
             final RequestBodyConverter converter = getTestFactory()
-                    .getRequestConverterFromAnnotation(TestDTO.class, AA, AA, RTF);
+                    .getRequestConverterFromCallAnnotation(TestDTO.class, AA, AA, RTF);
             assertThat(converter, nullValue());
         }
 
@@ -230,7 +230,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             final Converters converters = BaseCoreUnitTest.getConverters(new ResponseConverter[]{}, new RequestConverter[]{});
             final RequestConverter requestConverter = getRequestConverter(TestConverter.class);
             final Annotation[] annotations = {converters, requestConverter};
-            assertThrow(() -> getTestFactory().getRequestConverterFromAnnotation(OBJ_C, AA, annotations, RTF))
+            assertThrow(() -> getTestFactory().getRequestConverterFromCallAnnotation(OBJ_C, AA, annotations, RTF))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("API method contains concurrent annotations.\n" +
                             "Use only one of:\n" +
@@ -578,15 +578,15 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
     }
 
     @Nested
-    @DisplayName("#getResponseConverterFromAnnotation() method tests")
+    @DisplayName("#getResponseConverterFromCallAnnotation() method tests")
     public class GetResponseConverterFromAnnotationMethodTests {
 
         @Test
         @DisplayName("Required parameters")
         public void test1639974240248() {
-            assertNPE(() -> getTestFactory().getResponseConverterFromAnnotation(null, AA, RTF), "bodyType");
-            assertNPE(() -> getTestFactory().getResponseConverterFromAnnotation(OBJ_C, null, RTF), "methodAnnotations");
-            assertNPE(() -> getTestFactory().getResponseConverterFromAnnotation(OBJ_C, AA, null), "retrofit");
+            assertNPE(() -> getTestFactory().getResponseConverterFromCallAnnotation(null, AA, RTF), "bodyType");
+            assertNPE(() -> getTestFactory().getResponseConverterFromCallAnnotation(OBJ_C, null, RTF), "methodAnnotations");
+            assertNPE(() -> getTestFactory().getResponseConverterFromCallAnnotation(OBJ_C, AA, null), "retrofit");
         }
 
         @Test
@@ -594,7 +594,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639065949284() {
             final ResponseConverter responseConverter = getResponseConverter(TestConverter.class, TestDTO.class);
             final Converter<ResponseBody, ?> converter = getTestFactory()
-                    .getResponseConverterFromAnnotation(TestDTO.class, array(responseConverter), RTF);
+                    .getResponseConverterFromCallAnnotation(TestDTO.class, array(responseConverter), RTF);
             assertThat("Converter", converter, isA(ResponseBodyConverter.class));
         }
 
@@ -604,7 +604,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639065949295() {
             final ResponseConverter responseConverter = getResponseConverter(TestConverter.class, Objects.class);
             final Converter<ResponseBody, ?> converter = getTestFactory()
-                    .getResponseConverterFromAnnotation(TestDTO.class, array(responseConverter), RTF);
+                    .getResponseConverterFromCallAnnotation(TestDTO.class, array(responseConverter), RTF);
             assertThat("Converter", converter, nullValue());
         }
 
@@ -617,7 +617,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             };
             final Converters converters = BaseCoreUnitTest.getConverters(responseConverters, new RequestConverter[]{});
             final Converter<ResponseBody, ?> converter = getTestFactory()
-                    .getResponseConverterFromAnnotation(TestDTO.class, array(converters), RTF);
+                    .getResponseConverterFromCallAnnotation(TestDTO.class, array(converters), RTF);
             assertThat("Converter", converter, nullValue());
         }
 
@@ -626,7 +626,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639065949319() {
             final Converters converters = BaseCoreUnitTest.getConverters(new ResponseConverter[]{}, new RequestConverter[]{});
             final Converter<ResponseBody, ?> responseConverterFromAnnotation = getTestFactory()
-                    .getResponseConverterFromAnnotation(OBJ_C, array(converters), RTF);
+                    .getResponseConverterFromCallAnnotation(OBJ_C, array(converters), RTF);
             assertThat("Converter", responseConverterFromAnnotation, nullValue());
         }
 
@@ -638,7 +638,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             };
             final Converters converters = BaseCoreUnitTest.getConverters(responseConverters, new RequestConverter[]{});
             final Converter<ResponseBody, ?> converter = getTestFactory()
-                    .getResponseConverterFromAnnotation(TestDTO.class, array(converters), RTF);
+                    .getResponseConverterFromCallAnnotation(TestDTO.class, array(converters), RTF);
             assertThat("Converter", converter, isA(ResponseBodyConverter.class));
         }
 
@@ -650,7 +650,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             };
             final Converters converters = BaseCoreUnitTest.getConverters(responseConverters, new RequestConverter[]{});
             final Converter<ResponseBody, ?> converter = getTestFactory()
-                    .getResponseConverterFromAnnotation(TestDTO.class, array(converters), RTF);
+                    .getResponseConverterFromCallAnnotation(TestDTO.class, array(converters), RTF);
             assertThat("Converter", converter, isA(ResponseBodyConverter.class));
         }
 
@@ -658,7 +658,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @DisplayName("return null if annotations not present")
         public void test1639065949355() {
             final Converter<ResponseBody, ?> responseConverterFromAnnotation = getTestFactory()
-                    .getResponseConverterFromAnnotation(OBJ_C, AA, RTF);
+                    .getResponseConverterFromCallAnnotation(OBJ_C, AA, RTF);
             assertThat("Converter", responseConverterFromAnnotation, nullValue());
         }
 
@@ -668,7 +668,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             final Converters converters = BaseCoreUnitTest.getConverters(new ResponseConverter[]{}, new RequestConverter[]{});
             final ResponseConverter responseConverter = getResponseConverter(TestConverter.class);
             final Annotation[] annotations = {converters, responseConverter};
-            assertThrow(() -> getTestFactory().getResponseConverterFromAnnotation(OBJ_C, annotations, RTF))
+            assertThrow(() -> getTestFactory().getResponseConverterFromCallAnnotation(OBJ_C, annotations, RTF))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("API method contains concurrent annotations.\n" +
                             "Use only one of:\n" +
@@ -1255,15 +1255,14 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
     }
 
     @Nested
-    @DisplayName("#getAnnotatedRequestConverters() method tests")
+    @DisplayName("#getCallMethodAnnotationRequestConverters() method tests")
     public class GetAnnotatedRequestConvertersMethodTests {
-
 
         @Test
         @DisplayName("return empty map if annotations not present")
         public void test1639065949451() {
             final Map<String, Type> convertersMap = getTestFactory()
-                    .getAnnotatedRequestConverters(AA);
+                    .getCallMethodAnnotationRequestConverters(AA);
             assertThat("Annotation converters map ", convertersMap, notNullValue());
             assertThat("Annotation converters map size", convertersMap.size(), is(0));
         }
@@ -1273,7 +1272,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639065949460() {
             final Converters converters = BaseCoreUnitTest.getConverters(new ResponseConverter[]{}, new RequestConverter[]{});
             final Map<String, Type> convertersMap = getTestFactory()
-                    .getAnnotatedRequestConverters(new Annotation[]{converters});
+                    .getCallMethodAnnotationRequestConverters(new Annotation[]{converters});
             assertThat("Annotation converters map ", convertersMap, notNullValue());
             assertThat("Annotation converters map size", convertersMap.size(), is(0));
         }
@@ -1284,7 +1283,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             final RequestConverter requestConverter = getRequestConverter(TestConverter.class);
             final Converters converters = BaseCoreUnitTest.getConverters(new ResponseConverter[]{}, new RequestConverter[]{requestConverter});
             final Map<String, Type> convertersMap = getTestFactory()
-                    .getAnnotatedRequestConverters(new Annotation[]{converters});
+                    .getCallMethodAnnotationRequestConverters(new Annotation[]{converters});
             assertThat("Annotation converters map ", convertersMap, notNullValue());
             assertThat("Annotation converters map size", convertersMap.size(), is(1));
             assertThat("Annotation converters map", convertersMap.toString(),
@@ -1297,7 +1296,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             final RequestConverter requestConverter = getRequestConverter(TestConverter.class, TestDTO.class);
             final Converters converters = BaseCoreUnitTest.getConverters(new ResponseConverter[]{}, new RequestConverter[]{requestConverter});
             final Map<String, Type> convertersMap = getTestFactory()
-                    .getAnnotatedRequestConverters(new Annotation[]{converters});
+                    .getCallMethodAnnotationRequestConverters(new Annotation[]{converters});
             assertThat("Annotation converters map ", convertersMap, notNullValue());
             assertThat("Annotation converters map size", convertersMap.size(), is(1));
             assertThat("Annotation converters map", convertersMap.toString(),
@@ -1309,7 +1308,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639065949499() {
             final RequestConverter requestConverter = getRequestConverter(TestConverter.class);
             final Map<String, Type> convertersMap = getTestFactory()
-                    .getAnnotatedRequestConverters(new Annotation[]{requestConverter});
+                    .getCallMethodAnnotationRequestConverters(new Annotation[]{requestConverter});
             assertThat("Annotation converters map ", convertersMap, notNullValue());
             assertThat("Annotation converters map size", convertersMap.size(), is(1));
             assertThat("Annotation converters map", convertersMap.toString(),
@@ -1321,7 +1320,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639065949512() {
             final RequestConverter requestConverter = getRequestConverter(TestConverter.class, TestDTO.class);
             final Map<String, Type> convertersMap = getTestFactory()
-                    .getAnnotatedRequestConverters(new Annotation[]{requestConverter});
+                    .getCallMethodAnnotationRequestConverters(new Annotation[]{requestConverter});
             assertThat("Annotation converters map ", convertersMap, notNullValue());
             assertThat("Annotation converters map size", convertersMap.size(), is(1));
             assertThat("Annotation converters map", convertersMap.toString(),
@@ -1331,13 +1330,13 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
     }
 
     @Nested
-    @DisplayName("#getAnnotatedResponseConverters() method tests")
+    @DisplayName("#getCallMethodAnnotationResponseConverters() method tests")
     public class GetAnnotatedResponseConvertersMethodTests {
 
         @Test
         @DisplayName("return empty map if annotations not present")
         public void test1639065949378() {
-            final Map<String, Type> convertersMap = getTestFactory().getAnnotatedResponseConverters(AA);
+            final Map<String, Type> convertersMap = getTestFactory().getCallMethodAnnotationResponseConverters(AA);
             assertThat("Annotation converters map ", convertersMap, notNullValue());
             assertThat("Annotation converters map size", convertersMap.size(), is(0));
         }
@@ -1347,7 +1346,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639065949387() {
             final Converters converters = BaseCoreUnitTest.getConverters(new ResponseConverter[]{}, new RequestConverter[]{});
             final Map<String, Type> convertersMap = getTestFactory()
-                    .getAnnotatedResponseConverters(new Annotation[]{converters});
+                    .getCallMethodAnnotationResponseConverters(new Annotation[]{converters});
             assertThat("Annotation converters map ", convertersMap, notNullValue());
             assertThat("Annotation converters map size", convertersMap.size(), is(0));
         }
@@ -1358,7 +1357,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             final ResponseConverter responseConverter = getResponseConverter(TestConverter.class);
             final Converters converters = BaseCoreUnitTest.getConverters(new ResponseConverter[]{responseConverter}, new RequestConverter[]{});
             final Map<String, Type> convertersMap = getTestFactory()
-                    .getAnnotatedResponseConverters(new Annotation[]{converters});
+                    .getCallMethodAnnotationResponseConverters(new Annotation[]{converters});
             assertThat("Annotation converters map ", convertersMap, notNullValue());
             assertThat("Annotation converters map size", convertersMap.size(), is(1));
             assertThat("Annotation converters map", convertersMap.toString(),
@@ -1371,7 +1370,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             final ResponseConverter responseConverter = getResponseConverter(TestConverter.class, TestDTO.class);
             final Converters converters = BaseCoreUnitTest.getConverters(new ResponseConverter[]{responseConverter}, new RequestConverter[]{});
             final Map<String, Type> convertersMap = getTestFactory()
-                    .getAnnotatedResponseConverters(new Annotation[]{converters});
+                    .getCallMethodAnnotationResponseConverters(new Annotation[]{converters});
             assertThat("Annotation converters map ", convertersMap, notNullValue());
             assertThat("Annotation converters map size", convertersMap.size(), is(1));
             assertThat("Annotation converters map", convertersMap.toString(),
@@ -1383,7 +1382,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639065949426() {
             final ResponseConverter responseConverter = getResponseConverter(TestConverter.class);
             final Map<String, Type> convertersMap = getTestFactory()
-                    .getAnnotatedResponseConverters(new Annotation[]{responseConverter});
+                    .getCallMethodAnnotationResponseConverters(new Annotation[]{responseConverter});
             assertThat("Annotation converters map ", convertersMap, notNullValue());
             assertThat("Annotation converters map size", convertersMap.size(), is(1));
             assertThat("Annotation converters map", convertersMap.toString(),
@@ -1395,7 +1394,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639065949439() {
             final ResponseConverter responseConverter = getResponseConverter(TestConverter.class, TestDTO.class);
             final Map<String, Type> convertersMap = getTestFactory()
-                    .getAnnotatedResponseConverters(new Annotation[]{responseConverter});
+                    .getCallMethodAnnotationResponseConverters(new Annotation[]{responseConverter});
             assertThat("Annotation converters map ", convertersMap, notNullValue());
             assertThat("Annotation converters map size", convertersMap.size(), is(1));
             assertThat("Annotation converters map", convertersMap.toString(),

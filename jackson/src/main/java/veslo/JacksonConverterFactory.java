@@ -69,10 +69,10 @@ public class JacksonConverterFactory extends ExtensionConverterFactory {
      * - {@link JavaPrimitiveTypeConverter}
      * - {@link JavaReferenceTypeConverter}
      *
-     * @param jacksonConverter - converter for Gson models
+     * @param converter - converter for Jackson models
      */
-    public JacksonConverterFactory(ExtensionConverter<Object> jacksonConverter) {
-        this(LoggerFactory.getLogger(JacksonConverterFactory.class), jacksonConverter);
+    public JacksonConverterFactory(ExtensionConverter<Object> converter) {
+        this(LoggerFactory.getLogger(JacksonConverterFactory.class), converter);
     }
 
     /**
@@ -81,14 +81,15 @@ public class JacksonConverterFactory extends ExtensionConverterFactory {
      * - {@link JavaPrimitiveTypeConverter}
      * - {@link JavaReferenceTypeConverter}
      *
-     * @param jacksonConverter - converter for Gson models
-     * @param logger           - required Slf4J logger
+     * @param converter - converter for Jackson models
+     * @param logger    - required Slf4J logger
      */
-    public JacksonConverterFactory(Logger logger, ExtensionConverter<Object> jacksonConverter) {
+    public JacksonConverterFactory(Logger logger, ExtensionConverter<Object> converter) {
         super(logger);
-        Utils.parameterRequireNonNull(jacksonConverter, "jacksonConverter");
-        registerMimeConverter(jacksonConverter, APP_JSON, APP_JSON_UTF8, TEXT_JSON, TEXT_JSON_UTF8);
-        registerJavaTypeConverter(jacksonConverter, Map.class, List.class);
+        Utils.parameterRequireNonNull(converter, "converter");
+        registerMimeConverter(converter, APP_JSON, APP_JSON_UTF8, TEXT_JSON, TEXT_JSON_UTF8);
+        registerJavaTypeConverter(converter, Map.class, List.class);
+        registerModelAnnotationConverter(converter, JacksonModel.class);
     }
 
 }

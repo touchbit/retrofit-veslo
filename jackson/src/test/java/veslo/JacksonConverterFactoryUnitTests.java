@@ -20,55 +20,59 @@ import internal.test.utils.BaseUnitTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import veslo.client.converter.api.ExtensionConverter;
 import veslo.client.header.ContentType;
 
 import java.lang.reflect.Type;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.stream.Collectors;
 
-import static org.hamcrest.Matchers.*;
-import static veslo.client.header.ContentTypeConstants.*;
+import static org.hamcrest.Matchers.is;
 
-@SuppressWarnings({"unchecked", "rawtypes"})
 @DisplayName("JacksonDualConverterFactory.class unit tests")
 public class JacksonConverterFactoryUnitTests extends BaseUnitTest {
 
     @Test
+    @DisplayName("Required parameters")
+    public void test1645006625893() {
+        assertThrow(() -> new JacksonConverterFactory((Logger) null)).assertNPE("logger");
+        assertThrow(() -> new JacksonConverterFactory((ExtensionConverter<Object>) null)).assertNPE("converter");
+    }
+
+    @Test
     @DisplayName("JacksonDualConverterFactory default constructors")
     public void test1639065954656() {
-        final Logger logger = LoggerFactory.getLogger(JacksonConverterFactoryUnitTests.class);
-        assertJacksonDualConverterFactory(new JacksonConverterFactory(logger), JacksonConverter.class);
-        assertJacksonDualConverterFactory(new JacksonConverterFactory(), JacksonConverter.class);
-        assertJacksonDualConverterFactory(new JacksonConverterFactory(new TestJacksonConverter()), TestJacksonConverter.class);
-        assertThrow(() -> new JacksonConverterFactory((Logger) null)).assertNPE("logger");
-        assertThrow(() -> new JacksonConverterFactory((ExtensionConverter<Object>) null)).assertNPE("jacksonConverter");
-    }
-
-    private void assertJacksonDualConverterFactory(JacksonConverterFactory factory, Class<?> expectedConverter) {
-        final Set<ExtensionConverter<?>> mimeConverters = new HashSet<>(factory.getMimeRequestConverters().values());
-        mimeConverters.addAll(factory.getMimeResponseConverters().values());
-        assertThat(mimeConverters, hasSize(1));
-        assertThat(mimeConverters, hasItem(instanceOf(expectedConverter)));
-        final Set<ContentType> requestContentTypes = factory.getMimeRequestConverters().keySet();
-        assertThat(requestContentTypes, hasSize(4));
-        assertThat(requestContentTypes, containsInAnyOrder(APP_JSON, APP_JSON_UTF8, TEXT_JSON, TEXT_JSON_UTF8));
-        final Set<ContentType> responseContentTypes = factory.getMimeResponseConverters().keySet();
-        assertThat(responseContentTypes, hasSize(4));
-        assertThat(responseContentTypes, containsInAnyOrder(APP_JSON, APP_JSON_UTF8, TEXT_JSON, TEXT_JSON_UTF8));
-        final Set<Type> requestJavaTypes = factory.getJavaTypeRequestConverters().keySet();
-        assertThat(requestJavaTypes, hasItems(Map.class, List.class));
-        final Set<Type> responseJavaTypes = factory.getJavaTypeResponseConverters().keySet();
-        assertThat(responseJavaTypes, hasItems(Map.class, List.class));
-        assertThat(factory.getLogger(), notNullValue());
-    }
-
-
-    private static class TestJacksonConverter extends JacksonConverter {
-
+        final JacksonConverterFactory converterFactory = new JacksonConverterFactory();
+        final Map<ContentType, ? extends ExtensionConverter<?>> mimeRequestConverters =
+                converterFactory.getMimeRequestConverters().entrySet().stream()
+                        .filter(e -> e.getValue() instanceof JacksonConverter)
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        assertThat("MIME request converters", mimeRequestConverters.size(), is(4));
+        final Map<ContentType, ? extends ExtensionConverter<?>> mimeResponseConverters =
+                converterFactory.getMimeResponseConverters().entrySet().stream()
+                        .filter(e -> e.getValue() instanceof JacksonConverter)
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        assertThat("MIME response converters", mimeResponseConverters.size(), is(4));
+        final Map<? extends Type, ? extends ExtensionConverter<?>> rawRequestConverters =
+                converterFactory.getRawRequestConverters().entrySet().stream()
+                        .filter(e -> e.getValue() instanceof JacksonConverter)
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        assertThat("Raw request converters", rawRequestConverters.size(), is(0));
+        final Map<? extends Type, ? extends ExtensionConverter<?>> rawResponseConverters =
+                converterFactory.getRawResponseConverters().entrySet().stream()
+                        .filter(e -> e.getValue() instanceof JacksonConverter)
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        assertThat("Raw response converters", rawResponseConverters.size(), is(0));
+        final Map<? extends Type, ? extends ExtensionConverter<?>> aModelRequestConverters =
+                converterFactory.getModelAnnotationRequestConverters().entrySet().stream()
+                        .filter(e -> e.getValue() instanceof JacksonConverter)
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        assertThat("Annotated model converters", aModelRequestConverters.size(), is(1));
+        final Map<? extends Type, ? extends ExtensionConverter<?>> aModelResponseConverters =
+                converterFactory.getModelAnnotationResponseConverters().entrySet().stream()
+                        .filter(e -> e.getValue() instanceof JacksonConverter)
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        assertThat("Annotated model converters", aModelResponseConverters.size(), is(1));
     }
 
 }

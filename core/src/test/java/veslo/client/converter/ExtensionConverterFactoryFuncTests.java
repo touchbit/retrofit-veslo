@@ -37,7 +37,7 @@ import veslo.util.Utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
+import java.lang.annotation.*;
 import java.nio.file.Files;
 
 import static internal.test.utils.OkHttpTestUtils.requestBodyToString;
@@ -103,7 +103,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Successfully converting Byte[].class to RequestBody by type (raw)")
         public void test1639065948800() throws IOException {
-            final Byte[] expected = Utils.toObjectByteArray("test1637428566604" .getBytes());
+            final Byte[] expected = Utils.toObjectByteArray("test1637428566604".getBytes());
             final RequestBody requestBody = new ExtensionConverterFactory()
                     .requestBodyConverter(RawBody.class, array(), array(), RTF)
                     .convert(expected);
@@ -179,6 +179,17 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
                             "DTO type: class java.lang.Object\n" +
                             "\n" +
                             "SUPPORTED REQUEST CONVERTERS:\n");
+        }
+
+        @Test
+        @DisplayName("Successfully converting annotated model")
+        public void test1645044663567() throws IOException {
+            final TestsExtensionConverterFactory factory = new TestsExtensionConverterFactory();
+            factory.registerModelAnnotationConverter(TestToStringConverter.INSTANCE, ModelAnnotation.class);
+            final RequestBody dto = factory.requestBodyConverter(Model.class, array(), array(), RTF)
+                    .convert(new Model());
+            assertThat("RequestBody", dto, notNullValue());
+            assertThat("RequestBody.toString()", OkHttpTestUtils.requestBodyToString(dto), is(Model.class.getName()));
         }
 
     }
@@ -337,6 +348,31 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
                             "SUPPORTED RESPONSE CONVERTERS:\n");
         }
 
+        @Test
+        @DisplayName("Successfully converting annotated model")
+        public void test1645008062643() throws IOException {
+            final TestsExtensionConverterFactory factory = new TestsExtensionConverterFactory();
+            factory.registerModelAnnotationConverter(TestToStringConverter.INSTANCE, ModelAnnotation.class);
+            final Object dto = factory.responseBodyConverter(Model.class, array(), RTF)
+                    .convert(ResponseBody.create(null, ""));
+            assertThat("PackDTO", dto, is(Model.class.toString()));
+        }
+
+    }
+
+    @ModelAnnotation
+    private static final class Model {
+
+        @Override
+        public String toString() {
+            return this.getClass().getName();
+        }
+
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.TYPE})
+    public @interface ModelAnnotation {
     }
 
 }
