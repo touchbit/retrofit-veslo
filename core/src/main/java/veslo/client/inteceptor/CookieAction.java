@@ -18,11 +18,13 @@ package veslo.client.inteceptor;
 
 import okhttp3.*;
 import retrofit2.internal.EverythingIsNonNull;
+import veslo.util.Utils;
 
 import java.net.URL;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -76,6 +78,7 @@ public class CookieAction implements InterceptAction {
     @Override
     @EverythingIsNonNull
     public Request requestAction(final Request request) {
+        Utils.parameterRequireNonNull(request, "request");
         final String cookie = getCookieHeaderValue(request.url());
         return cookie.isEmpty() ? request : request.newBuilder().header("Cookie", cookie).build();
     }
@@ -89,6 +92,7 @@ public class CookieAction implements InterceptAction {
     @Override
     @EverythingIsNonNull
     public Response responseAction(final Response response) {
+        Utils.parameterRequireNonNull(response, "response");
         final HttpUrl url = response.request().url();
         final Headers headers = response.headers();
         Cookie.parseAll(url, headers).forEach(CookieAction::addCookie);
@@ -98,15 +102,57 @@ public class CookieAction implements InterceptAction {
     /**
      * @return all cached {@link Cookie} collection
      */
+    @EverythingIsNonNull
     public static Set<Cookie> getCookie() {
         return COOKIES.get();
+    }
+
+    /**
+     * @return set of {@link Cookie} by name for different domains and paths
+     */
+    @EverythingIsNonNull
+    public static Set<Cookie> getCookie(final String cookieName) {
+        Utils.parameterRequireNonNull(cookieName, "cookieName");
+        return getCookie().stream()
+                .filter(c -> c.name().equals(cookieName))
+                .collect(Collectors.toSet());
+    }
+
+    /**
+     * @return set of {@link Cookie} by name and domain for different paths
+     */
+    @EverythingIsNonNull
+    public static Set<Cookie> getCookie(final String cookieName, String domain) {
+        Utils.parameterRequireNonNull(cookieName, "cookieName");
+        Utils.parameterRequireNonNull(domain, "domain");
+        return getCookie().stream()
+                .filter(c -> c.name().equals(cookieName))
+                .filter(c -> c.domain().equals(domain))
+                .collect(Collectors.toSet());
+    }
+
+    /**
+     * @return set of {@link Cookie} by name, domain and path
+     */
+    @EverythingIsNonNull
+    public static Set<Cookie> getCookie(final String cookieName, String domain, String path) {
+        Utils.parameterRequireNonNull(cookieName, "cookieName");
+        Utils.parameterRequireNonNull(domain, "domain");
+        Utils.parameterRequireNonNull(path, "path");
+        return getCookie().stream()
+                .filter(c -> c.name().equals(cookieName))
+                .filter(c -> c.domain().equals(domain))
+                .filter(c -> c.path().equals(path))
+                .collect(Collectors.toSet());
     }
 
     /**
      * @param url - request url
      * @return cached {@link Cookie} collection for the url
      */
-    public static Set<Cookie> getCookie(final HttpUrl url) {
+    @EverythingIsNonNull
+    public static Set<Cookie> getRequestUnexpiredCookie(final HttpUrl url) {
+        Utils.parameterRequireNonNull(url, "url");
         return getCookie().stream()
                 .filter(cookie -> cookie.matches(url))
                 .filter(cookie -> cookie.expiresAt() > new Date().getTime())
@@ -117,44 +163,113 @@ public class CookieAction implements InterceptAction {
      * @param url - request url
      * @return string value cached {@link Cookie} collection for the url
      */
+    @EverythingIsNonNull
     public static String getCookieHeaderValue(final HttpUrl url) {
-        return getCookie(url).stream()
+        Utils.parameterRequireNonNull(url, "url");
+        return getRequestUnexpiredCookie(url).stream()
                 .map(cookie -> cookie.name() + "=" + cookie.value())
                 .collect(Collectors.joining("; "));
     }
 
     /**
-     * @param cookie - {@link Cookie}
+     * Add {@link Cookie} to {@link ThreadLocal} set with replacement by name, domain and path
+     *
+     * @param cookies - {@link Cookie} list to add
      */
-    public static void addCookie(final Cookie cookie) {
-        getCookie().add(cookie);
+    @EverythingIsNonNull
+    public static void addCookie(final Cookie... cookies) {
+        Utils.parameterRequireNonNull(cookies, "cookies");
+        addCookie(true, cookies);
+    }
+
+    /**
+     * Add {@link Cookie} to {@link ThreadLocal} set with/without replacement
+     *
+     * @param cookies - {@link Cookie} list to add
+     * @param replace - flag for replacement by name, domain and path
+     */
+    @EverythingIsNonNull
+    public static void addCookie(final boolean replace, final Cookie... cookies) {
+        Utils.parameterRequireNonNull(cookies, "cookies");
+        for (Cookie cookie : cookies) {
+            Utils.parameterRequireNonNull(cookie, "cookie");
+            if (replace) {
+                getCookie().removeIf(c -> c.domain().equals(cookie.domain())
+                        && c.path().equals(cookie.path())
+                        && c.name().equals(cookie.name()));
+            }
+            getCookie().add(cookie);
+        }
     }
 
     /**
      * Clear all Cookies for the {@link HttpUrl} host
      *
-     * @param url - {@link HttpUrl}
+     * @param url - cookie {@link HttpUrl}
      */
+    @EverythingIsNonNull
     public static void clearCookie(final HttpUrl url) {
-        clearCookie(url.host());
+        Utils.parameterRequireNonNull(url, "url");
+        clearCookie(url.url());
     }
 
     /**
      * Clear all Cookies for the {@link URL} host
      *
-     * @param url - {@link URL}
+     * @param url - cookie {@link URL}
      */
+    @EverythingIsNonNull
     public static void clearCookie(final URL url) {
-        clearCookie(url.getHost());
+        Utils.parameterRequireNonNull(url, "url");
+        getCookie().removeIf(cookie -> cookie.domain().equals(url.getHost()));
     }
 
     /**
      * Clear all Cookies for the host
      *
-     * @param host - host/domain
+     * @param cookieName - cookie name
      */
-    public static void clearCookie(final String host) {
-        getCookie().removeIf(cookie -> cookie.domain().equals(host));
+    @EverythingIsNonNull
+    public static void clearCookie(final String cookieName) {
+        Utils.parameterRequireNonNull(cookieName, "cookieName");
+        getCookie().removeIf(cookie -> cookie.name().equals(cookieName));
+    }
+
+    /**
+     * Clear all Cookies for the host
+     *
+     * @param cookieName - cookie name
+     * @param url - cookie {@link URL}
+     */
+    @EverythingIsNonNull
+    public static void clearCookie(final URL url, final String cookieName) {
+        Utils.parameterRequireNonNull(url, "url");
+        clearCookie(url.getHost(), cookieName);
+    }
+
+    /**
+     * Clear all Cookies for the host
+     *
+     * @param cookieName - cookie name
+     * @param url - cookie {@link HttpUrl}
+     */
+    @EverythingIsNonNull
+    public static void clearCookie(final HttpUrl url, final String cookieName) {
+        Utils.parameterRequireNonNull(url, "url");
+        clearCookie(url.host(), cookieName);
+    }
+
+    /**
+     * Clear all Cookies for the host
+     *
+     * @param cookieName - cookie name
+     * @param domain - cookie domain
+     */
+    @EverythingIsNonNull
+    public static void clearCookie(final String domain, final String cookieName) {
+        Utils.parameterRequireNonNull(domain, "domain");
+        Utils.parameterRequireNonNull(cookieName, "cookieName");
+        getCookie().removeIf(cookie -> cookie.name().equals(cookieName) && cookie.domain().equals(domain));
     }
 
     /**
@@ -162,6 +277,16 @@ public class CookieAction implements InterceptAction {
      */
     public static void clearCookie() {
         getCookie().clear();
+    }
+
+    public static String toStringCookies() {
+        return toStringCookies(Collectors.joining("\n"));
+    }
+
+    @EverythingIsNonNull
+    public static String toStringCookies(Collector<CharSequence, ?, String> collector) {
+        Utils.parameterRequireNonNull(collector, "collector");
+        return getCookie().stream().map(Cookie::toString).collect(collector);
     }
 
 }
