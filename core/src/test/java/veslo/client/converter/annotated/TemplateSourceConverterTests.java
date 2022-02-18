@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Shaburov Oleg
+ * Copyright 2021-2022 Shaburov Oleg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,29 +14,43 @@
  * limitations under the License.
  */
 
-package veslo.client.converter.typed;
+package veslo.client.converter.annotated;
 
+import internal.test.utils.BaseUnitTest;
 import internal.test.utils.OkHttpTestUtils;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import veslo.BaseCoreUnitTest;
 import veslo.ConvertCallException;
-import veslo.ConverterUnsupportedTypeException;
+import veslo.bean.template.TemplateReplaceAll;
+import veslo.bean.template.TemplateSource;
 import veslo.client.model.ResourceFile;
 
 import java.io.IOException;
 
 import static internal.test.utils.TestUtils.array;
 import static org.hamcrest.Matchers.is;
+import static veslo.bean.template.TemplateSourceType.RESOURCE;
 
 @SuppressWarnings("ConstantConditions")
-@DisplayName("ResourceFileConverter.class unit tests")
-public class ResourceFileConverterUnitTests extends BaseCoreUnitTest {
+@DisplayName("TemplateSourceConverter.class unit tests")
+public class TemplateSourceConverterTests extends BaseUnitTest {
 
-    private static final ResourceFileConverter CONVERTER = ResourceFileConverter.INSTANCE;
+    private static final TemplateSourceConverter CONVERTER = TemplateSourceConverter.INSTANCE;
+    private static final String NOT_FILLED = "<note>\n" +
+            "    <to>null</to>\n" +
+            "    <from>null</from>\n" +
+            "    <heading>Reminder</heading>\n" +
+            "    <body>\n" +
+            "        <content>null</content>\n" +
+            "        <status>DRAFT</status>\n" +
+            "    </body>\n" +
+            "</note>";
 
     @Nested
     @DisplayName("#requestBodyConverter() method tests")
@@ -44,33 +58,21 @@ public class ResourceFileConverterUnitTests extends BaseCoreUnitTest {
 
         @Test
         @DisplayName("All parameters required")
-        public void test1639675612780() {
+        public void test1645209300345() {
             assertNPE(() -> CONVERTER.requestBodyConverter(null, AA, AA, RTF), "type");
             assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, null, AA, RTF), "parameterAnnotations");
             assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, null, RTF), "methodAnnotations");
             assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, null), "retrofit");
-            assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(null), "body");
+            assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(null), "template");
         }
 
         @Test
         @DisplayName("Convert ResourceFile to RequestBody")
-        public void test1637468946514() throws IOException {
-            final String expected = "test1637468946514";
-            final ResourceFile body = new ResourceFile("test/data/test1637468946514.txt");
-            final RequestBody requestBody = CONVERTER.requestBodyConverter(OBJ_C, array(), array(), RTF).convert(body);
+        public void test1645209303378() throws IOException {
+            final ResourceNotesUTF8 template = new ResourceNotesUTF8();
+            final RequestBody requestBody = CONVERTER.requestBodyConverter(OBJ_C, array(), array(), RTF).convert(template);
             final String actual = OkHttpTestUtils.requestBodyToString(requestBody);
-            assertThat("Body", actual, is(expected));
-        }
-
-        @Test
-        @DisplayName("ConverterUnsupportedTypeException if body != File type")
-        public void test1639675616271() {
-            assertThrow(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(1))
-                    .assertClass(ConverterUnsupportedTypeException.class)
-                    .assertMessageIs("Unsupported type for converter " +
-                            CONVERTER.getClass().getTypeName() + "\n" +
-                            "Received: java.lang.Integer\n" +
-                            "Expected: veslo.client.model.ResourceFile\n");
+            assertThat("Body", actual, is(NOT_FILLED));
         }
 
     }
@@ -81,7 +83,7 @@ public class ResourceFileConverterUnitTests extends BaseCoreUnitTest {
 
         @Test
         @DisplayName("All parameters required")
-        public void test1639675722127() {
+        public void test1645209310019() {
             assertNPE(() -> CONVERTER.responseBodyConverter(null, AA, RTF), "type");
             assertNPE(() -> CONVERTER.responseBodyConverter(Long.class, null, RTF), "methodAnnotations");
             assertNPE(() -> CONVERTER.responseBodyConverter(Long.class, AA, null), "retrofit");
@@ -89,24 +91,28 @@ public class ResourceFileConverterUnitTests extends BaseCoreUnitTest {
 
         @Test
         @DisplayName("ConvertCallException if ResponseBody present")
-        public void test1639065950762() {
+        public void test1645209314300() {
             final ResponseBody responseBody = ResponseBody.create(null, "test");
             assertThrow(() -> CONVERTER.responseBodyConverter(ResourceFile.class, AA, RTF).convert(responseBody))
                     .assertClass(ConvertCallException.class)
-                    .assertMessageIs("It is forbidden to use the ResourceFile type to convert the response body.");
+                    .assertMessageIs("Template classes with the @TemplateSource annotation are not allowed to " +
+                            "be used to convert the response body.");
         }
 
-        @Test
-        @DisplayName("ConverterUnsupportedTypeException if body == unsupported type")
-        public void test1639676718389() {
-            assertThrow(() -> CONVERTER.responseBodyConverter(OBJ_C, AA, RTF).convert(null))
-                    .assertClass(ConverterUnsupportedTypeException.class)
-                    .assertMessageIs("Unsupported type for converter " +
-                            CONVERTER.getClass().getTypeName() + "\n" +
-                            "Received: java.lang.Object\n" +
-                            "Expected: veslo.client.model.ResourceFile\n");
-        }
+    }
 
+    @Getter
+    @Setter
+    @Accessors(chain = true, fluent = true)
+    @TemplateSource(type = RESOURCE, path = "test/data/Notes_utf_8.txt")
+    public static final class ResourceNotesUTF8 {
+
+        @TemplateReplaceAll(regex = "\\[note.to]")
+        private String to;
+        @TemplateReplaceAll(regex = "replace_note_from")
+        private String from;
+        @TemplateReplaceAll(regex = "\\{note_body_content}")
+        private String bodyContent;
 
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Shaburov Oleg
+ * Copyright 2021-2022 Shaburov Oleg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,21 @@
  * limitations under the License.
  */
 
-package veslo;
+package veslo.bean.template;
 
-public class ReplaceableTextFileException extends RuntimeException {
+/**
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 18.02.2022
+ */
+public enum TemplateSourceType {
 
-    public ReplaceableTextFileException(String message, Throwable t) {
-        super(message, t);
-    }
+    /**
+     * file located in file system
+     */
+    FILE,
+    /**
+     * file located in project resources
+     */
+    RESOURCE,
 
 }

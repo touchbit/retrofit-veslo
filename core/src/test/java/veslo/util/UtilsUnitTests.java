@@ -22,9 +22,12 @@ import org.junit.jupiter.api.Test;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import veslo.BaseCoreUnitTest;
+import veslo.RuntimeIOException;
 
+import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 
 import static internal.test.utils.RetrofitTestUtils.getCallMethodAnnotations;
 import static org.hamcrest.Matchers.*;
@@ -236,6 +239,75 @@ public class UtilsUnitTests extends BaseCoreUnitTest {
         public void test1639983905357() {
             final String result = Utils.arrayToPrettyString(new Object[]{});
             assertThat(result, emptyString());
+        }
+
+    }
+
+    @Nested
+    @DisplayName("#readResourceFile() method tests")
+    public class ReadResourceFileMethodTests {
+
+        @Test
+        @DisplayName("All parameters required")
+        public void test1645210107069() {
+            assertNPE(() -> Utils.readResourceFile(null), "path");
+            assertNPE(() -> Utils.readResourceFile(null, StandardCharsets.UTF_8), "path");
+            assertNPE(() -> Utils.readResourceFile("", null), "charset");
+        }
+
+        @Test
+        @DisplayName("Successfully read resource file")
+        public void test1645210277950() {
+            final String result = Utils.readResourceFile("test/data/Notes_utf_8.txt");
+            assertNotNull(result);
+        }
+
+        @Test
+        @DisplayName("RuntimeIOException throws if file not exists")
+        public void test1645210340598() {
+            assertThrow(() -> Utils.readResourceFile("test1645210340598"))
+                    .assertClass(RuntimeIOException.class)
+                    .assertMessageIs("Resource file not readable: test1645210340598");
+        }
+
+    }
+
+    @Nested
+    @DisplayName("#readFile() method tests")
+    public class ReadFileMethodTests {
+
+        @Test
+        @DisplayName("All parameters required")
+        public void test1645210767344() {
+            assertNPE(() -> Utils.readFile((String) null), "path");
+            assertNPE(() -> Utils.readFile((String) null, StandardCharsets.UTF_8), "path");
+            assertNPE(() -> Utils.readFile("", null), "charset");
+            assertNPE(() -> Utils.readFile((File) null), "file");
+            assertNPE(() -> Utils.readFile((File) null, StandardCharsets.UTF_8), "file");
+            assertNPE(() -> Utils.readFile(new File("."), null), "charset");
+        }
+
+        @Test
+        @DisplayName("Successfully read file by path")
+        public void test1645210835344() {
+            final String result = Utils.readFile("src/test/resources/test/data/Notes_utf_8.txt");
+            assertNotNull(result);
+        }
+
+        @Test
+        @DisplayName("Successfully read file ")
+        public void test1645210949413() {
+            final File file = new File("src/test/resources/test/data/Notes_utf_8.txt");
+            final String result = Utils.readFile(file);
+            assertNotNull(result);
+        }
+
+        @Test
+        @DisplayName("RuntimeIOException throws if file not exists")
+        public void test1645210859030() {
+            assertThrow(() -> Utils.readFile("test1645210859030"))
+                    .assertClass(RuntimeIOException.class)
+                    .assertMessageIs("File not readable: test1645210859030");
         }
 
     }

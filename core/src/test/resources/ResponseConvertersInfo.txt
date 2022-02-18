@@ -1,5 +1,7 @@
 SUPPORTED RESPONSE CONVERTERS:
-Annotated converters: <absent>
+Annotated converters:
+veslo.client.converter.annotated.TemplateSourceConverter
+    @veslo.bean.template.TemplateSource
 Raw converters:
 veslo.client.converter.defaults.RawBodyTypeConverter
     byte[]

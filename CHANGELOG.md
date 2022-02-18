@@ -1,7 +1,8 @@
 Change Log
 ==========
 
-* **New** Reading and modifying text files through a helper class `ReplaceableTextFile`
+* **New** Register converter for annotated models (`ExtensionConverterFactory`)
+* **New** Reading and modifying template text files through a helper class (`TemplateMapper`)
 * **Change** `ResourceFile` - added charset support
 
 ## Version 1.0.1

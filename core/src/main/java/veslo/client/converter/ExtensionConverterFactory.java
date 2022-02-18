@@ -25,7 +25,9 @@ import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 import veslo.ConvertCallException;
 import veslo.ConverterNotFoundException;
+import veslo.bean.template.TemplateSource;
 import veslo.client.TransportEvent;
+import veslo.client.converter.annotated.TemplateSourceConverter;
 import veslo.client.converter.api.Converters;
 import veslo.client.converter.api.ExtensionConverter;
 import veslo.client.converter.api.ExtensionConverter.ResponseBodyConverter;
@@ -108,6 +110,8 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
         // Java type reference converters
         final JavaReferenceTypeConverter javaReferenceTypeConverter = JavaReferenceTypeConverter.INSTANCE;
         registerJavaTypeConverter(javaReferenceTypeConverter, javaReferenceTypeConverter.getSupportedTypes());
+        // Annotated java bean converters
+        registerModelAnnotationConverter(TemplateSourceConverter.INSTANCE, TemplateSource.class);
     }
 
     /**

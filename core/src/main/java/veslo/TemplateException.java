@@ -16,13 +16,17 @@
 
 package veslo;
 
-public class ResourceFileException extends RuntimeException {
+/**
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 18.02.2022
+ */
+public class TemplateException extends RuntimeException {
 
-    public ResourceFileException(String message) {
+    public TemplateException(String message) {
         super(message);
     }
 
-    public ResourceFileException(String message, Throwable t) {
+    public TemplateException(String message, Throwable t) {
         super(message, t);
     }
 
