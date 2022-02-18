@@ -17,14 +17,20 @@
 package veslo.util;
 
 import retrofit2.internal.EverythingIsNonNull;
+import veslo.RuntimeIOException;
 import veslo.UtilityClassException;
 import veslo.client.response.IDualResponse;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -169,6 +175,124 @@ public class Utils {
             return IDualResponse.class.isAssignableFrom(rawClass);
         }
         return false;
+    }
+
+    /**
+     * Helper method to read UTF-8 encoded resource file.
+     * Important! In case of errors, a RuntimeException will be thrown!
+     * Use only in tests.
+     *
+     * @param path - resource file path
+     * @return resource file content ({@link String})
+     * @throws RuntimeIOException if resource file not readable
+     */
+    public static String readResourceFile(String path) {
+        Utils.parameterRequireNonNull(path, "path");
+        return readResourceFile(path, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Helper method to read a resource file.
+     * Important! In case of errors, a RuntimeException will be thrown!
+     * Use only in tests.
+     *
+     * @param path    - resource file path
+     * @param charset - resource file charset
+     * @return resource file content ({@link String})
+     * @throws RuntimeIOException if resource file not readable
+     */
+    public static String readResourceFile(String path, Charset charset) {
+        Utils.parameterRequireNonNull(path, "path");
+        Utils.parameterRequireNonNull(charset, "charset");
+        try (final InputStream stream = getClassLoader().getResourceAsStream(path)) {
+            if (stream == null) {
+                throw new RuntimeIOException("Resource file not readable: " + path);
+            }
+            return getBufferedReader(stream, charset).lines().collect(Collectors.joining("\n"));
+        } catch (IOException e) {
+            throw new RuntimeIOException("Resource file not readable", e);
+        }
+    }
+
+    /**
+     * Helper method to read UTF-8 encoded file.
+     * Important! In case of errors, a RuntimeException will be thrown!
+     * Use only in tests.
+     *
+     * @param path - file path
+     * @return file content ({@link String})
+     * @throws RuntimeIOException if file not readable
+     */
+    public static String readFile(String path) {
+        Utils.parameterRequireNonNull(path, "path");
+        return readFile(path, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Helper method to read a file.
+     * Important! In case of errors, a RuntimeException will be thrown!
+     * Use only in tests.
+     *
+     * @param path    - file path
+     * @param charset - file charset
+     * @return file content ({@link String})
+     * @throws RuntimeIOException if file not readable
+     */
+    public static String readFile(String path, Charset charset) {
+        Utils.parameterRequireNonNull(path, "path");
+        Utils.parameterRequireNonNull(charset, "charset");
+        return readFile(new File(path), charset);
+    }
+
+    /**
+     * Helper method to read UTF-8 encoded file.
+     * Important! In case of errors, a RuntimeException will be thrown!
+     * Use only in tests.
+     *
+     * @param file - {@link File}
+     * @return file content ({@link String})
+     * @throws RuntimeIOException if file not readable
+     */
+    public static String readFile(File file) {
+        Utils.parameterRequireNonNull(file, "file");
+        return readFile(file, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Helper method to read a file.
+     * Important! In case of errors, a RuntimeException will be thrown!
+     * Use only in tests.
+     *
+     * @param file    - {@link File}
+     * @param charset - file charset
+     * @return file content ({@link String})
+     * @throws RuntimeIOException if file not readable
+     */
+    public static String readFile(File file, Charset charset) {
+        Utils.parameterRequireNonNull(file, "file");
+        Utils.parameterRequireNonNull(charset, "charset");
+        try {
+            final Path path = file.toPath();
+            return String.join("\n", Files.readAllLines(path, charset));
+        } catch (IOException e) {
+            throw new RuntimeIOException("File not readable: " + file, e);
+        }
+    }
+
+    /**
+     * @param inputStream - source {@link InputStream}
+     * @param charset     - source input stream {@link Charset}
+     * @return {@link BufferedReader} for input stream
+     */
+    public static BufferedReader getBufferedReader(InputStream inputStream, Charset charset) {
+        return new BufferedReader(new InputStreamReader(inputStream, charset));
+    }
+
+    /**
+     * @return {@link ClassLoader} for current thread
+     */
+    public static ClassLoader getClassLoader() {
+        return Thread.currentThread().getContextClassLoader();
     }
 
 }

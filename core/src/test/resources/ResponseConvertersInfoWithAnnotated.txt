@@ -3,6 +3,8 @@ Annotated converters:
 veslo.BaseCoreUnitTest$TestConverter
     internal.test.utils.client.model.TestDTO
     java.lang.Object
+veslo.client.converter.annotated.TemplateSourceConverter
+    @veslo.bean.template.TemplateSource
 Raw converters:
 veslo.client.converter.defaults.RawBodyTypeConverter
     byte[]

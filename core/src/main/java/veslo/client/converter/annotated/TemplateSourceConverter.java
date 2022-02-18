@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Shaburov Oleg
+ * Copyright 2021-2022 Shaburov Oleg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package veslo.client.converter.typed;
+package veslo.client.converter.annotated;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -22,29 +22,29 @@ import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 import veslo.ConvertCallException;
 import veslo.ConverterUnsupportedTypeException;
+import veslo.bean.template.TemplateMapper;
+import veslo.bean.template.TemplateSource;
 import veslo.client.converter.api.ExtensionConverter;
-import veslo.client.model.ResourceFile;
 import veslo.util.Utils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 /**
- * {@link ResourceFile} java type converter
+ * Converter for annotated classes {@link TemplateSource}
  * <p>
  *
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
- * Created: 16.12.2021
+ * Created: 18.02.2022
  */
-public class ResourceFileConverter implements ExtensionConverter<ResourceFile> {
+public class TemplateSourceConverter implements ExtensionConverter<Object> {
 
     /**
-     * {@link ResourceFileConverter} constant
+     * {@link TemplateSourceConverter} constant
      */
-    public static final ResourceFileConverter INSTANCE = new ResourceFileConverter();
+    public static final TemplateSourceConverter INSTANCE = new TemplateSourceConverter();
 
     /**
      * @see ExtensionConverter#requestBodyConverter(Type, Annotation[], Annotation[], Retrofit)
@@ -62,16 +62,14 @@ public class ResourceFileConverter implements ExtensionConverter<ResourceFile> {
         return new RequestBodyConverter() {
 
             /**
-             * @param body - {@link ResourceFile}
+             * @param body - annotated classes {@link TemplateSource}
              * @return {@link RequestBody}
              * @throws ConverterUnsupportedTypeException unsupported body type
              */
             @Override
             @EverythingIsNonNull
             public RequestBody convert(Object body) {
-                assertSupportedBodyType(INSTANCE, body, ResourceFile.class);
-                final ResourceFile resourceFile = (ResourceFile) body;
-                return createRequestBody(methodAnnotations, resourceFile.read());
+                return createRequestBody(methodAnnotations, TemplateMapper.marshal(body));
             }
 
         };
@@ -82,24 +80,23 @@ public class ResourceFileConverter implements ExtensionConverter<ResourceFile> {
      */
     @Override
     @EverythingIsNonNull
-    public ResponseBodyConverter<ResourceFile> responseBodyConverter(final Type type,
-                                                                     final Annotation[] methodAnnotations,
-                                                                     final Retrofit retrofit) {
+    public ResponseBodyConverter<Object> responseBodyConverter(final Type type,
+                                                               final Annotation[] methodAnnotations,
+                                                               final Retrofit retrofit) {
         Utils.parameterRequireNonNull(type, "type");
         Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
         Utils.parameterRequireNonNull(retrofit, "retrofit");
-        return new ResponseBodyConverter<ResourceFile>() {
+        return new ResponseBodyConverter<Object>() {
 
             /**
              * @param responseBody - HTTP call {@link ResponseBody}
-             * @throws ConverterUnsupportedTypeException unsupported body type
-             * @throws ConvertCallException forbidden to use the ResourceFile type to convert the response body
+             * @throws ConvertCallException forbidden to use template classes to convert the response body
              */
             @Override
             @Nonnull
-            public ResourceFile convert(@Nullable ResponseBody responseBody) {
-                assertSupportedBodyType(INSTANCE, type, ResourceFile.class);
-                throw new ConvertCallException("It is forbidden to use the ResourceFile type to convert the response body.");
+            public Object convert(@Nullable ResponseBody responseBody) {
+                throw new ConvertCallException("Template classes with the @TemplateSource annotation are not " +
+                        "allowed to be used to convert the response body.");
             }
 
         };

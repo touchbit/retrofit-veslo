@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package veslo.client.model;
+package veslo.bean.template;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -36,19 +36,17 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  *   </note>
  * }
  * </pre>
+ * <p>
  * TestFile class
  * <pre>
  * {@code
  *   @Getter
  *   @Setter
  *   @Accessors(chain = true, fluent = true)
- *   public class NoteFile extends TestFile {
+ *   @TemplateSource(type = RESOURCE, path = "testNote.xml")
+ *   public class NoteFile {
  *
- *       public NoteFile() {
- *           super("testNote.xml");
- *       }
- *
- *       @ReplaceAll(regex = "\\{note_body}")
+ *       @TemplateReplaceAll(regex = "\\{note_body}")
  *       private String body;
  *
  *   }
@@ -62,10 +60,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Target(FIELD)
 @Retention(RUNTIME)
-public @interface ReplaceAll {
+public @interface TemplateReplaceAll {
 
     /**
-     * @return replaceable regex. For example @Replace("{first_name}").
+     * @return replaceable regex. For example {@code @TemplateReplaceAll(regex = "\\{note_body}")}.
      */
     String regex();
 

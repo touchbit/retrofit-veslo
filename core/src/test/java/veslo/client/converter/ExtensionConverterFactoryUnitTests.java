@@ -43,6 +43,7 @@ import veslo.client.header.ContentTypeConstants;
 import veslo.client.model.RawBody;
 import veslo.client.model.ResourceFile;
 import veslo.client.response.DualResponse;
+import veslo.util.Utils;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -59,10 +60,10 @@ import static org.hamcrest.Matchers.*;
 @DisplayName("ExtensionConverterFactory tests")
 public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
 
-    private static final String REQUEST_CONVERTERS_INFO = ResourceFile.resourceToString("RequestConvertersInfo.txt");
-    private static final String REQUEST_CONVERTERS_INFO_WITH_ANNOTATION = ResourceFile.resourceToString("RequestConvertersInfoWithAnnotated.txt");
-    private static final String RESPONSE_CONVERTERS_INFO = ResourceFile.resourceToString("ResponseConvertersInfo.txt");
-    private static final String RESPONSE_CONVERTERS_INFO_WITH_ANNOTATION = ResourceFile.resourceToString("ResponseConvertersInfoWithAnnotated.txt");
+    private static final String REQUEST_CONVERTERS_INFO = Utils.readResourceFile("RequestConvertersInfo.txt");
+    private static final String REQUEST_CONVERTERS_INFO_WITH_ANNOTATION = Utils.readResourceFile("RequestConvertersInfoWithAnnotated.txt");
+    private static final String RESPONSE_CONVERTERS_INFO = Utils.readResourceFile("ResponseConvertersInfo.txt");
+    private static final String RESPONSE_CONVERTERS_INFO_WITH_ANNOTATION = Utils.readResourceFile("ResponseConvertersInfoWithAnnotated.txt");
 
     @Test
     @DisplayName("Default converters initialization")
@@ -1434,6 +1435,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @DisplayName("Converters not present (REQUEST)")
         public void test1639065949550() {
             final TestsExtensionConverterFactory factory = new TestsExtensionConverterFactory();
+            factory.getModelAnnotationRequestConverters().clear();
             factory.getPackageRequestConverters().clear();
             factory.getRawRequestConverters().clear();
             factory.getMimeRequestConverters().clear();
@@ -1451,6 +1453,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @DisplayName("Converters not present (RESPONSE)")
         public void test1639065949567() {
             final TestsExtensionConverterFactory factory = new TestsExtensionConverterFactory();
+            factory.getModelAnnotationResponseConverters().clear();
             factory.getPackageResponseConverters().clear();
             factory.getRawResponseConverters().clear();
             factory.getMimeResponseConverters().clear();
