@@ -18,6 +18,7 @@ package veslo.bean.urlencoded;
 
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import retrofit2.internal.EverythingIsNonNull;
 import veslo.FormUrlEncodedMapperException;
 import veslo.util.Utils;
 
@@ -27,11 +28,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
@@ -48,23 +50,31 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * @return model string representation
      */
     @Override
-    public String marshal(Object model) {
+    @EverythingIsNonNull
+    public String marshal(final Object model) {
         Utils.parameterRequireNonNull(model, "model");
         return null;
+    }
+
+    public <M> M unmarshal(final Class<M> modelClass, final String data) {
+        return unmarshal(modelClass, data, UTF_8);
     }
 
     /**
      * String to model conversion
      *
-     * @param data       - String data to conversation
      * @param modelClass - FormUrlEncoded model class
+     * @param data       - String data to conversation
+     * @param charset    - String data charset
      * @param <M>        - FormUrlEncoded model type
      * @return completed model
      */
     @Override
-    public <M> M unmarshal(String data, Class<M> modelClass) {
-        Utils.parameterRequireNonNull(data, "model");
-        Utils.parameterRequireNonNull(modelClass, "model");
+    @EverythingIsNonNull
+    public <M> M unmarshal(final Class<M> modelClass, final String data, final Charset charset) {
+        Utils.parameterRequireNonNull(modelClass, "modelClass");
+        Utils.parameterRequireNonNull(data, "data");
+        Utils.parameterRequireNonNull(charset, "charset");
         final M model;
         try {
             model = ConstructorUtils.invokeConstructor(modelClass);
@@ -75,7 +85,17 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
             return model;
         }
         final List<Field> fields = Arrays.asList(modelClass.getDeclaredFields());
-        final Field additionalProperties = getAdditionalProperties(modelClass);
+        final Map<String, Object> additionalProperties = initAdditionalProperties(model);
+
+        for (Field field : fields) {
+            final FormUrlEncodedField annotation = field.getAnnotation(FormUrlEncodedField.class);
+            if (annotation == null) {
+                continue;
+            }
+            final String key = annotation.value();
+
+        }
+
         final List<String> keyValue = Arrays.asList(data.split("&"));
         final List<String> brokenPairs = keyValue.stream().filter(pair -> pair.split("=").length != 2)
                 .collect(Collectors.toList());
@@ -117,8 +137,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
             ParameterizedType parameterizedType = (ParameterizedType) type;
             final Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
             final Type keyType = actualTypeArguments[0];
-            final Type valueType = actualTypeArguments[1];
-            isValidTypeArguments = keyType == String.class && valueType == String.class;
+            isValidTypeArguments = keyType == String.class;
         } else {
             isValidTypeArguments = false;
         }
@@ -128,7 +147,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
                     "    Model         - " + modelClass + "\n" +
                     "    Field         - " + additionalProperty.getName() + "\n" +
                     "    Actual type   - " + type.getTypeName() + "\n" +
-                    "    Expected type - java.util.Map<java.lang.String, java.lang.String>\n");
+                    "    Expected type - java.util.Map<java.lang.String, java.lang.Object>\n");
         }
         return additionalProperty;
     }
@@ -144,7 +163,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      */
     @Nullable
     @SuppressWarnings("unchecked")
-    public Map<String, String> initAdditionalProperties(@Nonnull final Object model) {
+    protected Map<String, Object> initAdditionalProperties(@Nonnull final Object model) {
         Utils.parameterRequireNonNull(model, "model");
         final Field additionalProperty = getAdditionalProperties(model.getClass());
         if (additionalProperty == null) {
@@ -153,18 +172,58 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         final String fieldName = additionalProperty.getName();
         try {
             if (Modifier.isFinal(additionalProperty.getModifiers())) {
-                return (Map<String, String>) FieldUtils.readDeclaredField(model, additionalProperty.getName(), true);
+                return (Map<String, Object>) FieldUtils.readDeclaredField(model, additionalProperty.getName(), true);
             }
         } catch (Exception e) {
             throw new FormUrlEncodedMapperException("Unable to get field value: " + fieldName, e);
         }
         try {
-            final HashMap<String, String> value = new HashMap<>();
+            final HashMap<String, Object> value = new HashMap<>();
             FieldUtils.writeDeclaredField(model, fieldName, value, true);
             return value;
         } catch (Exception e) {
             throw new FormUrlEncodedMapperException("Unable to initialize field " + fieldName, e);
         }
+    }
+
+    @EverythingIsNonNull
+    protected Map<String, List<String>> parseEncodedString(final String rawData, final Charset charset) {
+        Utils.parameterRequireNonNull(rawData, "rawData");
+        Utils.parameterRequireNonNull(charset, "charset");
+        final Map<String, List<String>> result = new HashMap<>();
+        if (rawData.trim().length() == 0) {
+            return result;
+        }
+        final String prepared;
+        if (rawData.startsWith("?")) {
+            prepared = rawData.substring(1);
+        } else {
+            prepared = rawData;
+        }
+        final String[] pairs = prepared.split("&");
+        for (String pair : pairs) {
+            if (pair.isEmpty()) {
+                continue;
+            }
+            final String[] split = pair.split("=");
+            if (split.length > 2 || split.length == 0) {
+                throw new FormUrlEncodedMapperException("URL encoded string not in URL format:\n" + rawData);
+            }
+            final String key = split[0];
+            final String urlEncodedValue;
+            if (split.length == 1) {
+                urlEncodedValue = "";
+            } else {
+                urlEncodedValue = split[1];
+            }
+            try {
+                final String urlDecodedValue = URLDecoder.decode(urlEncodedValue, charset.name()) ;
+                result.computeIfAbsent(key, i -> new ArrayList<>()).add(urlDecodedValue);
+            } catch (Exception e) {
+                throw new FormUrlEncodedMapperException("Error decoding URL encoded string:\n" + pair, e);
+            }
+        }
+        return result;
     }
 
 }

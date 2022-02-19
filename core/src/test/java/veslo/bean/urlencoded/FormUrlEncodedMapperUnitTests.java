@@ -23,9 +23,15 @@ import org.junit.jupiter.api.Test;
 import veslo.FormUrlEncodedMapperException;
 
 import java.lang.reflect.Field;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @SuppressWarnings({"ConstantConditions", "unused"})
 @DisplayName("FormUrlEncodedMapper.class unit tests")
@@ -73,7 +79,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
                             "    Model         - " + AdditionalFieldsInvalidType.class + "\n" +
                             "    Field         - additionalProperties\n" +
                             "    Actual type   - java.util.Map<?, ?>\n" +
-                            "    Expected type - java.util.Map<java.lang.String, java.lang.String>\n");
+                            "    Expected type - java.util.Map<java.lang.String, java.lang.Object>\n");
         }
 
         @Test
@@ -85,7 +91,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
                             "    Model         - " + AdditionalFieldsRawMap.class + "\n" +
                             "    Field         - additionalProperties\n" +
                             "    Actual type   - java.util.Map\n" +
-                            "    Expected type - java.util.Map<java.lang.String, java.lang.String>\n");
+                            "    Expected type - java.util.Map<java.lang.String, java.lang.Object>\n");
         }
 
         @Test
@@ -97,7 +103,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
                             "    Model         - " + AdditionalFieldsList.class + "\n" +
                             "    Field         - additionalProperties\n" +
                             "    Actual type   - java.util.List<java.lang.String>\n" +
-                            "    Expected type - java.util.Map<java.lang.String, java.lang.String>\n");
+                            "    Expected type - java.util.Map<java.lang.String, java.lang.Object>\n");
         }
 
         @Test
@@ -128,21 +134,21 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final AdditionalFields additionalFields = new AdditionalFields();
             additionalFields.additionalProperties = new HashMap<>();
             additionalFields.additionalProperties.put("1", "2");
-            final Map<String, String> result = MAPPER.initAdditionalProperties(additionalFields);
+            final Map<String, Object> result = MAPPER.initAdditionalProperties(additionalFields);
             assertIs(result, additionalFields.additionalProperties);
         }
 
         @Test
         @DisplayName("Successfully getting additionalProperties map if field not initiated")
         public void test1645292357593() {
-            final Map<String, String> result = MAPPER.initAdditionalProperties(new AdditionalFields());
+            final Map<String, Object> result = MAPPER.initAdditionalProperties(new AdditionalFields());
             assertIs(result, new HashMap<>());
         }
 
         @Test
         @DisplayName("Successfully getting additionalProperties map (null) if field not present")
         public void test1645292405815() {
-            final Map<String, String> result = MAPPER.initAdditionalProperties(new EmptyModel());
+            final Map<String, Object> result = MAPPER.initAdditionalProperties(new EmptyModel());
             assertIsNull(result);
         }
 
@@ -151,8 +157,119 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         public void test1645292517696() {
             final FinalAdditionalFields additionalFields = new FinalAdditionalFields();
             additionalFields.additionalProperties.put("1", "2");
-            final Map<String, String> result = MAPPER.initAdditionalProperties(additionalFields);
+            final Map<String, Object> result = MAPPER.initAdditionalProperties(additionalFields);
             assertIs(result, additionalFields.additionalProperties);
+        }
+
+    }
+
+    @Nested
+    @DisplayName("#parseEncodedString() method tests")
+    public class ParseEncodedStringMethodTests {
+
+        @Test
+        @DisplayName("Required parameters")
+        public void test1645294525400() {
+            assertNPE(() -> MAPPER.parseEncodedString(null, UTF_8), "rawData");
+            assertNPE(() -> MAPPER.parseEncodedString("", null), "charset");
+        }
+
+        @Test
+        @DisplayName("Successfully parsing a plain key value pair")
+        public void test1645294673959() {
+            final Map<String, List<String>> map = MAPPER.parseEncodedString("a=b", UTF_8);
+            assertThat(map, aMapWithSize(1));
+            assertThat(map.get("a"), contains("b"));
+
+        }
+
+        @Test
+        @DisplayName("Successfully parsing encoded value")
+        public void test1645294871965() {
+            final Map<String, List<String>> map = MAPPER.parseEncodedString("text=%D1%82%D0%B5%D1%81%D1%82", UTF_8);
+            assertThat(map, aMapWithSize(1));
+            assertThat(map.get("text"), contains("тест"));
+        }
+
+        @Test
+        @DisplayName("Successfully parsing encoded json")
+        public void test1645303623520() {
+            final Map<String, List<String>> map = MAPPER.parseEncodedString("text=%7B%22a%22%3D%22%26%22%7D", UTF_8);
+            assertThat(map, aMapWithSize(1));
+            assertThat(map.get("text"), contains("{\"a\"=\"&\"}"));
+        }
+
+        @Test
+        @DisplayName("Successfully parsing empty value")
+        public void test1645294974883() {
+            final Map<String, List<String>> map = MAPPER.parseEncodedString("text=", UTF_8);
+            assertThat(map, aMapWithSize(1));
+            assertThat(map.get("text"), contains(""));
+        }
+
+        @Test
+        @DisplayName("Successfully parsing if data start with '?' character")
+        public void test1645295172307() {
+            final Map<String, List<String>> map = MAPPER.parseEncodedString("?text=123", UTF_8);
+            assertThat(map, aMapWithSize(1));
+            assertThat(map.get("text"), contains("123"));
+        }
+
+        @Test
+        @DisplayName("Successfully parsing if data ends with '&' character")
+        public void test1645295257672() {
+            final Map<String, List<String>> map = MAPPER.parseEncodedString("text=123&", UTF_8);
+            assertThat(map, aMapWithSize(1));
+            assertThat(map.get("text"), contains("123"));
+        }
+
+        @Test
+        @DisplayName("Successfully parsing if data start with '&' character")
+        public void test1645295303635() {
+            final Map<String, List<String>> map = MAPPER.parseEncodedString("&text=123", UTF_8);
+            assertThat(map, aMapWithSize(1));
+            assertThat(map.get("text"), contains("123"));
+        }
+
+        @Test
+        @DisplayName("Successfully parsing if data contains list")
+        public void test1645303330255() {
+            final Map<String, List<String>> map = MAPPER.parseEncodedString("id=1&text=foo&text=bar", UTF_8);
+            assertThat(map, aMapWithSize(2));
+            assertThat(map.get("text"), containsInAnyOrder("bar", "foo"));
+            assertThat(map.get("id"), containsInAnyOrder("1"));
+        }
+
+        @Test
+        @DisplayName("Successfully parsing if data contains empty string")
+        public void test1645303459015() {
+            final Map<String, List<String>> map = MAPPER.parseEncodedString("", UTF_8);
+            assertThat(map, aMapWithSize(0));
+        }
+
+        @Test
+        @DisplayName("Successfully parsing if data contains blank string")
+        public void test1645303473746() {
+            final Map<String, List<String>> map = MAPPER.parseEncodedString("\n", UTF_8);
+            assertThat(map, aMapWithSize(0));
+        }
+
+        @Test
+        @DisplayName("FormUrlEncodedMapperException throws if URL string = 'a=b=c'")
+        public void test1645303862266() {
+            assertThrow(() -> MAPPER.parseEncodedString("a=b=c", UTF_8))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("URL encoded string not in URL format:\na=b=c");
+        }
+
+        @Test
+        @DisplayName("FormUrlEncodedMapperException throws if charset == FooBar")
+        public void test1645304020681() {
+            final Charset mock = mock(Charset.class);
+            when(mock.name()).thenReturn("");
+            assertThrow(() -> MAPPER.parseEncodedString("a=b", mock))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("Error decoding URL encoded string:\na=b");
         }
 
     }

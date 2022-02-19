@@ -16,6 +16,10 @@
 
 package veslo.bean.urlencoded;
 
+import retrofit2.internal.EverythingIsNonNull;
+
+import java.nio.charset.Charset;
+
 /**
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 19.02.2022
@@ -28,16 +32,19 @@ public interface IFormUrlEncodedMapper {
      * @param model - FormUrlEncoded model
      * @return model string representation
      */
-    String marshal(Object model);
+    @EverythingIsNonNull
+    String marshal(final Object model);
 
     /**
      * String to model conversion
      *
-     * @param data - String data to conversation
      * @param modelClass - FormUrlEncoded model class
-     * @param <M> - FormUrlEncoded model type
+     * @param data       - String data to conversation
+     * @param charset    - String data charset
+     * @param <M>        - FormUrlEncoded model type
      * @return completed model
      */
-    <M> M unmarshal(String data, Class<M> modelClass);
+    @EverythingIsNonNull
+    <M> M unmarshal(final Class<M> modelClass, final String data, final Charset charset);
 
 }
