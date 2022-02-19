@@ -17,12 +17,14 @@
 package veslo.bean.urlencoded;
 
 import org.apache.commons.lang3.reflect.ConstructorUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import veslo.FormUrlEncodedMapperException;
 import veslo.util.Utils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -54,9 +56,9 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
     /**
      * String to model conversion
      *
-     * @param data - String data to conversation
+     * @param data       - String data to conversation
      * @param modelClass - FormUrlEncoded model class
-     * @param <M> - FormUrlEncoded model type
+     * @param <M>        - FormUrlEncoded model type
      * @return completed model
      */
     @Override
@@ -77,7 +79,6 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         final List<String> keyValue = Arrays.asList(data.split("&"));
         final List<String> brokenPairs = keyValue.stream().filter(pair -> pair.split("=").length != 2)
                 .collect(Collectors.toList());
-
         final Map<Field, String> result = new HashMap<>();
 
         return null;
@@ -86,7 +87,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
     /**
      * @param modelClass - FormUrlEncoded model class
      * @return field annotated with FormUrlEncodedAdditionalProperties or null
-     * @throws NullPointerException if modelClass parameter is null
+     * @throws NullPointerException          if modelClass parameter is null
      * @throws FormUrlEncodedMapperException if additionalProperties fields more than one
      * @throws FormUrlEncodedMapperException if additionalProperties type != {@code Map<String, String>}
      */
@@ -130,6 +131,40 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
                     "    Expected type - java.util.Map<java.lang.String, java.lang.String>\n");
         }
         return additionalProperty;
+    }
+
+    /**
+     * If a field marked with the {@link FormUrlEncodedAdditionalProperties} annotation is present and not initialized,
+     * then a new HashMap instance will be written to the field value.
+     *
+     * @param model - FormUrlEncoded model
+     * @return additionalProperty field value (Map) or null if field not present
+     * @throws NullPointerException          if model parameter is null
+     * @throws FormUrlEncodedMapperException in case of initialization errors of the additionalProperty field
+     */
+    @Nullable
+    @SuppressWarnings("unchecked")
+    public Map<String, String> initAdditionalProperties(@Nonnull final Object model) {
+        Utils.parameterRequireNonNull(model, "model");
+        final Field additionalProperty = getAdditionalProperties(model.getClass());
+        if (additionalProperty == null) {
+            return null;
+        }
+        final String fieldName = additionalProperty.getName();
+        try {
+            if (Modifier.isFinal(additionalProperty.getModifiers())) {
+                return (Map<String, String>) FieldUtils.readDeclaredField(model, additionalProperty.getName(), true);
+            }
+        } catch (Exception e) {
+            throw new FormUrlEncodedMapperException("Unable to get field value: " + fieldName, e);
+        }
+        try {
+            final HashMap<String, String> value = new HashMap<>();
+            FieldUtils.writeDeclaredField(model, fieldName, value, true);
+            return value;
+        } catch (Exception e) {
+            throw new FormUrlEncodedMapperException("Unable to initialize field " + fieldName, e);
+        }
     }
 
 }

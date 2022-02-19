@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import veslo.FormUrlEncodedMapperException;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -111,6 +112,51 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
 
     }
 
+    @Nested
+    @DisplayName("#initAdditionalProperties() method tests")
+    public class InitAdditionalPropertiesMethodTests {
+
+        @Test
+        @DisplayName("Required parameters")
+        public void test1645292235482() {
+            assertNPE(() -> MAPPER.initAdditionalProperties(null), "model");
+        }
+
+        @Test
+        @DisplayName("Successfully getting additionalProperties map if field initiated")
+        public void test1645292268987() {
+            final AdditionalFields additionalFields = new AdditionalFields();
+            additionalFields.additionalProperties = new HashMap<>();
+            additionalFields.additionalProperties.put("1", "2");
+            final Map<String, String> result = MAPPER.initAdditionalProperties(additionalFields);
+            assertIs(result, additionalFields.additionalProperties);
+        }
+
+        @Test
+        @DisplayName("Successfully getting additionalProperties map if field not initiated")
+        public void test1645292357593() {
+            final Map<String, String> result = MAPPER.initAdditionalProperties(new AdditionalFields());
+            assertIs(result, new HashMap<>());
+        }
+
+        @Test
+        @DisplayName("Successfully getting additionalProperties map (null) if field not present")
+        public void test1645292405815() {
+            final Map<String, String> result = MAPPER.initAdditionalProperties(new EmptyModel());
+            assertIsNull(result);
+        }
+
+        @Test
+        @DisplayName("Successfully getting additionalProperties map if field initiated (final)")
+        public void test1645292517696() {
+            final FinalAdditionalFields additionalFields = new FinalAdditionalFields();
+            additionalFields.additionalProperties.put("1", "2");
+            final Map<String, String> result = MAPPER.initAdditionalProperties(additionalFields);
+            assertIs(result, additionalFields.additionalProperties);
+        }
+
+    }
+
     @FormUrlEncoded
     private static class EmptyModel {
 
@@ -121,6 +167,14 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
 
         @FormUrlEncodedAdditionalProperties()
         private Map<String, String> additionalProperties;
+
+    }
+
+    @FormUrlEncoded
+    private static class FinalAdditionalFields {
+
+        @FormUrlEncodedAdditionalProperties()
+        private final Map<String, String> additionalProperties = new HashMap<>();
 
     }
 
