@@ -150,6 +150,19 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         return model;
     }
 
+    /**
+     * Converts a [string] to supported model field type
+     *
+     * @param model - FormUrlEncoded model
+     * @param field - model field
+     * @param value - String value to convert
+     * @return converted reference type object
+     * @throws FormUrlEncodedMapperException if value list is empty
+     * @see FormUrlEncodedMapper#convertParameterizedType
+     * @see FormUrlEncodedMapper#convertArrayType
+     * @see FormUrlEncodedMapper#convertSingleType
+     * @see FormUrlEncodedMapper#convertUrlDecodedStringValueToType
+     */
     @EverythingIsNonNull
     protected Object convertValueToFieldType(final Object model, final Field field, final List<String> value) {
         Utils.parameterRequireNonNull(model, "model");
@@ -159,7 +172,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
             throw new FormUrlEncodedMapperException("The 'value' field does not contain data to be converted.");
         }
         final Class<?> fieldType = field.getType();
-        // convert to collection type
+        // convert to parameterized type (collection)
         if (field.getGenericType() instanceof ParameterizedType) {
             final ParameterizedType parameterizedType = (ParameterizedType) field.getGenericType();
             return convertParameterizedType(model, field, parameterizedType, value);

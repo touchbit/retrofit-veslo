@@ -303,13 +303,51 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         }
 
         @Test
-        @DisplayName("Transform raw value to List<Integer>")
+        @DisplayName("Transform raw value to String")
         public void test1645319853249() {
-            final Field field = TypedModel.field(LIST_INTEGER_FIELD);
-            final List<String> value = Arrays.asList("2", "3", "7");
+            final Field field = TypedModel.field(STRING_FIELD);
+            final List<String> value = Collections.singletonList("2");
             final Object o = MAPPER.convertValueToFieldType(new TypedModel(), field, value);
-            assertThat(o, instanceOf(List.class));
-            assertThat(o, is(Arrays.asList(2, 3, 7)));
+            assertThat(o, instanceOf(String.class));
+            assertThat(o, is("2"));
+        }
+
+        @Test
+        @DisplayName("Transform raw value to Integer")
+        public void test1645389602012() {
+            final Field field = TypedModel.field(INTEGER_FIELD);
+            final List<String> value = Collections.singletonList("2");
+            final Object o = MAPPER.convertValueToFieldType(new TypedModel(), field, value);
+            assertThat(o, instanceOf(Integer.class));
+            assertThat(o, is(2));
+        }
+
+        @Test
+        @DisplayName("Transform raw value to String[]")
+        public void test1645389712876() {
+            final Field field = TypedModel.field(STRING_ARRAY_FIELD);
+            final List<String> value = listOf("1", "2");
+            final Object o = MAPPER.convertValueToFieldType(new TypedModel(), field, value);
+            assertThat(o, is(new String[]{"1", "2"}));
+        }
+
+        @Test
+        @DisplayName("Transform raw value to String[]")
+        public void test1645389793160() {
+            final Field field = TypedModel.field(INTEGER_ARRAY_FIELD);
+            final List<String> value = listOf("1", "2");
+            final Object o = MAPPER.convertValueToFieldType(new TypedModel(), field, value);
+            assertThat(o, is(new Integer[]{1, 2}));
+        }
+
+        @Test
+        @DisplayName("Throws FormUrlEncodedMapperException if value list is empty")
+        public void test1645389846421() {
+            final Field field = TypedModel.field(STRING_FIELD);
+            final List<String> value = listOf();
+            assertThrow(() -> MAPPER.convertValueToFieldType(new TypedModel(), field, value))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("The 'value' field does not contain data to be converted.");
         }
 
     }
@@ -579,7 +617,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
                             "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$TypedModel\n" +
                             "    Field type: interface java.util.Map\n" +
                             "    Field name: mapStringIntegerField\n" +
-                            "    URL form field name: mapStringIntegerField\n" +
+                            "    URL form field name: MAP_STRING_INTEGER_FIELD\n" +
                             "    Supported parameterized types:\n" +
                             "    - java.util.List\n" +
                             "    - java.util.Set\n");
@@ -599,7 +637,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
                             "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$TypedModel\n" +
                             "    Field type: java.util.List<java.lang.Enum<?>>\n" +
                             "    Field name: listEnumField\n" +
-                            "    URL form field name: listEnumField\n" +
+                            "    URL form field name: LIST_ENUM_FIELD\n" +
                             "    Type to convert: java.lang.Enum<?>\n" +
                             "    Value for convert: test\n" +
                             "    Error cause: Received unsupported type for conversion: java.lang.Enum<?>\n");
