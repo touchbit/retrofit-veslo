@@ -44,6 +44,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  *
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 19.02.2022
+ * @see FormUrlEncodedMapper
  * @see FormUrlEncodedField
  * @see FormUrlEncodedAdditionalProperties
  */

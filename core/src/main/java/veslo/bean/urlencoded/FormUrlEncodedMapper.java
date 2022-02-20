@@ -16,6 +16,7 @@
 
 package veslo.bean.urlencoded;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import retrofit2.internal.EverythingIsNonNull;
@@ -28,6 +29,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -36,8 +39,34 @@ import java.util.stream.Collectors;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
+ * Convert model (JavaBean) to URL encoded form and back to model.
+ * Model example:
+ * <pre><code>
+ * &#64;FormUrlEncoded()
+ * public class Model {
+ *
+ *     &#64;FormUrlEncodedField("foo")
+ *     private String foo;
+ *
+ *     &#64;FormUrlEncodedField("bar")
+ *     private List<Integer> bar;
+ *
+ * }
+ * </code></pre>
+ * <p>
+ * Usage:
+ * <pre><code>
+ *     Model model = new Model().foo("text").bar(1,2,3);
+ *     Strung formUrlEncodedString = FormUrlEncodedMapper.INSTANCE.marshal(model);
+ *     Model formUrlEncodedModel = FormUrlEncodedMapper.INSTANCE.unmarshal(formUrlEncodedString);
+ * </code></pre>
+ * <p>
+ *
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 19.02.2022
+ * @see FormUrlEncoded
+ * @see FormUrlEncodedField
+ * @see FormUrlEncodedAdditionalProperties
  */
 public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
 
@@ -56,52 +85,242 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         return null;
     }
 
-    public <M> M unmarshal(final Class<M> modelClass, final String data) {
-        return unmarshal(modelClass, data, UTF_8);
+    /**
+     * String to model conversion
+     *
+     * @param modelClass    - FormUrlEncoded model class
+     * @param encodedString - URL encoded string to conversation (UTF-8 encode charset)
+     * @param <M>           - FormUrlEncoded model type
+     * @return completed model
+     */
+    public <M> M unmarshal(final Class<M> modelClass, final String encodedString) {
+        return unmarshal(modelClass, encodedString, UTF_8);
     }
 
     /**
      * String to model conversion
      *
-     * @param modelClass - FormUrlEncoded model class
-     * @param data       - String data to conversation
-     * @param charset    - String data charset
-     * @param <M>        - FormUrlEncoded model type
+     * @param modelClass    - FormUrlEncoded model class
+     * @param encodedString - URL encoded string to conversation
+     * @param encodeCharset - String data charset
+     * @param <M>           - FormUrlEncoded model type
      * @return completed model
      */
     @Override
     @EverythingIsNonNull
-    public <M> M unmarshal(final Class<M> modelClass, final String data, final Charset charset) {
+    public <M> M unmarshal(final Class<M> modelClass, final String encodedString, final Charset encodeCharset) {
         Utils.parameterRequireNonNull(modelClass, "modelClass");
-        Utils.parameterRequireNonNull(data, "data");
-        Utils.parameterRequireNonNull(charset, "charset");
+        Utils.parameterRequireNonNull(encodedString, "encodedString");
+        Utils.parameterRequireNonNull(encodeCharset, "encodeCharset");
         final M model;
         try {
             model = ConstructorUtils.invokeConstructor(modelClass);
         } catch (Exception e) {
             throw new FormUrlEncodedMapperException("Unable to instantiate " + modelClass, e);
         }
-        if (data.isEmpty()) {
+        if (encodedString.isEmpty()) {
             return model;
         }
-        final List<Field> fields = Arrays.asList(modelClass.getDeclaredFields());
         final Map<String, Object> additionalProperties = initAdditionalProperties(model);
-
-        for (Field field : fields) {
-            final FormUrlEncodedField annotation = field.getAnnotation(FormUrlEncodedField.class);
-            if (annotation == null) {
+        final Map<String, List<String>> parsed = parseEncodedString(encodedString, encodeCharset);
+        final List<Field> annotatedFields = Arrays.stream(modelClass.getDeclaredFields())
+                .filter(f -> f.isAnnotationPresent(FormUrlEncodedField.class))
+                .collect(Collectors.toList());
+        final List<Field> handledAnnotatedFields = new ArrayList<>();
+        for (Field annotatedField : annotatedFields) {
+            final FormUrlEncodedField annotation = annotatedField.getAnnotation(FormUrlEncodedField.class);
+            final String fieldName = annotation.value();
+            final List<String> value = parsed.get(fieldName);
+            if (value == null) {
+                handledAnnotatedFields.add(annotatedField);
                 continue;
             }
-            final String key = annotation.value();
-
+            final Object forWrite = convertValueToFieldType(model, annotatedField, value);
+            writeFieldValue(model, annotatedField, forWrite);
+            handledAnnotatedFields.add(annotatedField);
         }
+        if (additionalProperties != null) {
+            handledAnnotatedFields.stream()
+                    .map(f -> f.getAnnotation(FormUrlEncodedField.class))
+                    .map(FormUrlEncodedField::value)
+                    .forEach(parsed::remove);
+            additionalProperties.putAll(parsed);
+        }
+        return model;
+    }
 
-        final List<String> keyValue = Arrays.asList(data.split("&"));
-        final List<String> brokenPairs = keyValue.stream().filter(pair -> pair.split("=").length != 2)
-                .collect(Collectors.toList());
-        final Map<Field, String> result = new HashMap<>();
+    @EverythingIsNonNull
+    protected Object convertValueToFieldType(final Object model, final Field field, final List<String> value) {
+        Utils.parameterRequireNonNull(model, "model");
+        Utils.parameterRequireNonNull(field, "field");
+        Utils.parameterRequireNonNull(value, "value");
+        if (value.isEmpty()) {
+            throw new FormUrlEncodedMapperException("The 'value' field does not contain data to be converted.");
+        }
+        final Class<?> fieldType = field.getType();
+        // convert to collection type
+        if (field.getGenericType() instanceof ParameterizedType) {
+            final ParameterizedType parameterizedType = (ParameterizedType) field.getGenericType();
+            return convertParameterizedType(model, field, parameterizedType, value);
+        }
+        // convert to array type
+        if (fieldType.isArray()) {
+            return convertArrayType(model, field, fieldType, value);
+        }
+        // convert to single type
+        return convertSingleType(model, field, fieldType, value);
+    }
 
-        return null;
+    @EverythingIsNonNull
+    protected Object convertSingleType(final Object model,
+                                       final Field field,
+                                       final Class<?> fieldType,
+                                       final List<String> value) {
+        if (value.isEmpty()) {
+            throw new FormUrlEncodedMapperException("The 'value' field does not contain data to be converted.");
+        }
+        if (value.size() > 1) {
+            throw new FormUrlEncodedMapperException("Mismatch types. Got an array instead of a single value.\n" +
+                    "Model type: " + model.getClass().getName() +
+                    "Field type: " + fieldType.getName() + "\n" +
+                    "Field name: " + field.getName() + "\n" +
+                    "URL form field name: " + getFormUrlEncodedFieldName(field) +
+                    "Received type: array\n" +
+                    "Received value: " + value + "\n" +
+                    "Expected value: single value");
+        }
+        final String forConvert = value.get(0);
+        try {
+            return convertStringValueToType(forConvert, fieldType);
+        } catch (Exception e) {
+            throw new FormUrlEncodedMapperException("Error converting string to field type.\n" +
+                    "Model type: " + model.getClass().getName() + "\n" +
+                    "Field type: " + fieldType.getName() + "\n" +
+                    "Field name: " + field.getName() + "\n" +
+                    "URL form field name: " + getFormUrlEncodedFieldName(field) + "\n" +
+                    "Value for convert: " + forConvert + "\n" +
+                    "Error cause: " + e.getMessage() + "\n");
+        }
+    }
+
+    @EverythingIsNonNull
+    protected Object[] convertArrayType(final Object model,
+                                        final Field field,
+                                        final Class<?> fieldType,
+                                        final List<String> value) {
+        if (!fieldType.isArray()) {
+            throw new FormUrlEncodedMapperException("Mismatch types. Got a single type instead of an array.\n" +
+                    "Model type: " + model.getClass().getName() +
+                    "Field type: " + fieldType.getName() + "\n" +
+                    "Field name: " + field.getName() + "\n" +
+                    "URL form field name: " + getFormUrlEncodedFieldName(field) +
+                    "Expected type: array\n");
+        }
+        final List<Object> result = new ArrayList<>();
+        for (String element : value) {
+            final Class<?> arrayComponentType = fieldType.getComponentType();
+            try {
+                final Object convertedValue = convertStringValueToType(element, arrayComponentType);
+                result.add(convertedValue);
+            } catch (Exception e) {
+                throw new FormUrlEncodedMapperException("Received unsupported type for conversion.\n" +
+                        "Model type: " + model.getClass().getName() + "\n" +
+                        "Field type: " + fieldType.getName() + "\n" +
+                        "Field name: " + field.getName() + "\n" +
+                        "URL form field name: " + getFormUrlEncodedFieldName(field) + "\n" +
+                        "Type to convert: " + arrayComponentType + "\n" +
+                        "Value for convert: " + element + "\n" +
+                        "Error cause: " + e.getMessage() + "\n");
+            }
+        }
+        return result.toArray();
+    }
+
+    @EverythingIsNonNull
+    protected Collection<Object> convertParameterizedType(final Object model,
+                                                          final Field field,
+                                                          final ParameterizedType parameterizedType,
+                                                          final List<String> value) {
+        final Type rawType = parameterizedType.getRawType();
+        final Type targetType = parameterizedType.getActualTypeArguments()[0];
+        if (Collection.class.isAssignableFrom((Class<?>) rawType)) {
+            final List<Object> list = new ArrayList<>();
+            for (String element : value) {
+                try {
+                    list.add(convertStringValueToType(element, targetType));
+                } catch (Exception e) {
+                    throw new FormUrlEncodedMapperException("Received unsupported type for conversion.\n" +
+                            "Model type: " + model.getClass().getName() + "\n" +
+                            "Field type: " + rawType + "\n" +
+                            "Field name: " + field.getName() + "\n" +
+                            "URL form field name: " + getFormUrlEncodedFieldName(field) + "\n" +
+                            "Type to convert: " + targetType + "\n" +
+                            "Value for convert: " + element + "\n" +
+                            "Error cause: " + e.getMessage() + "\n");
+                }
+            }
+            if (List.class.equals(rawType)) {
+                return list;
+            }
+            if (Set.class.equals(rawType)) {
+                return new HashSet<>(list);
+            }
+        }
+        throw new FormUrlEncodedMapperException("Received unsupported parameterized type for conversion.\n" +
+                "Model type: " + model.getClass().getName() + "\n" +
+                "Field type: " + rawType + "\n" +
+                "Field name: " + field.getName() + "\n" +
+                "URL form field name: " + getFormUrlEncodedFieldName(field) + "\n" +
+                "Supported parameterized types:\n" +
+                " - " + List.class.getName() + "\n" +
+                " - " + Set.class.getName() + "\n");
+    }
+
+    protected Object convertStringValueToType(final String value, final Type targetType) {
+        if (targetType.equals(String.class)) {
+            return value;
+        } else if (targetType.equals(Boolean.class) || targetType.equals(Boolean.TYPE)) {
+            if ("true".equals(value)) {
+                return true;
+            }
+            if ("false".equals(value)) {
+                return false;
+            }
+            throw new IllegalArgumentException("String cannot be converted to boolean: " + value);
+        } else if (targetType.equals(Short.class) || targetType.equals(Short.TYPE)) {
+            return Short.valueOf(value);
+        } else if (targetType.equals(Long.class) || targetType.equals(Long.TYPE)) {
+            return Long.valueOf(value);
+        } else if (targetType.equals(Float.class) || targetType.equals(Float.TYPE)) {
+            return Float.valueOf(value);
+        } else if (targetType.equals(Integer.class) || targetType.equals(Integer.TYPE)) {
+            return Integer.valueOf(value);
+        } else if (targetType.equals(Double.class) || targetType.equals(Double.TYPE)) {
+            return Double.valueOf(value);
+        } else if (targetType.equals(BigInteger.class)) {
+            return NumberUtils.createBigInteger(value);
+        } else if (targetType.equals(BigDecimal.class)) {
+            return NumberUtils.createBigDecimal(value);
+        } else {
+            throw new IllegalArgumentException("Received unsupported field type for conversion: " + targetType);
+        }
+    }
+
+    @EverythingIsNonNull
+    protected <M> void writeFieldValue(M model, Field field, Object value) {
+        Utils.parameterRequireNonNull(model, "model");
+        Utils.parameterRequireNonNull(field, "field");
+        Utils.parameterRequireNonNull(value, "value");
+        try {
+            FieldUtils.writeDeclaredField(model, field.getName(), value, true);
+        } catch (Exception e) {
+            throw new FormUrlEncodedMapperException("Unable to write field value.\n" +
+                    "Model       - " + model.getClass().getName() + "\n" +
+                    "Field name  - " + field.getName() + "\n" +
+                    "Field type  - " + field.getType() + "\n" +
+                    "Field value - " + value + "\n" +
+                    "Error       - " + e.getMessage() + "\n", e);
+        }
     }
 
     /**
@@ -122,8 +341,8 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
             final String fNames = additionalProperties.stream().map(Field::getName).collect(Collectors.joining(", "));
             throw new FormUrlEncodedMapperException("Model contains more than one field annotated with " +
                     FormUrlEncodedAdditionalProperties.class.getSimpleName() + ":\n" +
-                    "    Model: " + modelClass + "\n" +
-                    "    Fields: " + fNames + "\n");
+                    "    Model  - " + modelClass + "\n" +
+                    "    Fields - " + fNames + "\n");
         }
         if (additionalProperties.isEmpty()) {
             return null;
@@ -217,13 +436,24 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
                 urlEncodedValue = split[1];
             }
             try {
-                final String urlDecodedValue = URLDecoder.decode(urlEncodedValue, charset.name()) ;
+                final String urlDecodedValue = URLDecoder.decode(urlEncodedValue, charset.name());
                 result.computeIfAbsent(key, i -> new ArrayList<>()).add(urlDecodedValue);
             } catch (Exception e) {
                 throw new FormUrlEncodedMapperException("Error decoding URL encoded string:\n" + pair, e);
             }
         }
         return result;
+    }
+
+    @EverythingIsNonNull
+    protected String getFormUrlEncodedFieldName(final Field field) {
+        Utils.parameterRequireNonNull(field, "field");
+        final FormUrlEncodedField annotation = field.getAnnotation(FormUrlEncodedField.class);
+        if (annotation == null) {
+            throw new FormUrlEncodedMapperException("The '" + field.getName() + "' field does not contain the @" +
+                    FormUrlEncodedAdditionalProperties.class.getSimpleName() + " annotation.");
+        }
+        return annotation.value();
     }
 
 }

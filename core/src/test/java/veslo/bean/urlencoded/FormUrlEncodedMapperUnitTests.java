@@ -17,6 +17,7 @@
 package veslo.bean.urlencoded;
 
 import internal.test.utils.BaseUnitTest;
+import internal.test.utils.CorruptedTestException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,14 +25,14 @@ import veslo.FormUrlEncodedMapperException;
 
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests.TypedModel.LIST_INTEGER_FIELD;
+import static veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests.TypedModel.LIST_STRING_FIELD;
 
 @SuppressWarnings({"ConstantConditions", "unused"})
 @DisplayName("FormUrlEncodedMapper.class unit tests")
@@ -270,6 +271,75 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             assertThrow(() -> MAPPER.parseEncodedString("a=b", mock))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("Error decoding URL encoded string:\na=b");
+        }
+
+    }
+
+    @Nested
+    @DisplayName("#convertValueToFieldType() method tests")
+    public class ConvertValueToFieldTypeMethodTests {
+
+        @Test
+        @DisplayName("Required parameters")
+        public void test1645318639983() {
+            final TypedModel model = new TypedModel();
+            final Field declaredField = AdditionalFields.class.getDeclaredFields()[0];
+            assertNPE(() -> MAPPER.convertValueToFieldType(null, declaredField, new ArrayList<>()), "model");
+            assertNPE(() -> MAPPER.convertValueToFieldType(model, null, new ArrayList<>()), "field");
+            assertNPE(() -> MAPPER.convertValueToFieldType(model, declaredField, null), "value");
+        }
+
+        @Test
+        @DisplayName("Transform raw value to List<String>")
+        public void test1645318712610() {
+            final Field field = TypedModel.field(LIST_STRING_FIELD);
+            final List<String> value = Collections.singletonList("test");
+            final Object o = MAPPER.convertValueToFieldType(new TypedModel(), field, value);
+            assertThat(o, instanceOf(List.class));
+            assertThat(o, is(value));
+        }
+
+        @Test
+        @DisplayName("Transform raw value to List<Integer>")
+        public void test1645319853249() {
+            final Field field = TypedModel.field(LIST_INTEGER_FIELD);
+            final List<String> value = Arrays.asList("2", "3", "7");
+            final Object o = MAPPER.convertValueToFieldType(new TypedModel(), field, value);
+            assertThat(o, instanceOf(List.class));
+            assertThat(o, is(Arrays.asList(2, 3, 7)));
+        }
+
+    }
+
+    @Nested
+    @DisplayName("convertStringValueToType#() method tests")
+    public class ConvertStringValueToTypeMethodTests {
+
+
+
+    }
+
+    @FormUrlEncoded
+    static class TypedModel {
+
+        static final String LIST_STRING_FIELD = "listStringField";
+        static final String LIST_INTEGER_FIELD = "listIntegerField";
+
+        @FormUrlEncodedField("stringField")
+        private String stringField;
+
+        @FormUrlEncodedField(LIST_STRING_FIELD)
+        private List<String> listStringField;
+
+        @FormUrlEncodedField(LIST_INTEGER_FIELD)
+        private List<Integer> listIntegerField;
+
+        static Field field(String name) {
+            return Arrays.stream(TypedModel.class.getDeclaredFields())
+                    .filter(f -> f.isAnnotationPresent(FormUrlEncodedField.class))
+                    .filter(f -> f.getAnnotation(FormUrlEncodedField.class).value().equals(name))
+                    .findFirst()
+                    .orElseThrow(CorruptedTestException::new);
         }
 
     }
