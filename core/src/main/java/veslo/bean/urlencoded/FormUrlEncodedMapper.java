@@ -106,7 +106,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * @param modelClass    - FormUrlEncoded model class
      * @param encodedString - URL encoded string to conversation
      * @param encodeCharset - String data charset
-     * @param <M>           - FormUrlEncoded model type
+     * @param <M>           - model generic type
      * @return completed model
      */
     @Override
@@ -124,7 +124,6 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         if (encodedString.isEmpty()) {
             return model;
         }
-        final Map<String, Object> additionalProperties = initAdditionalProperties(model);
         final Map<String, List<String>> parsed = parseAndDecodeUrlEncodedString(encodedString, encodeCharset);
         final List<Field> annotatedFields = Arrays.stream(modelClass.getDeclaredFields())
                 .filter(f -> f.isAnnotationPresent(FormUrlEncodedField.class))
@@ -141,13 +140,44 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
             writeFieldValue(model, annotatedField, forWrite);
             handledAnnotatedFields.add(annotatedField);
         }
-        if (additionalProperties != null) {
-            handledAnnotatedFields.stream()
-                    .map(this::getFormUrlEncodedFieldName)
-                    .forEach(parsed::remove);
-            additionalProperties.putAll(parsed);
-        }
+        writeAdditionalProperties(model, parsed, handledAnnotatedFields);
         return model;
+    }
+
+    /**
+     * Populates the field marked with the {@link FormUrlEncodedField} annotation
+     * with the received data that is not in the model.
+     *
+     * @param model   - FormUrlEncoded model
+     * @param parsed  - all parsed URL decoded entries
+     * @param handled - processed model fields ({@link FormUrlEncodedField})
+     * @param <M>     - model generic type
+     */
+    @EverythingIsNonNull
+    protected <M> void writeAdditionalProperties(final M model,
+                                                 final Map<String, List<String>> parsed,
+                                                 final List<Field> handled) {
+        Utils.parameterRequireNonNull(model, "model");
+        Utils.parameterRequireNonNull(parsed, "parsed");
+        Utils.parameterRequireNonNull(handled, "handled");
+        final Map<String, List<String>> unhandled = new HashMap<>(parsed);
+        final Map<String, Object> additionalProperties = initAdditionalProperties(model);
+        if (additionalProperties != null) {
+            handled.stream()
+                    .map(this::getFormUrlEncodedFieldName)
+                    .forEach(unhandled::remove);
+            for (Map.Entry<String, List<String>> entry : unhandled.entrySet()) {
+                final String key = entry.getKey();
+                final List<String> values = entry.getValue();
+                if (values.isEmpty()) {
+                    additionalProperties.put(key, "");
+                } else if (values.size() > 1) {
+                    additionalProperties.put(key, values);
+                } else {
+                    additionalProperties.put(key, values.get(0));
+                }
+            }
+        }
     }
 
     /**
@@ -412,7 +442,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * @param model - FormUrlEncoded model
      * @param field - model field
      * @param value - String value to convert
-     * @param <M> model generic type
+     * @param <M>   model generic type
      * @throws FormUrlEncodedMapperException if the value cannot be written to the model field
      */
     @EverythingIsNonNull
@@ -465,7 +495,8 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
             ParameterizedType parameterizedType = (ParameterizedType) type;
             final Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
             final Type keyType = actualTypeArguments[0];
-            isValidTypeArguments = keyType == String.class;
+            final Type valueType = actualTypeArguments[1];
+            isValidTypeArguments = keyType == String.class && valueType == Object.class;
         } else {
             isValidTypeArguments = false;
         }

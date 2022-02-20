@@ -906,6 +906,52 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
                             " to java.util.ArrayList\n");
         }
 
+    }
+
+    @Nested
+    @DisplayName("#writeAdditionalProperties() method tests")
+    public class WriteAdditionalPropertiesMethodTests {
+
+        @Test
+        @DisplayName("Required parameters")
+        public void test1645392361215() {
+            final AdditionalFields model = new AdditionalFields();
+            final Map<String, List<String>> parsed = new HashMap<>();
+            final List<Field> handled = new ArrayList<>();
+            assertNPE(() -> MAPPER.writeAdditionalProperties(null, parsed, handled), "model");
+            assertNPE(() -> MAPPER.writeAdditionalProperties(model, null, handled), "parsed");
+            assertNPE(() -> MAPPER.writeAdditionalProperties(model, parsed, null), "handled");
+        }
+
+        @Test
+        @DisplayName("Fill additional properties if field present")
+        public void test1645392502716() {
+            final AdditionalFields model = new AdditionalFields();
+            final List<Field> handled = new ArrayList<>();
+            final Map<String, List<String>> parsed = new HashMap<>();
+            parsed.put("singleField", listOf("value"));
+            parsed.put("emptyField", listOf());
+            parsed.put("listField", listOf("value1", "value2"));
+            MAPPER.writeAdditionalProperties(model, parsed, handled);
+            Map<String, Object> expected = new HashMap<>();
+            expected.put("singleField", "value");
+            expected.put("emptyField", "");
+            expected.put("listField", listOf("value1", "value2"));
+            assertIs(model.additionalProperties, expected);
+        }
+
+        @Test
+        @DisplayName("Method complete without errors if additionalProperties field not present")
+        public void test1645393261530() {
+            final AdditionalFieldsWithoutAnnotation model = new AdditionalFieldsWithoutAnnotation();
+            final List<Field> handled = new ArrayList<>();
+            final Map<String, List<String>> parsed = new HashMap<>();
+            parsed.put("singleField", listOf("value"));
+            parsed.put("emptyField", listOf());
+            parsed.put("listField", listOf("value1", "value2"));
+            MAPPER.writeAdditionalProperties(model, parsed, handled);
+            assertIsNull(model.additionalProperties);
+        }
 
     }
 
@@ -1014,7 +1060,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
     private static class AdditionalFields {
 
         @FormUrlEncodedAdditionalProperties()
-        private Map<String, String> additionalProperties;
+        private Map<String, Object> additionalProperties;
 
     }
 
@@ -1022,14 +1068,14 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
     private static class FinalAdditionalFields {
 
         @FormUrlEncodedAdditionalProperties()
-        private final Map<String, String> additionalProperties = new HashMap<>();
+        private final Map<String, Object> additionalProperties = new HashMap<>();
 
     }
 
     @FormUrlEncoded
     private static class AdditionalFieldsWithoutAnnotation {
 
-        private Map<String, String> additionalProperties;
+        private Map<String, Object> additionalProperties;
 
     }
 
