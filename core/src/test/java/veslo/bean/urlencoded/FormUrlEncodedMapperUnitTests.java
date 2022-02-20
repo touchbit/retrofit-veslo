@@ -899,9 +899,11 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
                             "Unable to write value to model field.\n" +
                             "    Model: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$TypedModel\n" +
                             "    Field name: stringField\n" +
-                            "    Field type: class java.lang.String\n" +
-                            "    Field value: [fooBar1, fooBar2]\n" +
-                            "    Error cause: Can not set java.lang.String field" +
+                            "    Field type: String\n" +
+                            "    Value type: ArrayList\n" +
+                            "    Value: [fooBar1, fooBar2]\n" +
+                            "    Error cause:" +
+                            " Can not set java.lang.String field" +
                             " veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$TypedModel.stringField" +
                             " to java.util.ArrayList\n");
         }
@@ -952,6 +954,99 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             MAPPER.writeAdditionalProperties(model, parsed, handled);
             assertIsNull(model.additionalProperties);
         }
+
+    }
+
+    @Nested
+    @DisplayName("#unmarshal() method tests")
+    public class UnmarshalMethodTests {
+
+        @Test
+        @DisplayName("Required parameters")
+        public void test1645393437479() {
+            final AdditionalFields model = new AdditionalFields();
+            assertNPE(() -> MAPPER.unmarshal(null, ""), "modelClass");
+            assertNPE(() -> MAPPER.unmarshal(AdditionalFields.class, null), "encodedString");
+            assertNPE(() -> MAPPER.unmarshal(null, "", UTF_8), "modelClass");
+            assertNPE(() -> MAPPER.unmarshal(AdditionalFields.class, null, UTF_8), "encodedString");
+            assertNPE(() -> MAPPER.unmarshal(AdditionalFields.class, "", null), "encodeCharset");
+        }
+
+        @Test
+        @DisplayName("Return empty model if empty string received")
+        public void test1645393873436() {
+            final AdditionalFields unmarshal = MAPPER.unmarshal(AdditionalFields.class, "");
+            assertIsNull(unmarshal.additionalProperties);
+        }
+
+        @Test
+        @DisplayName("Successful unmarshal over all model fields")
+        public void test1645394207527() {
+            final String value = "?\n" +
+                    "stringField=%D1%82%D0%B5%D1%81%D1%82&\n" +
+                    "integerField=111&\n" +
+                    "stringArrayField=stringArrayValue1&\n" +
+                    "stringArrayField=stringArrayValue2&\n" +
+                    "integerArrayField=1&\n" +
+                    "listStringField=listStringValue1&\n" +
+                    "listStringField=listStringValue2&\n" +
+                    "listIntegerField=1&\n" +
+                    "additional=properties&\n" +
+                    "empty=\n";
+            final GoodModel model = MAPPER.unmarshal(GoodModel.class, value);
+            assertThat(model, notNullValue());
+            assertThat(model.stringField, is("тест"));
+            assertThat(model.integerField, is(111));
+            assertThat(model.stringArrayField, arrayContaining("stringArrayValue1", "stringArrayValue2"));
+            assertThat(model.integerArrayField, arrayContaining(1));
+            assertThat(model.listStringField, contains("listStringValue1", "listStringValue2"));
+            assertThat(model.listIntegerField, contains(1));
+            assertThat(model.missed, nullValue());
+            Map<String, Object> additionalProperties = new HashMap<>();
+            additionalProperties.put("additional", "properties");
+            additionalProperties.put("empty", "");
+            assertThat(model.additionalProperties, is(additionalProperties));
+        }
+
+        @Test
+        @DisplayName("Throws FormUrlEncodedMapperException on class instantiation errors (private constructor)")
+        public void test1645393625291() {
+            assertThrow(() -> MAPPER.unmarshal(PrivateModel.class, ""))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("Unable to instantiate model class\n" +
+                            "    Model class: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$PrivateModel\n" +
+                            "    Error cause: No such accessible constructor on object: " +
+                            "veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$PrivateModel\n");
+        }
+
+    }
+
+    @FormUrlEncoded
+    public static class GoodModel {
+
+        @FormUrlEncodedField("missed")
+        private String missed;
+
+        @FormUrlEncodedField("stringField")
+        private String stringField;
+
+        @FormUrlEncodedField("integerField")
+        private Integer integerField;
+
+        @FormUrlEncodedField("stringArrayField")
+        private String[] stringArrayField;
+
+        @FormUrlEncodedField("integerArrayField")
+        private Integer[] integerArrayField;
+
+        @FormUrlEncodedField("listStringField")
+        private List<String> listStringField;
+
+        @FormUrlEncodedField("listIntegerField")
+        private List<Integer> listIntegerField;
+
+        @FormUrlEncodedAdditionalProperties()
+        private Map<String, Object> additionalProperties;
 
     }
 
@@ -1057,7 +1152,16 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
     }
 
     @FormUrlEncoded
-    private static class AdditionalFields {
+    public static class PrivateModel {
+
+        private PrivateModel() {
+
+        }
+
+    }
+
+    @FormUrlEncoded
+    public static class AdditionalFields {
 
         @FormUrlEncodedAdditionalProperties()
         private Map<String, Object> additionalProperties;

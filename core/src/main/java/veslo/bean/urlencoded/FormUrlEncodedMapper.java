@@ -25,10 +25,7 @@ import veslo.util.Utils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URLDecoder;
@@ -108,6 +105,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * @param encodeCharset - String data charset
      * @param <M>           - model generic type
      * @return completed model
+     * @throws FormUrlEncodedMapperException on class instantiation errors
      */
     @Override
     @EverythingIsNonNull
@@ -119,7 +117,9 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         try {
             model = ConstructorUtils.invokeConstructor(modelClass);
         } catch (Exception e) {
-            throw new FormUrlEncodedMapperException("Unable to instantiate " + modelClass, e);
+            throw new FormUrlEncodedMapperException("Unable to instantiate model class\n" +
+                    "    Model class: " + modelClass.getName() + "\n" +
+                    "    Error cause: " + e.getMessage().trim() + "\n", e);
         }
         if (encodedString.isEmpty()) {
             return model;
@@ -318,7 +318,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
                         "    Error cause: " + e.getMessage().trim() + "\n");
             }
         }
-        return result.toArray();
+        return result.toArray((Object[]) Array.newInstance(fieldType.getComponentType(), 0));
     }
 
     /**
@@ -446,18 +446,26 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * @throws FormUrlEncodedMapperException if the value cannot be written to the model field
      */
     @EverythingIsNonNull
-    protected <M> void writeFieldValue(M model, Field field, Object value) {
+    protected <M> void writeFieldValue(final M model, final Field field, final Object value) {
         Utils.parameterRequireNonNull(model, "model");
         Utils.parameterRequireNonNull(field, "field");
         Utils.parameterRequireNonNull(value, "value");
         try {
             FieldUtils.writeDeclaredField(model, field.getName(), value, true);
         } catch (Exception e) {
+            final String fieldTypeName = field.getType().getSimpleName();
+            final String fieldValue;
+            if (value.getClass().isArray()) {
+                fieldValue = Arrays.toString((Object[]) value);
+            } else {
+                fieldValue = String.valueOf(value);
+            }
             throw new FormUrlEncodedMapperException("Unable to write value to model field.\n" +
                     "    Model: " + model.getClass().getName() + "\n" +
                     "    Field name: " + field.getName() + "\n" +
-                    "    Field type: " + field.getType() + "\n" +
-                    "    Field value: " + value + "\n" +
+                    "    Field type: " + fieldTypeName + "\n" +
+                    "    Value type: " + value.getClass().getSimpleName() + "\n" +
+                    "    Value: " + fieldValue + "\n" +
                     "    Error cause: " + e.getMessage().trim() + "\n", e);
         }
     }
@@ -573,9 +581,9 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         }
         final String prepared;
         if (urlEncodedString.startsWith("?")) {
-            prepared = urlEncodedString.substring(1);
+            prepared = urlEncodedString.substring(1).replaceAll("\n", "").replaceAll("\r", "");
         } else {
-            prepared = urlEncodedString;
+            prepared = urlEncodedString.replaceAll("\n", "").replaceAll("\r", "");
         }
         final String[] pairs = prepared.split("&");
         for (String pair : pairs) {
