@@ -172,23 +172,40 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         return convertSingleType(model, field, fieldType, value);
     }
 
+    /**
+     * Converts a [string] to single reference type (type != list && type != array)
+     *
+     * @param model     - FormUrlEncoded model
+     * @param field     - model field
+     * @param fieldType - field type
+     * @param value     - String value to convert
+     * @return converted reference type array
+     * @throws FormUrlEncodedMapperException if value list is empty
+     * @throws FormUrlEncodedMapperException if value list has more than one record
+     * @throws FormUrlEncodedMapperException if field type not supported
+     * @see FormUrlEncodedMapper#convertUrlDecodedStringValueToType
+     */
     @EverythingIsNonNull
     protected Object convertSingleType(final Object model,
                                        final Field field,
                                        final Class<?> fieldType,
                                        final List<String> value) {
+        Utils.parameterRequireNonNull(model, "model");
+        Utils.parameterRequireNonNull(field, "field");
+        Utils.parameterRequireNonNull(fieldType, "fieldType");
+        Utils.parameterRequireNonNull(value, "value");
         if (value.isEmpty()) {
             throw new FormUrlEncodedMapperException("The 'value' field does not contain data to be converted.");
         }
         if (value.size() > 1) {
             throw new FormUrlEncodedMapperException("Mismatch types. Got an array instead of a single value.\n" +
-                    "Model type: " + model.getClass().getName() +
-                    "Field type: " + fieldType.getName() + "\n" +
-                    "Field name: " + field.getName() + "\n" +
-                    "URL form field name: " + getFormUrlEncodedFieldName(field) +
-                    "Received type: array\n" +
-                    "Received value: " + value + "\n" +
-                    "Expected value: single value");
+                    "    Model type: " + model.getClass().getName() + "\n" +
+                    "    Field type: " + fieldType.getName() + "\n" +
+                    "    Field name: " + field.getName() + "\n" +
+                    "    URL form field name: " + getFormUrlEncodedFieldName(field) + "\n" +
+                    "    Received type: array\n" +
+                    "    Received value: " + value + "\n" +
+                    "    Expected value: single value\n");
         }
         final String forConvert = value.get(0);
         try {

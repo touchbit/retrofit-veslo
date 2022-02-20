@@ -717,6 +717,98 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
 
     }
 
+    @Nested
+    @DisplayName("#convertSingleType() method tests")
+    public class ConvertSingleTypeMethodTests {
+
+        @Test
+        @DisplayName("Required parameters")
+        public void test1645387634626() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(STRING_ARRAY_FIELD);
+            final Class<?> type = field.getType();
+            final List<String> value = Collections.singletonList("test");
+            assertNPE(() -> MAPPER.convertSingleType(null, field, type, value), "model");
+            assertNPE(() -> MAPPER.convertSingleType(model, null, type, value), "field");
+            assertNPE(() -> MAPPER.convertSingleType(model, field, null, value), "fieldType");
+            assertNPE(() -> MAPPER.convertSingleType(model, field, type, null), "value");
+        }
+
+        @Test
+        @DisplayName("Successfully conversion '[1]' string to Integer type")
+        public void test1645388027397() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(INTEGER_FIELD);
+            final Class<?> type = field.getType();
+            final List<String> value = listOf("1");
+            final Object result = MAPPER.convertSingleType(model, field, type, value);
+            assertThat(result, is(1));
+        }
+
+        @Test
+        @DisplayName("Successfully conversion '[test]' string to String type")
+        public void test1645388038498() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(STRING_FIELD);
+            final Class<?> type = field.getType();
+            final List<String> value = listOf("test");
+            final Object result = MAPPER.convertSingleType(model, field, type, value);
+            assertThat(result, is("test"));
+        }
+
+        @Test
+        @DisplayName("Throws FormUrlEncodedMapperException if value list is empty")
+        public void test1645388254928() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(STRING_FIELD);
+            final Class<?> type = field.getType();
+            final List<String> value = listOf();
+            assertThrow(() -> MAPPER.convertSingleType(model, field, type, value))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("The 'value' field does not contain data to be converted.");
+        }
+
+        @Test
+        @DisplayName("Throws FormUrlEncodedMapperException if value list has more than one record")
+        public void test1645388313701() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(STRING_FIELD);
+            final Class<?> type = field.getType();
+            final List<String> value = listOf("1", "2");
+            assertThrow(() -> MAPPER.convertSingleType(model, field, type, value))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("" +
+                            "Mismatch types. Got an array instead of a single value.\n" +
+                            "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$TypedModel\n" +
+                            "    Field type: java.lang.String\n" +
+                            "    Field name: stringField\n" +
+                            "    URL form field name: STRING_FIELD\n" +
+                            "    Received type: array\n" +
+                            "    Received value: [1, 2]\n" +
+                            "    Expected value: single value\n");
+        }
+
+        @Test
+        @DisplayName("Throws FormUrlEncodedMapperException if field type not supported")
+        public void test1645388419144() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(CHARACTER_FIELD);
+            final Class<?> type = field.getType();
+            final List<String> value = listOf("1");
+            assertThrow(() -> MAPPER.convertSingleType(model, field, type, value))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("" +
+                            "Error converting string to field type.\n" +
+                            "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$TypedModel\n" +
+                            "    Field type: java.lang.Character\n" +
+                            "    Field name: characterField\n" +
+                            "    URL form field name: CHARACTER_FIELD\n" +
+                            "    Value for convert: 1\n" +
+                            "    Error cause: Received unsupported type for conversion: class java.lang.Character\n");
+        }
+
+    }
+
     @FormUrlEncoded
     @SuppressWarnings("rawtypes")
     static class TypedModel {
@@ -724,7 +816,9 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         static final String EMPTY_FORM_URL_ENCODED_FIELD_VALUE = "";
         static final String BLANK_FORM_URL_ENCODED_FIELD_VALUE = " \n";
         static final String STRING_FIELD = "STRING_FIELD";
+        static final String CHARACTER_FIELD = "CHARACTER_FIELD";
         static final String STRING_ARRAY_FIELD = "STRING_ARRAY_FIELD";
+        static final String INTEGER_FIELD = "INTEGER_FIELD";
         static final String INTEGER_ARRAY_FIELD = "INTEGER_ARRAY_FIELD";
         static final String CHARACTER_ARRAY_FIELD = "CHARACTER_ARRAY_FIELD";
         static final String LIST_STRING_FIELD = "LIST_STRING_FIELD";
@@ -754,6 +848,12 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
 
         @FormUrlEncodedField(STRING_FIELD)
         private String stringField;
+
+        @FormUrlEncodedField(CHARACTER_FIELD)
+        private Character characterField;
+
+        @FormUrlEncodedField(INTEGER_FIELD)
+        private Integer integerField;
 
         @FormUrlEncodedField(STRING_ARRAY_FIELD)
         private String[] stringArrayField;
