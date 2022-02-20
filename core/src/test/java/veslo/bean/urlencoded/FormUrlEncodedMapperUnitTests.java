@@ -24,6 +24,8 @@ import org.junit.jupiter.api.Test;
 import veslo.FormUrlEncodedMapperException;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.util.*;
 
@@ -311,10 +313,116 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
     }
 
     @Nested
-    @DisplayName("convertStringValueToType#() method tests")
+    @DisplayName("#convertStringValueToType() method tests")
     public class ConvertStringValueToTypeMethodTests {
 
+        @Test
+        @DisplayName("Required parameters")
+        public void test1645376480179() {
+            assertNPE(() -> MAPPER.convertStringValueToType(null, Object.class), "value");
+            assertNPE(() -> MAPPER.convertStringValueToType("", null), "targetType");
+        }
 
+        @Test
+        @DisplayName("Successfully conversion string value to String type")
+        public void test1645376586652() {
+            final Object result = MAPPER.convertStringValueToType("test", String.class);
+            assertIs(result, "test");
+        }
+
+        @Test
+        @DisplayName("Successfully conversion string value to Object type")
+        public void test1645377510696() {
+            final Object result = MAPPER.convertStringValueToType("test", Object.class);
+            assertIs(result, "test");
+        }
+
+        @Test
+        @DisplayName("Successfully conversion integer string value to Integer type")
+        public void test1645376667247() {
+            final Object result = MAPPER.convertStringValueToType("1", Integer.class);
+            assertIs(result, 1);
+        }
+
+        @Test
+        @DisplayName("Successfully conversion integer string value to BigInteger type")
+        public void test1645376817230() {
+            final Object result = MAPPER.convertStringValueToType("1", BigInteger.class);
+            assertIs(result, BigInteger.valueOf(1L));
+        }
+
+        @Test
+        @DisplayName("Successfully conversion long string value to Long type")
+        public void test1645376695492() {
+            final Object result = MAPPER.convertStringValueToType("1", Long.class);
+            assertIs(result, 1L);
+        }
+
+        @Test
+        @DisplayName("Successfully conversion short string value to Short type")
+        public void test1645376718177() {
+            final Object result = MAPPER.convertStringValueToType("1", Short.class);
+            assertIs(result, Short.valueOf("1"));
+        }
+
+        @Test
+        @DisplayName("Successfully conversion float string value to Float type")
+        public void test1645376750074() {
+            final Object result = MAPPER.convertStringValueToType("0.1", Float.class);
+            assertIs(result, 0.1F);
+        }
+
+        @Test
+        @DisplayName("Successfully conversion double string value to Double type")
+        public void test1645376788850() {
+            final Object result = MAPPER.convertStringValueToType("0.1", Double.class);
+            assertIs(result, 0.1);
+        }
+
+        @Test
+        @DisplayName("Successfully conversion integer string value to BigDecimal type")
+        public void test1645376867326() {
+            final Object result = MAPPER.convertStringValueToType("0.1", BigDecimal.class);
+            assertIs(result, BigDecimal.valueOf(0.1));
+        }
+
+        @Test
+        @DisplayName("Successfully conversion 'true' string value to Boolean type")
+        public void test1645376909313() {
+            final Object result = MAPPER.convertStringValueToType("true", Boolean.class);
+            assertIs(result, true);
+        }
+
+        @Test
+        @DisplayName("Successfully conversion 'false' string value to Boolean type")
+        public void test1645376924701() {
+            final Object result = MAPPER.convertStringValueToType("false", Boolean.class);
+            assertIs(result, false);
+        }
+
+        @Test
+        @DisplayName("IllegalArgumentException -> conversion 'FooBar' string value to Boolean type")
+        public void test1645377271047() {
+            assertThrow(() -> MAPPER.convertStringValueToType("FooBar", Boolean.class))
+                    .assertClass(IllegalArgumentException.class)
+                    .assertMessageIs("Cannot convert string to boolean: 'FooBar'");
+        }
+
+        @Test
+        @DisplayName("IllegalArgumentException -> field type is primitive")
+        public void test1645377119906() {
+            assertThrow(() -> MAPPER.convertStringValueToType("false", Boolean.TYPE))
+                    .assertClass(IllegalArgumentException.class)
+                    .assertMessageIs("It is forbidden to use primitive types in FormUrlEncoded models: boolean");
+        }
+
+        @Test
+        @DisplayName("IllegalArgumentException -> unsupported field type")
+        public void test1645377473744() {
+            assertThrow(() -> MAPPER.convertStringValueToType("false", Map.class))
+                    .assertClass(IllegalArgumentException.class)
+                    .assertMessageIs("Received unsupported field type for conversion: interface java.util.Map");
+        }
 
     }
 
@@ -386,6 +494,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         static final String STRING_FIELD = "stringField";
         static final String LIST_STRING_FIELD = "listStringField";
         static final String LIST_INTEGER_FIELD = "listIntegerField";
+        static final String PRIMITIVE_FIELD = "primitiveField";
 
         private String withoutAnnotation;
 
@@ -394,6 +503,9 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
 
         @FormUrlEncodedField(BLANK_FORM_URL_ENCODED_FIELD_VALUE)
         private String blankFormUrlEncodedFieldValue;
+
+        @FormUrlEncodedField(PRIMITIVE_FIELD)
+        private int primitiveField;
 
         @FormUrlEncodedField(STRING_FIELD)
         private String stringField;

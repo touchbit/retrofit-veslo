@@ -275,7 +275,12 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
     }
 
     protected Object convertStringValueToType(final String value, final Type targetType) {
-        if (targetType.equals(String.class)) {
+        Utils.parameterRequireNonNull(value, "value");
+        Utils.parameterRequireNonNull(targetType, "targetType");
+        if (targetType instanceof Class && ((Class<?>) targetType).isPrimitive()) {
+            throw new IllegalArgumentException("It is forbidden to use primitive types in FormUrlEncoded models: " + targetType);
+        }
+        if (targetType.equals(String.class) || targetType.equals(Object.class)) {
             return value;
         } else if (targetType.equals(Boolean.class) || targetType.equals(Boolean.TYPE)) {
             if ("true".equals(value)) {
@@ -284,7 +289,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
             if ("false".equals(value)) {
                 return false;
             }
-            throw new IllegalArgumentException("String cannot be converted to boolean: " + value);
+            throw new IllegalArgumentException("Cannot convert string to boolean: '" + value + "'");
         } else if (targetType.equals(Short.class) || targetType.equals(Short.TYPE)) {
             return Short.valueOf(value);
         } else if (targetType.equals(Long.class) || targetType.equals(Long.TYPE)) {
