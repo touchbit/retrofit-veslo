@@ -18,7 +18,6 @@ package veslo.bean.urlencoded;
 
 import internal.test.utils.BaseUnitTest;
 import internal.test.utils.CorruptedTestException;
-import internal.test.utils.TestUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -31,6 +30,7 @@ import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.util.*;
 
+import static internal.test.utils.TestUtils.listOf;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
@@ -168,20 +168,20 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
     }
 
     @Nested
-    @DisplayName("#parseEncodedString() method tests")
-    public class ParseEncodedStringMethodTests {
+    @DisplayName("#parseAndDecodeUrlEncodedString() method tests")
+    public class ParseAndDecodeUrlEncodedStringMethodTests {
 
         @Test
         @DisplayName("Required parameters")
         public void test1645294525400() {
-            assertNPE(() -> MAPPER.parseEncodedString(null, UTF_8), "rawData");
-            assertNPE(() -> MAPPER.parseEncodedString("", null), "charset");
+            assertNPE(() -> MAPPER.parseAndDecodeUrlEncodedString(null, UTF_8), "urlEncodedString");
+            assertNPE(() -> MAPPER.parseAndDecodeUrlEncodedString("", null), "charset");
         }
 
         @Test
         @DisplayName("Successfully parsing a plain key value pair")
         public void test1645294673959() {
-            final Map<String, List<String>> map = MAPPER.parseEncodedString("a=b", UTF_8);
+            final Map<String, List<String>> map = MAPPER.parseAndDecodeUrlEncodedString("a=b", UTF_8);
             assertThat(map, aMapWithSize(1));
             assertThat(map.get("a"), contains("b"));
 
@@ -190,7 +190,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         @Test
         @DisplayName("Successfully parsing encoded value")
         public void test1645294871965() {
-            final Map<String, List<String>> map = MAPPER.parseEncodedString("text=%D1%82%D0%B5%D1%81%D1%82", UTF_8);
+            final Map<String, List<String>> map = MAPPER.parseAndDecodeUrlEncodedString("text=%D1%82%D0%B5%D1%81%D1%82", UTF_8);
             assertThat(map, aMapWithSize(1));
             assertThat(map.get("text"), contains("тест"));
         }
@@ -198,7 +198,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         @Test
         @DisplayName("Successfully parsing encoded json")
         public void test1645303623520() {
-            final Map<String, List<String>> map = MAPPER.parseEncodedString("text=%7B%22a%22%3D%22%26%22%7D", UTF_8);
+            final Map<String, List<String>> map = MAPPER.parseAndDecodeUrlEncodedString("text=%7B%22a%22%3D%22%26%22%7D", UTF_8);
             assertThat(map, aMapWithSize(1));
             assertThat(map.get("text"), contains("{\"a\"=\"&\"}"));
         }
@@ -206,7 +206,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         @Test
         @DisplayName("Successfully parsing empty value")
         public void test1645294974883() {
-            final Map<String, List<String>> map = MAPPER.parseEncodedString("text=", UTF_8);
+            final Map<String, List<String>> map = MAPPER.parseAndDecodeUrlEncodedString("text=", UTF_8);
             assertThat(map, aMapWithSize(1));
             assertThat(map.get("text"), contains(""));
         }
@@ -214,7 +214,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         @Test
         @DisplayName("Successfully parsing if data start with '?' character")
         public void test1645295172307() {
-            final Map<String, List<String>> map = MAPPER.parseEncodedString("?text=123", UTF_8);
+            final Map<String, List<String>> map = MAPPER.parseAndDecodeUrlEncodedString("?text=123", UTF_8);
             assertThat(map, aMapWithSize(1));
             assertThat(map.get("text"), contains("123"));
         }
@@ -222,7 +222,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         @Test
         @DisplayName("Successfully parsing if data ends with '&' character")
         public void test1645295257672() {
-            final Map<String, List<String>> map = MAPPER.parseEncodedString("text=123&", UTF_8);
+            final Map<String, List<String>> map = MAPPER.parseAndDecodeUrlEncodedString("text=123&", UTF_8);
             assertThat(map, aMapWithSize(1));
             assertThat(map.get("text"), contains("123"));
         }
@@ -230,7 +230,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         @Test
         @DisplayName("Successfully parsing if data start with '&' character")
         public void test1645295303635() {
-            final Map<String, List<String>> map = MAPPER.parseEncodedString("&text=123", UTF_8);
+            final Map<String, List<String>> map = MAPPER.parseAndDecodeUrlEncodedString("&text=123", UTF_8);
             assertThat(map, aMapWithSize(1));
             assertThat(map.get("text"), contains("123"));
         }
@@ -238,7 +238,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         @Test
         @DisplayName("Successfully parsing if data contains list")
         public void test1645303330255() {
-            final Map<String, List<String>> map = MAPPER.parseEncodedString("id=1&text=foo&text=bar", UTF_8);
+            final Map<String, List<String>> map = MAPPER.parseAndDecodeUrlEncodedString("id=1&text=foo&text=bar", UTF_8);
             assertThat(map, aMapWithSize(2));
             assertThat(map.get("text"), containsInAnyOrder("bar", "foo"));
             assertThat(map.get("id"), containsInAnyOrder("1"));
@@ -247,21 +247,21 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         @Test
         @DisplayName("Successfully parsing if data contains empty string")
         public void test1645303459015() {
-            final Map<String, List<String>> map = MAPPER.parseEncodedString("", UTF_8);
+            final Map<String, List<String>> map = MAPPER.parseAndDecodeUrlEncodedString("", UTF_8);
             assertThat(map, aMapWithSize(0));
         }
 
         @Test
         @DisplayName("Successfully parsing if data contains blank string")
         public void test1645303473746() {
-            final Map<String, List<String>> map = MAPPER.parseEncodedString("\n", UTF_8);
+            final Map<String, List<String>> map = MAPPER.parseAndDecodeUrlEncodedString("\n", UTF_8);
             assertThat(map, aMapWithSize(0));
         }
 
         @Test
         @DisplayName("FormUrlEncodedMapperException throws if URL string = 'a=b=c'")
         public void test1645303862266() {
-            assertThrow(() -> MAPPER.parseEncodedString("a=b=c", UTF_8))
+            assertThrow(() -> MAPPER.parseAndDecodeUrlEncodedString("a=b=c", UTF_8))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("URL encoded string not in URL format:\na=b=c");
         }
@@ -271,7 +271,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         public void test1645304020681() {
             final Charset mock = mock(Charset.class);
             when(mock.name()).thenReturn("");
-            assertThrow(() -> MAPPER.parseEncodedString("a=b", mock))
+            assertThrow(() -> MAPPER.parseAndDecodeUrlEncodedString("a=b", mock))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("Error decoding URL encoded string:\na=b");
         }
@@ -315,97 +315,97 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
     }
 
     @Nested
-    @DisplayName("#convertStringValueToType() method tests")
-    public class ConvertStringValueToTypeMethodTests {
+    @DisplayName("#convertUrlDecodedStringValueToType() method tests")
+    public class ConvertUrlDecodedStringValueToTypeMethodTests {
 
         @Test
         @DisplayName("Required parameters")
         public void test1645376480179() {
-            assertNPE(() -> MAPPER.convertStringValueToType(null, Object.class), "value");
-            assertNPE(() -> MAPPER.convertStringValueToType("", null), "targetType");
+            assertNPE(() -> MAPPER.convertUrlDecodedStringValueToType(null, Object.class), "value");
+            assertNPE(() -> MAPPER.convertUrlDecodedStringValueToType("", null), "targetType");
         }
 
         @Test
         @DisplayName("Successfully conversion string value to String type")
         public void test1645376586652() {
-            final Object result = MAPPER.convertStringValueToType("test", String.class);
+            final Object result = MAPPER.convertUrlDecodedStringValueToType("test", String.class);
             assertIs(result, "test");
         }
 
         @Test
         @DisplayName("Successfully conversion string value to Object type")
         public void test1645377510696() {
-            final Object result = MAPPER.convertStringValueToType("test", Object.class);
+            final Object result = MAPPER.convertUrlDecodedStringValueToType("test", Object.class);
             assertIs(result, "test");
         }
 
         @Test
         @DisplayName("Successfully conversion integer string value to Integer type")
         public void test1645376667247() {
-            final Object result = MAPPER.convertStringValueToType("1", Integer.class);
+            final Object result = MAPPER.convertUrlDecodedStringValueToType("1", Integer.class);
             assertIs(result, 1);
         }
 
         @Test
         @DisplayName("Successfully conversion integer string value to BigInteger type")
         public void test1645376817230() {
-            final Object result = MAPPER.convertStringValueToType("1", BigInteger.class);
+            final Object result = MAPPER.convertUrlDecodedStringValueToType("1", BigInteger.class);
             assertIs(result, BigInteger.valueOf(1L));
         }
 
         @Test
         @DisplayName("Successfully conversion long string value to Long type")
         public void test1645376695492() {
-            final Object result = MAPPER.convertStringValueToType("1", Long.class);
+            final Object result = MAPPER.convertUrlDecodedStringValueToType("1", Long.class);
             assertIs(result, 1L);
         }
 
         @Test
         @DisplayName("Successfully conversion short string value to Short type")
         public void test1645376718177() {
-            final Object result = MAPPER.convertStringValueToType("1", Short.class);
+            final Object result = MAPPER.convertUrlDecodedStringValueToType("1", Short.class);
             assertIs(result, Short.valueOf("1"));
         }
 
         @Test
         @DisplayName("Successfully conversion float string value to Float type")
         public void test1645376750074() {
-            final Object result = MAPPER.convertStringValueToType("0.1", Float.class);
+            final Object result = MAPPER.convertUrlDecodedStringValueToType("0.1", Float.class);
             assertIs(result, 0.1F);
         }
 
         @Test
         @DisplayName("Successfully conversion double string value to Double type")
         public void test1645376788850() {
-            final Object result = MAPPER.convertStringValueToType("0.1", Double.class);
+            final Object result = MAPPER.convertUrlDecodedStringValueToType("0.1", Double.class);
             assertIs(result, 0.1);
         }
 
         @Test
         @DisplayName("Successfully conversion integer string value to BigDecimal type")
         public void test1645376867326() {
-            final Object result = MAPPER.convertStringValueToType("0.1", BigDecimal.class);
+            final Object result = MAPPER.convertUrlDecodedStringValueToType("0.1", BigDecimal.class);
             assertIs(result, BigDecimal.valueOf(0.1));
         }
 
         @Test
         @DisplayName("Successfully conversion 'true' string value to Boolean type")
         public void test1645376909313() {
-            final Object result = MAPPER.convertStringValueToType("true", Boolean.class);
+            final Object result = MAPPER.convertUrlDecodedStringValueToType("true", Boolean.class);
             assertIs(result, true);
         }
 
         @Test
         @DisplayName("Successfully conversion 'false' string value to Boolean type")
         public void test1645376924701() {
-            final Object result = MAPPER.convertStringValueToType("false", Boolean.class);
+            final Object result = MAPPER.convertUrlDecodedStringValueToType("false", Boolean.class);
             assertIs(result, false);
         }
 
         @Test
         @DisplayName("IllegalArgumentException -> conversion 'FooBar' string value to Boolean type")
         public void test1645377271047() {
-            assertThrow(() -> MAPPER.convertStringValueToType("FooBar", Boolean.class))
+            assertThrow(() -> MAPPER.convertUrlDecodedStringValueToType("FooBar", Boolean.class))
                     .assertClass(IllegalArgumentException.class)
                     .assertMessageIs("Cannot convert string to boolean: 'FooBar'");
         }
@@ -413,7 +413,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         @Test
         @DisplayName("IllegalArgumentException -> field type is primitive")
         public void test1645377119906() {
-            assertThrow(() -> MAPPER.convertStringValueToType("false", Boolean.TYPE))
+            assertThrow(() -> MAPPER.convertUrlDecodedStringValueToType("false", Boolean.TYPE))
                     .assertClass(IllegalArgumentException.class)
                     .assertMessageIs("It is forbidden to use primitive types in FormUrlEncoded models: boolean");
         }
@@ -421,7 +421,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         @Test
         @DisplayName("IllegalArgumentException -> unsupported field type")
         public void test1645377473744() {
-            assertThrow(() -> MAPPER.convertStringValueToType("false", Map.class))
+            assertThrow(() -> MAPPER.convertUrlDecodedStringValueToType("false", Map.class))
                     .assertClass(IllegalArgumentException.class)
                     .assertMessageIs("Received unsupported type for conversion: interface java.util.Map");
         }
@@ -523,7 +523,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final TypedModel model = new TypedModel();
             final Field field = field(LIST_STRING_FIELD);
             final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
-            final List<String> value = TestUtils.listOf("test1", "test2");
+            final List<String> value = listOf("test1", "test2");
             final Collection<Object> collection = MAPPER.convertParameterizedType(model, field, genericType, value);
             assertThat(collection, instanceOf(List.class));
             assertThat(collection, containsInAnyOrder("test1", "test2"));
@@ -535,7 +535,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final TypedModel model = new TypedModel();
             final Field field = field(LIST_INTEGER_FIELD);
             final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
-            final List<String> value = TestUtils.listOf("1", "2");
+            final List<String> value = listOf("1", "2");
             final Collection<Object> collection = MAPPER.convertParameterizedType(model, field, genericType, value);
             assertThat(collection, instanceOf(List.class));
             assertThat(collection, containsInAnyOrder(1, 2));
@@ -547,7 +547,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final TypedModel model = new TypedModel();
             final Field field = field(SET_STRING_FIELD);
             final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
-            final List<String> value = TestUtils.listOf("test1", "test2");
+            final List<String> value = listOf("test1", "test2");
             final Collection<Object> collection = MAPPER.convertParameterizedType(model, field, genericType, value);
             assertThat(collection, instanceOf(Set.class));
             assertThat(collection, containsInAnyOrder("test1", "test2"));
@@ -559,7 +559,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final TypedModel model = new TypedModel();
             final Field field = field(SET_STRING_FIELD);
             final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
-            final List<String> value = TestUtils.listOf("test", "test");
+            final List<String> value = listOf("test", "test");
             final Collection<Object> collection = MAPPER.convertParameterizedType(model, field, genericType, value);
             assertThat(collection, instanceOf(Set.class));
             assertThat(collection, contains("test"));
@@ -571,7 +571,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final TypedModel model = new TypedModel();
             final Field field = field(MAP_STRING_INTEGER_FIELD);
             final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
-            final List<String> value = TestUtils.listOf("test", "test");
+            final List<String> value = listOf("test", "test");
             assertThrow(() -> MAPPER.convertParameterizedType(model, field, genericType, value))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("" +
@@ -591,7 +591,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final TypedModel model = new TypedModel();
             final Field field = field(LIST_ENUM_FIELD);
             final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
-            final List<String> value = TestUtils.listOf("test", "test");
+            final List<String> value = listOf("test", "test");
             assertThrow(() -> MAPPER.convertParameterizedType(model, field, genericType, value))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("" +
@@ -607,22 +607,136 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
 
     }
 
-    @SuppressWarnings("rawtypes")
+    @Nested
+    @DisplayName("#convertArrayType() method tests")
+    public class ConvertArrayTypeMethodTests {
+
+        @Test
+        @DisplayName("Required parameters")
+        public void test1645383123445() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(STRING_ARRAY_FIELD);
+            final Class<?> type = field.getType();
+            final List<String> value = Collections.singletonList("test");
+            assertNPE(() -> MAPPER.convertArrayType(null, field, type, value), "model");
+            assertNPE(() -> MAPPER.convertArrayType(model, null, type, value), "field");
+            assertNPE(() -> MAPPER.convertArrayType(model, field, null, value), "fieldType");
+            assertNPE(() -> MAPPER.convertArrayType(model, field, type, null), "value");
+        }
+
+        @Test
+        @DisplayName("Successfully conversion '[test]' string to String[] type")
+        public void test1645383368879() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(STRING_ARRAY_FIELD);
+            final Class<?> type = field.getType();
+            final List<String> value = Collections.singletonList("test");
+            final Object[] result = MAPPER.convertArrayType(model, field, type, value);
+            assertThat(result, arrayWithSize(1));
+            assertThat(result, arrayContaining("test"));
+        }
+
+        @Test
+        @DisplayName("Successfully conversion '[test, test]' string to String[] type")
+        public void test1645383383031() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(STRING_ARRAY_FIELD);
+            final Class<?> type = field.getType();
+            final List<String> value = listOf("test", "test");
+            final Object[] result = MAPPER.convertArrayType(model, field, type, value);
+            assertThat(result, arrayWithSize(2));
+            assertThat(result, arrayContaining("test", "test"));
+        }
+
+        @Test
+        @DisplayName("Successfully conversion '[1, 2]' string to Integer[] type")
+        public void test1645383431358() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(INTEGER_ARRAY_FIELD);
+            final Class<?> type = field.getType();
+            final List<String> value = listOf("1", "2");
+            final Object[] result = MAPPER.convertArrayType(model, field, type, value);
+            assertThat(result, arrayWithSize(2));
+            assertThat(result, arrayContaining(1, 2));
+        }
+
+        @Test
+        @DisplayName("Throws FormUrlEncodedMapperException if field type is not array")
+        public void test1645386934351() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(STRING_FIELD);
+            final Class<?> type = field.getType();
+            final List<String> value = listOf("1", "2");
+            assertThrow(() -> MAPPER.convertArrayType(model, field, type, value))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("" +
+                            "Mismatch types. Got a single type instead of an array.\n" +
+                            "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$TypedModel\n" +
+                            "    Field type: java.lang.String\n" +
+                            "    Field name: stringField\n" +
+                            "    URL form field name: STRING_FIELD\n" +
+                            "    Expected type: array\n");
+        }
+
+        @Test
+        @DisplayName("Throws IllegalArgumentException if field component type is primitive")
+        public void test1645387069345() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(PRIMITIVE_ARRAY_FIELD);
+            final Class<?> type = field.getType();
+            final List<String> value = listOf("1", "2");
+            assertThrow(() -> MAPPER.convertArrayType(model, field, type, value))
+                    .assertClass(IllegalArgumentException.class)
+                    .assertMessageIs("" +
+                            "It is forbidden to use primitive types in FormUrlEncoded models.\n" +
+                            "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$TypedModel\n" +
+                            "    Field type: int[]\n" +
+                            "    Field name: primitiveArrayField\n" +
+                            "    URL form field name: PRIMITIVE_ARRAY_FIELD\n");
+        }
+
+        @Test
+        @DisplayName("Throws FormUrlEncodedMapperException if field component type not supported")
+        public void test1645387316882() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(CHARACTER_ARRAY_FIELD);
+            final Class<?> type = field.getType();
+            final List<String> value = listOf("1", "2");
+            assertThrow(() -> MAPPER.convertArrayType(model, field, type, value))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("" +
+                            "Received unsupported type for conversion.\n" +
+                            "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$TypedModel\n" +
+                            "    Field type: Character[]\n" +
+                            "    Field name: characterArrayField\n" +
+                            "    URL form field name: CHARACTER_ARRAY_FIELD\n" +
+                            "    Type to convert: class java.lang.Character\n" +
+                            "    Value for convert: 1\n" +
+                            "    Error cause: Received unsupported type for conversion: class java.lang.Character\n");
+        }
+
+    }
+
     @FormUrlEncoded
+    @SuppressWarnings("rawtypes")
     static class TypedModel {
 
         static final String EMPTY_FORM_URL_ENCODED_FIELD_VALUE = "";
         static final String BLANK_FORM_URL_ENCODED_FIELD_VALUE = " \n";
-        static final String STRING_FIELD = "stringField";
-        static final String LIST_STRING_FIELD = "listStringField";
-        static final String LIST_INTEGER_FIELD = "listIntegerField";
-        static final String SET_STRING_FIELD = "setStringField";
-        static final String SET_INTEGER_FIELD = "setIntegerField";
-        static final String PRIMITIVE_FIELD = "primitiveField";
-        static final String MAP_STRING_INTEGER_FIELD = "mapStringIntegerField";
-        static final String MAP_RAW_FIELD = "mapRawField";
-        static final String LIST_RAW_FIELD = "listRawField";
-        static final String LIST_ENUM_FIELD = "listEnumField";
+        static final String STRING_FIELD = "STRING_FIELD";
+        static final String STRING_ARRAY_FIELD = "STRING_ARRAY_FIELD";
+        static final String INTEGER_ARRAY_FIELD = "INTEGER_ARRAY_FIELD";
+        static final String CHARACTER_ARRAY_FIELD = "CHARACTER_ARRAY_FIELD";
+        static final String LIST_STRING_FIELD = "LIST_STRING_FIELD";
+        static final String LIST_INTEGER_FIELD = "LIST_INTEGER_FIELD";
+        static final String SET_STRING_FIELD = "SET_STRING_FIELD";
+        static final String SET_INTEGER_FIELD = "SET_INTEGER_FIELD";
+        static final String PRIMITIVE_FIELD = "PRIMITIVE_FIELD";
+        static final String PRIMITIVE_ARRAY_FIELD = "PRIMITIVE_ARRAY_FIELD";
+        static final String MAP_STRING_INTEGER_FIELD = "MAP_STRING_INTEGER_FIELD";
+        static final String MAP_RAW_FIELD = "MAP_RAW_FIELD";
+        static final String LIST_RAW_FIELD = "LIST_RAW_FIELD";
+        static final String LIST_ENUM_FIELD = "LIST_ENUM_FIELD";
 
         private String withoutAnnotation;
 
@@ -635,8 +749,20 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         @FormUrlEncodedField(PRIMITIVE_FIELD)
         private int primitiveField;
 
+        @FormUrlEncodedField(PRIMITIVE_ARRAY_FIELD)
+        private int[] primitiveArrayField;
+
         @FormUrlEncodedField(STRING_FIELD)
         private String stringField;
+
+        @FormUrlEncodedField(STRING_ARRAY_FIELD)
+        private String[] stringArrayField;
+
+        @FormUrlEncodedField(INTEGER_ARRAY_FIELD)
+        private Integer[] integerArrayField;
+
+        @FormUrlEncodedField(CHARACTER_ARRAY_FIELD)
+        private Character[] characterArrayField;
 
         @FormUrlEncodedField(LIST_STRING_FIELD)
         private List<String> listStringField;

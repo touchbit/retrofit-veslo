@@ -125,7 +125,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
             return model;
         }
         final Map<String, Object> additionalProperties = initAdditionalProperties(model);
-        final Map<String, List<String>> parsed = parseEncodedString(encodedString, encodeCharset);
+        final Map<String, List<String>> parsed = parseAndDecodeUrlEncodedString(encodedString, encodeCharset);
         final List<Field> annotatedFields = Arrays.stream(modelClass.getDeclaredFields())
                 .filter(f -> f.isAnnotationPresent(FormUrlEncodedField.class))
                 .collect(Collectors.toList());
@@ -192,7 +192,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         }
         final String forConvert = value.get(0);
         try {
-            return convertStringValueToType(forConvert, fieldType);
+            return convertUrlDecodedStringValueToType(forConvert, fieldType);
         } catch (Exception e) {
             throw new FormUrlEncodedMapperException("Error converting string to field type.\n" +
                     "    Model type: " + model.getClass().getName() + "\n" +
@@ -204,29 +204,53 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         }
     }
 
+    /**
+     * Converts a [string] to reference type array
+     *
+     * @param model     - FormUrlEncoded model
+     * @param field     - model field
+     * @param fieldType - field type
+     * @param value     - String value to convert
+     * @return converted reference type array
+     * @throws FormUrlEncodedMapperException if field type is not array
+     * @throws FormUrlEncodedMapperException if field component type not supported
+     * @throws IllegalArgumentException      if field component type is primitive
+     * @see FormUrlEncodedMapper#convertUrlDecodedStringValueToType
+     */
     @EverythingIsNonNull
     protected Object[] convertArrayType(final Object model,
                                         final Field field,
                                         final Class<?> fieldType,
                                         final List<String> value) {
+        Utils.parameterRequireNonNull(model, "model");
+        Utils.parameterRequireNonNull(field, "field");
+        Utils.parameterRequireNonNull(fieldType, "fieldType");
+        Utils.parameterRequireNonNull(value, "value");
         if (!fieldType.isArray()) {
             throw new FormUrlEncodedMapperException("Mismatch types. Got a single type instead of an array.\n" +
-                    "    Model type: " + model.getClass().getName() +
+                    "    Model type: " + model.getClass().getName() + "\n" +
                     "    Field type: " + fieldType.getName() + "\n" +
                     "    Field name: " + field.getName() + "\n" +
-                    "    URL form field name: " + getFormUrlEncodedFieldName(field) +
+                    "    URL form field name: " + getFormUrlEncodedFieldName(field) + "\n" +
                     "    Expected type: array\n");
         }
         final List<Object> result = new ArrayList<>();
         for (String element : value) {
             final Class<?> arrayComponentType = fieldType.getComponentType();
+            if (arrayComponentType.isPrimitive()) {
+                throw new IllegalArgumentException("It is forbidden to use primitive types in FormUrlEncoded models.\n" +
+                        "    Model type: " + model.getClass().getName() + "\n" +
+                        "    Field type: " + fieldType.getSimpleName() + "\n" +
+                        "    Field name: " + field.getName() + "\n" +
+                        "    URL form field name: " + getFormUrlEncodedFieldName(field) + "\n");
+            }
             try {
-                final Object convertedValue = convertStringValueToType(element, arrayComponentType);
+                final Object convertedValue = convertUrlDecodedStringValueToType(element, arrayComponentType);
                 result.add(convertedValue);
             } catch (Exception e) {
                 throw new FormUrlEncodedMapperException("Received unsupported type for conversion.\n" +
                         "    Model type: " + model.getClass().getName() + "\n" +
-                        "    Field type: " + fieldType.getName() + "\n" +
+                        "    Field type: " + fieldType.getSimpleName() + "\n" +
                         "    Field name: " + field.getName() + "\n" +
                         "    URL form field name: " + getFormUrlEncodedFieldName(field) + "\n" +
                         "    Type to convert: " + arrayComponentType + "\n" +
@@ -250,6 +274,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * @return converted {@link Collection}
      * @throws FormUrlEncodedMapperException if conversion type is different from {@link List}, {@link Set}
      * @throws FormUrlEncodedMapperException if {@link Collection} generic type ({@code <?>}) not supported
+     * @see FormUrlEncodedMapper#convertUrlDecodedStringValueToType
      */
     @EverythingIsNonNull
     protected Collection<Object> convertParameterizedType(final Object model,
@@ -266,7 +291,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
             final List<Object> list = new ArrayList<>();
             for (String element : value) {
                 try {
-                    list.add(convertStringValueToType(element, targetType));
+                    list.add(convertUrlDecodedStringValueToType(element, targetType));
                 } catch (Exception e) {
                     throw new FormUrlEncodedMapperException("Received unsupported type for conversion.\n" +
                             "    Model type: " + model.getClass().getName() + "\n" +
@@ -317,7 +342,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * @throws IllegalArgumentException if the value cannot be converted to {@link Boolean} type
      * @throws NumberFormatException    if the value cannot be converted to number types
      */
-    protected Object convertStringValueToType(final String value, final Type targetType) {
+    protected Object convertUrlDecodedStringValueToType(final String value, final Type targetType) {
         Utils.parameterRequireNonNull(value, "value");
         Utils.parameterRequireNonNull(targetType, "targetType");
         if (targetType instanceof Class && ((Class<?>) targetType).isPrimitive()) {
@@ -463,25 +488,26 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * - {@code name= -> {name:[""]}}
      * - {@code name=%7B%22a%22%3D%22%26%22%7D -> {name:["{\"a\"=\"&\"}"]}}
      *
-     * @param rawData - `x-www-form-urlencoded` string
-     * @param charset - URL decoding {@link Charset}
+     * @param urlEncodedString - `x-www-form-urlencoded` string
+     * @param charset          - URL decoding {@link Charset}
      * @return {@link Map} where key - field name, value - list of field values (1...n)
      * @throws FormUrlEncodedMapperException - broken urlencoded string (for example a=b=c)
      * @throws FormUrlEncodedMapperException - unsupported URL decoding {@link Charset}
      */
     @EverythingIsNonNull
-    protected Map<String, List<String>> parseEncodedString(final String rawData, final Charset charset) {
-        Utils.parameterRequireNonNull(rawData, "rawData");
+    protected Map<String, List<String>> parseAndDecodeUrlEncodedString(final String urlEncodedString,
+                                                                       final Charset charset) {
+        Utils.parameterRequireNonNull(urlEncodedString, "urlEncodedString");
         Utils.parameterRequireNonNull(charset, "charset");
         final Map<String, List<String>> result = new HashMap<>();
-        if (rawData.trim().length() == 0) {
+        if (urlEncodedString.trim().length() == 0) {
             return result;
         }
         final String prepared;
-        if (rawData.startsWith("?")) {
-            prepared = rawData.substring(1);
+        if (urlEncodedString.startsWith("?")) {
+            prepared = urlEncodedString.substring(1);
         } else {
-            prepared = rawData;
+            prepared = urlEncodedString;
         }
         final String[] pairs = prepared.split("&");
         for (String pair : pairs) {
@@ -490,7 +516,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
             }
             final String[] split = pair.split("=");
             if (split.length > 2 || split.length == 0) {
-                throw new FormUrlEncodedMapperException("URL encoded string not in URL format:\n" + rawData);
+                throw new FormUrlEncodedMapperException("URL encoded string not in URL format:\n" + urlEncodedString);
             }
             final String key = split[0];
             final String urlEncodedValue;
