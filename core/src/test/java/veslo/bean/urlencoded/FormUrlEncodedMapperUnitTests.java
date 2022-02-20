@@ -31,8 +31,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests.TypedModel.LIST_INTEGER_FIELD;
-import static veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests.TypedModel.LIST_STRING_FIELD;
+import static veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests.TypedModel.*;
 
 @SuppressWarnings({"ConstantConditions", "unused"})
 @DisplayName("FormUrlEncodedMapper.class unit tests")
@@ -77,10 +76,10 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             assertThrow(() -> MAPPER.getAdditionalProperties(AdditionalFieldsInvalidType.class))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("Invalid field type with @FormUrlEncodedAdditionalProperties annotation\n" +
-                            "    Model         - " + AdditionalFieldsInvalidType.class + "\n" +
-                            "    Field         - additionalProperties\n" +
-                            "    Actual type   - java.util.Map<?, ?>\n" +
-                            "    Expected type - java.util.Map<java.lang.String, java.lang.Object>\n");
+                            "    Model: " + AdditionalFieldsInvalidType.class + "\n" +
+                            "    Field: additionalProperties\n" +
+                            "    Actual type: java.util.Map<?, ?>\n" +
+                            "    Expected type: java.util.Map<java.lang.String, java.lang.Object>\n");
         }
 
         @Test
@@ -89,10 +88,10 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             assertThrow(() -> MAPPER.getAdditionalProperties(AdditionalFieldsRawMap.class))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("Invalid field type with @FormUrlEncodedAdditionalProperties annotation\n" +
-                            "    Model         - " + AdditionalFieldsRawMap.class + "\n" +
-                            "    Field         - additionalProperties\n" +
-                            "    Actual type   - java.util.Map\n" +
-                            "    Expected type - java.util.Map<java.lang.String, java.lang.Object>\n");
+                            "    Model: " + AdditionalFieldsRawMap.class + "\n" +
+                            "    Field: additionalProperties\n" +
+                            "    Actual type: java.util.Map\n" +
+                            "    Expected type: java.util.Map<java.lang.String, java.lang.Object>\n");
         }
 
         @Test
@@ -101,10 +100,10 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             assertThrow(() -> MAPPER.getAdditionalProperties(AdditionalFieldsList.class))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("Invalid field type with @FormUrlEncodedAdditionalProperties annotation\n" +
-                            "    Model         - " + AdditionalFieldsList.class + "\n" +
-                            "    Field         - additionalProperties\n" +
-                            "    Actual type   - java.util.List<java.lang.String>\n" +
-                            "    Expected type - java.util.Map<java.lang.String, java.lang.Object>\n");
+                            "    Model: " + AdditionalFieldsList.class + "\n" +
+                            "    Field: additionalProperties\n" +
+                            "    Actual type: java.util.List<java.lang.String>\n" +
+                            "    Expected type: java.util.Map<java.lang.String, java.lang.Object>\n");
         }
 
         @Test
@@ -319,13 +318,84 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
 
     }
 
+    @Nested
+    @DisplayName("#getFormUrlEncodedFieldName() method tests")
+    public class GetFormUrlEncodedFieldNameMethodTests {
+
+        @Test
+        @DisplayName("Required parameters")
+        public void test1645374343042() {
+            assertNPE(() -> MAPPER.getFormUrlEncodedFieldName(null), "field");
+        }
+
+        @Test
+        @DisplayName("Successfully getting URL field name from FormUrlEncodedField annotation")
+        public void test1645374994327() {
+            final Field field = field(STRING_FIELD);
+            final String result = MAPPER.getFormUrlEncodedFieldName(field);
+            assertIs(result, STRING_FIELD);
+        }
+
+        @Test
+        @DisplayName("FormUrlEncodedMapperException throws if FormUrlEncodedField.value = empty string")
+        public void test1645375279348() {
+            final Field field = field(EMPTY_FORM_URL_ENCODED_FIELD_VALUE);
+            assertThrow(() -> MAPPER.getFormUrlEncodedFieldName(field))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("" +
+                            "URL field name can not be empty or blank.\n" +
+                            "    Field: emptyFormUrlEncodedFieldValue\n" +
+                            "    Annotation: veslo.bean.urlencoded.FormUrlEncodedField\n" +
+                            "    Method: value()\n" +
+                            "    Actual: ''\n");
+        }
+
+        @Test
+        @DisplayName("FormUrlEncodedMapperException throws if FormUrlEncodedField.value = blank string")
+        public void test1645375670651() {
+            final Field field = field(BLANK_FORM_URL_ENCODED_FIELD_VALUE);
+            assertThrow(() -> MAPPER.getFormUrlEncodedFieldName(field))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("" +
+                            "URL field name can not be empty or blank.\n" +
+                            "    Field: blankFormUrlEncodedFieldValue\n" +
+                            "    Annotation: veslo.bean.urlencoded.FormUrlEncodedField\n" +
+                            "    Method: value()\n" +
+                            "    Actual: ' \n'\n");
+        }
+
+        @Test
+        @DisplayName("FormUrlEncodedMapperException throws if field does not contain @FormUrlEncodedField annotation")
+        public void test1645376067254() {
+            final Field field = TypedModel.fieldWithoutFormUrlEncodedFieldAnnotation();
+            assertThrow(() -> MAPPER.getFormUrlEncodedFieldName(field))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("" +
+                            "Field does not contain a required annotation.\n" +
+                            "    Field: withoutAnnotation\n" +
+                            "    Expected annotation: veslo.bean.urlencoded.FormUrlEncodedField\n");
+        }
+
+    }
+
     @FormUrlEncoded
     static class TypedModel {
 
+        static final String EMPTY_FORM_URL_ENCODED_FIELD_VALUE = "";
+        static final String BLANK_FORM_URL_ENCODED_FIELD_VALUE = " \n";
+        static final String STRING_FIELD = "stringField";
         static final String LIST_STRING_FIELD = "listStringField";
         static final String LIST_INTEGER_FIELD = "listIntegerField";
 
-        @FormUrlEncodedField("stringField")
+        private String withoutAnnotation;
+
+        @FormUrlEncodedField(EMPTY_FORM_URL_ENCODED_FIELD_VALUE)
+        private String emptyFormUrlEncodedFieldValue;
+
+        @FormUrlEncodedField(BLANK_FORM_URL_ENCODED_FIELD_VALUE)
+        private String blankFormUrlEncodedFieldValue;
+
+        @FormUrlEncodedField(STRING_FIELD)
         private String stringField;
 
         @FormUrlEncodedField(LIST_STRING_FIELD)
@@ -333,6 +403,13 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
 
         @FormUrlEncodedField(LIST_INTEGER_FIELD)
         private List<Integer> listIntegerField;
+
+        static Field fieldWithoutFormUrlEncodedFieldAnnotation() {
+            return Arrays.stream(TypedModel.class.getDeclaredFields())
+                    .filter(f -> f.getName().equals("withoutAnnotation"))
+                    .findFirst()
+                    .orElseThrow(CorruptedTestException::new);
+        }
 
         static Field field(String name) {
             return Arrays.stream(TypedModel.class.getDeclaredFields())

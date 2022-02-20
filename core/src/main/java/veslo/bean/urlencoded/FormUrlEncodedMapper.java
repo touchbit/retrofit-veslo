@@ -128,8 +128,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
                 .collect(Collectors.toList());
         final List<Field> handledAnnotatedFields = new ArrayList<>();
         for (Field annotatedField : annotatedFields) {
-            final FormUrlEncodedField annotation = annotatedField.getAnnotation(FormUrlEncodedField.class);
-            final String fieldName = annotation.value();
+            final String fieldName = getFormUrlEncodedFieldName(annotatedField);
             final List<String> value = parsed.get(fieldName);
             if (value == null) {
                 handledAnnotatedFields.add(annotatedField);
@@ -141,8 +140,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         }
         if (additionalProperties != null) {
             handledAnnotatedFields.stream()
-                    .map(f -> f.getAnnotation(FormUrlEncodedField.class))
-                    .map(FormUrlEncodedField::value)
+                    .map(this::getFormUrlEncodedFieldName)
                     .forEach(parsed::remove);
             additionalProperties.putAll(parsed);
         }
@@ -194,12 +192,12 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
             return convertStringValueToType(forConvert, fieldType);
         } catch (Exception e) {
             throw new FormUrlEncodedMapperException("Error converting string to field type.\n" +
-                    "Model type: " + model.getClass().getName() + "\n" +
-                    "Field type: " + fieldType.getName() + "\n" +
-                    "Field name: " + field.getName() + "\n" +
-                    "URL form field name: " + getFormUrlEncodedFieldName(field) + "\n" +
-                    "Value for convert: " + forConvert + "\n" +
-                    "Error cause: " + e.getMessage() + "\n");
+                    "    Model type: " + model.getClass().getName() + "\n" +
+                    "    Field type: " + fieldType.getName() + "\n" +
+                    "    Field name: " + field.getName() + "\n" +
+                    "    URL form field name: " + getFormUrlEncodedFieldName(field) + "\n" +
+                    "    Value for convert: " + forConvert + "\n" +
+                    "    Error cause: " + e.getMessage().trim() + "\n");
         }
     }
 
@@ -210,11 +208,11 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
                                         final List<String> value) {
         if (!fieldType.isArray()) {
             throw new FormUrlEncodedMapperException("Mismatch types. Got a single type instead of an array.\n" +
-                    "Model type: " + model.getClass().getName() +
-                    "Field type: " + fieldType.getName() + "\n" +
-                    "Field name: " + field.getName() + "\n" +
-                    "URL form field name: " + getFormUrlEncodedFieldName(field) +
-                    "Expected type: array\n");
+                    "    Model type: " + model.getClass().getName() +
+                    "    Field type: " + fieldType.getName() + "\n" +
+                    "    Field name: " + field.getName() + "\n" +
+                    "    URL form field name: " + getFormUrlEncodedFieldName(field) +
+                    "    Expected type: array\n");
         }
         final List<Object> result = new ArrayList<>();
         for (String element : value) {
@@ -224,13 +222,13 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
                 result.add(convertedValue);
             } catch (Exception e) {
                 throw new FormUrlEncodedMapperException("Received unsupported type for conversion.\n" +
-                        "Model type: " + model.getClass().getName() + "\n" +
-                        "Field type: " + fieldType.getName() + "\n" +
-                        "Field name: " + field.getName() + "\n" +
-                        "URL form field name: " + getFormUrlEncodedFieldName(field) + "\n" +
-                        "Type to convert: " + arrayComponentType + "\n" +
-                        "Value for convert: " + element + "\n" +
-                        "Error cause: " + e.getMessage() + "\n");
+                        "    Model type: " + model.getClass().getName() + "\n" +
+                        "    Field type: " + fieldType.getName() + "\n" +
+                        "    Field name: " + field.getName() + "\n" +
+                        "    URL form field name: " + getFormUrlEncodedFieldName(field) + "\n" +
+                        "    Type to convert: " + arrayComponentType + "\n" +
+                        "    Value for convert: " + element + "\n" +
+                        "    Error cause: " + e.getMessage().trim() + "\n");
             }
         }
         return result.toArray();
@@ -250,13 +248,13 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
                     list.add(convertStringValueToType(element, targetType));
                 } catch (Exception e) {
                     throw new FormUrlEncodedMapperException("Received unsupported type for conversion.\n" +
-                            "Model type: " + model.getClass().getName() + "\n" +
-                            "Field type: " + rawType + "\n" +
-                            "Field name: " + field.getName() + "\n" +
-                            "URL form field name: " + getFormUrlEncodedFieldName(field) + "\n" +
-                            "Type to convert: " + targetType + "\n" +
-                            "Value for convert: " + element + "\n" +
-                            "Error cause: " + e.getMessage() + "\n");
+                            "    Model type: " + model.getClass().getName() + "\n" +
+                            "    Field type: " + rawType + "\n" +
+                            "    Field name: " + field.getName() + "\n" +
+                            "    URL form field name: " + getFormUrlEncodedFieldName(field) + "\n" +
+                            "    Type to convert: " + targetType + "\n" +
+                            "    Value for convert: " + element + "\n" +
+                            "    Error cause: " + e.getMessage().trim() + "\n");
                 }
             }
             if (List.class.equals(rawType)) {
@@ -267,13 +265,13 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
             }
         }
         throw new FormUrlEncodedMapperException("Received unsupported parameterized type for conversion.\n" +
-                "Model type: " + model.getClass().getName() + "\n" +
-                "Field type: " + rawType + "\n" +
-                "Field name: " + field.getName() + "\n" +
-                "URL form field name: " + getFormUrlEncodedFieldName(field) + "\n" +
-                "Supported parameterized types:\n" +
-                " - " + List.class.getName() + "\n" +
-                " - " + Set.class.getName() + "\n");
+                "    Model type: " + model.getClass().getName() + "\n" +
+                "    Field type: " + rawType + "\n" +
+                "    Field name: " + field.getName() + "\n" +
+                "    URL form field name: " + getFormUrlEncodedFieldName(field) + "\n" +
+                "    Supported parameterized types:\n" +
+                "    - " + List.class.getName() + "\n" +
+                "    - " + Set.class.getName() + "\n");
     }
 
     protected Object convertStringValueToType(final String value, final Type targetType) {
@@ -315,11 +313,11 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
             FieldUtils.writeDeclaredField(model, field.getName(), value, true);
         } catch (Exception e) {
             throw new FormUrlEncodedMapperException("Unable to write field value.\n" +
-                    "Model       - " + model.getClass().getName() + "\n" +
-                    "Field name  - " + field.getName() + "\n" +
-                    "Field type  - " + field.getType() + "\n" +
-                    "Field value - " + value + "\n" +
-                    "Error       - " + e.getMessage() + "\n", e);
+                    "    Model: " + model.getClass().getName() + "\n" +
+                    "    Field name: " + field.getName() + "\n" +
+                    "    Field type: " + field.getType() + "\n" +
+                    "    Field value: " + value + "\n" +
+                    "    Error cause: " + e.getMessage().trim() + "\n", e);
         }
     }
 
@@ -341,8 +339,8 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
             final String fNames = additionalProperties.stream().map(Field::getName).collect(Collectors.joining(", "));
             throw new FormUrlEncodedMapperException("Model contains more than one field annotated with " +
                     FormUrlEncodedAdditionalProperties.class.getSimpleName() + ":\n" +
-                    "    Model  - " + modelClass + "\n" +
-                    "    Fields - " + fNames + "\n");
+                    "    Model: " + modelClass + "\n" +
+                    "    Fields: " + fNames + "\n");
         }
         if (additionalProperties.isEmpty()) {
             return null;
@@ -363,10 +361,10 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         if (!isParameterizedType || !isMap || !isValidTypeArguments) {
             throw new FormUrlEncodedMapperException("Invalid field type with @" +
                     FormUrlEncodedAdditionalProperties.class.getSimpleName() + " annotation\n" +
-                    "    Model         - " + modelClass + "\n" +
-                    "    Field         - " + additionalProperty.getName() + "\n" +
-                    "    Actual type   - " + type.getTypeName() + "\n" +
-                    "    Expected type - java.util.Map<java.lang.String, java.lang.Object>\n");
+                    "    Model: " + modelClass + "\n" +
+                    "    Field: " + additionalProperty.getName() + "\n" +
+                    "    Actual type: " + type.getTypeName() + "\n" +
+                    "    Expected type: java.util.Map<java.lang.String, java.lang.Object>\n");
         }
         return additionalProperty;
     }
@@ -445,15 +443,28 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         return result;
     }
 
+    /**
+     * @param field - model field
+     * @return URL form field name from the {@link FormUrlEncodedField} field annotation
+     */
     @EverythingIsNonNull
     protected String getFormUrlEncodedFieldName(final Field field) {
         Utils.parameterRequireNonNull(field, "field");
         final FormUrlEncodedField annotation = field.getAnnotation(FormUrlEncodedField.class);
         if (annotation == null) {
-            throw new FormUrlEncodedMapperException("The '" + field.getName() + "' field does not contain the @" +
-                    FormUrlEncodedAdditionalProperties.class.getSimpleName() + " annotation.");
+            throw new FormUrlEncodedMapperException("Field does not contain a required annotation.\n" +
+                    "    Field: " + field.getName() + "\n" +
+                    "    Expected annotation: " + FormUrlEncodedField.class.getName() + "\n");
         }
-        return annotation.value();
+        final String value = annotation.value();
+        if (value.trim().isEmpty()) {
+            throw new FormUrlEncodedMapperException("URL field name can not be empty or blank.\n" +
+                    "    Field: " + field.getName() + "\n" +
+                    "    Annotation: " + FormUrlEncodedField.class.getName() + "\n" +
+                    "    Method: value()\n" +
+                    "    Actual: '" + value + "'\n");
+        }
+        return value;
     }
 
 }
