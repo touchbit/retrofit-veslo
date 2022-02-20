@@ -18,12 +18,14 @@ package veslo.bean.urlencoded;
 
 import internal.test.utils.BaseUnitTest;
 import internal.test.utils.CorruptedTestException;
+import internal.test.utils.TestUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import veslo.FormUrlEncodedMapperException;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
@@ -421,7 +423,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         public void test1645377473744() {
             assertThrow(() -> MAPPER.convertStringValueToType("false", Map.class))
                     .assertClass(IllegalArgumentException.class)
-                    .assertMessageIs("Received unsupported field type for conversion: interface java.util.Map");
+                    .assertMessageIs("Received unsupported type for conversion: interface java.util.Map");
         }
 
     }
@@ -486,6 +488,126 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
 
     }
 
+    @Nested
+    @DisplayName("#convertParameterizedType() method tests")
+    public class ConvertParameterizedTypeMethodTests {
+
+        @Test
+        @DisplayName("Required parameters")
+        public void test1645378798457() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(LIST_STRING_FIELD);
+            final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
+            final List<String> value = Collections.singletonList("test");
+            assertNPE(() -> MAPPER.convertParameterizedType(null, field, genericType, value), "model");
+            assertNPE(() -> MAPPER.convertParameterizedType(model, null, genericType, value), "field");
+            assertNPE(() -> MAPPER.convertParameterizedType(model, field, null, value), "parameterizedType");
+            assertNPE(() -> MAPPER.convertParameterizedType(model, field, genericType, null), "value");
+        }
+
+        @Test
+        @DisplayName("Successfully conversion '[test]' string to List<String> type")
+        public void test1645379107057() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(LIST_STRING_FIELD);
+            final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
+            final List<String> value = Collections.singletonList("test");
+            final Collection<Object> collection = MAPPER.convertParameterizedType(model, field, genericType, value);
+            assertThat(collection, instanceOf(List.class));
+            assertThat(collection, contains("test"));
+        }
+
+        @Test
+        @DisplayName("Successfully conversion '[test1, test2]' string to List<String> type")
+        public void test1645379248235() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(LIST_STRING_FIELD);
+            final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
+            final List<String> value = TestUtils.listOf("test1", "test2");
+            final Collection<Object> collection = MAPPER.convertParameterizedType(model, field, genericType, value);
+            assertThat(collection, instanceOf(List.class));
+            assertThat(collection, containsInAnyOrder("test1", "test2"));
+        }
+
+        @Test
+        @DisplayName("Successfully conversion '[1, 2]' string to List<Integer> type")
+        public void test1645379404348() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(LIST_INTEGER_FIELD);
+            final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
+            final List<String> value = TestUtils.listOf("1", "2");
+            final Collection<Object> collection = MAPPER.convertParameterizedType(model, field, genericType, value);
+            assertThat(collection, instanceOf(List.class));
+            assertThat(collection, containsInAnyOrder(1, 2));
+        }
+
+        @Test
+        @DisplayName("Successfully conversion '[test1, test2]' string to Set<String> type")
+        public void test1645379523002() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(SET_STRING_FIELD);
+            final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
+            final List<String> value = TestUtils.listOf("test1", "test2");
+            final Collection<Object> collection = MAPPER.convertParameterizedType(model, field, genericType, value);
+            assertThat(collection, instanceOf(Set.class));
+            assertThat(collection, containsInAnyOrder("test1", "test2"));
+        }
+
+        @Test
+        @DisplayName("Successfully conversion '[test, test]' string to Set<String> type")
+        public void test1645379575376() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(SET_STRING_FIELD);
+            final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
+            final List<String> value = TestUtils.listOf("test", "test");
+            final Collection<Object> collection = MAPPER.convertParameterizedType(model, field, genericType, value);
+            assertThat(collection, instanceOf(Set.class));
+            assertThat(collection, contains("test"));
+        }
+
+        @Test
+        @DisplayName("FormUrlEncodedMapperException -> unsupported parameterized type (Map<>)")
+        public void test1645379801127() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(MAP_STRING_INTEGER_FIELD);
+            final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
+            final List<String> value = TestUtils.listOf("test", "test");
+            assertThrow(() -> MAPPER.convertParameterizedType(model, field, genericType, value))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("" +
+                            "Received unsupported parameterized type for conversion.\n" +
+                            "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$TypedModel\n" +
+                            "    Field type: interface java.util.Map\n" +
+                            "    Field name: mapStringIntegerField\n" +
+                            "    URL form field name: mapStringIntegerField\n" +
+                            "    Supported parameterized types:\n" +
+                            "    - java.util.List\n" +
+                            "    - java.util.Set\n");
+        }
+
+        @Test
+        @DisplayName("FormUrlEncodedMapperException -> unsupported parameterized type (generic type argument)")
+        public void test1645379919097() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(LIST_ENUM_FIELD);
+            final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
+            final List<String> value = TestUtils.listOf("test", "test");
+            assertThrow(() -> MAPPER.convertParameterizedType(model, field, genericType, value))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("" +
+                            "Received unsupported type for conversion.\n" +
+                            "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$TypedModel\n" +
+                            "    Field type: java.util.List<java.lang.Enum<?>>\n" +
+                            "    Field name: listEnumField\n" +
+                            "    URL form field name: listEnumField\n" +
+                            "    Type to convert: java.lang.Enum<?>\n" +
+                            "    Value for convert: test\n" +
+                            "    Error cause: Received unsupported type for conversion: java.lang.Enum<?>\n");
+        }
+
+    }
+
+    @SuppressWarnings("rawtypes")
     @FormUrlEncoded
     static class TypedModel {
 
@@ -494,7 +616,13 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         static final String STRING_FIELD = "stringField";
         static final String LIST_STRING_FIELD = "listStringField";
         static final String LIST_INTEGER_FIELD = "listIntegerField";
+        static final String SET_STRING_FIELD = "setStringField";
+        static final String SET_INTEGER_FIELD = "setIntegerField";
         static final String PRIMITIVE_FIELD = "primitiveField";
+        static final String MAP_STRING_INTEGER_FIELD = "mapStringIntegerField";
+        static final String MAP_RAW_FIELD = "mapRawField";
+        static final String LIST_RAW_FIELD = "listRawField";
+        static final String LIST_ENUM_FIELD = "listEnumField";
 
         private String withoutAnnotation;
 
@@ -515,6 +643,24 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
 
         @FormUrlEncodedField(LIST_INTEGER_FIELD)
         private List<Integer> listIntegerField;
+
+        @FormUrlEncodedField(LIST_ENUM_FIELD)
+        private List<Enum<?>> listEnumField;
+
+        @FormUrlEncodedField(SET_STRING_FIELD)
+        private Set<String> setStringField;
+
+        @FormUrlEncodedField(SET_INTEGER_FIELD)
+        private Set<Integer> setIntegerField;
+
+        @FormUrlEncodedField(MAP_STRING_INTEGER_FIELD)
+        private Map<String, Integer> mapStringIntegerField;
+
+        @FormUrlEncodedField(MAP_RAW_FIELD)
+        private Map mapRawField;
+
+        @FormUrlEncodedField(LIST_RAW_FIELD)
+        private List listRawField;
 
         static Field fieldWithoutFormUrlEncodedFieldAnnotation() {
             return Arrays.stream(TypedModel.class.getDeclaredFields())

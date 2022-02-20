@@ -93,7 +93,10 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * @param <M>           - FormUrlEncoded model type
      * @return completed model
      */
+    @EverythingIsNonNull
     public <M> M unmarshal(final Class<M> modelClass, final String encodedString) {
+        Utils.parameterRequireNonNull(modelClass, "modelClass");
+        Utils.parameterRequireNonNull(encodedString, "encodedString");
         return unmarshal(modelClass, encodedString, UTF_8);
     }
 
@@ -234,11 +237,29 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         return result.toArray();
     }
 
+    /**
+     * Converts a [string] to the target {@link ParameterizedType}.
+     * Supports the following types for conversion:
+     * - {@link List}
+     * - {@link Set}
+     *
+     * @param model             - FormUrlEncoded model
+     * @param field             - model field
+     * @param parameterizedType - field type
+     * @param value             - String value to convert
+     * @return converted {@link Collection}
+     * @throws FormUrlEncodedMapperException if conversion type is different from {@link List}, {@link Set}
+     * @throws FormUrlEncodedMapperException if {@link Collection} generic type ({@code <?>}) not supported
+     */
     @EverythingIsNonNull
     protected Collection<Object> convertParameterizedType(final Object model,
                                                           final Field field,
                                                           final ParameterizedType parameterizedType,
                                                           final List<String> value) {
+        Utils.parameterRequireNonNull(model, "model");
+        Utils.parameterRequireNonNull(field, "field");
+        Utils.parameterRequireNonNull(parameterizedType, "parameterizedType");
+        Utils.parameterRequireNonNull(value, "value");
         final Type rawType = parameterizedType.getRawType();
         final Type targetType = parameterizedType.getActualTypeArguments()[0];
         if (Collection.class.isAssignableFrom((Class<?>) rawType)) {
@@ -249,7 +270,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
                 } catch (Exception e) {
                     throw new FormUrlEncodedMapperException("Received unsupported type for conversion.\n" +
                             "    Model type: " + model.getClass().getName() + "\n" +
-                            "    Field type: " + rawType + "\n" +
+                            "    Field type: " + parameterizedType + "\n" +
                             "    Field name: " + field.getName() + "\n" +
                             "    URL form field name: " + getFormUrlEncodedFieldName(field) + "\n" +
                             "    Type to convert: " + targetType + "\n" +
@@ -274,15 +295,38 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
                 "    - " + Set.class.getName() + "\n");
     }
 
+    /**
+     * Converts a string to the target type.
+     * Supports the following types for conversion:
+     * - {@link String}
+     * - {@link Object} (string by default)
+     * - {@link Boolean}
+     * - {@link Short}
+     * - {@link Long}
+     * - {@link Float}
+     * - {@link Integer}
+     * - {@link Double}
+     * - {@link BigInteger}
+     * - {@link BigDecimal}
+     *
+     * @param value      - String value to convert
+     * @param targetType - Java type to which the string is converted
+     * @return converted value
+     * @throws IllegalArgumentException if targetType is primitive
+     * @throws IllegalArgumentException if targetType not supported
+     * @throws IllegalArgumentException if the value cannot be converted to {@link Boolean} type
+     * @throws NumberFormatException    if the value cannot be converted to number types
+     */
     protected Object convertStringValueToType(final String value, final Type targetType) {
         Utils.parameterRequireNonNull(value, "value");
         Utils.parameterRequireNonNull(targetType, "targetType");
         if (targetType instanceof Class && ((Class<?>) targetType).isPrimitive()) {
-            throw new IllegalArgumentException("It is forbidden to use primitive types in FormUrlEncoded models: " + targetType);
+            throw new IllegalArgumentException("It is forbidden to use primitive types " +
+                    "in FormUrlEncoded models: " + targetType);
         }
         if (targetType.equals(String.class) || targetType.equals(Object.class)) {
             return value;
-        } else if (targetType.equals(Boolean.class) || targetType.equals(Boolean.TYPE)) {
+        } else if (targetType.equals(Boolean.class)) {
             if ("true".equals(value)) {
                 return true;
             }
@@ -290,22 +334,22 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
                 return false;
             }
             throw new IllegalArgumentException("Cannot convert string to boolean: '" + value + "'");
-        } else if (targetType.equals(Short.class) || targetType.equals(Short.TYPE)) {
+        } else if (targetType.equals(Short.class)) {
             return Short.valueOf(value);
-        } else if (targetType.equals(Long.class) || targetType.equals(Long.TYPE)) {
+        } else if (targetType.equals(Long.class)) {
             return Long.valueOf(value);
-        } else if (targetType.equals(Float.class) || targetType.equals(Float.TYPE)) {
+        } else if (targetType.equals(Float.class)) {
             return Float.valueOf(value);
-        } else if (targetType.equals(Integer.class) || targetType.equals(Integer.TYPE)) {
+        } else if (targetType.equals(Integer.class)) {
             return Integer.valueOf(value);
-        } else if (targetType.equals(Double.class) || targetType.equals(Double.TYPE)) {
+        } else if (targetType.equals(Double.class)) {
             return Double.valueOf(value);
         } else if (targetType.equals(BigInteger.class)) {
             return NumberUtils.createBigInteger(value);
         } else if (targetType.equals(BigDecimal.class)) {
             return NumberUtils.createBigDecimal(value);
         } else {
-            throw new IllegalArgumentException("Received unsupported field type for conversion: " + targetType);
+            throw new IllegalArgumentException("Received unsupported type for conversion: " + targetType);
         }
     }
 
@@ -408,6 +452,23 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         }
     }
 
+    /**
+     * Parse `x-www-form-urlencoded` String
+     * According to the 3W specification, it is strongly recommended to use UTF-8 encoding.
+     * - {@code name=value -> {"name":["value"]}}
+     * - {@code &name=value -> {"name":["value"]}}
+     * - {@code ?name=value -> {"name":["value"]}}
+     * - {@code name=value1&name=value2 -> {"name":["value1", "value2"]}}
+     * - {@code name1=value1&name2=value2 -> {"name1":["value1"], "name2":["value2"]}}
+     * - {@code name= -> {name:[""]}}
+     * - {@code name=%7B%22a%22%3D%22%26%22%7D -> {name:["{\"a\"=\"&\"}"]}}
+     *
+     * @param rawData - `x-www-form-urlencoded` string
+     * @param charset - URL decoding {@link Charset}
+     * @return {@link Map} where key - field name, value - list of field values (1...n)
+     * @throws FormUrlEncodedMapperException - broken urlencoded string (for example a=b=c)
+     * @throws FormUrlEncodedMapperException - unsupported URL decoding {@link Charset}
+     */
     @EverythingIsNonNull
     protected Map<String, List<String>> parseEncodedString(final String rawData, final Charset charset) {
         Utils.parameterRequireNonNull(rawData, "rawData");
@@ -451,6 +512,8 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
     /**
      * @param field - model field
      * @return URL form field name from the {@link FormUrlEncodedField} field annotation
+     * @throws FormUrlEncodedMapperException if field does not contain {@link FormUrlEncodedField} annotation
+     * @throws FormUrlEncodedMapperException if {@link FormUrlEncodedField#value()} is empty or blank
      */
     @EverythingIsNonNull
     protected String getFormUrlEncodedFieldName(final Field field) {

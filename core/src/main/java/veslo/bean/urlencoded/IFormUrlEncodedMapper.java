@@ -39,12 +39,23 @@ public interface IFormUrlEncodedMapper {
      * String to model conversion
      *
      * @param modelClass - FormUrlEncoded model class
-     * @param data       - String data to conversation
+     * @param encodedString       - String data to conversation
      * @param charset    - String data charset
      * @param <M>        - FormUrlEncoded model type
      * @return completed model
      */
     @EverythingIsNonNull
-    <M> M unmarshal(final Class<M> modelClass, final String data, final Charset charset);
+    <M> M unmarshal(final Class<M> modelClass, final String encodedString, final Charset charset);
+
+    /**
+     * String to model conversion
+     *
+     * @param modelClass    - FormUrlEncoded model class
+     * @param encodedString - URL encoded string to conversation (UTF-8 encode charset)
+     * @param <M>           - FormUrlEncoded model type
+     * @return completed model
+     */
+    @EverythingIsNonNull
+    <M> M unmarshal(final Class<M> modelClass, final String encodedString);
 
 }
