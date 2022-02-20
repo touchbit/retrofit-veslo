@@ -847,6 +847,68 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
 
     }
 
+    @Nested
+    @DisplayName("#writeFieldValue() method tests")
+    public class WriteFieldValueMethodTests {
+
+        @Test
+        @DisplayName("Required parameters")
+        public void test1645390941993() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(STRING_FIELD);
+            assertNPE(() -> MAPPER.writeFieldValue(null, field, "fooBar"), "model");
+            assertNPE(() -> MAPPER.writeFieldValue(model, null, "fooBar"), "field");
+            assertNPE(() -> MAPPER.writeFieldValue(model, field, null), "value");
+        }
+
+        @Test
+        @DisplayName("Successfully writing String to the model field")
+        public void test1645391130913() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(STRING_FIELD);
+            MAPPER.writeFieldValue(model, field, "fooBar");
+            assertIs(model.stringField, "fooBar");
+        }
+
+        @Test
+        @DisplayName("Successfully writing String[] to the model field")
+        public void test1645391207681() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(STRING_ARRAY_FIELD);
+            MAPPER.writeFieldValue(model, field, new String[]{"fooBar1", "fooBar2"});
+            assertThat(model.stringArrayField, arrayContaining("fooBar1", "fooBar2"));
+        }
+
+        @Test
+        @DisplayName("Successfully writing List<String> to the model field")
+        public void test1645391288159() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(LIST_STRING_FIELD);
+            MAPPER.writeFieldValue(model, field, listOf("fooBar1", "fooBar2"));
+            assertThat(model.listStringField, contains("fooBar1", "fooBar2"));
+        }
+
+        @Test
+        @DisplayName("Throws FormUrlEncodedMapperException if the value cannot be written to the model field")
+        public void test1645391472862() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(STRING_FIELD);
+            assertThrow(() -> MAPPER.writeFieldValue(model, field, listOf("fooBar1", "fooBar2")))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("" +
+                            "Unable to write value to model field.\n" +
+                            "    Model: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$TypedModel\n" +
+                            "    Field name: stringField\n" +
+                            "    Field type: class java.lang.String\n" +
+                            "    Field value: [fooBar1, fooBar2]\n" +
+                            "    Error cause: Can not set java.lang.String field" +
+                            " veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$TypedModel.stringField" +
+                            " to java.util.ArrayList\n");
+        }
+
+
+    }
+
     @FormUrlEncoded
     @SuppressWarnings("rawtypes")
     static class TypedModel {

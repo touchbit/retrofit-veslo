@@ -1,7 +1,6 @@
 # Retrofit Veslo<sup>(paddle)</sup>
 
-![](https://img.shields.io/badge/Java-8%2B-blue?style=plastic&logo=java)
-![](https://maven-badges.herokuapp.com/maven-central/org.touchbit.retrofit.veslo/parent-pom/badge.svg?style=plastic)
+![](https://img.shields.io/badge/Java-8%2B-blue?style=plastic&logo=java) [![](https://maven-badges.herokuapp.com/maven-central/org.touchbit.retrofit.veslo/parent-pom/badge.svg?style=plastic)](https://mvnrepository.com/artifact/org.touchbit.retrofit.veslo)
 
 Описание на русском языке смотреть [тут](https://habr.com/ru/post/647499/).
 

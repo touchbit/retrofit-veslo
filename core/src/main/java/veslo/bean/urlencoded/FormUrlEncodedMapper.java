@@ -408,6 +408,13 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         }
     }
 
+    /**
+     * @param model - FormUrlEncoded model
+     * @param field - model field
+     * @param value - String value to convert
+     * @param <M> model generic type
+     * @throws FormUrlEncodedMapperException if the value cannot be written to the model field
+     */
     @EverythingIsNonNull
     protected <M> void writeFieldValue(M model, Field field, Object value) {
         Utils.parameterRequireNonNull(model, "model");
@@ -416,7 +423,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         try {
             FieldUtils.writeDeclaredField(model, field.getName(), value, true);
         } catch (Exception e) {
-            throw new FormUrlEncodedMapperException("Unable to write field value.\n" +
+            throw new FormUrlEncodedMapperException("Unable to write value to model field.\n" +
                     "    Model: " + model.getClass().getName() + "\n" +
                     "    Field name: " + field.getName() + "\n" +
                     "    Field type: " + field.getType() + "\n" +
