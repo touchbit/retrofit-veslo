@@ -68,6 +68,18 @@
         <maven.compiler.target>${jdk.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <sonar.sources>src/main</sonar.sources>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.organization>touchbit</sonar.organization>
+<!--        <sonar.projectName>Veslo</sonar.projectName>-->
+        <sonar.java.binaries>target/classes</sonar.java.binaries>
+        <sonar.java.test.binaries>target/test-classes</sonar.java.test.binaries>
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.skippedModules>internal-test-module</sonar.skippedModules>
+        <veslo.sonar.exclusions>**/*.xml</veslo.sonar.exclusions>
+        <sonar.exclusions>${veslo.sonar.exclusions}</sonar.exclusions>
+        <sonar.coverage.exclusions>${veslo.sonar.exclusions}</sonar.coverage.exclusions>
+        <sonar.cpd.exclusions/>
     </properties>
 
     <dependencies>
