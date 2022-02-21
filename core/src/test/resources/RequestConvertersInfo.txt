@@ -1,5 +1,7 @@
 SUPPORTED REQUEST CONVERTERS:
 Annotated converters:
+veslo.client.converter.annotated.FormUrlEncodedConverter
+    @veslo.bean.urlencoded.FormUrlEncoded
 veslo.client.converter.annotated.TemplateSourceConverter
     @veslo.bean.template.TemplateSource
 Raw converters:
