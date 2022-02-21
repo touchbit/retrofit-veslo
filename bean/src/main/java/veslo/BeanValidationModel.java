@@ -45,7 +45,7 @@ public interface BeanValidationModel<DTO> {
      */
     @SuppressWarnings("unchecked")
     default DTO assertConsistency() {
-        Logger.getLogger("org.hibernate.validator.internal.util").setLevel(Level.OFF);
+        Logger.getLogger("org.hibernate.validator.internal.util").setLevel(Level.SEVERE);
         final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         final Validator validator = validatorFactory.getValidator();
         final Set<ConstraintViolation<Object>> constraintViolations = validator.validate(this);

@@ -1059,15 +1059,6 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             assertThat(testFactory.getPackageResponseConverters().get(name), nullValue());
         }
 
-        @Test
-        @DisplayName("IllegalArgumentException if invalid package name")
-        public void test1639978358896() {
-            assertThrow(() -> getTestFactory().registerPackageRequestConverter(TestConverter.INSTANCE, "123"))
-                    .assertClass(IllegalArgumentException.class)
-                    .assertMessageIs("Invalid package name: 123\n" +
-                            "Expected regex match: ^[a-zA-Z_]+(:?[a-zA-Z0-9_]*)?+(\\.[a-zA-Z_][a-zA-Z0-9_]*)*$");
-        }
-
     }
 
     @Nested
@@ -1090,167 +1081,6 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             testFactory.registerPackageResponseConverter(TestConverter.INSTANCE, name);
             assertThat(testFactory.getPackageRequestConverters().get(name), nullValue());
             assertThat(testFactory.getPackageResponseConverters().get(name), notNullValue());
-        }
-
-        @Test
-        @DisplayName("IllegalArgumentException if invalid package name")
-        public void test1640471551418() {
-            assertThrow(() -> getTestFactory().registerPackageResponseConverter(TestConverter.INSTANCE, "123"))
-                    .assertClass(IllegalArgumentException.class)
-                    .assertMessageIs("Invalid package name: 123\n" +
-                            "Expected regex match: ^[a-zA-Z_]+(:?[a-zA-Z0-9_]*)?+(\\.[a-zA-Z_][a-zA-Z0-9_]*)*$");
-        }
-
-    }
-
-    @Nested
-    @DisplayName("#assertPackageName() method tests")
-    public class AssertPackageNameMethodTests {
-
-        @Test
-        @DisplayName("Required parameters")
-        public void test1639978907890() {
-            assertNPE(() -> getTestFactory().assertPackageName(null), "packageName");
-        }
-
-        @Test
-        @DisplayName("SUC package name: foo.BAR")
-        public void test1639978930419() {
-            getTestFactory().assertPackageName("foo.BAR");
-        }
-
-        @Test
-        @DisplayName("SUC package name: foo._.BAR")
-        public void test1639979836168() {
-            getTestFactory().assertPackageName("foo._.BAR");
-        }
-
-        @Test
-        @DisplayName("SUC package name: f1")
-        public void test1639979024157() {
-            getTestFactory().assertPackageName("f1");
-        }
-
-        @Test
-        @DisplayName("SUC package name: f_1F")
-        public void test1639979264092() {
-            getTestFactory().assertPackageName("f_1F");
-        }
-
-        @Test
-        @DisplayName("SUC package name: a")
-        public void test1639979056113() {
-            getTestFactory().assertPackageName("a");
-        }
-
-        @Test
-        @DisplayName("SUC package name: A")
-        public void test1639979757520() {
-            getTestFactory().assertPackageName("A");
-        }
-
-        @Test
-        @DisplayName("SUC package name: _")
-        public void test1639979433484() {
-            getTestFactory().assertPackageName("_");
-        }
-
-        @Test
-        @DisplayName("ERR package name: *")
-        public void test1639979144566() {
-            assertThrow(() -> getTestFactory().assertPackageName("*"))
-                    .assertClass(IllegalArgumentException.class);
-        }
-
-        @Test
-        @DisplayName("ERR package name: *.*.*")
-        public void test1639980011141() {
-            assertThrow(() -> getTestFactory().assertPackageName("*.*.*"))
-                    .assertClass(IllegalArgumentException.class);
-        }
-
-        @Test
-        @DisplayName("ERR package name: ***")
-        public void test1639980018896() {
-            assertThrow(() -> getTestFactory().assertPackageName("***"))
-                    .assertClass(IllegalArgumentException.class);
-        }
-
-        @Test
-        @DisplayName("ERR package name: *foo.bar")
-        public void test1639979902263() {
-            assertThrow(() -> getTestFactory().assertPackageName("*foo.bar"))
-                    .assertClass(IllegalArgumentException.class);
-        }
-
-        @Test
-        @DisplayName("ERR package name: foo*.bar")
-        public void test1639979913162() {
-            assertThrow(() -> getTestFactory().assertPackageName("foo*.bar"))
-                    .assertClass(IllegalArgumentException.class);
-        }
-
-        @Test
-        @DisplayName("ERR package name: foo.*.bar")
-        public void test1639979953730() {
-            assertThrow(() -> getTestFactory().assertPackageName("foo.*.bar"))
-                    .assertClass(IllegalArgumentException.class);
-        }
-
-        @Test
-        @DisplayName("ERR package name: foo.*bar")
-        public void test1639979962162() {
-            assertThrow(() -> getTestFactory().assertPackageName("foo.*bar"))
-                    .assertClass(IllegalArgumentException.class);
-        }
-
-        @Test
-        @DisplayName("ERR package name: foo.bar.*")
-        public void test1639979996357() {
-            assertThrow(() -> getTestFactory().assertPackageName("foo.bar.*"))
-                    .assertClass(IllegalArgumentException.class);
-        }
-
-        @Test
-        @DisplayName("ERR package name: foo.bar*")
-        public void test1639980063857() {
-            assertThrow(() -> getTestFactory().assertPackageName("foo.bar*"))
-                    .assertClass(IllegalArgumentException.class);
-        }
-
-        @Test
-        @DisplayName("ERR package name: 1.foo.bar")
-        public void test1639979011490() {
-            assertThrow(() -> getTestFactory().assertPackageName("1.foo.bar"))
-                    .assertClass(IllegalArgumentException.class);
-        }
-
-        @Test
-        @DisplayName("ERR package name: foo.1.bar")
-        public void test1639979114654() {
-            assertThrow(() -> getTestFactory().assertPackageName("foo.1.bar"))
-                    .assertClass(IllegalArgumentException.class);
-        }
-
-        @Test
-        @DisplayName("ERR package name: foo.bar.1")
-        public void test1639979125055() {
-            assertThrow(() -> getTestFactory().assertPackageName("foo.bar.1"))
-                    .assertClass(IllegalArgumentException.class);
-        }
-
-        @Test
-        @DisplayName("ERR package name: .")
-        public void test1639979136699() {
-            assertThrow(() -> getTestFactory().assertPackageName("."))
-                    .assertClass(IllegalArgumentException.class);
-        }
-
-        @Test
-        @DisplayName("ERR package name: <empty>")
-        public void test1639979707475() {
-            assertThrow(() -> getTestFactory().assertPackageName(""))
-                    .assertClass(IllegalArgumentException.class);
         }
 
     }
@@ -1474,5 +1304,4 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         }
 
     }
-
 }

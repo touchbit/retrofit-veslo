@@ -18,6 +18,8 @@ package veslo.client.converter.typed;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 import veslo.ConvertCallException;
@@ -32,6 +34,10 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.util.Set;
 
 /**
  * {@link File} java type converter
@@ -106,13 +112,28 @@ public class FileConverter implements ExtensionConverter<File> {
              */
             @Override
             @Nullable
+            @SuppressWarnings("ResultOfMethodCallIgnored")
             public File convert(@Nullable ResponseBody responseBody) throws IOException {
                 assertSupportedBodyType(INSTANCE, type, File.class);
                 final String body = copyBody(responseBody);
                 if (body == null) {
                     return null;
                 }
-                final Path tempFile = Files.createTempFile(null, null);
+                final String prefix = RandomStringUtils.random(5, true, true);
+                final String suffix = RandomStringUtils.random(5, true, true);
+                final Path tempFile;
+                if(SystemUtils.IS_OS_UNIX) {
+                    FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions
+                            .asFileAttribute(PosixFilePermissions.fromString("rw-------"));
+                    tempFile = Files.createTempFile(prefix, suffix, attr);
+                }
+                else {
+                    File f = Files.createTempFile(prefix, suffix).toFile();
+                    f.setReadable(true, true);
+                    f.setWritable(true, true);
+                    f.setExecutable(false, true);
+                    tempFile = f.toPath();
+                }
                 return Files.write(tempFile, body.getBytes()).toFile();
             }
 
