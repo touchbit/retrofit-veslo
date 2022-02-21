@@ -31,9 +31,8 @@ import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Convert model (JavaBean) to URL encoded form and back to model.
@@ -71,48 +70,54 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
 
     /**
      * Model to string conversion
+     * According to the 3W specification, it is strongly recommended to use UTF-8 charset for URL form data coding.
      *
-     * @param model - FormUrlEncoded model
+     * @param model         - FormUrlEncoded model
+     * @param codingCharset - URL form data coding charset
+     * @param indexedArray  - flag for indexed array format: {@code foo[0]=100&foo[1]=200...&foo[n]=100500}
      * @return model string representation
      */
     @Override
     @EverythingIsNonNull
-    public String marshal(final Object model) {
+    public String marshal(final Object model, final Charset codingCharset, final boolean indexedArray) {
         Utils.parameterRequireNonNull(model, "model");
-        return null;
+        final List<Field> annotated = Arrays.stream(model.getClass().getDeclaredFields())
+                .filter(f -> f.isAnnotationPresent(FormUrlEncodedField.class))
+                .collect(Collectors.toList());
+        final Map<String, String> result = new HashMap<>();
+        for (Field field : annotated) {
+            final String fieldName = getFormUrlEncodedFieldName(field);
+            final String pair;
+            if (Collection.class.isAssignableFrom(field.getType())) {
+//                result.putAll(buildCollectionUrlEncodedString(model, field, codingCharset, indexedArray));
+            } else if (field.getType().isArray()) {
+                // todo
+            } else {
+                // todo
+            }
+        }
+        return result.entrySet().stream()
+                .map(e -> e.getKey() + "=" + e.getValue())
+                .collect(Collectors.joining("&"));
     }
 
     /**
      * String to model conversion
-     *
-     * @param modelClass    - FormUrlEncoded model class
-     * @param encodedString - URL encoded string to conversation (UTF-8 encode charset)
-     * @param <M>           - FormUrlEncoded model type
-     * @return completed model
-     */
-    @EverythingIsNonNull
-    public <M> M unmarshal(final Class<M> modelClass, final String encodedString) {
-        Utils.parameterRequireNonNull(modelClass, "modelClass");
-        Utils.parameterRequireNonNull(encodedString, "encodedString");
-        return unmarshal(modelClass, encodedString, UTF_8);
-    }
-
-    /**
-     * String to model conversion
+     * According to the 3W specification, it is strongly recommended to use UTF-8 charset for URL form data coding.
      *
      * @param modelClass    - FormUrlEncoded model class
      * @param encodedString - URL encoded string to conversation
-     * @param encodeCharset - String data charset
+     * @param codingCharset - URL form data coding charset
      * @param <M>           - model generic type
      * @return completed model
      * @throws FormUrlEncodedMapperException on class instantiation errors
      */
     @Override
     @EverythingIsNonNull
-    public <M> M unmarshal(final Class<M> modelClass, final String encodedString, final Charset encodeCharset) {
+    public <M> M unmarshal(final Class<M> modelClass, final String encodedString, final Charset codingCharset) {
         Utils.parameterRequireNonNull(modelClass, "modelClass");
         Utils.parameterRequireNonNull(encodedString, "encodedString");
-        Utils.parameterRequireNonNull(encodeCharset, "encodeCharset");
+        Utils.parameterRequireNonNull(codingCharset, "codingCharset");
         final M model;
         try {
             model = ConstructorUtils.invokeConstructor(modelClass);
@@ -124,7 +129,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         if (encodedString.isEmpty()) {
             return model;
         }
-        final Map<String, List<String>> parsed = parseAndDecodeUrlEncodedString(encodedString, encodeCharset);
+        final Map<String, List<String>> parsed = parseAndDecodeUrlEncodedString(encodedString, codingCharset);
         final List<Field> annotatedFields = Arrays.stream(modelClass.getDeclaredFields())
                 .filter(f -> f.isAnnotationPresent(FormUrlEncodedField.class))
                 .collect(Collectors.toList());
@@ -142,6 +147,69 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         }
         writeAdditionalProperties(model, parsed, handledAnnotatedFields);
         return model;
+    }
+
+    /**
+     * Converts the collection to FormUrlEncoded array string
+     * According to the 3W specification, it is strongly recommended to use UTF-8 charset for URL form data coding.
+     *
+     * @param model         - FormUrlEncoded model
+     * @param field         - model field
+     * @param formFieldName - model field {@link FormUrlEncodedField#value()}
+     * @param codingCharset - URL form data coding charset
+     * @param indexedArray  - flag for indexed array format: {@code foo[0]=100&foo[1]=200...&foo[n]=100500}
+     * @return FormUrlEncoded collection representation
+     * @throws FormUrlEncodedMapperException if model field not readable
+     * @throws FormUrlEncodedMapperException if unsupported URL form coding {@link Charset}
+     */
+    @EverythingIsNonNull
+    protected String buildCollectionUrlEncodedString(final Object model,
+                                                     final Field field,
+                                                     final String formFieldName,
+                                                     final Charset codingCharset,
+                                                     final boolean indexedArray) {
+        Utils.parameterRequireNonNull(model, "model");
+        Utils.parameterRequireNonNull(field, "field");
+        Utils.parameterRequireNonNull(formFieldName, "formFieldName");
+        Utils.parameterRequireNonNull(codingCharset, "codingCharset");
+        final StringJoiner result = new StringJoiner("&");
+        final Collection<?> collection;
+        try {
+            collection = (Collection<?>) FieldUtils.readField(model, field.getName(), true);
+        } catch (Exception e) {
+            throw new FormUrlEncodedMapperException("Unable to read value from model field.\n" +
+                    "    Model type: " + model.getClass().getName() + "\n" +
+                    "    Field type: " + field.getType().getName() + "\n" +
+                    "    Field name: " + field.getName() + "\n" +
+                    "    URL form field name: " + formFieldName + "\n" +
+                    "    Error cause: " + e.getMessage().trim() + "\n", e);
+        }
+        if (collection == null || collection.isEmpty()) {
+            return "";
+        }
+        final AtomicLong index = new AtomicLong(0);
+        for (Object rawValue : collection) {
+            final String fieldName = indexedArray ? formFieldName + "[" + index.getAndIncrement() + "]" : formFieldName;
+            if (rawValue == null) {
+                result.add(fieldName + "=");
+            } else {
+                final String value = String.valueOf(rawValue);
+                try {
+                    final String encodedValue = URLDecoder.decode(value, codingCharset.name());
+                    result.add(fieldName + "=" + encodedValue);
+                } catch (Exception e) {
+                    throw new FormUrlEncodedMapperException("Unable to encode string to FormUrlEncoded format\n" +
+                            "    Model type: " + model.getClass().getName() + "\n" +
+                            "    Field type: " + field.getType().getName() + "\n" +
+                            "    Field name: " + field.getName() + "\n" +
+                            "    URL form field name: " + formFieldName + "\n" +
+                            "    Value to encode: " + value + "\n" +
+                            "    Encode charset: " + codingCharset + "\n" +
+                            "    Error cause: " + e.getMessage().trim() + "\n", e);
+                }
+            }
+        }
+        return result.toString();
     }
 
     /**
@@ -555,7 +623,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
 
     /**
      * Parse `x-www-form-urlencoded` String
-     * According to the 3W specification, it is strongly recommended to use UTF-8 encoding.
+     * According to the 3W specification, it is strongly recommended to use UTF-8 charset for URL form data coding.
      * - {@code name=value -> {"name":["value"]}}
      * - {@code &name=value -> {"name":["value"]}}
      * - {@code ?name=value -> {"name":["value"]}}
@@ -565,16 +633,16 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * - {@code name=%7B%22a%22%3D%22%26%22%7D -> {name:["{\"a\"=\"&\"}"]}}
      *
      * @param urlEncodedString - `x-www-form-urlencoded` string
-     * @param charset          - URL decoding {@link Charset}
+     * @param codingCharset    - URL form data coding {@link Charset}
      * @return {@link Map} where key - field name, value - list of field values (1...n)
      * @throws FormUrlEncodedMapperException - broken urlencoded string (for example a=b=c)
-     * @throws FormUrlEncodedMapperException - unsupported URL decoding {@link Charset}
+     * @throws FormUrlEncodedMapperException - unsupported URL form coding {@link Charset}
      */
     @EverythingIsNonNull
     protected Map<String, List<String>> parseAndDecodeUrlEncodedString(final String urlEncodedString,
-                                                                       final Charset charset) {
+                                                                       final Charset codingCharset) {
         Utils.parameterRequireNonNull(urlEncodedString, "urlEncodedString");
-        Utils.parameterRequireNonNull(charset, "charset");
+        Utils.parameterRequireNonNull(codingCharset, "charset");
         final Map<String, List<String>> result = new HashMap<>();
         if (urlEncodedString.trim().length() == 0) {
             return result;
@@ -602,7 +670,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
                 urlEncodedValue = split[1];
             }
             try {
-                final String urlDecodedValue = URLDecoder.decode(urlEncodedValue, charset.name());
+                final String urlDecodedValue = URLDecoder.decode(urlEncodedValue, codingCharset.name());
                 result.computeIfAbsent(key, i -> new ArrayList<>()).add(urlDecodedValue);
             } catch (Exception e) {
                 throw new FormUrlEncodedMapperException("Error decoding URL encoded string:\n" + pair, e);

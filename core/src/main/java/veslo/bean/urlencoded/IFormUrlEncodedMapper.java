@@ -17,8 +17,11 @@
 package veslo.bean.urlencoded;
 
 import retrofit2.internal.EverythingIsNonNull;
+import veslo.util.Utils;
 
 import java.nio.charset.Charset;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
@@ -28,24 +31,51 @@ public interface IFormUrlEncodedMapper {
 
     /**
      * Model to string conversion
+     * According to the 3W specification, it is strongly recommended to use UTF-8 charset for URL form data coding.
+     *
+     * @param model         - FormUrlEncoded model
+     * @param codingCharset - URL form data coding charset
+     * @param indexedArray  - flag for indexed array format: {@code foo[0]=100&foo[1]=200...&foo[n]=100500}
+     * @return model string representation
+     */
+    @EverythingIsNonNull
+    String marshal(Object model, Charset codingCharset, boolean indexedArray);
+
+    /**
+     * Model to string conversion
      *
      * @param model - FormUrlEncoded model
      * @return model string representation
      */
     @EverythingIsNonNull
-    String marshal(final Object model);
+    default String marshal(Object model) {
+        Utils.parameterRequireNonNull(model, "model");
+        return marshal(model, UTF_8, false);
+    }
+
+    /**
+     * Model to string conversion
+     *
+     * @param model        - FormUrlEncoded model
+     * @param indexedArray - flag for indexed array format: {@code foo[0]=100&foo[1]=200...&foo[n]=100500}
+     * @return model string representation
+     */
+    default String marshal(Object model, boolean indexedArray) {
+        return marshal(model, UTF_8, indexedArray);
+    }
 
     /**
      * String to model conversion
+     * According to the 3W specification, it is strongly recommended to use UTF-8 charset for URL form data coding.
      *
-     * @param modelClass - FormUrlEncoded model class
-     * @param encodedString       - String data to conversation
-     * @param charset    - String data charset
-     * @param <M>        - FormUrlEncoded model type
+     * @param modelClass    - FormUrlEncoded model class
+     * @param encodedString - String data to conversation
+     * @param codingCharset - URL form data coding charset
+     * @param <M>           - FormUrlEncoded model type
      * @return completed model
      */
     @EverythingIsNonNull
-    <M> M unmarshal(final Class<M> modelClass, final String encodedString, final Charset charset);
+    <M> M unmarshal(Class<M> modelClass, String encodedString, Charset codingCharset);
 
     /**
      * String to model conversion
@@ -56,6 +86,10 @@ public interface IFormUrlEncodedMapper {
      * @return completed model
      */
     @EverythingIsNonNull
-    <M> M unmarshal(final Class<M> modelClass, final String encodedString);
+    default <M> M unmarshal(Class<M> modelClass, String encodedString) {
+        Utils.parameterRequireNonNull(modelClass, "modelClass");
+        Utils.parameterRequireNonNull(encodedString, "encodedString");
+        return unmarshal(modelClass, encodedString, UTF_8);
+    }
 
 }
