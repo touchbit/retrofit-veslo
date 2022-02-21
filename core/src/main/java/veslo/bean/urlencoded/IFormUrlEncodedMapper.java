@@ -60,6 +60,7 @@ public interface IFormUrlEncodedMapper {
      * @param indexedArray - flag for indexed array format: {@code foo[0]=100&foo[1]=200...&foo[n]=100500}
      * @return model string representation
      */
+    @EverythingIsNonNull
     default String marshal(Object model, boolean indexedArray) {
         return marshal(model, UTF_8, indexedArray);
     }

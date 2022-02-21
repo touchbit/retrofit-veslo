@@ -279,7 +279,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         }
         final String value = String.valueOf(rawValue);
         try {
-            return formFieldName + "=" + URLDecoder.decode(value, codingCharset.name());
+            return formFieldName + "=" + URLEncoder.encode(value, codingCharset.name());
         } catch (Exception e) {
             throw new FormUrlEncodedMapperException("Unable to encode string to FormUrlEncoded format\n" +
                     "    Model type: " + model.getClass().getName() + "\n" +

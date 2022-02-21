@@ -1310,7 +1310,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             model.objectField = 100;
             final Field field = GoodModel.class.getDeclaredField("objectField");
             final Charset mock = mock(Charset.class);
-            when(mock.name()).thenReturn("");
+            when(mock.name()).thenReturn("asdasdasd");
             when(mock.toString()).thenReturn("mock");
             assertThrow(() -> MAPPER.buildSingleUrlEncodedString(model, field, "test1", mock))
                     .assertClass(FormUrlEncodedMapperException.class)
@@ -1321,7 +1321,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
                             "    URL form field name: test1\n" +
                             "    Value to encode: 100\n" +
                             "    Encode charset: mock\n" +
-                            "    Error cause: URLDecoder: empty string enc parameter\n");
+                            "    Error cause: asdasdasd\n");
         }
 
         @Test
@@ -1585,8 +1585,84 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
 
     }
 
+    @Nested
+    @DisplayName("#marshal() method tests")
+    public class MarshalMethodTests {
+
+        @Test
+        @DisplayName("Required parameters")
+        public void test1645455841739() {
+            final GoodModel model = new GoodModel();
+            assertNPE(() -> MAPPER.marshal(null), "model");
+            assertNPE(() -> MAPPER.marshal(null, true), "model");
+            assertNPE(() -> MAPPER.marshal(null, UTF_8, true), "model");
+            assertNPE(() -> MAPPER.marshal(model, null, true), "codingCharset");
+        }
+
+        @Test
+        @DisplayName("Successfully marshaling model")
+        public void test1645456064003() {
+            final GoodModel model = new GoodModel();
+            model.listStringField = listOf("1", "2");
+            model.listIntegerField = listOf(1, 2);
+            model.integerField = 1;
+            model.stringField = "тест";
+            model.objectField = new HashMap<>();
+            model.additionalProperties = new HashMap<>();
+            model.additionalProperties.put("ap1", listOf("foo", "bar"));
+            model.additionalProperties.put("ap2", "foobar");
+            final String result = MAPPER.marshal(model);
+            assertIs(result, "" +
+                    "constant=toString&" +
+                    "stringField=%D1%82%D0%B5%D1%81%D1%82&" +
+                    "integerField=1&" +
+                    "objectField=%7B%7D&" +
+                    "listStringField=1&" +
+                    "listStringField=2&" +
+                    "listIntegerField=1&" +
+                    "listIntegerField=2&" +
+                    "ap2=foobar&" +
+                    "ap1=foo&" +
+                    "ap1=bar");
+        }
+
+        @Test
+        @DisplayName("Successfully marshaling model (indexed)")
+        public void test1645457146944() {
+            final GoodModel model = new GoodModel();
+            model.listStringField = listOf("1", "2");
+            model.listIntegerField = listOf(1, 2);
+            model.integerField = 1;
+            model.stringField = "тест";
+            model.objectField = new HashMap<>();
+            model.additionalProperties = new HashMap<>();
+            model.additionalProperties.put("ap1", listOf("foo", "bar"));
+            model.additionalProperties.put("ap2", "foobar");
+            final String result = MAPPER.marshal(model, true);
+            assertIs(result, "" +
+                    "constant=toString&" +
+                    "stringField=%D1%82%D0%B5%D1%81%D1%82&" +
+                    "integerField=1&" +
+                    "objectField=%7B%7D&" +
+                    "listStringField[0]=1&" +
+                    "listStringField[1]=2&" +
+                    "listIntegerField[0]=1&" +
+                    "listIntegerField[1]=2&" +
+                    "ap2=foobar&" +
+                    "ap1[0]=foo&" +
+                    "ap1[1]=bar");
+        }
+
+
+    }
+
     @FormUrlEncoded
     public static class GoodModel {
+
+        public static final GoodModel CONSTANT = new GoodModel();
+
+        @FormUrlEncodedField("constant")
+        public static final GoodModel ANNOTATED_CONSTANT = new GoodModel();
 
         @FormUrlEncodedField("missed")
         private String missed;
@@ -1614,6 +1690,11 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
 
         @FormUrlEncodedAdditionalProperties()
         private Map<String, Object> additionalProperties;
+
+        @Override
+        public String toString() {
+            return "toString";
+        }
 
     }
 
