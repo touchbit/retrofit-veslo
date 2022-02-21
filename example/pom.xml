@@ -35,6 +35,7 @@
         <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
         <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
         <!-- remove --> <skipTests>true</skipTests>
+        <!-- remove --> <sonar.skip>true</sonar.skip>
     </properties>
 
     <dependencies>
