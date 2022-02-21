@@ -44,40 +44,40 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
     private static final FormUrlEncodedMapper MAPPER = FormUrlEncodedMapper.INSTANCE;
 
     @Nested
-    @DisplayName("#getAdditionalField() method tests")
-    public class GetAdditionalFieldMethodTests {
+    @DisplayName("#getAdditionalPropertiesField() method tests")
+    public class GetAdditionalPropertiesFieldMethodTests {
 
         @Test
         @DisplayName("Required parameters")
         public void test1645279093093() {
-            assertNPE(() -> MAPPER.getAdditionalProperties(null), "modelClass");
+            assertNPE(() -> MAPPER.getAdditionalPropertiesField(null), "modelClass");
         }
 
         @Test
         @DisplayName("Successfully getting additionalProperties field from a class (contains annotation)")
         public void test1645281367804() {
-            final Field additionalProperties = MAPPER.getAdditionalProperties(AdditionalFields.class);
+            final Field additionalProperties = MAPPER.getAdditionalPropertiesField(AdditionalFields.class);
             assertNotNull(additionalProperties);
         }
 
         @Test
         @DisplayName("Successfully getting additionalProperties field (null) from a class (without annotation)")
         public void test1645281802803() {
-            final Field additionalProperties = MAPPER.getAdditionalProperties(AdditionalFieldsWithoutAnnotation.class);
+            final Field additionalProperties = MAPPER.getAdditionalPropertiesField(AdditionalFieldsWithoutAnnotation.class);
             assertIsNull(additionalProperties);
         }
 
         @Test
         @DisplayName("Successfully getting additionalProperties field (null) from a class (empty class)")
         public void test1645281893559() {
-            final Field additionalProperties = MAPPER.getAdditionalProperties(EmptyModel.class);
+            final Field additionalProperties = MAPPER.getAdditionalPropertiesField(EmptyModel.class);
             assertIsNull(additionalProperties);
         }
 
         @Test
         @DisplayName("FormUrlEncodedMapperException throws if additionalProperties type != Map<String, String>")
         public void test1645282054759() {
-            assertThrow(() -> MAPPER.getAdditionalProperties(AdditionalFieldsInvalidType.class))
+            assertThrow(() -> MAPPER.getAdditionalPropertiesField(AdditionalFieldsInvalidType.class))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("Invalid field type with @FormUrlEncodedAdditionalProperties annotation\n" +
                             "    Model: " + AdditionalFieldsInvalidType.class + "\n" +
@@ -89,7 +89,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         @Test
         @DisplayName("FormUrlEncodedMapperException throws if additionalProperties type == Map (raw type)")
         public void test1645282252989() {
-            assertThrow(() -> MAPPER.getAdditionalProperties(AdditionalFieldsRawMap.class))
+            assertThrow(() -> MAPPER.getAdditionalPropertiesField(AdditionalFieldsRawMap.class))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("Invalid field type with @FormUrlEncodedAdditionalProperties annotation\n" +
                             "    Model: " + AdditionalFieldsRawMap.class + "\n" +
@@ -101,7 +101,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         @Test
         @DisplayName("FormUrlEncodedMapperException throws if additionalProperties type == List<String>")
         public void test1645282363009() {
-            assertThrow(() -> MAPPER.getAdditionalProperties(AdditionalFieldsList.class))
+            assertThrow(() -> MAPPER.getAdditionalPropertiesField(AdditionalFieldsList.class))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("Invalid field type with @FormUrlEncodedAdditionalProperties annotation\n" +
                             "    Model: " + AdditionalFieldsList.class + "\n" +
@@ -113,7 +113,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         @Test
         @DisplayName("FormUrlEncodedMapperException throws if several additionalProperties fields")
         public void test1645282588975() {
-            assertThrow(() -> MAPPER.getAdditionalProperties(SeveralAdditionalFields.class))
+            assertThrow(() -> MAPPER.getAdditionalPropertiesField(SeveralAdditionalFields.class))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("Model contains more than one field annotated with FormUrlEncodedAdditionalProperties:\n" +
                             "    Model: class veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$SeveralAdditionalFields\n" +
@@ -1169,7 +1169,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         }
 
         @Test
-        @DisplayName("Convert Collection<String> to FormUrlEncoded array string")
+        @DisplayName("Convert String[] to FormUrlEncoded array string")
         public void test1645447364780() throws NoSuchFieldException {
             final GoodModel model = new GoodModel();
             model.stringArrayField = new String[]{"foo", "bar"};
@@ -1179,7 +1179,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         }
 
         @Test
-        @DisplayName("Convert Collection<String> to indexed FormUrlEncoded array string")
+        @DisplayName("Convert String[] to indexed FormUrlEncoded array string")
         public void test1645447368273() throws NoSuchFieldException {
             final GoodModel model = new GoodModel();
             model.stringArrayField = new String[]{"foo", "bar"};
@@ -1189,7 +1189,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         }
 
         @Test
-        @DisplayName("Convert empty Collection<String> to empty string")
+        @DisplayName("Convert empty String[] to empty string")
         public void test1645447371378() throws NoSuchFieldException {
             final GoodModel model = new GoodModel();
             model.stringArrayField = new String[]{};
@@ -1199,7 +1199,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         }
 
         @Test
-        @DisplayName("Convert 'null' Collection<String> to empty string")
+        @DisplayName("Convert 'null' String[] to empty string")
         public void test1645447374826() throws NoSuchFieldException {
             final GoodModel model = new GoodModel();
             model.stringArrayField = null;
@@ -1209,7 +1209,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         }
 
         @Test
-        @DisplayName("Convert 'null' value Collection<String> to FormUrlEncoded array string")
+        @DisplayName("Convert 'null' value String[] to FormUrlEncoded array string")
         public void test1645447377986() throws NoSuchFieldException {
             final GoodModel model = new GoodModel();
             model.stringArrayField = new String[]{null, "bar"};
@@ -1258,6 +1258,90 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
 
     }
 
+    @Nested
+    @DisplayName("#buildSingleUrlEncodedString() method tests")
+    public class BuildSingleUrlEncodedStringMethodTests {
+
+        @Test
+        @DisplayName("Required parameters")
+        public void test1645448237832() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            final Field field = GoodModel.class.getDeclaredField("stringArrayField");
+            assertNPE(() -> MAPPER.buildSingleUrlEncodedString(null, field, "test", UTF_8), "model");
+            assertNPE(() -> MAPPER.buildSingleUrlEncodedString(model, null, "test", UTF_8), "field");
+            assertNPE(() -> MAPPER.buildSingleUrlEncodedString(model, field, null, UTF_8), "formFieldName");
+            assertNPE(() -> MAPPER.buildSingleUrlEncodedString(model, field, "test", null), "codingCharset");
+        }
+
+        @Test
+        @DisplayName("Convert Integer to FormUrlEncoded string")
+        public void test1645448313907() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.integerField = 100;
+            final Field field = GoodModel.class.getDeclaredField("integerField");
+            final String result = MAPPER.buildSingleUrlEncodedString(model, field, "test", UTF_8);
+            assertThat(result, is("test=100"));
+        }
+
+        @Test
+        @DisplayName("Convert Object to FormUrlEncoded string")
+        public void test1645448376651() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.objectField = new Object();
+            final Field field = GoodModel.class.getDeclaredField("objectField");
+            final String result = MAPPER.buildSingleUrlEncodedString(model, field, "test", UTF_8);
+            assertThat(result, containsString("test=java.lang.Object"));
+        }
+
+        @Test
+        @DisplayName("Convert null to FormUrlEncoded string")
+        public void test1645448553257() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            final Field field = GoodModel.class.getDeclaredField("objectField");
+            final String result = MAPPER.buildSingleUrlEncodedString(model, field, "test", UTF_8);
+            assertThat(result, emptyString());
+        }
+
+        @Test
+        @DisplayName("Throws FormUrlEncodedMapperException if unsupported URL form coding Charset")
+        public void test1645448598763() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.objectField = 100;
+            final Field field = GoodModel.class.getDeclaredField("objectField");
+            final Charset mock = mock(Charset.class);
+            when(mock.name()).thenReturn("");
+            when(mock.toString()).thenReturn("mock");
+            assertThrow(() -> MAPPER.buildSingleUrlEncodedString(model, field, "test1", mock))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("Unable to encode string to FormUrlEncoded format\n" +
+                            "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$GoodModel\n" +
+                            "    Field type: class java.lang.Object\n" +
+                            "    Field name: objectField\n" +
+                            "    URL form field name: test1\n" +
+                            "    Value to encode: 100\n" +
+                            "    Encode charset: mock\n" +
+                            "    Error cause: URLDecoder: empty string enc parameter\n");
+        }
+
+        @Test
+        @DisplayName("Throws FormUrlEncodedMapperException if model field not readable")
+        public void test1645448603710() {
+            final GoodModel model = new GoodModel();
+            final Field field = TypedModel.field(MAP_STRING_INTEGER_FIELD);
+            assertThrow(() -> MAPPER.buildSingleUrlEncodedString(model, field, "test", UTF_8))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("" +
+                            "Unable to read value from model field.\n" +
+                            "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$GoodModel\n" +
+                            "    Field type: java.util.Map\n" +
+                            "    Field name: mapStringIntegerField\n" +
+                            "    URL form field name: test\n" +
+                            "    Error cause: Cannot locate field mapStringIntegerField" +
+                            " on class veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$GoodModel\n");
+        }
+
+    }
+
     @FormUrlEncoded
     public static class GoodModel {
 
@@ -1269,6 +1353,9 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
 
         @FormUrlEncodedField("integerField")
         private Integer integerField;
+
+        @FormUrlEncodedField("objectField")
+        private Object objectField;
 
         @FormUrlEncodedField("stringArrayField")
         private String[] stringArrayField;

@@ -93,13 +93,16 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
             } else if (field.getType().isArray()) {
                 pair = buildArrayUrlEncodedString(model, field, formFieldName, codingCharset, indexedArray);
             } else {
-                // pair = buildSingleUrlEncodedString(model, field, formFieldName, codingCharset, indexedArray);
+                pair = buildSingleUrlEncodedString(model, field, formFieldName, codingCharset);
+            }
+            if (pair != null && !pair.trim().isEmpty()) {
+                result.add(pair);
             }
         }
+//        String asd = marshalAdditionalProperties(model);
         // todo add AP
         return result.toString();
     }
-
 
     /**
      * String to model conversion
@@ -147,6 +150,44 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         }
         writeAdditionalProperties(model, parsed, handledAnnotatedFields);
         return model;
+    }
+
+    @EverythingIsNonNull
+    protected String buildSingleUrlEncodedString(final Object model,
+                                                 final Field field,
+                                                 final String formFieldName,
+                                                 final Charset codingCharset) {
+        Utils.parameterRequireNonNull(model, "model");
+        Utils.parameterRequireNonNull(field, "field");
+        Utils.parameterRequireNonNull(formFieldName, "formFieldName");
+        Utils.parameterRequireNonNull(codingCharset, "codingCharset");
+        final Object rawValue;
+        try {
+            rawValue = FieldUtils.readField(model, field.getName(), true);
+        } catch (Exception e) {
+            throw new FormUrlEncodedMapperException("Unable to read value from model field.\n" +
+                    "    Model type: " + model.getClass().getName() + "\n" +
+                    "    Field type: " + field.getType().getName() + "\n" +
+                    "    Field name: " + field.getName() + "\n" +
+                    "    URL form field name: " + formFieldName + "\n" +
+                    "    Error cause: " + e.getMessage().trim() + "\n", e);
+        }
+        if (rawValue == null) {
+            return "";
+        }
+        final String value = String.valueOf(rawValue);
+        try {
+            return formFieldName + "=" + URLDecoder.decode(value, codingCharset.name());
+        } catch (Exception e) {
+            throw new FormUrlEncodedMapperException("Unable to encode string to FormUrlEncoded format\n" +
+                    "    Model type: " + model.getClass().getName() + "\n" +
+                    "    Field type: " + field.getType() + "\n" +
+                    "    Field name: " + field.getName() + "\n" +
+                    "    URL form field name: " + formFieldName + "\n" +
+                    "    Value to encode: " + value + "\n" +
+                    "    Encode charset: " + codingCharset + "\n" +
+                    "    Error cause: " + e.getMessage().trim() + "\n", e);
+        }
     }
 
     /**
@@ -609,7 +650,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * @throws FormUrlEncodedMapperException if additionalProperties type != {@code Map<String, String>}
      */
     @Nullable
-    protected Field getAdditionalProperties(@Nonnull final Class<?> modelClass) {
+    protected Field getAdditionalPropertiesField(@Nonnull final Class<?> modelClass) {
         Utils.parameterRequireNonNull(modelClass, "modelClass");
         final List<Field> fields = Arrays.asList(modelClass.getDeclaredFields());
         final List<Field> additionalProperties = fields.stream()
@@ -663,7 +704,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
     @SuppressWarnings("unchecked")
     protected Map<String, Object> initAdditionalProperties(@Nonnull final Object model) {
         Utils.parameterRequireNonNull(model, "model");
-        final Field additionalProperty = getAdditionalProperties(model.getClass());
+        final Field additionalProperty = getAdditionalPropertiesField(model.getClass());
         if (additionalProperty == null) {
             return null;
         }
