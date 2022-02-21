@@ -96,6 +96,7 @@ public class FileConverter implements ExtensionConverter<File> {
      */
     @Override
     @EverythingIsNonNull
+    @SuppressWarnings("java:S5443")
     public ResponseBodyConverter<File> responseBodyConverter(final Type type,
                                                              final Annotation[] methodAnnotations,
                                                              final Retrofit retrofit) {
@@ -112,28 +113,13 @@ public class FileConverter implements ExtensionConverter<File> {
              */
             @Override
             @Nullable
-            @SuppressWarnings("ResultOfMethodCallIgnored")
             public File convert(@Nullable ResponseBody responseBody) throws IOException {
                 assertSupportedBodyType(INSTANCE, type, File.class);
                 final String body = copyBody(responseBody);
                 if (body == null) {
                     return null;
                 }
-                final String prefix = RandomStringUtils.random(5, true, true);
-                final String suffix = RandomStringUtils.random(5, true, true);
-                final Path tempFile;
-                if(SystemUtils.IS_OS_UNIX) {
-                    FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions
-                            .asFileAttribute(PosixFilePermissions.fromString("rw-------"));
-                    tempFile = Files.createTempFile(prefix, suffix, attr);
-                }
-                else {
-                    File f = Files.createTempFile(prefix, suffix).toFile();
-                    f.setReadable(true, true);
-                    f.setWritable(true, true);
-                    f.setExecutable(false, true);
-                    tempFile = f.toPath();
-                }
+                final Path tempFile = Files.createTempFile(null, null);
                 return Files.write(tempFile, body.getBytes()).toFile();
             }
 
