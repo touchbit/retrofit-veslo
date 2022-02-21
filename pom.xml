@@ -77,7 +77,11 @@
         <veslo.sonar.exclusions>**/*.xml, **/src/test/**/*.*</veslo.sonar.exclusions>
         <sonar.exclusions>${veslo.sonar.exclusions}</sonar.exclusions>
         <sonar.coverage.exclusions>${veslo.sonar.exclusions}</sonar.coverage.exclusions>
-        <sonar.cpd.exclusions/>
+        <sonar.cpd.exclusions>
+            src/main/java/veslo/client/converter/annotated/*Converter.java,
+            src/main/java/veslo/client/converter/typed/*Converter.java,
+            src/main/java/veslo/JacksonConverter.java
+        </sonar.cpd.exclusions>
     </properties>
 
     <dependencies>
