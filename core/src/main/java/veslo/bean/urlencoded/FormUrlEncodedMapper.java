@@ -84,22 +84,22 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         final List<Field> annotated = Arrays.stream(model.getClass().getDeclaredFields())
                 .filter(f -> f.isAnnotationPresent(FormUrlEncodedField.class))
                 .collect(Collectors.toList());
-        final Map<String, String> result = new HashMap<>();
+        StringJoiner result = new StringJoiner("&");
         for (Field field : annotated) {
-            final String fieldName = getFormUrlEncodedFieldName(field);
+            final String formFieldName = getFormUrlEncodedFieldName(field);
             final String pair;
             if (Collection.class.isAssignableFrom(field.getType())) {
-//                result.putAll(buildCollectionUrlEncodedString(model, field, codingCharset, indexedArray));
+                pair = buildCollectionUrlEncodedString(model, field, formFieldName, codingCharset, indexedArray);
             } else if (field.getType().isArray()) {
-                // todo
+                pair = buildArrayUrlEncodedString(model, field, formFieldName, codingCharset, indexedArray);
             } else {
-                // todo
+                // pair = buildSingleUrlEncodedString(model, field, formFieldName, codingCharset, indexedArray);
             }
         }
-        return result.entrySet().stream()
-                .map(e -> e.getKey() + "=" + e.getValue())
-                .collect(Collectors.joining("&"));
+        // todo add AP
+        return result.toString();
     }
+
 
     /**
      * String to model conversion
@@ -147,6 +147,69 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         }
         writeAdditionalProperties(model, parsed, handledAnnotatedFields);
         return model;
+    }
+
+    /**
+     * Converts array to FormUrlEncoded array string
+     * According to the 3W specification, it is strongly recommended to use UTF-8 charset for URL form data coding.
+     *
+     * @param model         - FormUrlEncoded model
+     * @param field         - model field
+     * @param formFieldName - model field {@link FormUrlEncodedField#value()}
+     * @param codingCharset - URL form data coding charset
+     * @param indexedArray  - flag for indexed array format: {@code foo[0]=100&foo[1]=200...&foo[n]=100500}
+     * @return FormUrlEncoded collection representation
+     * @throws FormUrlEncodedMapperException if model field not readable
+     * @throws FormUrlEncodedMapperException if unsupported URL form coding {@link Charset}
+     */
+    @EverythingIsNonNull
+    protected String buildArrayUrlEncodedString(final Object model,
+                                                final Field field,
+                                                final String formFieldName,
+                                                final Charset codingCharset,
+                                                final boolean indexedArray) {
+        Utils.parameterRequireNonNull(model, "model");
+        Utils.parameterRequireNonNull(field, "field");
+        Utils.parameterRequireNonNull(formFieldName, "formFieldName");
+        Utils.parameterRequireNonNull(codingCharset, "codingCharset");
+        final StringJoiner result = new StringJoiner("&");
+        final Object[] array;
+        try {
+            array = (Object[]) FieldUtils.readField(model, field.getName(), true);
+        } catch (Exception e) {
+            throw new FormUrlEncodedMapperException("Unable to read value from model field.\n" +
+                    "    Model type: " + model.getClass().getName() + "\n" +
+                    "    Field type: " + field.getType().getName() + "\n" +
+                    "    Field name: " + field.getName() + "\n" +
+                    "    URL form field name: " + formFieldName + "\n" +
+                    "    Error cause: " + e.getMessage().trim() + "\n", e);
+        }
+        if (array == null || array.length == 0) {
+            return "";
+        }
+        final AtomicLong index = new AtomicLong(0);
+        for (Object rawValue : array) {
+            final String fieldName = indexedArray ? formFieldName + "[" + index.getAndIncrement() + "]" : formFieldName;
+            if (rawValue == null) {
+                result.add(fieldName + "=");
+            } else {
+                final String value = String.valueOf(rawValue);
+                try {
+                    final String encodedValue = URLDecoder.decode(value, codingCharset.name());
+                    result.add(fieldName + "=" + encodedValue);
+                } catch (Exception e) {
+                    throw new FormUrlEncodedMapperException("Unable to encode string to FormUrlEncoded format\n" +
+                            "    Model type: " + model.getClass().getName() + "\n" +
+                            "    Field type: " + field.getType().getSimpleName() + "\n" +
+                            "    Field name: " + field.getName() + "\n" +
+                            "    URL form field name: " + formFieldName + "\n" +
+                            "    Value to encode: " + value + "\n" +
+                            "    Encode charset: " + codingCharset + "\n" +
+                            "    Error cause: " + e.getMessage().trim() + "\n", e);
+                }
+            }
+        }
+        return result.toString();
     }
 
     /**

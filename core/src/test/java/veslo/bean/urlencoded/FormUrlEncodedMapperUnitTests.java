@@ -1138,10 +1138,113 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         @DisplayName("Throws FormUrlEncodedMapperException if model field not readable")
         public void test1645406389756() {
             final GoodModel model = new GoodModel();
-            model.listStringField = new ArrayList<>();
-            model.listStringField.add("bar");
             final Field field = TypedModel.field(MAP_STRING_INTEGER_FIELD);
             assertThrow(() -> MAPPER.buildCollectionUrlEncodedString(model, field, "test", UTF_8, true))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("" +
+                            "Unable to read value from model field.\n" +
+                            "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$GoodModel\n" +
+                            "    Field type: java.util.Map\n" +
+                            "    Field name: mapStringIntegerField\n" +
+                            "    URL form field name: test\n" +
+                            "    Error cause: Cannot locate field mapStringIntegerField" +
+                            " on class veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$GoodModel\n");
+        }
+
+    }
+
+    @Nested
+    @DisplayName("buildArrayUrlEncodedString#() method tests")
+    public class BuildArrayUrlEncodedStringMethodTests {
+
+        @Test
+        @DisplayName("Required parameters")
+        public void test1645447361272() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            final Field field = GoodModel.class.getDeclaredField("stringArrayField");
+            assertNPE(() -> MAPPER.buildArrayUrlEncodedString(null, field, "test", UTF_8, false), "model");
+            assertNPE(() -> MAPPER.buildArrayUrlEncodedString(model, null, "test", UTF_8, false), "field");
+            assertNPE(() -> MAPPER.buildArrayUrlEncodedString(model, field, null, UTF_8, false), "formFieldName");
+            assertNPE(() -> MAPPER.buildArrayUrlEncodedString(model, field, "test", null, false), "codingCharset");
+        }
+
+        @Test
+        @DisplayName("Convert Collection<String> to FormUrlEncoded array string")
+        public void test1645447364780() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.stringArrayField = new String[]{"foo", "bar"};
+            final Field field = GoodModel.class.getDeclaredField("stringArrayField");
+            final String result = MAPPER.buildArrayUrlEncodedString(model, field, "test", UTF_8, false);
+            assertThat(result, is("test=foo&test=bar"));
+        }
+
+        @Test
+        @DisplayName("Convert Collection<String> to indexed FormUrlEncoded array string")
+        public void test1645447368273() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.stringArrayField = new String[]{"foo", "bar"};
+            final Field field = GoodModel.class.getDeclaredField("stringArrayField");
+            final String result = MAPPER.buildArrayUrlEncodedString(model, field, "test", UTF_8, true);
+            assertThat(result, is("test[0]=foo&test[1]=bar"));
+        }
+
+        @Test
+        @DisplayName("Convert empty Collection<String> to empty string")
+        public void test1645447371378() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.stringArrayField = new String[]{};
+            final Field field = GoodModel.class.getDeclaredField("stringArrayField");
+            final String result = MAPPER.buildArrayUrlEncodedString(model, field, "test", UTF_8, true);
+            assertThat(result, emptyString());
+        }
+
+        @Test
+        @DisplayName("Convert 'null' Collection<String> to empty string")
+        public void test1645447374826() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.stringArrayField = null;
+            final Field field = GoodModel.class.getDeclaredField("stringArrayField");
+            final String result = MAPPER.buildArrayUrlEncodedString(model, field, "test", UTF_8, true);
+            assertThat(result, emptyString());
+        }
+
+        @Test
+        @DisplayName("Convert 'null' value Collection<String> to FormUrlEncoded array string")
+        public void test1645447377986() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.stringArrayField = new String[]{null, "bar"};
+            final Field field = GoodModel.class.getDeclaredField("stringArrayField");
+            final String result = MAPPER.buildArrayUrlEncodedString(model, field, "test", UTF_8, true);
+            assertThat(result, is("test[0]=&test[1]=bar"));
+        }
+
+        @Test
+        @DisplayName("Throws FormUrlEncodedMapperException if unsupported URL form coding Charset")
+        public void test1645447381277() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.stringArrayField = new String[]{"bar"};
+            final Field field = GoodModel.class.getDeclaredField("stringArrayField");
+            final Charset mock = mock(Charset.class);
+            when(mock.name()).thenReturn("");
+            when(mock.toString()).thenReturn("mock");
+            assertThrow(() -> MAPPER.buildArrayUrlEncodedString(model, field, "test1", mock, true))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("Unable to encode string to FormUrlEncoded format\n" +
+                            "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$GoodModel\n" +
+                            "    Field type: String[]\n" +
+                            "    Field name: stringArrayField\n" +
+                            "    URL form field name: test1\n" +
+                            "    Value to encode: bar\n" +
+                            "    Encode charset: mock\n" +
+                            "    Error cause: URLDecoder: empty string enc parameter\n");
+        }
+
+        @Test
+        @DisplayName("Throws FormUrlEncodedMapperException if model field not readable")
+        public void test1645447385192() {
+            final GoodModel model = new GoodModel();
+            final Field field = TypedModel.field(MAP_STRING_INTEGER_FIELD);
+            assertThrow(() -> MAPPER.buildArrayUrlEncodedString(model, field, "test", UTF_8, true))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("" +
                             "Unable to read value from model field.\n" +
