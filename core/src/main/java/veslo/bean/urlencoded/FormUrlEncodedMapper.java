@@ -154,7 +154,10 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
             writeFieldValue(model, annotatedField, forWrite);
             handledAnnotatedFields.add(annotatedField);
         }
-        writeAdditionalProperties(model, parsed, handledAnnotatedFields);
+        final Field additionalProperty = getAdditionalPropertiesField(model.getClass());
+        if (additionalProperty != null) {
+            writeAdditionalProperties(model, additionalProperty, parsed, handledAnnotatedFields);
+        }
         return model;
     }
 
@@ -426,30 +429,31 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * @param parsed  - all parsed URL decoded entries
      * @param handled - processed model fields ({@link FormUrlEncodedField})
      * @param <M>     - model generic type
+     * @throws FormUrlEncodedMapperException if unable to initialize additionalProperties field
      */
     @EverythingIsNonNull
     protected <M> void writeAdditionalProperties(final M model,
+                                                 final Field field,
                                                  final Map<String, List<String>> parsed,
                                                  final List<Field> handled) {
         Utils.parameterRequireNonNull(model, "model");
+        Utils.parameterRequireNonNull(field, "field");
         Utils.parameterRequireNonNull(parsed, "parsed");
         Utils.parameterRequireNonNull(handled, "handled");
         final Map<String, List<String>> unhandled = new HashMap<>(parsed);
-        final Map<String, Object> additionalProperties = initAdditionalProperties(model);
-        if (additionalProperties != null) {
-            handled.stream()
-                    .map(this::getFormUrlEncodedFieldName)
-                    .forEach(unhandled::remove);
-            for (Map.Entry<String, List<String>> entry : unhandled.entrySet()) {
-                final String key = entry.getKey();
-                final List<String> values = entry.getValue();
-                if (values.isEmpty()) {
-                    additionalProperties.put(key, "");
-                } else if (values.size() > 1) {
-                    additionalProperties.put(key, values);
-                } else {
-                    additionalProperties.put(key, values.get(0));
-                }
+        final Map<String, Object> additionalProperties = initAdditionalProperties(model, field);
+        handled.stream()
+                .map(this::getFormUrlEncodedFieldName)
+                .forEach(unhandled::remove);
+        for (Map.Entry<String, List<String>> entry : unhandled.entrySet()) {
+            final String key = entry.getKey();
+            final List<String> values = entry.getValue();
+            if (values.isEmpty()) {
+                additionalProperties.put(key, "");
+            } else if (values.size() > 1) {
+                additionalProperties.put(key, values);
+            } else {
+                additionalProperties.put(key, values.get(0));
             }
         }
     }
@@ -800,30 +804,36 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * @param model - FormUrlEncoded model
      * @return additionalProperty field value (Map) or null if field not present
      * @throws NullPointerException          if model parameter is null
-     * @throws FormUrlEncodedMapperException in case of initialization errors of the additionalProperty field
+     * @throws FormUrlEncodedMapperException if unable to initialize additionalProperties field
+     * @throws FormUrlEncodedMapperException if additionalProperty field not readable
      */
-    @Nullable
+    @EverythingIsNonNull
     @SuppressWarnings("unchecked")
-    protected Map<String, Object> initAdditionalProperties(@Nonnull final Object model) {
+    protected Map<String, Object> initAdditionalProperties(final Object model, final Field field) {
         Utils.parameterRequireNonNull(model, "model");
-        final Field additionalProperty = getAdditionalPropertiesField(model.getClass());
-        if (additionalProperty == null) {
-            return null;
-        }
-        final String fieldName = additionalProperty.getName();
+        Utils.parameterRequireNonNull(field, "field");
+        final String fieldName = field.getName();
         try {
-            if (Modifier.isFinal(additionalProperty.getModifiers())) {
-                return (Map<String, Object>) FieldUtils.readDeclaredField(model, additionalProperty.getName(), true);
+            if (Modifier.isFinal(field.getModifiers())) {
+                return (Map<String, Object>) FieldUtils.readDeclaredField(model, field.getName(), true);
             }
         } catch (Exception e) {
-            throw new FormUrlEncodedMapperException("Unable to get field value: " + fieldName, e);
+            throw new FormUrlEncodedMapperException("Unable to read additional properties field.\n" +
+                    "    Model: " + model.getClass().getName() + "\n" +
+                    "    Field name: " + field.getName() + "\n" +
+                    "    Field type: " + field.getType() + "\n" +
+                    "    Error cause: " + e.getMessage().trim() + "\n", e);
         }
         try {
             final HashMap<String, Object> value = new HashMap<>();
             FieldUtils.writeDeclaredField(model, fieldName, value, true);
             return value;
         } catch (Exception e) {
-            throw new FormUrlEncodedMapperException("Unable to initialize field " + fieldName, e);
+            throw new FormUrlEncodedMapperException("Unable to initialize additional properties field.\n" +
+                    "    Model: " + model.getClass().getName() + "\n" +
+                    "    Field name: " + field.getName() + "\n" +
+                    "    Field type: " + field.getType() + "\n" +
+                    "    Error cause: " + e.getMessage().trim() + "\n", e);
         }
     }
 

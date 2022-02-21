@@ -129,41 +129,70 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Required parameters")
-        public void test1645292235482() {
-            assertNPE(() -> MAPPER.initAdditionalProperties(null), "model");
+        public void test1645292235482() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            final Field field = GoodModel.class.getDeclaredField("additionalProperties");
+            assertNPE(() -> MAPPER.initAdditionalProperties(null, field), "model");
+            assertNPE(() -> MAPPER.initAdditionalProperties(model, null), "field");
         }
 
         @Test
         @DisplayName("Successfully getting additionalProperties map if field initiated")
-        public void test1645292268987() {
-            final AdditionalFields additionalFields = new AdditionalFields();
-            additionalFields.additionalProperties = new HashMap<>();
-            additionalFields.additionalProperties.put("1", "2");
-            final Map<String, Object> result = MAPPER.initAdditionalProperties(additionalFields);
-            assertIs(result, additionalFields.additionalProperties);
+        public void test1645292268987() throws NoSuchFieldException {
+            final AdditionalFields model = new AdditionalFields();
+            model.additionalProperties = new HashMap<>();
+            model.additionalProperties.put("1", "2");
+            final Field field = AdditionalFields.class.getDeclaredField("additionalProperties");
+            final Map<String, Object> result = MAPPER.initAdditionalProperties(model, field);
+            assertIs(result, model.additionalProperties);
         }
 
         @Test
         @DisplayName("Successfully getting additionalProperties map if field not initiated")
-        public void test1645292357593() {
-            final Map<String, Object> result = MAPPER.initAdditionalProperties(new AdditionalFields());
+        public void test1645292357593() throws NoSuchFieldException {
+            final Field field = AdditionalFields.class.getDeclaredField("additionalProperties");
+            final Map<String, Object> result = MAPPER.initAdditionalProperties(new AdditionalFields(), field);
             assertIs(result, new HashMap<>());
         }
 
         @Test
-        @DisplayName("Successfully getting additionalProperties map (null) if field not present")
-        public void test1645292405815() {
-            final Map<String, Object> result = MAPPER.initAdditionalProperties(new EmptyModel());
-            assertIsNull(result);
+        @DisplayName("Successfully getting additionalProperties map if field initiated (final)")
+        public void test1645292517696() throws NoSuchFieldException {
+            final FinalAdditionalFields model = new FinalAdditionalFields();
+            model.additionalProperties.put("1", "2");
+            final Field field = FinalAdditionalFields.class.getDeclaredField("additionalProperties");
+            final Map<String, Object> result = MAPPER.initAdditionalProperties(model, field);
+            assertIs(result, model.additionalProperties);
         }
 
         @Test
-        @DisplayName("Successfully getting additionalProperties map if field initiated (final)")
-        public void test1645292517696() {
-            final FinalAdditionalFields additionalFields = new FinalAdditionalFields();
-            additionalFields.additionalProperties.put("1", "2");
-            final Map<String, Object> result = MAPPER.initAdditionalProperties(additionalFields);
-            assertIs(result, additionalFields.additionalProperties);
+        @DisplayName("Throws FormUrlEncodedMapperException if unable to initialize additionalProperties field")
+        public void test1645292405815() throws NoSuchFieldException {
+            final Field field = AdditionalFields.class.getDeclaredField("additionalProperties");
+            assertThrow(() -> MAPPER.initAdditionalProperties(new EmptyModel(), field))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("" +
+                            "Unable to initialize additional properties field.\n" +
+                            "    Model: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$EmptyModel\n" +
+                            "    Field name: additionalProperties\n" +
+                            "    Field type: interface java.util.Map\n" +
+                            "    Error cause: Cannot locate declared field" +
+                            " veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$EmptyModel.additionalProperties\n");
+        }
+
+        @Test
+        @DisplayName("Throws FormUrlEncodedMapperException if additionalProperty field not readable")
+        public void test1645458156865() throws NoSuchFieldException {
+            final Field field = FinalAdditionalFields.class.getDeclaredField("additionalProperties");
+            assertThrow(() -> MAPPER.initAdditionalProperties(new EmptyModel(), field))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("" +
+                            "Unable to read additional properties field.\n" +
+                            "    Model: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$EmptyModel\n" +
+                            "    Field name: additionalProperties\n" +
+                            "    Field type: interface java.util.Map\n" +
+                            "    Error cause: Cannot locate declared field class" +
+                            " veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$EmptyModel.additionalProperties\n");
         }
 
     }
@@ -937,25 +966,28 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
 
         @Test
         @DisplayName("Required parameters")
-        public void test1645392361215() {
+        public void test1645392361215() throws NoSuchFieldException {
             final AdditionalFields model = new AdditionalFields();
             final Map<String, List<String>> parsed = new HashMap<>();
             final List<Field> handled = new ArrayList<>();
-            assertNPE(() -> MAPPER.writeAdditionalProperties(null, parsed, handled), "model");
-            assertNPE(() -> MAPPER.writeAdditionalProperties(model, null, handled), "parsed");
-            assertNPE(() -> MAPPER.writeAdditionalProperties(model, parsed, null), "handled");
+            final Field field = AdditionalFields.class.getDeclaredField("additionalProperties");
+            assertNPE(() -> MAPPER.writeAdditionalProperties(null, field, parsed, handled), "model");
+            assertNPE(() -> MAPPER.writeAdditionalProperties(model, null, parsed, handled), "field");
+            assertNPE(() -> MAPPER.writeAdditionalProperties(model, field, null, handled), "parsed");
+            assertNPE(() -> MAPPER.writeAdditionalProperties(model, field, parsed, null), "handled");
         }
 
         @Test
         @DisplayName("Fill additional properties if field present")
-        public void test1645392502716() {
+        public void test1645392502716() throws NoSuchFieldException {
             final AdditionalFields model = new AdditionalFields();
             final List<Field> handled = new ArrayList<>();
             final Map<String, List<String>> parsed = new HashMap<>();
             parsed.put("singleField", listOf("value"));
             parsed.put("emptyField", listOf());
             parsed.put("listField", listOf("value1", "value2"));
-            MAPPER.writeAdditionalProperties(model, parsed, handled);
+            final Field field = AdditionalFields.class.getDeclaredField("additionalProperties");
+            MAPPER.writeAdditionalProperties(model, field, parsed, handled);
             Map<String, Object> expected = new HashMap<>();
             expected.put("singleField", "value");
             expected.put("emptyField", "");
@@ -964,16 +996,24 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         }
 
         @Test
-        @DisplayName("Method complete without errors if additionalProperties field not present")
-        public void test1645393261530() {
-            final AdditionalFieldsWithoutAnnotation model = new AdditionalFieldsWithoutAnnotation();
+        @DisplayName("Throws FormUrlEncodedMapperException if unable to initialize additionalProperties field")
+        public void test1645393261530() throws NoSuchFieldException {
+            final EmptyModel model = new EmptyModel();
             final List<Field> handled = new ArrayList<>();
             final Map<String, List<String>> parsed = new HashMap<>();
             parsed.put("singleField", listOf("value"));
             parsed.put("emptyField", listOf());
             parsed.put("listField", listOf("value1", "value2"));
-            MAPPER.writeAdditionalProperties(model, parsed, handled);
-            assertIsNull(model.additionalProperties);
+            final Field field = AdditionalFieldsWithoutAnnotation.class.getDeclaredField("additionalProperties");
+            assertThrow(() -> MAPPER.writeAdditionalProperties(model, field, parsed, handled))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("" +
+                            "Unable to initialize additional properties field.\n" +
+                            "    Model: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$EmptyModel\n" +
+                            "    Field name: additionalProperties\n" +
+                            "    Field type: interface java.util.Map\n" +
+                            "    Error cause: Cannot locate declared field" +
+                            " veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$EmptyModel.additionalProperties\n");
         }
 
     }
@@ -1652,7 +1692,6 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
                     "ap1[0]=foo&" +
                     "ap1[1]=bar");
         }
-
 
     }
 
