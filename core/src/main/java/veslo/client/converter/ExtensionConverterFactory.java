@@ -1006,7 +1006,6 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
         Utils.parameterRequireNonNull(supportedPackageNames, "supportedPackageNames");
         for (String supportedPackageName : supportedPackageNames) {
             Utils.parameterRequireNonNull(supportedPackageName, "supportedPackageName");
-            assertPackageName(supportedPackageName);
             getPackageRequestConverters().put(supportedPackageName, converter);
         }
     }
@@ -1032,20 +1031,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
         Utils.parameterRequireNonNull(supportedPackageNames, "supportedPackageNames");
         for (String supportedPackageName : supportedPackageNames) {
             Utils.parameterRequireNonNull(supportedPackageName, "supportedPackageName");
-            assertPackageName(supportedPackageName);
             getPackageResponseConverters().put(supportedPackageName, converter);
-        }
-    }
-
-    /**
-     * @param packageName - DTO model package name
-     */
-    protected void assertPackageName(final String packageName) {
-        Utils.parameterRequireNonNull(packageName, "packageName");
-        String regexp = "^[a-zA-Z_]+(:?[a-zA-Z0-9_]*)?+(\\.[a-zA-Z_][a-zA-Z0-9_]*)*$";
-        if (!packageName.matches(regexp)) {
-            throw new IllegalArgumentException("Invalid package name: " + packageName +
-                    "\nExpected regex match: " + regexp);
         }
     }
 
