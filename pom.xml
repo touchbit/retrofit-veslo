@@ -74,7 +74,7 @@
         <sonar.java.binaries>target/classes</sonar.java.binaries>
         <sonar.java.test.binaries>target/test-classes</sonar.java.test.binaries>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-        <veslo.sonar.exclusions>**/*.xml, **/src/test/java/**/*.java</veslo.sonar.exclusions>
+        <veslo.sonar.exclusions>**/*.xml, **/src/test/**/*.*</veslo.sonar.exclusions>
         <sonar.exclusions>${veslo.sonar.exclusions}</sonar.exclusions>
         <sonar.coverage.exclusions>${veslo.sonar.exclusions}</sonar.coverage.exclusions>
         <sonar.cpd.exclusions/>

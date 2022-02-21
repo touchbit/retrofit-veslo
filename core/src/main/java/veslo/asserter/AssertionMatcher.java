@@ -30,8 +30,6 @@ import java.util.Objects;
  */
 public class AssertionMatcher {
 
-    private static final String SMELL = new String();
-
     /**
      * @param reason   - assertion description
      * @param actual   - actual object
