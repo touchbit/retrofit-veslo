@@ -77,8 +77,7 @@
         <sonar.skippedModules>internal-test-module</sonar.skippedModules>
         <veslo.sonar.exclusions>
             **/*.xml,
-            **/src/test/java/*,
-            **/src/test/java/**/*,
+            src/test/**
         </veslo.sonar.exclusions>
         <sonar.exclusions>${veslo.sonar.exclusions}</sonar.exclusions>
         <sonar.coverage.exclusions>${veslo.sonar.exclusions}</sonar.coverage.exclusions>
