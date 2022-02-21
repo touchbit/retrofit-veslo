@@ -39,6 +39,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  *     &#64;FormUrlEncodedField("bar")
  *     private List<Object> bar;
  *
+ *     &#64;FormUrlEncodedAdditionalProperties()
+ *     private Map<String, Object> additionalProperties;
+ *
  * }
  * </code></pre>
  * <p>

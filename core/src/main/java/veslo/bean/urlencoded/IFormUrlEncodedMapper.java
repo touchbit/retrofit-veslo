@@ -26,6 +26,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 /**
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 19.02.2022
+ * @see FormUrlEncoded
+ * @see FormUrlEncodedField
+ * @see FormUrlEncodedAdditionalProperties
  */
 public interface IFormUrlEncodedMapper {
 

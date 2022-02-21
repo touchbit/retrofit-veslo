@@ -309,17 +309,17 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
     }
 
     @Nested
-    @DisplayName("#convertValueToFieldType() method tests")
-    public class ConvertValueToFieldTypeMethodTests {
+    @DisplayName("#unmarshalDecodedValueToFieldType() method tests")
+    public class UnmarshalDecodedValueToFieldTypeMethodTests {
 
         @Test
         @DisplayName("Required parameters")
         public void test1645318639983() {
             final TypedModel model = new TypedModel();
             final Field declaredField = AdditionalFields.class.getDeclaredFields()[0];
-            assertNPE(() -> MAPPER.convertValueToFieldType(null, declaredField, new ArrayList<>()), "model");
-            assertNPE(() -> MAPPER.convertValueToFieldType(model, null, new ArrayList<>()), "field");
-            assertNPE(() -> MAPPER.convertValueToFieldType(model, declaredField, null), "value");
+            assertNPE(() -> MAPPER.unmarshalDecodedValueToFieldType(null, declaredField, new ArrayList<>()), "model");
+            assertNPE(() -> MAPPER.unmarshalDecodedValueToFieldType(model, null, new ArrayList<>()), "field");
+            assertNPE(() -> MAPPER.unmarshalDecodedValueToFieldType(model, declaredField, null), "value");
         }
 
         @Test
@@ -327,7 +327,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         public void test1645318712610() {
             final Field field = TypedModel.field(LIST_STRING_FIELD);
             final List<String> value = Collections.singletonList("test");
-            final Object o = MAPPER.convertValueToFieldType(new TypedModel(), field, value);
+            final Object o = MAPPER.unmarshalDecodedValueToFieldType(new TypedModel(), field, value);
             assertThat(o, instanceOf(List.class));
             assertThat(o, is(value));
         }
@@ -337,7 +337,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         public void test1645319853249() {
             final Field field = TypedModel.field(STRING_FIELD);
             final List<String> value = Collections.singletonList("2");
-            final Object o = MAPPER.convertValueToFieldType(new TypedModel(), field, value);
+            final Object o = MAPPER.unmarshalDecodedValueToFieldType(new TypedModel(), field, value);
             assertThat(o, instanceOf(String.class));
             assertThat(o, is("2"));
         }
@@ -347,7 +347,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         public void test1645389602012() {
             final Field field = TypedModel.field(INTEGER_FIELD);
             final List<String> value = Collections.singletonList("2");
-            final Object o = MAPPER.convertValueToFieldType(new TypedModel(), field, value);
+            final Object o = MAPPER.unmarshalDecodedValueToFieldType(new TypedModel(), field, value);
             assertThat(o, instanceOf(Integer.class));
             assertThat(o, is(2));
         }
@@ -357,7 +357,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         public void test1645389712876() {
             final Field field = TypedModel.field(STRING_ARRAY_FIELD);
             final List<String> value = listOf("1", "2");
-            final Object o = MAPPER.convertValueToFieldType(new TypedModel(), field, value);
+            final Object o = MAPPER.unmarshalDecodedValueToFieldType(new TypedModel(), field, value);
             assertThat(o, is(new String[]{"1", "2"}));
         }
 
@@ -366,7 +366,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         public void test1645389793160() {
             final Field field = TypedModel.field(INTEGER_ARRAY_FIELD);
             final List<String> value = listOf("1", "2");
-            final Object o = MAPPER.convertValueToFieldType(new TypedModel(), field, value);
+            final Object o = MAPPER.unmarshalDecodedValueToFieldType(new TypedModel(), field, value);
             assertThat(o, is(new Integer[]{1, 2}));
         }
 
@@ -375,7 +375,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         public void test1645389846421() {
             final Field field = TypedModel.field(STRING_FIELD);
             final List<String> value = listOf();
-            assertThrow(() -> MAPPER.convertValueToFieldType(new TypedModel(), field, value))
+            assertThrow(() -> MAPPER.unmarshalDecodedValueToFieldType(new TypedModel(), field, value))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("The 'value' field does not contain data to be converted.");
         }
@@ -557,8 +557,8 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
     }
 
     @Nested
-    @DisplayName("#convertParameterizedType() method tests")
-    public class ConvertParameterizedTypeMethodTests {
+    @DisplayName("#unmarshalDecodedValueToParameterizedType() method tests")
+    public class UnmarshalDecodedValueToParameterizedTypeMethodTests {
 
         @Test
         @DisplayName("Required parameters")
@@ -567,10 +567,10 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Field field = field(LIST_STRING_FIELD);
             final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
             final List<String> value = Collections.singletonList("test");
-            assertNPE(() -> MAPPER.convertParameterizedType(null, field, genericType, value), "model");
-            assertNPE(() -> MAPPER.convertParameterizedType(model, null, genericType, value), "field");
-            assertNPE(() -> MAPPER.convertParameterizedType(model, field, null, value), "parameterizedType");
-            assertNPE(() -> MAPPER.convertParameterizedType(model, field, genericType, null), "value");
+            assertNPE(() -> MAPPER.unmarshalDecodedValueToParameterizedType(null, field, genericType, value), "model");
+            assertNPE(() -> MAPPER.unmarshalDecodedValueToParameterizedType(model, null, genericType, value), "field");
+            assertNPE(() -> MAPPER.unmarshalDecodedValueToParameterizedType(model, field, null, value), "parameterizedType");
+            assertNPE(() -> MAPPER.unmarshalDecodedValueToParameterizedType(model, field, genericType, null), "value");
         }
 
         @Test
@@ -580,7 +580,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Field field = field(LIST_STRING_FIELD);
             final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
             final List<String> value = Collections.singletonList("test");
-            final Collection<Object> collection = MAPPER.convertParameterizedType(model, field, genericType, value);
+            final Collection<Object> collection = MAPPER.unmarshalDecodedValueToParameterizedType(model, field, genericType, value);
             assertThat(collection, instanceOf(List.class));
             assertThat(collection, contains("test"));
         }
@@ -592,7 +592,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Field field = field(LIST_STRING_FIELD);
             final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
             final List<String> value = listOf("test1", "test2");
-            final Collection<Object> collection = MAPPER.convertParameterizedType(model, field, genericType, value);
+            final Collection<Object> collection = MAPPER.unmarshalDecodedValueToParameterizedType(model, field, genericType, value);
             assertThat(collection, instanceOf(List.class));
             assertThat(collection, containsInAnyOrder("test1", "test2"));
         }
@@ -604,7 +604,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Field field = field(LIST_INTEGER_FIELD);
             final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
             final List<String> value = listOf("1", "2");
-            final Collection<Object> collection = MAPPER.convertParameterizedType(model, field, genericType, value);
+            final Collection<Object> collection = MAPPER.unmarshalDecodedValueToParameterizedType(model, field, genericType, value);
             assertThat(collection, instanceOf(List.class));
             assertThat(collection, containsInAnyOrder(1, 2));
         }
@@ -616,7 +616,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Field field = field(SET_STRING_FIELD);
             final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
             final List<String> value = listOf("test1", "test2");
-            final Collection<Object> collection = MAPPER.convertParameterizedType(model, field, genericType, value);
+            final Collection<Object> collection = MAPPER.unmarshalDecodedValueToParameterizedType(model, field, genericType, value);
             assertThat(collection, instanceOf(Set.class));
             assertThat(collection, containsInAnyOrder("test1", "test2"));
         }
@@ -628,7 +628,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Field field = field(SET_STRING_FIELD);
             final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
             final List<String> value = listOf("test", "test");
-            final Collection<Object> collection = MAPPER.convertParameterizedType(model, field, genericType, value);
+            final Collection<Object> collection = MAPPER.unmarshalDecodedValueToParameterizedType(model, field, genericType, value);
             assertThat(collection, instanceOf(Set.class));
             assertThat(collection, contains("test"));
         }
@@ -640,7 +640,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Field field = field(MAP_STRING_INTEGER_FIELD);
             final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
             final List<String> value = listOf("test", "test");
-            assertThrow(() -> MAPPER.convertParameterizedType(model, field, genericType, value))
+            assertThrow(() -> MAPPER.unmarshalDecodedValueToParameterizedType(model, field, genericType, value))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("" +
                             "Received unsupported parameterized type for conversion.\n" +
@@ -660,7 +660,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Field field = field(LIST_ENUM_FIELD);
             final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
             final List<String> value = listOf("test", "test");
-            assertThrow(() -> MAPPER.convertParameterizedType(model, field, genericType, value))
+            assertThrow(() -> MAPPER.unmarshalDecodedValueToParameterizedType(model, field, genericType, value))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("" +
                             "Received unsupported type for conversion.\n" +
@@ -676,8 +676,8 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
     }
 
     @Nested
-    @DisplayName("#convertArrayType() method tests")
-    public class ConvertArrayTypeMethodTests {
+    @DisplayName("#unmarshalDecodedValueToArrayType() method tests")
+    public class UnmarshalDecodedValueToArrayTypeMethodTests {
 
         @Test
         @DisplayName("Required parameters")
@@ -686,10 +686,10 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Field field = field(STRING_ARRAY_FIELD);
             final Class<?> type = field.getType();
             final List<String> value = Collections.singletonList("test");
-            assertNPE(() -> MAPPER.convertArrayType(null, field, type, value), "model");
-            assertNPE(() -> MAPPER.convertArrayType(model, null, type, value), "field");
-            assertNPE(() -> MAPPER.convertArrayType(model, field, null, value), "fieldType");
-            assertNPE(() -> MAPPER.convertArrayType(model, field, type, null), "value");
+            assertNPE(() -> MAPPER.unmarshalDecodedValueToArrayType(null, field, type, value), "model");
+            assertNPE(() -> MAPPER.unmarshalDecodedValueToArrayType(model, null, type, value), "field");
+            assertNPE(() -> MAPPER.unmarshalDecodedValueToArrayType(model, field, null, value), "fieldType");
+            assertNPE(() -> MAPPER.unmarshalDecodedValueToArrayType(model, field, type, null), "value");
         }
 
         @Test
@@ -699,7 +699,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Field field = field(STRING_ARRAY_FIELD);
             final Class<?> type = field.getType();
             final List<String> value = Collections.singletonList("test");
-            final Object[] result = MAPPER.convertArrayType(model, field, type, value);
+            final Object[] result = MAPPER.unmarshalDecodedValueToArrayType(model, field, type, value);
             assertThat(result, arrayWithSize(1));
             assertThat(result, arrayContaining("test"));
         }
@@ -711,7 +711,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Field field = field(STRING_ARRAY_FIELD);
             final Class<?> type = field.getType();
             final List<String> value = listOf("test", "test");
-            final Object[] result = MAPPER.convertArrayType(model, field, type, value);
+            final Object[] result = MAPPER.unmarshalDecodedValueToArrayType(model, field, type, value);
             assertThat(result, arrayWithSize(2));
             assertThat(result, arrayContaining("test", "test"));
         }
@@ -723,7 +723,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Field field = field(INTEGER_ARRAY_FIELD);
             final Class<?> type = field.getType();
             final List<String> value = listOf("1", "2");
-            final Object[] result = MAPPER.convertArrayType(model, field, type, value);
+            final Object[] result = MAPPER.unmarshalDecodedValueToArrayType(model, field, type, value);
             assertThat(result, arrayWithSize(2));
             assertThat(result, arrayContaining(1, 2));
         }
@@ -735,7 +735,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Field field = field(STRING_FIELD);
             final Class<?> type = field.getType();
             final List<String> value = listOf("1", "2");
-            assertThrow(() -> MAPPER.convertArrayType(model, field, type, value))
+            assertThrow(() -> MAPPER.unmarshalDecodedValueToArrayType(model, field, type, value))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("" +
                             "Mismatch types. Got a single type instead of an array.\n" +
@@ -753,7 +753,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Field field = field(PRIMITIVE_ARRAY_FIELD);
             final Class<?> type = field.getType();
             final List<String> value = listOf("1", "2");
-            assertThrow(() -> MAPPER.convertArrayType(model, field, type, value))
+            assertThrow(() -> MAPPER.unmarshalDecodedValueToArrayType(model, field, type, value))
                     .assertClass(IllegalArgumentException.class)
                     .assertMessageIs("" +
                             "It is forbidden to use primitive types in FormUrlEncoded models.\n" +
@@ -770,7 +770,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Field field = field(CHARACTER_ARRAY_FIELD);
             final Class<?> type = field.getType();
             final List<String> value = listOf("1", "2");
-            assertThrow(() -> MAPPER.convertArrayType(model, field, type, value))
+            assertThrow(() -> MAPPER.unmarshalDecodedValueToArrayType(model, field, type, value))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("" +
                             "Received unsupported type for conversion.\n" +
@@ -786,8 +786,8 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
     }
 
     @Nested
-    @DisplayName("#convertSingleType() method tests")
-    public class ConvertSingleTypeMethodTests {
+    @DisplayName("#unmarshalDecodedValueToSingleType() method tests")
+    public class UnmarshalDecodedValueToSingleTypeMethodTests {
 
         @Test
         @DisplayName("Required parameters")
@@ -796,10 +796,10 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Field field = field(STRING_ARRAY_FIELD);
             final Class<?> type = field.getType();
             final List<String> value = Collections.singletonList("test");
-            assertNPE(() -> MAPPER.convertSingleType(null, field, type, value), "model");
-            assertNPE(() -> MAPPER.convertSingleType(model, null, type, value), "field");
-            assertNPE(() -> MAPPER.convertSingleType(model, field, null, value), "fieldType");
-            assertNPE(() -> MAPPER.convertSingleType(model, field, type, null), "value");
+            assertNPE(() -> MAPPER.unmarshalDecodedValueToSingleType(null, field, type, value), "model");
+            assertNPE(() -> MAPPER.unmarshalDecodedValueToSingleType(model, null, type, value), "field");
+            assertNPE(() -> MAPPER.unmarshalDecodedValueToSingleType(model, field, null, value), "fieldType");
+            assertNPE(() -> MAPPER.unmarshalDecodedValueToSingleType(model, field, type, null), "value");
         }
 
         @Test
@@ -809,7 +809,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Field field = field(INTEGER_FIELD);
             final Class<?> type = field.getType();
             final List<String> value = listOf("1");
-            final Object result = MAPPER.convertSingleType(model, field, type, value);
+            final Object result = MAPPER.unmarshalDecodedValueToSingleType(model, field, type, value);
             assertThat(result, is(1));
         }
 
@@ -820,7 +820,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Field field = field(STRING_FIELD);
             final Class<?> type = field.getType();
             final List<String> value = listOf("test");
-            final Object result = MAPPER.convertSingleType(model, field, type, value);
+            final Object result = MAPPER.unmarshalDecodedValueToSingleType(model, field, type, value);
             assertThat(result, is("test"));
         }
 
@@ -831,7 +831,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Field field = field(STRING_FIELD);
             final Class<?> type = field.getType();
             final List<String> value = listOf();
-            assertThrow(() -> MAPPER.convertSingleType(model, field, type, value))
+            assertThrow(() -> MAPPER.unmarshalDecodedValueToSingleType(model, field, type, value))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("The 'value' field does not contain data to be converted.");
         }
@@ -843,7 +843,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Field field = field(STRING_FIELD);
             final Class<?> type = field.getType();
             final List<String> value = listOf("1", "2");
-            assertThrow(() -> MAPPER.convertSingleType(model, field, type, value))
+            assertThrow(() -> MAPPER.unmarshalDecodedValueToSingleType(model, field, type, value))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("" +
                             "Mismatch types. Got an array instead of a single value.\n" +
@@ -863,7 +863,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Field field = field(CHARACTER_FIELD);
             final Class<?> type = field.getType();
             final List<String> value = listOf("1");
-            assertThrow(() -> MAPPER.convertSingleType(model, field, type, value))
+            assertThrow(() -> MAPPER.unmarshalDecodedValueToSingleType(model, field, type, value))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("" +
                             "Error converting string to field type.\n" +
@@ -961,8 +961,8 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
     }
 
     @Nested
-    @DisplayName("#writeAdditionalProperties() method tests")
-    public class WriteAdditionalPropertiesMethodTests {
+    @DisplayName("#unmarshalAndWriteAdditionalProperties() method tests")
+    public class UnmarshalAndWriteAdditionalPropertiesMethodTests {
 
         @Test
         @DisplayName("Required parameters")
@@ -971,10 +971,10 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Map<String, List<String>> parsed = new HashMap<>();
             final List<Field> handled = new ArrayList<>();
             final Field field = AdditionalFields.class.getDeclaredField("additionalProperties");
-            assertNPE(() -> MAPPER.writeAdditionalProperties(null, field, parsed, handled), "model");
-            assertNPE(() -> MAPPER.writeAdditionalProperties(model, null, parsed, handled), "field");
-            assertNPE(() -> MAPPER.writeAdditionalProperties(model, field, null, handled), "parsed");
-            assertNPE(() -> MAPPER.writeAdditionalProperties(model, field, parsed, null), "handled");
+            assertNPE(() -> MAPPER.unmarshalAndWriteAdditionalProperties(null, field, parsed, handled), "model");
+            assertNPE(() -> MAPPER.unmarshalAndWriteAdditionalProperties(model, null, parsed, handled), "field");
+            assertNPE(() -> MAPPER.unmarshalAndWriteAdditionalProperties(model, field, null, handled), "parsed");
+            assertNPE(() -> MAPPER.unmarshalAndWriteAdditionalProperties(model, field, parsed, null), "handled");
         }
 
         @Test
@@ -987,7 +987,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             parsed.put("emptyField", listOf());
             parsed.put("listField", listOf("value1", "value2"));
             final Field field = AdditionalFields.class.getDeclaredField("additionalProperties");
-            MAPPER.writeAdditionalProperties(model, field, parsed, handled);
+            MAPPER.unmarshalAndWriteAdditionalProperties(model, field, parsed, handled);
             Map<String, Object> expected = new HashMap<>();
             expected.put("singleField", "value");
             expected.put("emptyField", "");
@@ -1005,7 +1005,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             parsed.put("emptyField", listOf());
             parsed.put("listField", listOf("value1", "value2"));
             final Field field = AdditionalFieldsWithoutAnnotation.class.getDeclaredField("additionalProperties");
-            assertThrow(() -> MAPPER.writeAdditionalProperties(model, field, parsed, handled))
+            assertThrow(() -> MAPPER.unmarshalAndWriteAdditionalProperties(model, field, parsed, handled))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("" +
                             "Unable to initialize additional properties field.\n" +
@@ -1083,18 +1083,18 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
     }
 
     @Nested
-    @DisplayName("#buildCollectionUrlEncodedString() method tests")
-    public class BuildCollectionUrlEncodedStringMethodTests {
+    @DisplayName("#marshalCollectionToUrlEncodedString() method tests")
+    public class MarshalCollectionToUrlEncodedStringMethodTests {
 
         @Test
         @DisplayName("Required parameters")
         public void test1645407556671() throws NoSuchFieldException {
             final GoodModel model = new GoodModel();
             final Field field = GoodModel.class.getDeclaredField("listStringField");
-            assertNPE(() -> MAPPER.buildCollectionUrlEncodedString(null, field, "test", UTF_8, false), "model");
-            assertNPE(() -> MAPPER.buildCollectionUrlEncodedString(model, null, "test", UTF_8, false), "field");
-            assertNPE(() -> MAPPER.buildCollectionUrlEncodedString(model, field, null, UTF_8, false), "formFieldName");
-            assertNPE(() -> MAPPER.buildCollectionUrlEncodedString(model, field, "test", null, false), "codingCharset");
+            assertNPE(() -> MAPPER.marshalCollectionToUrlEncodedString(null, field, "test", UTF_8, false), "model");
+            assertNPE(() -> MAPPER.marshalCollectionToUrlEncodedString(model, null, "test", UTF_8, false), "field");
+            assertNPE(() -> MAPPER.marshalCollectionToUrlEncodedString(model, field, null, UTF_8, false), "formFieldName");
+            assertNPE(() -> MAPPER.marshalCollectionToUrlEncodedString(model, field, "test", null, false), "codingCharset");
         }
 
         @Test
@@ -1105,7 +1105,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             model.listStringField.add("foo");
             model.listStringField.add("bar");
             final Field field = GoodModel.class.getDeclaredField("listStringField");
-            final String result = MAPPER.buildCollectionUrlEncodedString(model, field, "test", UTF_8, false);
+            final String result = MAPPER.marshalCollectionToUrlEncodedString(model, field, "test", UTF_8, false);
             assertThat(result, is("test=foo&test=bar"));
         }
 
@@ -1117,7 +1117,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             model.listStringField.add("foo");
             model.listStringField.add("bar");
             final Field field = GoodModel.class.getDeclaredField("listStringField");
-            final String result = MAPPER.buildCollectionUrlEncodedString(model, field, "test", UTF_8, true);
+            final String result = MAPPER.marshalCollectionToUrlEncodedString(model, field, "test", UTF_8, true);
             assertThat(result, is("test[0]=foo&test[1]=bar"));
         }
 
@@ -1127,7 +1127,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final GoodModel model = new GoodModel();
             model.listStringField = new ArrayList<>();
             final Field field = GoodModel.class.getDeclaredField("listStringField");
-            final String result = MAPPER.buildCollectionUrlEncodedString(model, field, "test", UTF_8, true);
+            final String result = MAPPER.marshalCollectionToUrlEncodedString(model, field, "test", UTF_8, true);
             assertThat(result, emptyString());
         }
 
@@ -1137,7 +1137,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final GoodModel model = new GoodModel();
             model.listStringField = null;
             final Field field = GoodModel.class.getDeclaredField("listStringField");
-            final String result = MAPPER.buildCollectionUrlEncodedString(model, field, "test", UTF_8, true);
+            final String result = MAPPER.marshalCollectionToUrlEncodedString(model, field, "test", UTF_8, true);
             assertThat(result, emptyString());
         }
 
@@ -1149,7 +1149,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             model.listStringField.add(null);
             model.listStringField.add("bar");
             final Field field = GoodModel.class.getDeclaredField("listStringField");
-            final String result = MAPPER.buildCollectionUrlEncodedString(model, field, "test", UTF_8, true);
+            final String result = MAPPER.marshalCollectionToUrlEncodedString(model, field, "test", UTF_8, true);
             assertThat(result, is("test[0]=&test[1]=bar"));
         }
 
@@ -1163,7 +1163,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Charset mock = mock(Charset.class);
             when(mock.name()).thenReturn("asdasdas");
             when(mock.toString()).thenReturn("mock");
-            assertThrow(() -> MAPPER.buildCollectionUrlEncodedString(model, field, "test1", mock, true))
+            assertThrow(() -> MAPPER.marshalCollectionToUrlEncodedString(model, field, "test1", mock, true))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("Unable to encode string to FormUrlEncoded format\n" +
                             "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$GoodModel\n" +
@@ -1180,7 +1180,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         public void test1645406389756() {
             final GoodModel model = new GoodModel();
             final Field field = TypedModel.field(MAP_STRING_INTEGER_FIELD);
-            assertThrow(() -> MAPPER.buildCollectionUrlEncodedString(model, field, "test", UTF_8, true))
+            assertThrow(() -> MAPPER.marshalCollectionToUrlEncodedString(model, field, "test", UTF_8, true))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("" +
                             "Unable to read value from model field.\n" +
@@ -1195,18 +1195,18 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
     }
 
     @Nested
-    @DisplayName("buildArrayUrlEncodedString#() method tests")
-    public class BuildArrayUrlEncodedStringMethodTests {
+    @DisplayName("marshalArrayToUrlEncodedString#() method tests")
+    public class MarshalArrayToUrlEncodedStringMethodTests {
 
         @Test
         @DisplayName("Required parameters")
         public void test1645447361272() throws NoSuchFieldException {
             final GoodModel model = new GoodModel();
             final Field field = GoodModel.class.getDeclaredField("stringArrayField");
-            assertNPE(() -> MAPPER.buildArrayUrlEncodedString(null, field, "test", UTF_8, false), "model");
-            assertNPE(() -> MAPPER.buildArrayUrlEncodedString(model, null, "test", UTF_8, false), "field");
-            assertNPE(() -> MAPPER.buildArrayUrlEncodedString(model, field, null, UTF_8, false), "formFieldName");
-            assertNPE(() -> MAPPER.buildArrayUrlEncodedString(model, field, "test", null, false), "codingCharset");
+            assertNPE(() -> MAPPER.marshalArrayToUrlEncodedString(null, field, "test", UTF_8, false), "model");
+            assertNPE(() -> MAPPER.marshalArrayToUrlEncodedString(model, null, "test", UTF_8, false), "field");
+            assertNPE(() -> MAPPER.marshalArrayToUrlEncodedString(model, field, null, UTF_8, false), "formFieldName");
+            assertNPE(() -> MAPPER.marshalArrayToUrlEncodedString(model, field, "test", null, false), "codingCharset");
         }
 
         @Test
@@ -1215,7 +1215,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final GoodModel model = new GoodModel();
             model.stringArrayField = new String[]{"foo", "bar"};
             final Field field = GoodModel.class.getDeclaredField("stringArrayField");
-            final String result = MAPPER.buildArrayUrlEncodedString(model, field, "test", UTF_8, false);
+            final String result = MAPPER.marshalArrayToUrlEncodedString(model, field, "test", UTF_8, false);
             assertThat(result, is("test=foo&test=bar"));
         }
 
@@ -1225,7 +1225,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final GoodModel model = new GoodModel();
             model.stringArrayField = new String[]{"foo", "bar"};
             final Field field = GoodModel.class.getDeclaredField("stringArrayField");
-            final String result = MAPPER.buildArrayUrlEncodedString(model, field, "test", UTF_8, true);
+            final String result = MAPPER.marshalArrayToUrlEncodedString(model, field, "test", UTF_8, true);
             assertThat(result, is("test[0]=foo&test[1]=bar"));
         }
 
@@ -1235,7 +1235,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final GoodModel model = new GoodModel();
             model.stringArrayField = new String[]{};
             final Field field = GoodModel.class.getDeclaredField("stringArrayField");
-            final String result = MAPPER.buildArrayUrlEncodedString(model, field, "test", UTF_8, true);
+            final String result = MAPPER.marshalArrayToUrlEncodedString(model, field, "test", UTF_8, true);
             assertThat(result, emptyString());
         }
 
@@ -1245,7 +1245,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final GoodModel model = new GoodModel();
             model.stringArrayField = null;
             final Field field = GoodModel.class.getDeclaredField("stringArrayField");
-            final String result = MAPPER.buildArrayUrlEncodedString(model, field, "test", UTF_8, true);
+            final String result = MAPPER.marshalArrayToUrlEncodedString(model, field, "test", UTF_8, true);
             assertThat(result, emptyString());
         }
 
@@ -1255,7 +1255,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final GoodModel model = new GoodModel();
             model.stringArrayField = new String[]{null, "bar"};
             final Field field = GoodModel.class.getDeclaredField("stringArrayField");
-            final String result = MAPPER.buildArrayUrlEncodedString(model, field, "test", UTF_8, true);
+            final String result = MAPPER.marshalArrayToUrlEncodedString(model, field, "test", UTF_8, true);
             assertThat(result, is("test[0]=&test[1]=bar"));
         }
 
@@ -1268,7 +1268,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Charset mock = mock(Charset.class);
             when(mock.name()).thenReturn("asdasdasda");
             when(mock.toString()).thenReturn("mock");
-            assertThrow(() -> MAPPER.buildArrayUrlEncodedString(model, field, "test1", mock, true))
+            assertThrow(() -> MAPPER.marshalArrayToUrlEncodedString(model, field, "test1", mock, true))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("Unable to encode string to FormUrlEncoded format\n" +
                             "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$GoodModel\n" +
@@ -1285,7 +1285,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         public void test1645447385192() {
             final GoodModel model = new GoodModel();
             final Field field = TypedModel.field(MAP_STRING_INTEGER_FIELD);
-            assertThrow(() -> MAPPER.buildArrayUrlEncodedString(model, field, "test", UTF_8, true))
+            assertThrow(() -> MAPPER.marshalArrayToUrlEncodedString(model, field, "test", UTF_8, true))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("" +
                             "Unable to read value from model field.\n" +
@@ -1300,18 +1300,18 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
     }
 
     @Nested
-    @DisplayName("#buildSingleUrlEncodedString() method tests")
-    public class BuildSingleUrlEncodedStringMethodTests {
+    @DisplayName("#marshalSingleTypeToUrlEncodedString() method tests")
+    public class MarshalSingleTypeToUrlEncodedStringMethodTests {
 
         @Test
         @DisplayName("Required parameters")
         public void test1645448237832() throws NoSuchFieldException {
             final GoodModel model = new GoodModel();
             final Field field = GoodModel.class.getDeclaredField("stringArrayField");
-            assertNPE(() -> MAPPER.buildSingleUrlEncodedString(null, field, "test", UTF_8), "model");
-            assertNPE(() -> MAPPER.buildSingleUrlEncodedString(model, null, "test", UTF_8), "field");
-            assertNPE(() -> MAPPER.buildSingleUrlEncodedString(model, field, null, UTF_8), "formFieldName");
-            assertNPE(() -> MAPPER.buildSingleUrlEncodedString(model, field, "test", null), "codingCharset");
+            assertNPE(() -> MAPPER.marshalSingleTypeToUrlEncodedString(null, field, "test", UTF_8), "model");
+            assertNPE(() -> MAPPER.marshalSingleTypeToUrlEncodedString(model, null, "test", UTF_8), "field");
+            assertNPE(() -> MAPPER.marshalSingleTypeToUrlEncodedString(model, field, null, UTF_8), "formFieldName");
+            assertNPE(() -> MAPPER.marshalSingleTypeToUrlEncodedString(model, field, "test", null), "codingCharset");
         }
 
         @Test
@@ -1320,7 +1320,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final GoodModel model = new GoodModel();
             model.integerField = 100;
             final Field field = GoodModel.class.getDeclaredField("integerField");
-            final String result = MAPPER.buildSingleUrlEncodedString(model, field, "test", UTF_8);
+            final String result = MAPPER.marshalSingleTypeToUrlEncodedString(model, field, "test", UTF_8);
             assertThat(result, is("test=100"));
         }
 
@@ -1330,7 +1330,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final GoodModel model = new GoodModel();
             model.objectField = new Object();
             final Field field = GoodModel.class.getDeclaredField("objectField");
-            final String result = MAPPER.buildSingleUrlEncodedString(model, field, "test", UTF_8);
+            final String result = MAPPER.marshalSingleTypeToUrlEncodedString(model, field, "test", UTF_8);
             assertThat(result, containsString("test=java.lang.Object"));
         }
 
@@ -1339,7 +1339,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         public void test1645448553257() throws NoSuchFieldException {
             final GoodModel model = new GoodModel();
             final Field field = GoodModel.class.getDeclaredField("objectField");
-            final String result = MAPPER.buildSingleUrlEncodedString(model, field, "test", UTF_8);
+            final String result = MAPPER.marshalSingleTypeToUrlEncodedString(model, field, "test", UTF_8);
             assertThat(result, emptyString());
         }
 
@@ -1352,7 +1352,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Charset mock = mock(Charset.class);
             when(mock.name()).thenReturn("asdasdasd");
             when(mock.toString()).thenReturn("mock");
-            assertThrow(() -> MAPPER.buildSingleUrlEncodedString(model, field, "test1", mock))
+            assertThrow(() -> MAPPER.marshalSingleTypeToUrlEncodedString(model, field, "test1", mock))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("Unable to encode string to FormUrlEncoded format\n" +
                             "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$GoodModel\n" +
@@ -1369,7 +1369,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         public void test1645448603710() {
             final GoodModel model = new GoodModel();
             final Field field = TypedModel.field(MAP_STRING_INTEGER_FIELD);
-            assertThrow(() -> MAPPER.buildSingleUrlEncodedString(model, field, "test", UTF_8))
+            assertThrow(() -> MAPPER.marshalSingleTypeToUrlEncodedString(model, field, "test", UTF_8))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("" +
                             "Unable to read value from model field.\n" +

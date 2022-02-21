@@ -48,6 +48,9 @@ import java.util.stream.Collectors;
  *     &#64;FormUrlEncodedField("bar")
  *     private List<Integer> bar;
  *
+ *     &#64;FormUrlEncodedAdditionalProperties()
+ *     private Map<String, Object> additionalProperties;
+ *
  * }
  * </code></pre>
  * <p>
@@ -55,7 +58,7 @@ import java.util.stream.Collectors;
  * <pre><code>
  *     Model model = new Model().foo("text").bar(1,2,3);
  *     Strung formUrlEncodedString = FormUrlEncodedMapper.INSTANCE.marshal(model);
- *     Model formUrlEncodedModel = FormUrlEncodedMapper.INSTANCE.unmarshal(formUrlEncodedString);
+ *     Model formUrlDecodedModel = FormUrlEncodedMapper.INSTANCE.unmarshal(formUrlEncodedString);
  * </code></pre>
  * <p>
  *
@@ -90,11 +93,11 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
             final String formFieldName = getFormUrlEncodedFieldName(field);
             final String pair;
             if (Collection.class.isAssignableFrom(field.getType())) {
-                pair = buildCollectionUrlEncodedString(model, field, formFieldName, codingCharset, indexedArray);
+                pair = marshalCollectionToUrlEncodedString(model, field, formFieldName, codingCharset, indexedArray);
             } else if (field.getType().isArray()) {
-                pair = buildArrayUrlEncodedString(model, field, formFieldName, codingCharset, indexedArray);
+                pair = marshalArrayToUrlEncodedString(model, field, formFieldName, codingCharset, indexedArray);
             } else {
-                pair = buildSingleUrlEncodedString(model, field, formFieldName, codingCharset);
+                pair = marshalSingleTypeToUrlEncodedString(model, field, formFieldName, codingCharset);
             }
             if (pair != null && !pair.trim().isEmpty()) {
                 result.add(pair);
@@ -150,13 +153,13 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
                 handledAnnotatedFields.add(annotatedField);
                 continue;
             }
-            final Object forWrite = convertValueToFieldType(model, annotatedField, value);
+            final Object forWrite = unmarshalDecodedValueToFieldType(model, annotatedField, value);
             writeFieldValue(model, annotatedField, forWrite);
             handledAnnotatedFields.add(annotatedField);
         }
         final Field additionalProperty = getAdditionalPropertiesField(model.getClass());
         if (additionalProperty != null) {
-            writeAdditionalProperties(model, additionalProperty, parsed, handledAnnotatedFields);
+            unmarshalAndWriteAdditionalProperties(model, additionalProperty, parsed, handledAnnotatedFields);
         }
         return model;
     }
@@ -170,9 +173,9 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * If objects of other types are used as values, then {@code toString()} of these objects will be called.
      * According to the 3W specification, it is strongly recommended to use UTF-8 charset for URL form data coding.
      *
-     * @param model - FormUrlEncoded model
+     * @param model         - FormUrlEncoded model
      * @param codingCharset - URL form data coding charset
-     * @param indexedArray - flag for indexed array format: {@code foo[0]=100&foo[1]=200...&foo[n]=100500}
+     * @param indexedArray  - flag for indexed array format: {@code foo[0]=100&foo[1]=200...&foo[n]=100500}
      * @return FormUrlEncoded additionalProperties representation
      * @throws FormUrlEncodedMapperException if model field not readable
      * @throws FormUrlEncodedMapperException if unsupported URL form coding {@link Charset}
@@ -196,7 +199,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
                     "    Field name: " + field.getName() + "\n" +
                     "    Error cause: " + e.getMessage().trim() + "\n", e);
         }
-        if (additionalProperties == null) {
+        if (additionalProperties == null || additionalProperties.isEmpty()) {
             return "";
         }
         StringJoiner result = new StringJoiner("&");
@@ -258,10 +261,10 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * @throws FormUrlEncodedMapperException if unsupported URL form coding {@link Charset}
      */
     @EverythingIsNonNull
-    protected String buildSingleUrlEncodedString(final Object model,
-                                                 final Field field,
-                                                 final String formFieldName,
-                                                 final Charset codingCharset) {
+    protected String marshalSingleTypeToUrlEncodedString(final Object model,
+                                                         final Field field,
+                                                         final String formFieldName,
+                                                         final Charset codingCharset) {
         Utils.parameterRequireNonNull(model, "model");
         Utils.parameterRequireNonNull(field, "field");
         Utils.parameterRequireNonNull(formFieldName, "formFieldName");
@@ -309,11 +312,11 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * @throws FormUrlEncodedMapperException if unsupported URL form coding {@link Charset}
      */
     @EverythingIsNonNull
-    protected String buildArrayUrlEncodedString(final Object model,
-                                                final Field field,
-                                                final String formFieldName,
-                                                final Charset codingCharset,
-                                                final boolean indexedArray) {
+    protected String marshalArrayToUrlEncodedString(final Object model,
+                                                    final Field field,
+                                                    final String formFieldName,
+                                                    final Charset codingCharset,
+                                                    final boolean indexedArray) {
         Utils.parameterRequireNonNull(model, "model");
         Utils.parameterRequireNonNull(field, "field");
         Utils.parameterRequireNonNull(formFieldName, "formFieldName");
@@ -372,11 +375,11 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * @throws FormUrlEncodedMapperException if unsupported URL form coding {@link Charset}
      */
     @EverythingIsNonNull
-    protected String buildCollectionUrlEncodedString(final Object model,
-                                                     final Field field,
-                                                     final String formFieldName,
-                                                     final Charset codingCharset,
-                                                     final boolean indexedArray) {
+    protected String marshalCollectionToUrlEncodedString(final Object model,
+                                                         final Field field,
+                                                         final String formFieldName,
+                                                         final Charset codingCharset,
+                                                         final boolean indexedArray) {
         Utils.parameterRequireNonNull(model, "model");
         Utils.parameterRequireNonNull(field, "field");
         Utils.parameterRequireNonNull(formFieldName, "formFieldName");
@@ -432,10 +435,10 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * @throws FormUrlEncodedMapperException if unable to initialize additionalProperties field
      */
     @EverythingIsNonNull
-    protected <M> void writeAdditionalProperties(final M model,
-                                                 final Field field,
-                                                 final Map<String, List<String>> parsed,
-                                                 final List<Field> handled) {
+    protected <M> void unmarshalAndWriteAdditionalProperties(final M model,
+                                                             final Field field,
+                                                             final Map<String, List<String>> parsed,
+                                                             final List<Field> handled) {
         Utils.parameterRequireNonNull(model, "model");
         Utils.parameterRequireNonNull(field, "field");
         Utils.parameterRequireNonNull(parsed, "parsed");
@@ -466,13 +469,13 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * @param value - String value to convert
      * @return converted reference type object
      * @throws FormUrlEncodedMapperException if value list is empty
-     * @see FormUrlEncodedMapper#convertParameterizedType
-     * @see FormUrlEncodedMapper#convertArrayType
-     * @see FormUrlEncodedMapper#convertSingleType
+     * @see FormUrlEncodedMapper#unmarshalDecodedValueToParameterizedType
+     * @see FormUrlEncodedMapper#unmarshalDecodedValueToArrayType
+     * @see FormUrlEncodedMapper#unmarshalDecodedValueToSingleType
      * @see FormUrlEncodedMapper#convertUrlDecodedStringValueToType
      */
     @EverythingIsNonNull
-    protected Object convertValueToFieldType(final Object model, final Field field, final List<String> value) {
+    protected Object unmarshalDecodedValueToFieldType(final Object model, final Field field, final List<String> value) {
         Utils.parameterRequireNonNull(model, "model");
         Utils.parameterRequireNonNull(field, "field");
         Utils.parameterRequireNonNull(value, "value");
@@ -483,14 +486,14 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         // convert to parameterized type (collection)
         if (field.getGenericType() instanceof ParameterizedType) {
             final ParameterizedType parameterizedType = (ParameterizedType) field.getGenericType();
-            return convertParameterizedType(model, field, parameterizedType, value);
+            return unmarshalDecodedValueToParameterizedType(model, field, parameterizedType, value);
         }
         // convert to array type
         if (fieldType.isArray()) {
-            return convertArrayType(model, field, fieldType, value);
+            return unmarshalDecodedValueToArrayType(model, field, fieldType, value);
         }
         // convert to single type
-        return convertSingleType(model, field, fieldType, value);
+        return unmarshalDecodedValueToSingleType(model, field, fieldType, value);
     }
 
     /**
@@ -507,10 +510,10 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * @see FormUrlEncodedMapper#convertUrlDecodedStringValueToType
      */
     @EverythingIsNonNull
-    protected Object convertSingleType(final Object model,
-                                       final Field field,
-                                       final Class<?> fieldType,
-                                       final List<String> value) {
+    protected Object unmarshalDecodedValueToSingleType(final Object model,
+                                                       final Field field,
+                                                       final Class<?> fieldType,
+                                                       final List<String> value) {
         Utils.parameterRequireNonNull(model, "model");
         Utils.parameterRequireNonNull(field, "field");
         Utils.parameterRequireNonNull(fieldType, "fieldType");
@@ -556,10 +559,10 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * @see FormUrlEncodedMapper#convertUrlDecodedStringValueToType
      */
     @EverythingIsNonNull
-    protected Object[] convertArrayType(final Object model,
-                                        final Field field,
-                                        final Class<?> fieldType,
-                                        final List<String> value) {
+    protected Object[] unmarshalDecodedValueToArrayType(final Object model,
+                                                        final Field field,
+                                                        final Class<?> fieldType,
+                                                        final List<String> value) {
         Utils.parameterRequireNonNull(model, "model");
         Utils.parameterRequireNonNull(field, "field");
         Utils.parameterRequireNonNull(fieldType, "fieldType");
@@ -615,10 +618,10 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * @see FormUrlEncodedMapper#convertUrlDecodedStringValueToType
      */
     @EverythingIsNonNull
-    protected Collection<Object> convertParameterizedType(final Object model,
-                                                          final Field field,
-                                                          final ParameterizedType parameterizedType,
-                                                          final List<String> value) {
+    protected Collection<Object> unmarshalDecodedValueToParameterizedType(final Object model,
+                                                                          final Field field,
+                                                                          final ParameterizedType parameterizedType,
+                                                                          final List<String> value) {
         Utils.parameterRequireNonNull(model, "model");
         Utils.parameterRequireNonNull(field, "field");
         Utils.parameterRequireNonNull(parameterizedType, "parameterizedType");
@@ -897,7 +900,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
 
     /**
      * @param field - model field
-     * @return URL form field name from the {@link FormUrlEncodedField} field annotation
+     * @return URL form field name from the {@link FormUrlEncodedField#value()} field annotation
      * @throws FormUrlEncodedMapperException if field does not contain {@link FormUrlEncodedField} annotation
      * @throws FormUrlEncodedMapperException if {@link FormUrlEncodedField#value()} is empty or blank
      */
