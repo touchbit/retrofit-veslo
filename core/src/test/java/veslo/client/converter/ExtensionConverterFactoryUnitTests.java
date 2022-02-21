@@ -53,7 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static internal.test.utils.TestUtils.array;
+import static internal.test.utils.TestUtils.arrayOf;
 import static org.hamcrest.Matchers.*;
 
 @SuppressWarnings({"ConstantConditions", "SameParameterValue", "ConfusingArgumentToVarargsMethod"})
@@ -163,7 +163,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639065949591() {
             final RequestConverter requestConverter = getRequestConverter(TestConverter.class, TestDTO.class);
             final RequestBodyConverter converter = getTestFactory()
-                    .getRequestConverterFromCallAnnotation(TestDTO.class, AA, array(requestConverter), RTF);
+                    .getRequestConverterFromCallAnnotation(TestDTO.class, AA, arrayOf(requestConverter), RTF);
             assertThat("Converter", converter, isA(RequestBodyConverter.class));
         }
 
@@ -172,7 +172,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639065949601() {
             final RequestConverter requestConverter = getRequestConverter(TestConverter.class, Objects.class);
             final RequestBodyConverter converter = getTestFactory()
-                    .getRequestConverterFromCallAnnotation(TestDTO.class, AA, array(requestConverter), RTF);
+                    .getRequestConverterFromCallAnnotation(TestDTO.class, AA, arrayOf(requestConverter), RTF);
             assertThat("Converter", converter, nullValue());
         }
 
@@ -184,27 +184,27 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             };
             final Converters converters = BaseCoreUnitTest.getConverters(new ResponseConverter[]{}, requestConverters);
             final RequestBodyConverter converter = getTestFactory()
-                    .getRequestConverterFromCallAnnotation(TestDTO.class, AA, array(converters), RTF);
+                    .getRequestConverterFromCallAnnotation(TestDTO.class, AA, arrayOf(converters), RTF);
             assertThat("Converter", converter, nullValue());
         }
 
         @Test
         @DisplayName("return converter if Converters annotation does not contain classes for conversion")
         public void test1639065949634() {
-            final RequestConverter[] requestConverters = array(getRequestConverter(TestConverter.class));
+            final RequestConverter[] requestConverters = arrayOf(getRequestConverter(TestConverter.class));
             final Converters converters = BaseCoreUnitTest.getConverters(new ResponseConverter[]{}, requestConverters);
             final RequestBodyConverter converter = getTestFactory()
-                    .getRequestConverterFromCallAnnotation(TestDTO.class, AA, array(converters), RTF);
+                    .getRequestConverterFromCallAnnotation(TestDTO.class, AA, arrayOf(converters), RTF);
             assertThat("Converter", converter, isA(RequestBodyConverter.class));
         }
 
         @Test
         @DisplayName("return converter if Converters annotation has RawDTO.class")
         public void test1639065949645() {
-            final RequestConverter[] requestConverters = array(getRequestConverter(TestConverter.class, TestDTO.class));
+            final RequestConverter[] requestConverters = arrayOf(getRequestConverter(TestConverter.class, TestDTO.class));
             final Converters converters = BaseCoreUnitTest.getConverters(new ResponseConverter[]{}, requestConverters);
             final RequestBodyConverter converter = getTestFactory()
-                    .getRequestConverterFromCallAnnotation(TestDTO.class, AA, array(converters), RTF);
+                    .getRequestConverterFromCallAnnotation(TestDTO.class, AA, arrayOf(converters), RTF);
             assertThat("Converter", converter, isA(RequestBodyConverter.class));
         }
 
@@ -213,7 +213,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639065949624() {
             final Converters converters = BaseCoreUnitTest.getConverters(new ResponseConverter[]{}, new RequestConverter[]{});
             final RequestBodyConverter requestConverterFromAnnotation = getTestFactory()
-                    .getRequestConverterFromCallAnnotation(OBJ_C, AA, array(converters), RTF);
+                    .getRequestConverterFromCallAnnotation(OBJ_C, AA, arrayOf(converters), RTF);
             assertThat("Converter", requestConverterFromAnnotation, nullValue());
         }
 
@@ -595,7 +595,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639065949284() {
             final ResponseConverter responseConverter = getResponseConverter(TestConverter.class, TestDTO.class);
             final Converter<ResponseBody, ?> converter = getTestFactory()
-                    .getResponseConverterFromCallAnnotation(TestDTO.class, array(responseConverter), RTF);
+                    .getResponseConverterFromCallAnnotation(TestDTO.class, arrayOf(responseConverter), RTF);
             assertThat("Converter", converter, isA(ResponseBodyConverter.class));
         }
 
@@ -605,7 +605,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639065949295() {
             final ResponseConverter responseConverter = getResponseConverter(TestConverter.class, Objects.class);
             final Converter<ResponseBody, ?> converter = getTestFactory()
-                    .getResponseConverterFromCallAnnotation(TestDTO.class, array(responseConverter), RTF);
+                    .getResponseConverterFromCallAnnotation(TestDTO.class, arrayOf(responseConverter), RTF);
             assertThat("Converter", converter, nullValue());
         }
 
@@ -618,7 +618,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             };
             final Converters converters = BaseCoreUnitTest.getConverters(responseConverters, new RequestConverter[]{});
             final Converter<ResponseBody, ?> converter = getTestFactory()
-                    .getResponseConverterFromCallAnnotation(TestDTO.class, array(converters), RTF);
+                    .getResponseConverterFromCallAnnotation(TestDTO.class, arrayOf(converters), RTF);
             assertThat("Converter", converter, nullValue());
         }
 
@@ -627,7 +627,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         public void test1639065949319() {
             final Converters converters = BaseCoreUnitTest.getConverters(new ResponseConverter[]{}, new RequestConverter[]{});
             final Converter<ResponseBody, ?> responseConverterFromAnnotation = getTestFactory()
-                    .getResponseConverterFromCallAnnotation(OBJ_C, array(converters), RTF);
+                    .getResponseConverterFromCallAnnotation(OBJ_C, arrayOf(converters), RTF);
             assertThat("Converter", responseConverterFromAnnotation, nullValue());
         }
 
@@ -639,7 +639,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             };
             final Converters converters = BaseCoreUnitTest.getConverters(responseConverters, new RequestConverter[]{});
             final Converter<ResponseBody, ?> converter = getTestFactory()
-                    .getResponseConverterFromCallAnnotation(TestDTO.class, array(converters), RTF);
+                    .getResponseConverterFromCallAnnotation(TestDTO.class, arrayOf(converters), RTF);
             assertThat("Converter", converter, isA(ResponseBodyConverter.class));
         }
 
@@ -651,7 +651,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             };
             final Converters converters = BaseCoreUnitTest.getConverters(responseConverters, new RequestConverter[]{});
             final Converter<ResponseBody, ?> converter = getTestFactory()
-                    .getResponseConverterFromCallAnnotation(TestDTO.class, array(converters), RTF);
+                    .getResponseConverterFromCallAnnotation(TestDTO.class, arrayOf(converters), RTF);
             assertThat("Converter", converter, isA(ResponseBodyConverter.class));
         }
 
@@ -794,7 +794,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Required parameters")
         public void test1640471587692() {
-            assertNPE(() -> getTestFactory().registerMimeConverter(null, array()), "converter");
+            assertNPE(() -> getTestFactory().registerMimeConverter(null, arrayOf()), "converter");
             assertNPE(() -> getTestFactory().registerMimeConverter(TestConverter.INSTANCE, null), "supportedContentTypes");
         }
 
@@ -817,9 +817,9 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Required parameters")
         public void test1639974992833() {
-            assertNPE(() -> getTestFactory().registerMimeRequestConverter(null, array()), "converter");
+            assertNPE(() -> getTestFactory().registerMimeRequestConverter(null, arrayOf()), "converter");
             assertNPE(() -> getTestFactory().registerMimeRequestConverter(TestConverter.INSTANCE, null), "supportedContentTypes");
-            assertNPE(() -> getTestFactory().registerMimeRequestConverter(TestConverter.INSTANCE, array(null, null)), "supportedContentType");
+            assertNPE(() -> getTestFactory().registerMimeRequestConverter(TestConverter.INSTANCE, arrayOf(null, null)), "supportedContentType");
         }
 
         @Test
@@ -841,9 +841,9 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Required parameters")
         public void test1639974997169() {
-            assertNPE(() -> getTestFactory().registerMimeResponseConverter(null, array()), "converter");
+            assertNPE(() -> getTestFactory().registerMimeResponseConverter(null, arrayOf()), "converter");
             assertNPE(() -> getTestFactory().registerMimeResponseConverter(TestConverter.INSTANCE, null), "supportedContentTypes");
-            assertNPE(() -> getTestFactory().registerMimeResponseConverter(TestConverter.INSTANCE, array(null, null)), "supportedContentType");
+            assertNPE(() -> getTestFactory().registerMimeResponseConverter(TestConverter.INSTANCE, arrayOf(null, null)), "supportedContentType");
         }
 
         @Test
@@ -865,7 +865,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Required parameters")
         public void test1639975086685() {
-            assertNPE(() -> getTestFactory().registerRawConverter(null, array()), "converter");
+            assertNPE(() -> getTestFactory().registerRawConverter(null, arrayOf()), "converter");
             assertNPE(() -> getTestFactory().registerRawConverter(TestConverter.INSTANCE, null), "supportedRawClasses");
         }
 
@@ -887,9 +887,9 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Required parameters")
         public void test1639975224503() {
-            assertNPE(() -> getTestFactory().registerRawRequestConverter(null, array()), "converter");
+            assertNPE(() -> getTestFactory().registerRawRequestConverter(null, arrayOf()), "converter");
             assertNPE(() -> getTestFactory().registerRawRequestConverter(TestConverter.INSTANCE, null), "supportedRawClasses");
-            assertNPE(() -> getTestFactory().registerRawRequestConverter(TestConverter.INSTANCE, array(null, null)), "supportedRawClass");
+            assertNPE(() -> getTestFactory().registerRawRequestConverter(TestConverter.INSTANCE, arrayOf(null, null)), "supportedRawClass");
         }
 
         @Test
@@ -910,9 +910,9 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Required parameters")
         public void test1639975328522() {
-            assertNPE(() -> getTestFactory().registerRawResponseConverter(null, array()), "converter");
+            assertNPE(() -> getTestFactory().registerRawResponseConverter(null, arrayOf()), "converter");
             assertNPE(() -> getTestFactory().registerRawResponseConverter(TestConverter.INSTANCE, null), "supportedRawClasses");
-            assertNPE(() -> getTestFactory().registerRawResponseConverter(TestConverter.INSTANCE, array(null, null)), "supportedRawClass");
+            assertNPE(() -> getTestFactory().registerRawResponseConverter(TestConverter.INSTANCE, arrayOf(null, null)), "supportedRawClass");
         }
 
         @Test
@@ -933,7 +933,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Required parameters")
         public void test1639975489335() {
-            assertNPE(() -> getTestFactory().registerJavaTypeConverter(null, array()), "converter");
+            assertNPE(() -> getTestFactory().registerJavaTypeConverter(null, arrayOf()), "converter");
             assertNPE(() -> getTestFactory().registerJavaTypeConverter(TestConverter.INSTANCE, null), "supportedJavaTypeClasses");
         }
 
@@ -955,9 +955,9 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Required parameters")
         public void test1639975536231() {
-            assertNPE(() -> getTestFactory().registerJavaTypeRequestConverter(null, array()), "converter");
+            assertNPE(() -> getTestFactory().registerJavaTypeRequestConverter(null, arrayOf()), "converter");
             assertNPE(() -> getTestFactory().registerJavaTypeRequestConverter(TestConverter.INSTANCE, null), "supportedJavaTypeClasses");
-            assertNPE(() -> getTestFactory().registerJavaTypeRequestConverter(TestConverter.INSTANCE, array(null, null)), "supportedJavaTypeClass");
+            assertNPE(() -> getTestFactory().registerJavaTypeRequestConverter(TestConverter.INSTANCE, arrayOf(null, null)), "supportedJavaTypeClass");
         }
 
         @Test
@@ -978,9 +978,9 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Required parameters")
         public void test1639975635302() {
-            assertNPE(() -> getTestFactory().registerJavaTypeResponseConverter(null, array()), "converter");
+            assertNPE(() -> getTestFactory().registerJavaTypeResponseConverter(null, arrayOf()), "converter");
             assertNPE(() -> getTestFactory().registerJavaTypeResponseConverter(TestConverter.INSTANCE, null), "supportedJavaTypeClasses");
-            assertNPE(() -> getTestFactory().registerJavaTypeResponseConverter(TestConverter.INSTANCE, array(null, null)), "supportedJavaTypeClass");
+            assertNPE(() -> getTestFactory().registerJavaTypeResponseConverter(TestConverter.INSTANCE, arrayOf(null, null)), "supportedJavaTypeClass");
         }
 
         @Test
@@ -1044,9 +1044,9 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Required parameters")
         public void test1639978157481() {
-            assertNPE(() -> getTestFactory().registerPackageRequestConverter(null, array()), "converter");
+            assertNPE(() -> getTestFactory().registerPackageRequestConverter(null, arrayOf()), "converter");
             assertNPE(() -> getTestFactory().registerPackageRequestConverter(TestConverter.INSTANCE, null), "supportedPackageNames");
-            assertNPE(() -> getTestFactory().registerPackageRequestConverter(TestConverter.INSTANCE, array(null, null)), "supportedPackageName");
+            assertNPE(() -> getTestFactory().registerPackageRequestConverter(TestConverter.INSTANCE, arrayOf(null, null)), "supportedPackageName");
         }
 
         @Test
@@ -1077,9 +1077,9 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Required parameters")
         public void test1640471545821() {
-            assertNPE(() -> getTestFactory().registerPackageResponseConverter(null, array()), "converter");
+            assertNPE(() -> getTestFactory().registerPackageResponseConverter(null, arrayOf()), "converter");
             assertNPE(() -> getTestFactory().registerPackageResponseConverter(TestConverter.INSTANCE, null), "supportedPackageNames");
-            assertNPE(() -> getTestFactory().registerPackageResponseConverter(TestConverter.INSTANCE, array(null, null)), "supportedPackageName");
+            assertNPE(() -> getTestFactory().registerPackageResponseConverter(TestConverter.INSTANCE, arrayOf(null, null)), "supportedPackageName");
         }
 
         @Test
@@ -1411,7 +1411,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Required parameters")
         public void test1639980415676() {
-            assertNPE(() -> getTestFactory().getSupportedConvertersInfo(null, array()), "transportEvent");
+            assertNPE(() -> getTestFactory().getSupportedConvertersInfo(null, arrayOf()), "transportEvent");
             getTestFactory().getSupportedConvertersInfo(TransportEvent.REQUEST, null);
         }
 
@@ -1419,7 +1419,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @DisplayName("all Converters types present (REQUEST)")
         public void test1639065949534() {
             final RequestConverter requestConverter = getRequestConverter(TestConverter.class, TestDTO.class, OBJ_C);
-            final String info = getTestFactory().getSupportedConvertersInfo(TransportEvent.REQUEST, array(requestConverter));
+            final String info = getTestFactory().getSupportedConvertersInfo(TransportEvent.REQUEST, arrayOf(requestConverter));
             assertThat("", info, is(REQUEST_CONVERTERS_INFO_WITH_ANNOTATION));
         }
 
@@ -1427,7 +1427,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @DisplayName("all Converters types present (RESPONSE)")
         public void test1639065949542() {
             final ResponseConverter responseConverter = getResponseConverter(TestConverter.class, TestDTO.class, OBJ_C);
-            final String info = getTestFactory().getSupportedConvertersInfo(TransportEvent.RESPONSE, array(responseConverter));
+            final String info = getTestFactory().getSupportedConvertersInfo(TransportEvent.RESPONSE, arrayOf(responseConverter));
             assertThat("", info, is(RESPONSE_CONVERTERS_INFO_WITH_ANNOTATION));
         }
 

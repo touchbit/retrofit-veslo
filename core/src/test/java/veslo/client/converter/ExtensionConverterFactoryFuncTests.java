@@ -41,7 +41,7 @@ import java.lang.annotation.*;
 import java.nio.file.Files;
 
 import static internal.test.utils.OkHttpTestUtils.requestBodyToString;
-import static internal.test.utils.TestUtils.array;
+import static internal.test.utils.TestUtils.arrayOf;
 import static org.hamcrest.Matchers.*;
 import static veslo.client.header.ContentTypeConstants.NULL;
 import static veslo.client.header.ContentTypeConstants.TEXT_PLAIN;
@@ -62,7 +62,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
             final TestDTO dto = new TestDTO("test1638725788474");
             final Converters converters = getConverters(getRequestConverter(TestConverter.class));
             final RequestBody requestBody = getTestFactory()
-                    .requestBodyConverter(TestDTO.class, AA, array(converters), RTF).convert(dto);
+                    .requestBodyConverter(TestDTO.class, AA, arrayOf(converters), RTF).convert(dto);
             assertThat("RequestBody", requestBody, notNullValue());
             assertThat("RequestBody.contentType()", requestBody.contentType(), nullValue());
             assertThat("RequestBody.toString()", requestBodyToString(requestBody), is(dto.toString()));
@@ -74,7 +74,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
             final TestDTO dto = new TestDTO("test1637670751294");
             final RequestConverter requestConverter = getRequestConverter(TestConverter.class, TestDTO.class);
             final RequestBody requestBody = getTestFactory()
-                    .requestBodyConverter(TestDTO.class, AA, array(requestConverter), RTF).convert(dto);
+                    .requestBodyConverter(TestDTO.class, AA, arrayOf(requestConverter), RTF).convert(dto);
             assertThat("RequestBody", requestBody, notNullValue());
             assertThat("RequestBody.toString()", requestBodyToString(requestBody), is("test1637670751294"));
         }
@@ -94,7 +94,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         public void test1639065948789() throws IOException {
             final RawBody expected = new RawBody("test1637428451229");
             final RequestBody requestBody = new ExtensionConverterFactory()
-                    .requestBodyConverter(RawBody.class, array(), array(), RTF)
+                    .requestBodyConverter(RawBody.class, arrayOf(), arrayOf(), RTF)
                     .convert(expected);
             assertThat("RequestBody", requestBody, notNullValue());
             assertThat("RequestBody.toString()", OkHttpTestUtils.requestBodyToString(requestBody), is("test1637428451229"));
@@ -105,7 +105,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         public void test1639065948800() throws IOException {
             final Byte[] expected = Utils.toObjectByteArray("test1637428566604".getBytes());
             final RequestBody requestBody = new ExtensionConverterFactory()
-                    .requestBodyConverter(RawBody.class, array(), array(), RTF)
+                    .requestBodyConverter(RawBody.class, arrayOf(), arrayOf(), RTF)
                     .convert(expected);
             assertThat("RequestBody", requestBody, notNullValue());
             assertThat("RequestBody.toString()", OkHttpTestUtils.requestBodyToString(requestBody), is("test1637428566604"));
@@ -116,7 +116,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         public void test1639065948811() throws IOException {
             final File file = new File("src/test/resources/test/data/test1637428660061.txt");
             final RequestBody requestBody = new ExtensionConverterFactory()
-                    .requestBodyConverter(RawBody.class, array(), array(), RTF)
+                    .requestBodyConverter(RawBody.class, arrayOf(), arrayOf(), RTF)
                     .convert(file);
             assertThat("RequestBody", requestBody, notNullValue());
             assertThat("RequestBody.toString()", OkHttpTestUtils.requestBodyToString(requestBody), is("test1637428660061"));
@@ -127,7 +127,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         public void test1639065948822() throws IOException {
             final ResourceFile file = new ResourceFile("test/data/test1637428785169.txt");
             final RequestBody requestBody = new ExtensionConverterFactory()
-                    .requestBodyConverter(RawBody.class, array(), array(), RTF)
+                    .requestBodyConverter(RawBody.class, arrayOf(), arrayOf(), RTF)
                     .convert(file);
             assertThat("RequestBody", requestBody, notNullValue());
             assertThat("RequestBody.toString()", OkHttpTestUtils.requestBodyToString(requestBody), is("test1637428785169"));
@@ -137,7 +137,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         @DisplayName("Successfully converting String->RequestBody using java type Converter")
         public void test1639065948833() throws IOException {
             final RequestBody requestBody = new ExtensionConverterFactory()
-                    .requestBodyConverter(RawBody.class, array(), array(), RTF)
+                    .requestBodyConverter(RawBody.class, arrayOf(), arrayOf(), RTF)
                     .convert("test1637430252094");
             assertThat("RequestBody", requestBody, notNullValue());
             assertThat("RequestBody.toString()", OkHttpTestUtils.requestBodyToString(requestBody), is("test1637430252094"));
@@ -147,7 +147,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         @DisplayName("Successfully converting RawBody->RequestBody using RequestConverter annotation with RawDTO.class")
         public void test1639065948843() throws IOException {
             final ResponseConverter responseConverter = getResponseConverter(TestConverter.class, TestDTO.class);
-            final RequestBody dto = getTestFactory().requestBodyConverter(RawBody.class, array(), array(responseConverter), RTF)
+            final RequestBody dto = getTestFactory().requestBodyConverter(RawBody.class, arrayOf(), arrayOf(responseConverter), RTF)
                     .convert(new RawBody("test1637641171302"));
             assertThat("RequestBody", dto, notNullValue());
             assertThat("RequestBody.toString()", OkHttpTestUtils.requestBodyToString(dto), is("test1637641171302"));
@@ -159,7 +159,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
             final TestsExtensionConverterFactory factory = new TestsExtensionConverterFactory();
             factory.registerPackageRequestConverter(new TestPackageConverter(), "internal.test.utils.client.model.pack");
             final RequestBody dto = factory
-                    .requestBodyConverter(RawBody.class, array(), array(), RTF)
+                    .requestBodyConverter(RawBody.class, arrayOf(), arrayOf(), RTF)
                     .convert(new PackageDTO("test1637687959905"));
             assertThat("RequestBody", dto, notNullValue());
             assertThat("RequestBody.toString()", OkHttpTestUtils.requestBodyToString(dto), is("test1637687959905"));
@@ -169,7 +169,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         @DisplayName("ConverterNotFoundException if body type == Object")
         public void test1639980930213() {
             final ThrowableRunnable runnable = () -> new ExtensionConverterFactory()
-                    .requestBodyConverter(Object.class, array(), array(), RTF)
+                    .requestBodyConverter(Object.class, arrayOf(), arrayOf(), RTF)
                     .convert(new Object());
             assertThrow(runnable)
                     .assertClass(ConverterNotFoundException.class)
@@ -186,7 +186,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         public void test1645044663567() throws IOException {
             final TestsExtensionConverterFactory factory = new TestsExtensionConverterFactory();
             factory.registerModelAnnotationConverter(TestToStringConverter.INSTANCE, ModelAnnotation.class);
-            final RequestBody dto = factory.requestBodyConverter(Model.class, array(), array(), RTF)
+            final RequestBody dto = factory.requestBodyConverter(Model.class, arrayOf(), arrayOf(), RTF)
                     .convert(new Model());
             assertThat("RequestBody", dto, notNullValue());
             assertThat("RequestBody.toString()", OkHttpTestUtils.requestBodyToString(dto), is(Model.class.getName()));
@@ -221,7 +221,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         public void test1639065949029() throws IOException {
             RawBody expected = new RawBody("test1637429237836");
             final Object dto = new ExtensionConverterFactory()
-                    .responseBodyConverter(RawBody.class, array(), RTF)
+                    .responseBodyConverter(RawBody.class, arrayOf(), RTF)
                     .convert(ResponseBody.create(null, expected.string()));
             assertThat("ResponseBody", dto, is(expected));
         }
@@ -232,7 +232,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
             final String body = "test1637429413684";
             Byte[] expected = Utils.toObjectByteArray(body.getBytes());
             final Object dto = new ExtensionConverterFactory()
-                    .responseBodyConverter(Byte[].class, array(), RTF)
+                    .responseBodyConverter(Byte[].class, arrayOf(), RTF)
                     .convert(ResponseBody.create(null, body));
             assertThat("ResponseBody", dto, is(expected));
         }
@@ -242,7 +242,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         public void test1639065949050() throws Exception {
             final String body = "test1637429592556";
             final Object dto = new ExtensionConverterFactory()
-                    .responseBodyConverter(File.class, array(), RTF)
+                    .responseBodyConverter(File.class, arrayOf(), RTF)
                     .convert(ResponseBody.create(null, body));
             assertThat("ResponseBody", dto, instanceOf(File.class));
             File file = (File) dto;
@@ -254,7 +254,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         @DisplayName("ConvertCallException at converting ResponseBody to ResourceFile.class (raw)")
         public void test1639065949063() {
             final ThrowableRunnable runnable = () -> new ExtensionConverterFactory()
-                    .responseBodyConverter(ResourceFile.class, array(), RTF)
+                    .responseBodyConverter(ResourceFile.class, arrayOf(), RTF)
                     .convert(ResponseBody.create(null, "test1637429829752"));
             assertThrow(runnable)
                     .assertClass(ConvertCallException.class)
@@ -265,7 +265,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         @DisplayName("Successfully converting ResponseBody to String.class")
         public void test1639065949074() throws IOException {
             final Object dto = new ExtensionConverterFactory()
-                    .responseBodyConverter(String.class, array(), RTF)
+                    .responseBodyConverter(String.class, arrayOf(), RTF)
                     .convert(ResponseBody.create(null, "test1637430137761"));
             assertThat("ResponseBody", dto, is("test1637430137761"));
         }
@@ -275,7 +275,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         public void test1639065949083() throws IOException {
             RawBody expected = new RawBody((byte[]) null);
             final Object dto = new ExtensionConverterFactory()
-                    .responseBodyConverter(RawBody.class, array(), RTF)
+                    .responseBodyConverter(RawBody.class, arrayOf(), RTF)
                     .convert(null);
             assertThat("ResponseBody", dto, is(expected));
         }
@@ -284,7 +284,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         @DisplayName("Successfully converting ResponseBody to File.class (raw) if body == null (expected null)")
         public void test1639065949093() throws IOException {
             final Object dto = new ExtensionConverterFactory()
-                    .responseBodyConverter(File.class, array(), RTF)
+                    .responseBodyConverter(File.class, arrayOf(), RTF)
                     .convert(null);
             assertThat("ResponseBody", dto, nullValue());
         }
@@ -293,7 +293,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         @DisplayName("Successfully converting ResponseBody to Byte[].class (raw) if body == null (expected null)")
         public void test1639065949102() throws IOException {
             final Object dto = new ExtensionConverterFactory()
-                    .responseBodyConverter(Byte[].class, array(), RTF)
+                    .responseBodyConverter(Byte[].class, arrayOf(), RTF)
                     .convert(null);
             assertThat("ResponseBody", dto, nullValue());
         }
@@ -326,7 +326,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
             PackageDTO expected = new PackageDTO("test1637679684417");
             final TestsExtensionConverterFactory factory = new TestsExtensionConverterFactory();
             factory.registerPackageResponseConverter(new TestPackageConverter(), "internal.test.utils.client.model.pack");
-            final Object dto = factory.responseBodyConverter(PackageDTO.class, array(), RTF)
+            final Object dto = factory.responseBodyConverter(PackageDTO.class, arrayOf(), RTF)
                     .convert(ResponseBody.create(null, expected.data()));
             assertThat("PackDTO", dto, is(expected));
         }
@@ -336,7 +336,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         public void test1639942326488() {
             final ResponseBody responseBody = ResponseBody.create(null, "test1637430137761");
             final ThrowableRunnable runnable = () -> new ExtensionConverterFactory()
-                    .responseBodyConverter(Object.class, array(), RTF)
+                    .responseBodyConverter(Object.class, arrayOf(), RTF)
                     .convert(responseBody);
             assertThrow(runnable)
                     .assertClass(ConverterNotFoundException.class)
@@ -353,7 +353,7 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         public void test1645008062643() throws IOException {
             final TestsExtensionConverterFactory factory = new TestsExtensionConverterFactory();
             factory.registerModelAnnotationConverter(TestToStringConverter.INSTANCE, ModelAnnotation.class);
-            final Object dto = factory.responseBodyConverter(Model.class, array(), RTF)
+            final Object dto = factory.responseBodyConverter(Model.class, arrayOf(), RTF)
                     .convert(ResponseBody.create(null, ""));
             assertThat("PackDTO", dto, is(Model.class.toString()));
         }

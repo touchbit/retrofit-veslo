@@ -29,7 +29,7 @@ import veslo.client.model.ResourceFile;
 
 import java.io.IOException;
 
-import static internal.test.utils.TestUtils.array;
+import static internal.test.utils.TestUtils.arrayOf;
 import static org.hamcrest.Matchers.is;
 
 @SuppressWarnings("ConstantConditions")
@@ -57,7 +57,7 @@ public class ResourceFileConverterUnitTests extends BaseCoreUnitTest {
         public void test1637468946514() throws IOException {
             final String expected = "test1637468946514";
             final ResourceFile body = new ResourceFile("test/data/test1637468946514.txt");
-            final RequestBody requestBody = CONVERTER.requestBodyConverter(OBJ_C, array(), array(), RTF).convert(body);
+            final RequestBody requestBody = CONVERTER.requestBodyConverter(OBJ_C, arrayOf(), arrayOf(), RTF).convert(body);
             final String actual = OkHttpTestUtils.requestBodyToString(requestBody);
             assertThat("Body", actual, is(expected));
         }

@@ -28,7 +28,7 @@ import veslo.client.model.RawBody;
 
 import java.io.IOException;
 
-import static internal.test.utils.TestUtils.array;
+import static internal.test.utils.TestUtils.arrayOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
@@ -108,7 +108,7 @@ public class RawBodyConverterUnitTests extends BaseCoreUnitTest {
         public void test1639674352863() throws IOException {
             final RawBody expected = new RawBody("test");
             final ResponseBody responseBody = ResponseBody.create(null, expected.string());
-            final RawBody result = CONVERTER.responseBodyConverter(RawBody.class, array(), RTF).convert(responseBody);
+            final RawBody result = CONVERTER.responseBodyConverter(RawBody.class, arrayOf(), RTF).convert(responseBody);
             assertThat(result, is(expected));
         }
 
@@ -117,7 +117,7 @@ public class RawBodyConverterUnitTests extends BaseCoreUnitTest {
         public void test1639674355703() throws IOException {
             final RawBody expected = new RawBody("");
             final ResponseBody responseBody = ResponseBody.create(null, expected.string());
-            final RawBody result = CONVERTER.responseBodyConverter(RawBody.class, array(), RTF).convert(responseBody);
+            final RawBody result = CONVERTER.responseBodyConverter(RawBody.class, arrayOf(), RTF).convert(responseBody);
             assertThat(result, is(expected));
         }
 
@@ -125,7 +125,7 @@ public class RawBodyConverterUnitTests extends BaseCoreUnitTest {
         @DisplayName("return RawBody if response body == null")
         public void test1639674359219() throws IOException {
             final RawBody expected = RawBody.nullable();
-            final RawBody result = CONVERTER.responseBodyConverter(RawBody.class, array(), RTF).convert(null);
+            final RawBody result = CONVERTER.responseBodyConverter(RawBody.class, arrayOf(), RTF).convert(null);
             assertThat(result, is(expected));
         }
 

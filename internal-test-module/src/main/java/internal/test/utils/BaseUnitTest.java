@@ -38,7 +38,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static internal.test.utils.TestUtils.array;
+import static internal.test.utils.TestUtils.arrayOf;
 import static internal.test.utils.TestUtils.getGenericReturnTypeForMethod;
 import static org.hamcrest.Matchers.*;
 
@@ -46,7 +46,7 @@ import static org.hamcrest.Matchers.*;
 public abstract class BaseUnitTest {
 
     protected static final String INFO = "endpointInfo";
-    protected static final Annotation[] AA = array();
+    protected static final Annotation[] AA = arrayOf();
     protected static final Retrofit RTF = RetrofitTestUtils.retrofit();
     protected static final Class<Object> OBJ_C = Object.class;
     protected static final Type OBJ_T = OBJ_C;

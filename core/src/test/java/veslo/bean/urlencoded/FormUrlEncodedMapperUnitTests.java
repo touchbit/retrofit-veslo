@@ -30,6 +30,7 @@ import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.util.*;
 
+import static internal.test.utils.TestUtils.arrayOf;
 import static internal.test.utils.TestUtils.listOf;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.*;
@@ -989,7 +990,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             assertNPE(() -> MAPPER.unmarshal(AdditionalFields.class, null), "encodedString");
             assertNPE(() -> MAPPER.unmarshal(null, "", UTF_8), "modelClass");
             assertNPE(() -> MAPPER.unmarshal(AdditionalFields.class, null, UTF_8), "encodedString");
-            assertNPE(() -> MAPPER.unmarshal(AdditionalFields.class, "", null), "encodeCharset");
+            assertNPE(() -> MAPPER.unmarshal(AdditionalFields.class, "", null), "codingCharset");
         }
 
         @Test
@@ -1120,7 +1121,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             model.listStringField.add("bar");
             final Field field = GoodModel.class.getDeclaredField("listStringField");
             final Charset mock = mock(Charset.class);
-            when(mock.name()).thenReturn("");
+            when(mock.name()).thenReturn("asdasdas");
             when(mock.toString()).thenReturn("mock");
             assertThrow(() -> MAPPER.buildCollectionUrlEncodedString(model, field, "test1", mock, true))
                     .assertClass(FormUrlEncodedMapperException.class)
@@ -1131,7 +1132,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
                             "    URL form field name: test1\n" +
                             "    Value to encode: bar\n" +
                             "    Encode charset: mock\n" +
-                            "    Error cause: URLDecoder: empty string enc parameter\n");
+                            "    Error cause: asdasdas\n");
         }
 
         @Test
@@ -1225,7 +1226,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             model.stringArrayField = new String[]{"bar"};
             final Field field = GoodModel.class.getDeclaredField("stringArrayField");
             final Charset mock = mock(Charset.class);
-            when(mock.name()).thenReturn("");
+            when(mock.name()).thenReturn("asdasdasda");
             when(mock.toString()).thenReturn("mock");
             assertThrow(() -> MAPPER.buildArrayUrlEncodedString(model, field, "test1", mock, true))
                     .assertClass(FormUrlEncodedMapperException.class)
@@ -1236,7 +1237,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
                             "    URL form field name: test1\n" +
                             "    Value to encode: bar\n" +
                             "    Encode charset: mock\n" +
-                            "    Error cause: URLDecoder: empty string enc parameter\n");
+                            "    Error cause: asdasdasda\n");
         }
 
         @Test
@@ -1338,6 +1339,248 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
                             "    URL form field name: test\n" +
                             "    Error cause: Cannot locate field mapStringIntegerField" +
                             " on class veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$GoodModel\n");
+        }
+
+    }
+
+    @Nested
+    @DisplayName("#marshalAdditionalProperties() method tests")
+    public class MarshalAdditionalPropertiesMethodTests {
+
+        @Test
+        @DisplayName("Required parameters")
+        public void test1645452122329() throws NoSuchFieldException {
+            final Field field = GoodModel.class.getDeclaredField("additionalProperties");
+            assertNPE(() -> MAPPER.marshalAdditionalProperties(null, field, UTF_8, true), "model");
+            assertNPE(() -> MAPPER.marshalAdditionalProperties(new GoodModel(), null, UTF_8, true), "field");
+            assertNPE(() -> MAPPER.marshalAdditionalProperties(new GoodModel(), field, null, false), "codingCharset");
+        }
+
+        @Test
+        @DisplayName("Successfully marshaling if additionalProperties = null")
+        public void test1645452249648() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.additionalProperties = null;
+            final Field field = GoodModel.class.getDeclaredField("additionalProperties");
+            final String result = MAPPER.marshalAdditionalProperties(model, field, UTF_8, true);
+            assertThat(result, emptyString());
+        }
+
+        @Test
+        @DisplayName("Successfully marshaling if additionalProperties = empty map")
+        public void test1645452395845() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.additionalProperties = new HashMap<>();
+            final Field field = GoodModel.class.getDeclaredField("additionalProperties");
+            final String result = MAPPER.marshalAdditionalProperties(model, field, UTF_8, true);
+            assertThat(result, emptyString());
+        }
+
+        @Test
+        @DisplayName("Successfully marshaling if additionalProperties = {foo=bar}")
+        public void test1645452630224() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.additionalProperties = new HashMap<>();
+            model.additionalProperties.put("foo", "bar");
+            final Field field = GoodModel.class.getDeclaredField("additionalProperties");
+            final String result = MAPPER.marshalAdditionalProperties(model, field, UTF_8, true);
+            assertThat(result, is("foo=bar"));
+        }
+
+        @Test
+        @DisplayName("Successfully marshaling if additionalProperties = {foo=null}")
+        public void test1645453443576() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.additionalProperties = new HashMap<>();
+            model.additionalProperties.put("foo", null);
+            final Field field = GoodModel.class.getDeclaredField("additionalProperties");
+            final String result = MAPPER.marshalAdditionalProperties(model, field, UTF_8, true);
+            assertThat(result, is("foo="));
+        }
+
+        @Test
+        @DisplayName("Successfully marshaling if additionalProperties = {foo=тест}")
+        public void test1645453515797() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.additionalProperties = new HashMap<>();
+            model.additionalProperties.put("foo", "тест");
+            final Field field = GoodModel.class.getDeclaredField("additionalProperties");
+            final String result = MAPPER.marshalAdditionalProperties(model, field, UTF_8, true);
+            assertThat(result, is("foo=%D1%82%D0%B5%D1%81%D1%82"));
+        }
+
+        @Test
+        @DisplayName("Successfully marshaling if additionalProperties = {foo=JSON}")
+        public void test1645453563031() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.additionalProperties = new HashMap<>();
+            model.additionalProperties.put("foo", "{\"a\":\"b\"}");
+            final Field field = GoodModel.class.getDeclaredField("additionalProperties");
+            final String result = MAPPER.marshalAdditionalProperties(model, field, UTF_8, true);
+            assertThat(result, is("foo=%7B%22a%22%3A%22b%22%7D"));
+        }
+
+        @Test
+        @DisplayName("Successfully marshaling if additionalProperties = {foo1=bar1, foo2=bar2}")
+        public void test1645452689843() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.additionalProperties = new HashMap<>();
+            model.additionalProperties.put("foo1", "bar1");
+            model.additionalProperties.put("foo2", "bar2");
+            final Field field = GoodModel.class.getDeclaredField("additionalProperties");
+            final String result = MAPPER.marshalAdditionalProperties(model, field, UTF_8, true);
+            assertThat(result, is("foo1=bar1&foo2=bar2"));
+        }
+
+        @Test
+        @DisplayName("Successfully marshaling array if additionalProperties = {foo=<empty list>}")
+        public void test1645452732780() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.additionalProperties = new HashMap<>();
+            model.additionalProperties.put("foo1", listOf());
+            model.additionalProperties.put("foo2", listOf());
+            final Field field = GoodModel.class.getDeclaredField("additionalProperties");
+            final String result = MAPPER.marshalAdditionalProperties(model, field, UTF_8, false);
+            assertThat(result, is("foo1=&foo2="));
+        }
+
+        @Test
+        @DisplayName("Successfully marshaling indexed array if additionalProperties = {foo=<empty list>}")
+        public void test1645452837242() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.additionalProperties = new HashMap<>();
+            model.additionalProperties.put("foo1", listOf());
+            model.additionalProperties.put("foo2", listOf());
+            final Field field = GoodModel.class.getDeclaredField("additionalProperties");
+            final String result = MAPPER.marshalAdditionalProperties(model, field, UTF_8, true);
+            assertThat(result, is("foo1[0]=&foo2[0]="));
+        }
+
+        @Test
+        @DisplayName("Successfully marshaling indexed array if additionalProperties = {foo=<null list>}")
+        public void test1645453322554() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.additionalProperties = new HashMap<>();
+            model.additionalProperties.put("foo", listOf((String) null));
+            final Field field = GoodModel.class.getDeclaredField("additionalProperties");
+            final String result = MAPPER.marshalAdditionalProperties(model, field, UTF_8, true);
+            assertThat(result, is("foo[0]="));
+        }
+
+        @Test
+        @DisplayName("Successfully marshaling array if additionalProperties = {foo=<list>}")
+        public void test1645452882567() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.additionalProperties = new HashMap<>();
+            model.additionalProperties.put("foo", listOf(1, 2));
+            final Field field = GoodModel.class.getDeclaredField("additionalProperties");
+            final String result = MAPPER.marshalAdditionalProperties(model, field, UTF_8, false);
+            assertThat(result, is("foo=1&foo=2"));
+        }
+
+        @Test
+        @DisplayName("Successfully marshaling indexed array if additionalProperties = {foo=<list>}")
+        public void test1645452939401() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.additionalProperties = new HashMap<>();
+            model.additionalProperties.put("foo", listOf(1, 2));
+            final Field field = GoodModel.class.getDeclaredField("additionalProperties");
+            final String result = MAPPER.marshalAdditionalProperties(model, field, UTF_8, true);
+            assertThat(result, is("foo[0]=1&foo[1]=2"));
+        }
+
+        @Test
+        @DisplayName("Successfully marshaling array if additionalProperties = {foo=<empty array>}")
+        public void test1645452981576() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.additionalProperties = new HashMap<>();
+            model.additionalProperties.put("foo1", arrayOf());
+            model.additionalProperties.put("foo2", arrayOf());
+            final Field field = GoodModel.class.getDeclaredField("additionalProperties");
+            final String result = MAPPER.marshalAdditionalProperties(model, field, UTF_8, false);
+            assertThat(result, is("foo1=&foo2="));
+        }
+
+        @Test
+        @DisplayName("Successfully marshaling indexed array if additionalProperties = {foo=<empty array>}")
+        public void test1645453030187() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.additionalProperties = new HashMap<>();
+            model.additionalProperties.put("foo1", arrayOf());
+            model.additionalProperties.put("foo2", arrayOf());
+            final Field field = GoodModel.class.getDeclaredField("additionalProperties");
+            final String result = MAPPER.marshalAdditionalProperties(model, field, UTF_8, true);
+            assertThat(result, is("foo1[0]=&foo2[0]="));
+        }
+
+        @Test
+        @DisplayName("Successfully marshaling indexed array if additionalProperties = {foo=<null array>}")
+        public void test1645453253229() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.additionalProperties = new HashMap<>();
+            model.additionalProperties.put("foo", arrayOf((String) null));
+            final Field field = GoodModel.class.getDeclaredField("additionalProperties");
+            final String result = MAPPER.marshalAdditionalProperties(model, field, UTF_8, true);
+            assertThat(result, is("foo[0]="));
+        }
+
+        @Test
+        @DisplayName("Successfully marshaling array if additionalProperties = {foo=<array>}")
+        public void test1645453071392() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.additionalProperties = new HashMap<>();
+            model.additionalProperties.put("foo", arrayOf(1, 2));
+            final Field field = GoodModel.class.getDeclaredField("additionalProperties");
+            final String result = MAPPER.marshalAdditionalProperties(model, field, UTF_8, false);
+            assertThat(result, is("foo=1&foo=2"));
+        }
+
+        @Test
+        @DisplayName("Successfully marshaling indexed array if additionalProperties = {foo=<array>}")
+        public void test1645453090045() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.additionalProperties = new HashMap<>();
+            model.additionalProperties.put("foo", arrayOf(1, 2));
+            final Field field = GoodModel.class.getDeclaredField("additionalProperties");
+            final String result = MAPPER.marshalAdditionalProperties(model, field, UTF_8, true);
+            assertThat(result, is("foo[0]=1&foo[1]=2"));
+        }
+
+        @Test
+        @DisplayName("Throws FormUrlEncodedMapperException if unsupported URL form coding Charset")
+        public void test1645454197881() throws NoSuchFieldException {
+            final GoodModel model = new GoodModel();
+            model.additionalProperties = new HashMap<>();
+            model.additionalProperties.put("foo", listOf(1, 2));
+            final Charset mock = mock(Charset.class);
+            when(mock.name()).thenReturn("asdadasdasd");
+            when(mock.toString()).thenReturn("mock");
+            final Field field = GoodModel.class.getDeclaredField("additionalProperties");
+            assertThrow(() -> MAPPER.marshalAdditionalProperties(model, field, mock, true))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("Unable to encode string to FormUrlEncoded format\n" +
+                            "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$GoodModel\n" +
+                            "    Field name: additionalProperties\n" +
+                            "    URL form field name: foo\n" +
+                            "    Value to encode: [1, 2]\n" +
+                            "    Encode charset: mock\n" +
+                            "    Error cause: asdadasdasd\n");
+        }
+
+        @Test
+        @DisplayName("Throws FormUrlEncodedMapperException if additionalProperties = not present")
+        public void test1645455036757() throws NoSuchFieldException {
+            final EmptyModel model = new EmptyModel();
+            final Field field = GoodModel.class.getDeclaredField("additionalProperties");
+            assertThrow(() -> MAPPER.marshalAdditionalProperties(model, field, UTF_8, true))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("" +
+                            "Unable to read value from model field.\n" +
+                            "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$EmptyModel\n" +
+                            "    Field type: java.util.Map\n" +
+                            "    Field name: additionalProperties\n" +
+                            "    Error cause: Cannot locate field additionalProperties" +
+                            " on class veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$EmptyModel\n");
         }
 
     }

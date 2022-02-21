@@ -27,7 +27,7 @@ import veslo.client.response.DualResponse;
 
 import java.util.UUID;
 
-import static internal.test.utils.TestUtils.array;
+import static internal.test.utils.TestUtils.arrayOf;
 import static org.hamcrest.Matchers.is;
 
 @DisplayName("HeadersAsserter class tests")
@@ -44,7 +44,7 @@ public class HeadersAsserterUnitTests extends BaseCoreUnitTest {
         final Headers headers1 = new HeadersAsserter(Headers.of(HeadersAsserter.H_CONTENT_TYPE, EXP_CONTENT)).getHeaders();
         assertThat(headers1.get(HeadersAsserter.H_CONTENT_TYPE), is(EXP_CONTENT));
         final Response response = OkHttpTestUtils.getResponse();
-        DualResponse<?, ?> dualResponse = new DualResponse<>("", "", response, "", array());
+        DualResponse<?, ?> dualResponse = new DualResponse<>("", "", response, "", arrayOf());
         final Headers headers2 = new HeadersAsserter(dualResponse).getHeaders();
         assertThat(headers2.get(HeadersAsserter.H_CONTENT_TYPE), is("text/plain"));
     }

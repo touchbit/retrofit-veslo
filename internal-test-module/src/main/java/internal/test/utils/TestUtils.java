@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class TestUtils {
 
     @SafeVarargs
-    public static <C> C[] array(C... items) {
+    public static <C> C[] arrayOf(C... items) {
         return items;
     }
 

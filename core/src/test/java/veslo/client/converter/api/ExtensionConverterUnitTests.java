@@ -26,7 +26,7 @@ import veslo.ConverterUnsupportedTypeException;
 import veslo.PrimitiveConvertCallException;
 import veslo.client.converter.typed.BooleanConverter;
 
-import static internal.test.utils.TestUtils.array;
+import static internal.test.utils.TestUtils.arrayOf;
 import static org.hamcrest.Matchers.is;
 import static veslo.client.converter.api.ExtensionConverter.NULL_BODY_VALUE;
 import static veslo.client.converter.api.ExtensionConverter.NULL_JSON_VALUE;
@@ -75,13 +75,13 @@ public class ExtensionConverterUnitTests extends BaseCoreUnitTest {
         @DisplayName("All parameters required")
         public void test1639684290432() {
             assertNPE(() -> TEST_CONVERTER.createRequestBody(null, ""), "methodAnnotations");
-            assertNPE(() -> TEST_CONVERTER.createRequestBody(array(), (String) null), "body");
+            assertNPE(() -> TEST_CONVERTER.createRequestBody(arrayOf(), (String) null), "body");
         }
 
         @Test
         @DisplayName("return RequestBody")
         public void test1639684287787() {
-            final RequestBody requestBody = TEST_CONVERTER.createRequestBody(array(), "test");
+            final RequestBody requestBody = TEST_CONVERTER.createRequestBody(arrayOf(), "test");
             final String act = OkHttpTestUtils.requestBodyToString(requestBody);
             assertThat(act, is("test"));
         }
@@ -96,13 +96,13 @@ public class ExtensionConverterUnitTests extends BaseCoreUnitTest {
         @DisplayName("All parameters required")
         public void test1639684284123() {
             assertNPE(() -> TEST_CONVERTER.createRequestBody(null, ""), "methodAnnotations");
-            assertNPE(() -> TEST_CONVERTER.createRequestBody(array(), (String) null), "body");
+            assertNPE(() -> TEST_CONVERTER.createRequestBody(arrayOf(), (String) null), "body");
         }
 
         @Test
         @DisplayName("return RequestBody")
         public void test1639684281041() {
-            final RequestBody requestBody = TEST_CONVERTER.createRequestBody(array(), "test" .getBytes());
+            final RequestBody requestBody = TEST_CONVERTER.createRequestBody(arrayOf(), "test" .getBytes());
             final String act = OkHttpTestUtils.requestBodyToString(requestBody);
             assertThat(act, is("test"));
         }

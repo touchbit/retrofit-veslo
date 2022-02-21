@@ -33,7 +33,7 @@ import veslo.client.model.ResourceFile;
 
 import java.io.IOException;
 
-import static internal.test.utils.TestUtils.array;
+import static internal.test.utils.TestUtils.arrayOf;
 import static org.hamcrest.Matchers.is;
 import static veslo.bean.template.TemplateSourceType.RESOURCE;
 
@@ -70,7 +70,7 @@ public class TemplateSourceConverterTests extends BaseUnitTest {
         @DisplayName("Convert ResourceFile to RequestBody")
         public void test1645209303378() throws IOException {
             final ResourceNotesUTF8 template = new ResourceNotesUTF8();
-            final RequestBody requestBody = CONVERTER.requestBodyConverter(OBJ_C, array(), array(), RTF).convert(template);
+            final RequestBody requestBody = CONVERTER.requestBodyConverter(OBJ_C, arrayOf(), arrayOf(), RTF).convert(template);
             final String actual = OkHttpTestUtils.requestBodyToString(requestBody);
             assertThat("Body", actual, is(NOT_FILLED));
         }

@@ -29,6 +29,7 @@ import java.lang.reflect.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -99,8 +100,13 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
                 result.add(pair);
             }
         }
-//        String asd = marshalAdditionalProperties(model);
-        // todo add AP
+        final Field apField = getAdditionalPropertiesField(model.getClass());
+        if (apField != null) {
+            final String ap = marshalAdditionalProperties(model, apField, codingCharset, indexedArray);
+            if (ap != null && !ap.isEmpty()) {
+                result.add(ap);
+            }
+        }
         return result.toString();
     }
 
@@ -152,6 +158,102 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         return model;
     }
 
+    /**
+     * Converts additional properties {@link Map} to FormUrlEncoded string.
+     * Additional properties is a field annotated with the {@link FormUrlEncodedAdditionalProperties} annotation.
+     * Additional properties type - {@code Map<String, Object>}, where:
+     * - key -> field name
+     * - value -> simple type (String, Integer, etc.) or simple array or collection (List, Set)
+     * If objects of other types are used as values, then {@code toString()} of these objects will be called.
+     * According to the 3W specification, it is strongly recommended to use UTF-8 charset for URL form data coding.
+     *
+     * @param model - FormUrlEncoded model
+     * @param codingCharset - URL form data coding charset
+     * @param indexedArray - flag for indexed array format: {@code foo[0]=100&foo[1]=200...&foo[n]=100500}
+     * @return FormUrlEncoded additionalProperties representation
+     * @throws FormUrlEncodedMapperException if model field not readable
+     * @throws FormUrlEncodedMapperException if unsupported URL form coding {@link Charset}
+     */
+    @EverythingIsNonNull
+    @SuppressWarnings({"unchecked", "ConstantConditions"})
+    protected String marshalAdditionalProperties(final Object model,
+                                                 final Field field,
+                                                 final Charset codingCharset,
+                                                 final boolean indexedArray) {
+        Utils.parameterRequireNonNull(model, "model");
+        Utils.parameterRequireNonNull(field, "field");
+        Utils.parameterRequireNonNull(codingCharset, "codingCharset");
+        final Map<String, Object> additionalProperties;
+        try {
+            additionalProperties = (Map<String, Object>) FieldUtils.readField(model, field.getName(), true);
+        } catch (Exception e) {
+            throw new FormUrlEncodedMapperException("Unable to read value from model field.\n" +
+                    "    Model type: " + model.getClass().getName() + "\n" +
+                    "    Field type: " + field.getType().getName() + "\n" +
+                    "    Field name: " + field.getName() + "\n" +
+                    "    Error cause: " + e.getMessage().trim() + "\n", e);
+        }
+        if (additionalProperties == null) {
+            return "";
+        }
+        StringJoiner result = new StringJoiner("&");
+        for (Map.Entry<String, Object> entry : additionalProperties.entrySet()) {
+            final String rawName = entry.getKey();
+            final Object rawValue = entry.getValue();
+            try {
+                if (rawValue == null) {
+                    result.add(rawName + "=");
+                } else if (rawValue instanceof Collection || rawValue.getClass().isArray()) {
+                    final AtomicLong index = new AtomicLong(0);
+                    final Collection<?> values;
+                    if (rawValue.getClass().isArray()) {
+                        values = Arrays.asList((Object[]) rawValue);
+                    } else {
+                        values = ((Collection<?>) rawValue);
+                    }
+                    if (values.isEmpty()) {
+                        final long i = index.getAndIncrement();
+                        final String fieldName = indexedArray ? rawName + "[" + i + "]" : rawName;
+                        result.add(fieldName + "=");
+                    } else {
+                        for (Object value : values) {
+                            final long i = index.getAndIncrement();
+                            final String fieldName = indexedArray ? rawName + "[" + i + "]" : rawName;
+                            final String stringValue = value == null ? "" : String.valueOf(value);
+                            final String fieldValue = URLEncoder.encode(stringValue, codingCharset.name());
+                            result.add(fieldName + "=" + fieldValue);
+                        }
+                    }
+                } else {
+                    final String stringValue = String.valueOf(rawValue);
+                    final String fieldValue = URLEncoder.encode(stringValue, codingCharset.name());
+                    result.add(rawName + "=" + fieldValue);
+                }
+            } catch (Exception e) {
+                throw new FormUrlEncodedMapperException("Unable to encode string to FormUrlEncoded format\n" +
+                        "    Model type: " + model.getClass().getName() + "\n" +
+                        "    Field name: " + field.getName() + "\n" +
+                        "    URL form field name: " + rawName + "\n" +
+                        "    Value to encode: " + rawValue + "\n" +
+                        "    Encode charset: " + codingCharset + "\n" +
+                        "    Error cause: " + e.getMessage().trim() + "\n", e);
+            }
+        }
+        return result.toString();
+    }
+
+    /**
+     * Converts single type (String, Integer, etc.) filed to FormUrlEncoded string
+     * According to the 3W specification, it is strongly recommended to use UTF-8 charset for URL form data coding.
+     *
+     * @param model         - FormUrlEncoded model
+     * @param field         - model field
+     * @param formFieldName - model field {@link FormUrlEncodedField#value()}
+     * @param codingCharset - URL form data coding charset
+     * @return FormUrlEncoded collection representation
+     * @throws FormUrlEncodedMapperException if model field not readable
+     * @throws FormUrlEncodedMapperException if unsupported URL form coding {@link Charset}
+     */
     @EverythingIsNonNull
     protected String buildSingleUrlEncodedString(final Object model,
                                                  final Field field,
@@ -236,7 +338,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
             } else {
                 final String value = String.valueOf(rawValue);
                 try {
-                    final String encodedValue = URLDecoder.decode(value, codingCharset.name());
+                    final String encodedValue = URLEncoder.encode(value, codingCharset.name());
                     result.add(fieldName + "=" + encodedValue);
                 } catch (Exception e) {
                     throw new FormUrlEncodedMapperException("Unable to encode string to FormUrlEncoded format\n" +
@@ -299,7 +401,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
             } else {
                 final String value = String.valueOf(rawValue);
                 try {
-                    final String encodedValue = URLDecoder.decode(value, codingCharset.name());
+                    final String encodedValue = URLEncoder.encode(value, codingCharset.name());
                     result.add(fieldName + "=" + encodedValue);
                 } catch (Exception e) {
                     throw new FormUrlEncodedMapperException("Unable to encode string to FormUrlEncoded format\n" +

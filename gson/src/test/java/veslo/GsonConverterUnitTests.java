@@ -37,7 +37,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.*;
 
-import static internal.test.utils.TestUtils.array;
+import static internal.test.utils.TestUtils.arrayOf;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -50,7 +50,7 @@ import static veslo.client.header.ContentTypeConstants.*;
 public class GsonConverterUnitTests extends BaseUnitTest {
 
     private static final Retrofit RTF = mock(Retrofit.class);
-    private static final Annotation[] AA = array();
+    private static final Annotation[] AA = arrayOf();
 
     @Test
     @DisplayName("GsonDualConverterFactory default constructors")

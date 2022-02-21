@@ -30,7 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import static internal.test.utils.TestUtils.array;
+import static internal.test.utils.TestUtils.arrayOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
@@ -59,7 +59,7 @@ public class FileConverterUnitTests extends BaseCoreUnitTest {
         public void test1637466272864() throws IOException {
             final String expected = "test1637466272864";
             final File file = new File("src/test/resources/test/data/test1637466272864.txt");
-            final RequestBody requestBody = CONVERTER.requestBodyConverter(OBJ_C, array(), array(), RTF).convert(file);
+            final RequestBody requestBody = CONVERTER.requestBodyConverter(OBJ_C, arrayOf(), arrayOf(), RTF).convert(file);
             final String actual = OkHttpTestUtils.requestBodyToString(requestBody);
             assertThat("Body", actual, is(expected));
         }
@@ -68,7 +68,7 @@ public class FileConverterUnitTests extends BaseCoreUnitTest {
         @DisplayName("ConvertCallException if file not exists")
         public void test1639669359068() {
             final File file = new File("src/test_foo_bar");
-            assertThrow(() -> CONVERTER.requestBodyConverter(FILE_C, array(), array(), RTF).convert(file))
+            assertThrow(() -> CONVERTER.requestBodyConverter(FILE_C, arrayOf(), arrayOf(), RTF).convert(file))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("Request body file not exists: src/test_foo_bar");
         }
@@ -77,7 +77,7 @@ public class FileConverterUnitTests extends BaseCoreUnitTest {
         @DisplayName("ConvertCallException if file is a directory")
         public void test1639669398095() {
             final File file = new File("src");
-            assertThrow(() -> CONVERTER.requestBodyConverter(FILE_C, array(), array(), RTF).convert(file))
+            assertThrow(() -> CONVERTER.requestBodyConverter(FILE_C, arrayOf(), arrayOf(), RTF).convert(file))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("Request body file is not a readable file: src");
         }
@@ -112,7 +112,7 @@ public class FileConverterUnitTests extends BaseCoreUnitTest {
         public void test1639669554897() throws IOException {
             final String expected = "test";
             final ResponseBody responseBody = ResponseBody.create(null, expected);
-            final File result = CONVERTER.responseBodyConverter(FILE_C, array(), RTF).convert(responseBody);
+            final File result = CONVERTER.responseBodyConverter(FILE_C, arrayOf(), RTF).convert(responseBody);
             final byte[] resultData = Files.readAllBytes(result.toPath());
             assertThat("Body", resultData, is("test" .getBytes()));
         }
@@ -122,7 +122,7 @@ public class FileConverterUnitTests extends BaseCoreUnitTest {
         public void test1639669659531() throws IOException {
             final String expected = "";
             final ResponseBody responseBody = ResponseBody.create(null, expected);
-            final File result = CONVERTER.responseBodyConverter(FILE_C, array(), RTF).convert(responseBody);
+            final File result = CONVERTER.responseBodyConverter(FILE_C, arrayOf(), RTF).convert(responseBody);
             final byte[] resultData = Files.readAllBytes(result.toPath());
             assertThat("Body", resultData, is("" .getBytes()));
         }
@@ -130,7 +130,7 @@ public class FileConverterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("return null if response body == null")
         public void test1639669773834() throws IOException {
-            final File result = CONVERTER.responseBodyConverter(FILE_C, array(), RTF).convert(null);
+            final File result = CONVERTER.responseBodyConverter(FILE_C, arrayOf(), RTF).convert(null);
             assertThat("Body", result, nullValue());
         }
 
