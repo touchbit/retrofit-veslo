@@ -74,13 +74,13 @@
         <sonar.java.binaries>target/classes</sonar.java.binaries>
         <sonar.java.test.binaries>target/test-classes</sonar.java.test.binaries>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-        <veslo.sonar.exclusions>**/*.xml, **/src/test/**/*.*</veslo.sonar.exclusions>
-        <sonar.exclusions>${veslo.sonar.exclusions}</sonar.exclusions>
-        <sonar.coverage.exclusions>${veslo.sonar.exclusions}</sonar.coverage.exclusions>
+        <sonar.exclusions>**/*.xml</sonar.exclusions>
+        <sonar.coverage.exclusions>**/*.xml</sonar.coverage.exclusions>
+        <sonar.test.exclusions>**/src/test/**/*.*</sonar.test.exclusions>
         <sonar.cpd.exclusions>
-            src/main/java/veslo/client/converter/annotated/*Converter.java,
-            src/main/java/veslo/client/converter/typed/*Converter.java,
-            src/main/java/veslo/JacksonConverter.java
+            **/src/main/java/veslo/client/converter/annotated/*Converter.java,
+            **/src/main/java/veslo/client/converter/typed/*Converter.java,
+            **/src/main/java/veslo/JacksonConverter.java
         </sonar.cpd.exclusions>
     </properties>
 
