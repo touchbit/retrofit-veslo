@@ -594,7 +594,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
             if (split.length > 2 || split.length == 0) {
                 throw new FormUrlEncodedMapperException("URL encoded string not in URL format:\n" + urlEncodedString);
             }
-            final String key = split[0];
+            final String key = split[0].replaceAll("\\[.*]", "");
             final String urlEncodedValue;
             if (split.length == 1) {
                 urlEncodedValue = "";

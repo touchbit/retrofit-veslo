@@ -908,6 +908,26 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
                             " to java.util.ArrayList\n");
         }
 
+        @Test
+        @DisplayName("Throws FormUrlEncodedMapperException if the value cannot be written to the model field (array)")
+        public void test1645400443881() {
+            final TypedModel model = new TypedModel();
+            final Field field = field(STRING_ARRAY_FIELD);
+            assertThrow(() -> MAPPER.writeFieldValue(model, field, new Integer[] {1, 2}))
+                    .assertClass(FormUrlEncodedMapperException.class)
+                    .assertMessageIs("" +
+                            "Unable to write value to model field.\n" +
+                            "    Model: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$TypedModel\n" +
+                            "    Field name: stringArrayField\n" +
+                            "    Field type: String[]\n" +
+                            "    Value type: Integer[]\n" +
+                            "    Value: [1, 2]\n" +
+                            "    Error cause:" +
+                            " Can not set [Ljava.lang.String;" +
+                            " field veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$TypedModel.stringArrayField" +
+                            " to [Ljava.lang.Integer;\n");
+        }
+
     }
 
     @Nested
@@ -988,9 +1008,9 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
                     "stringArrayField=stringArrayValue1&\n" +
                     "stringArrayField=stringArrayValue2&\n" +
                     "integerArrayField=1&\n" +
-                    "listStringField=listStringValue1&\n" +
-                    "listStringField=listStringValue2&\n" +
-                    "listIntegerField=1&\n" +
+                    "listStringField[]=listStringValue1&\n" +
+                    "listStringField[]=listStringValue2&\n" +
+                    "listIntegerField[100]=1&\n" +
                     "additional=properties&\n" +
                     "empty=\n";
             final GoodModel model = MAPPER.unmarshal(GoodModel.class, value);
