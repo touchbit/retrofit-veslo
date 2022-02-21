@@ -104,6 +104,9 @@ public class CookieAction implements InterceptAction {
      */
     @EverythingIsNonNull
     public static Set<Cookie> getCookie() {
+        if (COOKIES.get() == null) {
+            COOKIES.set(new HashSet<>());
+        }
         return COOKIES.get();
     }
 
@@ -276,7 +279,7 @@ public class CookieAction implements InterceptAction {
      * Clear all Cookies
      */
     public static void clearCookie() {
-        getCookie().clear();
+        COOKIES.remove();
     }
 
     public static String toStringCookies() {

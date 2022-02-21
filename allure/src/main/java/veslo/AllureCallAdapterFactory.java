@@ -98,6 +98,7 @@ public class AllureCallAdapterFactory extends UniversalCallAdapterFactory {
             return super.get(returnType, methodAnnotations, retrofit);
         }
         final CallAdapter<Object, Object> adapter = super.get(returnType, methodAnnotations, retrofit);
+        //noinspection L101
         if (adapter == null) {
             throw new ConvertCallException("Missing CallAdapter for model " + returnType);
         }

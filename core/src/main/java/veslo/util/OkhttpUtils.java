@@ -78,14 +78,15 @@ public class OkhttpUtils {
         } else if (requestBody.isDuplex()) {
             resultMessage.add("Body: (duplex request body omitted)");
         } else {
-            final Buffer buffer = new Buffer();
-            requestBody.writeTo(buffer);
-            Charset charset = getCharset(requestBody);
-            if (isPlaintext(buffer)) {
-                resultMessage.add("Body: (" + buffer.size() + "-byte body)");
-                resultMessage.add("  " + buffer.readString(charset).replace("\n", "\n  "));
-            } else {
-                resultMessage.add("Body: (binary " + requestBody.contentLength() + "-byte body omitted)");
+            try (final Buffer buffer = new Buffer()) {
+                requestBody.writeTo(buffer);
+                Charset charset = getCharset(requestBody);
+                if (isPlaintext(buffer)) {
+                    resultMessage.add("Body: (" + buffer.size() + "-byte body)");
+                    resultMessage.add("  " + buffer.readString(charset).replace("\n", "\n  "));
+                } else {
+                    resultMessage.add("Body: (binary " + requestBody.contentLength() + "-byte body omitted)");
+                }
             }
         }
         return resultMessage.add("").toString();
@@ -127,21 +128,27 @@ public class OkhttpUtils {
             final BufferedSource source = responseBody.source();
             source.request(Long.MAX_VALUE);
             Buffer buffer = source.getBuffer();
-            if ("gzip" .equalsIgnoreCase(responseHeaders.get("Content-Encoding"))) {
-                try (GzipSource gzippedResponseBody = new GzipSource(buffer.clone())) {
-                    buffer = new Buffer();
-                    buffer.writeAll(gzippedResponseBody);
+            try {
+                if ("gzip".equalsIgnoreCase(responseHeaders.get("Content-Encoding"))) {
+                    try (final GzipSource gzippedResponseBody = new GzipSource(buffer.clone())) {
+                        buffer = new Buffer();
+                        buffer.writeAll(gzippedResponseBody);
+                    }
                 }
-            }
-            Charset charset = getCharset(responseBody);
-            if (isPlaintext(buffer)) {
-                final String body = buffer.clone().readString(charset);
-                resultMessage.add("Body: (" + buffer.size() + "-byte body)");
-                if (body.length() > 0) {
-                    resultMessage.add("  " + body.replace("\n", "\n  "));
+                Charset charset = getCharset(responseBody);
+                if (isPlaintext(buffer)) {
+                    final String body = buffer.clone().readString(charset);
+                    resultMessage.add("Body: (" + buffer.size() + "-byte body)");
+                    if (body.length() > 0) {
+                        resultMessage.add("  " + body.replace("\n", "\n  "));
+                    }
+                } else {
+                    resultMessage.add("Body: (binary " + buffer.size() + "-byte body omitted)");
                 }
-            } else {
-                resultMessage.add("Body: (binary " + buffer.size() + "-byte body omitted)");
+            } finally {
+                if (buffer != null) {
+                    buffer.close();
+                }
             }
         }
         return resultMessage.add("").toString();
@@ -210,7 +217,7 @@ public class OkhttpUtils {
     @Nonnull
     public static Charset getCharset(@Nullable MediaType mediaType) {
         final Charset charset = (mediaType == null) ? UTF_8 : mediaType.charset();
-        return (charset == null) ? UTF_8 : charset;
+        return charset != null ? charset : UTF_8;
     }
 
     /**
@@ -218,8 +225,7 @@ public class OkhttpUtils {
      * @return - true if buffer is present and contains only unicode code points
      */
     public static boolean isPlaintext(Buffer buffer) {
-        try {
-            Buffer prefix = new Buffer();
+        try (final Buffer prefix = new Buffer()) {
             long byteCount = Math.min(buffer.size(), 64L);
             buffer.copyTo(prefix, 0L, byteCount);
             for (int i = 0; i < 16 && !prefix.exhausted(); ++i) {
@@ -247,3 +253,4 @@ public class OkhttpUtils {
     }
 
 }
+
