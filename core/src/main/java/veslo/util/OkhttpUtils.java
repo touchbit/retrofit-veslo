@@ -104,6 +104,7 @@ public class OkhttpUtils {
      * @throws IOException - no comments
      */
     @Nonnull
+    @SuppressWarnings("java:S3776")
     public static String responseToString(final Response response) throws IOException {
         Utils.parameterRequireNonNull(response, "response");
         final StringJoiner resultMessage = new StringJoiner("\n");
