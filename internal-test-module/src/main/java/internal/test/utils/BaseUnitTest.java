@@ -38,16 +38,15 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static internal.test.utils.TestUtils.array;
+import static internal.test.utils.TestUtils.arrayOf;
 import static internal.test.utils.TestUtils.getGenericReturnTypeForMethod;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 @SuppressWarnings({"unused", "rawtypes"})
 public abstract class BaseUnitTest {
 
     protected static final String INFO = "endpointInfo";
-    protected static final Annotation[] AA = array();
+    protected static final Annotation[] AA = arrayOf();
     protected static final Retrofit RTF = RetrofitTestUtils.retrofit();
     protected static final Class<Object> OBJ_C = Object.class;
     protected static final Type OBJ_T = OBJ_C;
@@ -124,6 +123,10 @@ public abstract class BaseUnitTest {
 
     public static <DTO> void assertNotNull(DTO actual) {
         assertThat(actual, notNullValue());
+    }
+
+    public static <DTO> void assertIsNull(DTO actual) {
+        assertThat(actual, nullValue());
     }
 
     protected Annotation[] getAnyAnnotations() {

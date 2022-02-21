@@ -33,7 +33,7 @@ import veslo.util.TripleConsumer;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import static internal.test.utils.TestUtils.array;
+import static internal.test.utils.TestUtils.arrayOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.mock;
@@ -872,7 +872,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
 
     public static ResponseAsserter<SucDTO, ?, ?> getSucResponseAsserter(int status, SucDTO dto, IHeadersAsserter ha) {
         final Response response = OkHttpTestUtils.getResponse(status);
-        DualResponse<SucDTO, ErrDTO> dualResponse = new DualResponse<>(dto, null, response, "", array());
+        DualResponse<SucDTO, ErrDTO> dualResponse = new DualResponse<>(dto, null, response, "", arrayOf());
         return new ResponseAsserter<>(dualResponse, ha);
     }
 
@@ -882,7 +882,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
 
     public static ResponseAsserter<?, ErrDTO, ?> getErrResponseAsserter(int status, ErrDTO dto, IHeadersAsserter ha) {
         final Response response = OkHttpTestUtils.getResponse(status);
-        DualResponse<SucDTO, ErrDTO> dualResponse = new DualResponse<>(null, dto, response, "", array());
+        DualResponse<SucDTO, ErrDTO> dualResponse = new DualResponse<>(null, dto, response, "", arrayOf());
         return new ResponseAsserter<>(dualResponse, ha);
     }
 

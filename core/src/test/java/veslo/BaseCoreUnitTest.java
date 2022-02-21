@@ -41,7 +41,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
-import static internal.test.utils.TestUtils.array;
+import static internal.test.utils.TestUtils.arrayOf;
 import static internal.test.utils.TestUtils.getGenericReturnTypeForMethod;
 import static veslo.client.header.ContentTypeConstants.TEXT_PLAIN;
 
@@ -128,11 +128,11 @@ public class BaseCoreUnitTest extends BaseUnitTest {
     }
 
     protected static Converters getConverters(RequestConverter... requestConverters) {
-        return getConverters(array(), requestConverters);
+        return getConverters(arrayOf(), requestConverters);
     }
 
     protected static Converters getConverters(ResponseConverter... responseConverters) {
-        return getConverters(responseConverters, array());
+        return getConverters(responseConverters, arrayOf());
     }
 
     protected static Converters getConverters(ResponseConverter[] responseConverters,

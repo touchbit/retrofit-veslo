@@ -17,12 +17,26 @@
 package internal.test.utils;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class TestUtils {
 
     @SafeVarargs
-    public static <C> C[] array(C... items) {
+    public static <C> C[] arrayOf(C... items) {
         return items;
+    }
+
+    @SafeVarargs
+    public static <C> List<C> listOf(C... items) {
+        return Arrays.stream(items).collect(Collectors.toList());
+    }
+
+    @SafeVarargs
+    public static <C> Set<C> setOf(C... items) {
+        return Arrays.stream(items).collect(Collectors.toSet());
     }
 
     public static Type getGenericReturnTypeForMethod(Class<?> aClass, String methodName) {

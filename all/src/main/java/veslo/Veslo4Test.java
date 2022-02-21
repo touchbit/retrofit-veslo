@@ -42,7 +42,7 @@ public class Veslo4Test {
      * Default network interceptor with allure integration.
      * It is recommended to use your own interceptor.
      */
-    private static final CompositeInterceptor A_INTERCEPTOR = new CompositeInterceptor()
+    public static final CompositeInterceptor A_INTERCEPTOR = new CompositeInterceptor()
             .withRequestInterceptActionsChain(CookieAction.INSTANCE, LoggingAction.INSTANCE, AllureAction.INSTANCE)
             .withResponseInterceptActionsChain(LoggingAction.INSTANCE, AllureAction.INSTANCE, CookieAction.INSTANCE);
 
@@ -50,7 +50,7 @@ public class Veslo4Test {
      * Default network interceptor without allure integration.
      * It is recommended to use your own interceptor.
      */
-    private static final CompositeInterceptor U_INTERCEPTOR = new CompositeInterceptor()
+    public static final CompositeInterceptor U_INTERCEPTOR = new CompositeInterceptor()
             .withRequestInterceptActionsChain(CookieAction.INSTANCE, LoggingAction.INSTANCE)
             .withResponseInterceptActionsChain(LoggingAction.INSTANCE, CookieAction.INSTANCE);
 

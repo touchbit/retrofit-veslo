@@ -21,11 +21,9 @@ import okhttp3.Interceptor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import retrofit2.http.GET;
 import veslo.client.adapter.UniversalCallAdapterFactory;
 import veslo.client.converter.ExtensionConverterFactory;
 import veslo.client.inteceptor.CompositeInterceptor;
-import veslo.client.response.DualResponse;
 
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;

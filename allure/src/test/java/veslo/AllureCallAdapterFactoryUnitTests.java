@@ -25,7 +25,7 @@ import veslo.client.response.DualResponse;
 
 import java.lang.annotation.Annotation;
 
-import static internal.test.utils.TestUtils.array;
+import static internal.test.utils.TestUtils.arrayOf;
 import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyString;
@@ -47,7 +47,7 @@ public class AllureCallAdapterFactoryUnitTests extends BaseUnitTests {
     @Test
     @DisplayName("#getEndpointInfo() return empty string if Description.value = ''")
     public void test1639065952677() {
-        final Annotation[] array = array(getDescription(""));
+        final Annotation[] array = arrayOf(getDescription(""));
         final String endpointInfo = new AllureCallAdapterFactory().getEndpointInfo(array);
         assertThat("", endpointInfo, emptyString());
     }
@@ -55,7 +55,7 @@ public class AllureCallAdapterFactoryUnitTests extends BaseUnitTests {
     @Test
     @DisplayName("#getEndpointInfo() return empty string if Description.value = '   '")
     public void test1639065952685() {
-        final Annotation[] array = array(getDescription("   "));
+        final Annotation[] array = arrayOf(getDescription("   "));
         final String endpointInfo = new AllureCallAdapterFactory().getEndpointInfo(array);
         assertThat("", endpointInfo, emptyString());
     }
@@ -64,14 +64,14 @@ public class AllureCallAdapterFactoryUnitTests extends BaseUnitTests {
     @Test
     @DisplayName("#getEndpointInfo() return empty string if Description not present")
     public void test1639065952694() {
-        final String endpointInfo = new AllureCallAdapterFactory().getEndpointInfo(array());
+        final String endpointInfo = new AllureCallAdapterFactory().getEndpointInfo(arrayOf());
         assertThat("", endpointInfo, emptyString());
     }
 
     @Test
     @DisplayName("#getEndpointInfo() return Description.value if value not blank")
     public void test1639065952701() {
-        final Annotation[] array = array(getDescription("test1638356431777"));
+        final Annotation[] array = arrayOf(getDescription("test1638356431777"));
         final String endpointInfo = new AllureCallAdapterFactory().getEndpointInfo(array);
         assertThat("", endpointInfo, is("test1638356431777"));
     }
