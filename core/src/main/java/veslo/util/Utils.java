@@ -16,6 +16,7 @@
 
 package veslo.util;
 
+import org.apache.commons.lang3.ArrayUtils;
 import retrofit2.internal.EverythingIsNonNull;
 import veslo.RuntimeIOException;
 import veslo.UtilityClassException;
@@ -34,6 +35,8 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static veslo.constant.ParameterNameConstants.*;
 
 /**
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
@@ -83,7 +86,7 @@ public class Utils {
      */
     @EverythingIsNonNull
     public static Byte[] toObjectByteArray(String data) {
-        Utils.parameterRequireNonNull(data, "data");
+        Utils.parameterRequireNonNull(data, DATA_PARAMETER);
         return toObjectByteArray(data.getBytes());
     }
 
@@ -93,10 +96,8 @@ public class Utils {
      */
     @EverythingIsNonNull
     public static Byte[] toObjectByteArray(byte[] bytes) {
-        Utils.parameterRequireNonNull(bytes, "bytes");
-        Byte[] result = new Byte[bytes.length];
-        Arrays.setAll(result, n -> bytes[n]);
-        return result;
+        Utils.parameterRequireNonNull(bytes, BYTES_PARAMETER);
+        return ArrayUtils.toObject(bytes);
     }
 
     /**
@@ -105,7 +106,7 @@ public class Utils {
      */
     @EverythingIsNonNull
     public static byte[] toPrimitiveByteArray(Object bytes) {
-        Utils.parameterRequireNonNull(bytes, "bytes");
+        Utils.parameterRequireNonNull(bytes, BYTES_PARAMETER);
         if (bytes instanceof Byte[]) {
             return toPrimitiveByteArray((Byte[]) bytes);
         }
@@ -122,12 +123,8 @@ public class Utils {
      */
     @EverythingIsNonNull
     public static byte[] toPrimitiveByteArray(Byte[] bytes) {
-        Utils.parameterRequireNonNull(bytes, "bytes");
-        byte[] primitiveArray = new byte[bytes.length];
-        for (int i = 0; i < bytes.length; i++) {
-            primitiveArray[i] = bytes[i];
-        }
-        return primitiveArray;
+        Utils.parameterRequireNonNull(bytes, BYTES_PARAMETER);
+        return ArrayUtils.toPrimitive(bytes);
     }
 
     /**
@@ -187,7 +184,7 @@ public class Utils {
      * @throws RuntimeIOException if resource file not readable
      */
     public static String readResourceFile(String path) {
-        Utils.parameterRequireNonNull(path, "path");
+        Utils.parameterRequireNonNull(path, PATH_PARAMETER);
         return readResourceFile(path, StandardCharsets.UTF_8);
     }
 
@@ -202,15 +199,15 @@ public class Utils {
      * @throws RuntimeIOException if resource file not readable
      */
     public static String readResourceFile(String path, Charset charset) {
-        Utils.parameterRequireNonNull(path, "path");
-        Utils.parameterRequireNonNull(charset, "charset");
+        Utils.parameterRequireNonNull(path, PATH_PARAMETER);
+        Utils.parameterRequireNonNull(charset, CHARSET_PARAMETER);
         try (final InputStream stream = getClassLoader().getResourceAsStream(path)) {
             if (stream == null) {
                 throw new RuntimeIOException("Resource file not readable: " + path);
             }
             return getBufferedReader(stream, charset).lines().collect(Collectors.joining("\n"));
-        } catch (IOException e) {
-            throw new RuntimeIOException("Resource file not readable", e);
+        } catch (IOException | NullPointerException e) {
+            throw new RuntimeIOException("Resource file not readable: " + path, e);
         }
     }
 
@@ -224,7 +221,7 @@ public class Utils {
      * @throws RuntimeIOException if file not readable
      */
     public static String readFile(String path) {
-        Utils.parameterRequireNonNull(path, "path");
+        Utils.parameterRequireNonNull(path, PATH_PARAMETER);
         return readFile(path, StandardCharsets.UTF_8);
     }
 
@@ -239,8 +236,8 @@ public class Utils {
      * @throws RuntimeIOException if file not readable
      */
     public static String readFile(String path, Charset charset) {
-        Utils.parameterRequireNonNull(path, "path");
-        Utils.parameterRequireNonNull(charset, "charset");
+        Utils.parameterRequireNonNull(path, PATH_PARAMETER);
+        Utils.parameterRequireNonNull(charset, CHARSET_PARAMETER);
         return readFile(new File(path), charset);
     }
 
@@ -254,7 +251,7 @@ public class Utils {
      * @throws RuntimeIOException if file not readable
      */
     public static String readFile(File file) {
-        Utils.parameterRequireNonNull(file, "file");
+        Utils.parameterRequireNonNull(file, FILE_PARAMETER);
         return readFile(file, StandardCharsets.UTF_8);
     }
 
@@ -269,8 +266,8 @@ public class Utils {
      * @throws RuntimeIOException if file not readable
      */
     public static String readFile(File file, Charset charset) {
-        Utils.parameterRequireNonNull(file, "file");
-        Utils.parameterRequireNonNull(charset, "charset");
+        Utils.parameterRequireNonNull(file, FILE_PARAMETER);
+        Utils.parameterRequireNonNull(charset, CHARSET_PARAMETER);
         try {
             final Path path = file.toPath();
             return String.join("\n", Files.readAllLines(path, charset));

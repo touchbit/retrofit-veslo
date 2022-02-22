@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Shaburov Oleg
+ * Copyright 2021-2022 Shaburov Oleg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-package veslo.util;
+package veslo.constant;
 
-import static veslo.constant.SonarRuleConstants.GENERIC_EXCEPTIONS_THROWN;
+import veslo.UtilityClassException;
 
-/**
- * Auxiliary functional interface for Asserting
- * <p>
- *
- * @author Oleg Shaburov (shaburov.o.a@gmail.com)
- * Created: 20.11.2021
- * @see veslo.asserter.SoftlyAsserter#softly(ThrowableRunnable)
- */
-@FunctionalInterface
-public interface ThrowableRunnable {
+public class SonarRuleConstants {
 
     /**
-     * @throws Throwable to catch any errors and exceptions
+     * Type parameter names should comply with a naming convention
      */
-    @SuppressWarnings(GENERIC_EXCEPTIONS_THROWN)
-    void execute() throws Throwable;
+    public static final String TYPE_PARAMETER_NAMING = "java:S119";
+
+    /**
+     * Generic exceptions should never be thrown
+     */
+    public static final String GENERIC_EXCEPTIONS_THROWN = "java:S112";
+
+    private SonarRuleConstants() {
+        throw new UtilityClassException();
+    }
 
 }

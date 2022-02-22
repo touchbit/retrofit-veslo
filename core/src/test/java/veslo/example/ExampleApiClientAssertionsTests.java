@@ -57,13 +57,6 @@ public class ExampleApiClientAssertionsTests extends BaseCoreUnitTest {
     }
 
     @Test
-    @DisplayName("Util classes")
-    public void test1639981211052() {
-        assertUtilityClassException(ExampleApiClientAssertions.class);
-        assertUtilityClassException(ExampleApiClientAssertions.Assertions.class);
-    }
-
-    @Test
     @DisplayName("AssertResponseMethodTests")
     public void test1639586648784() {
         final ExampleApiClientAssertions.AssertResponseMethodExamples examples = new ExampleApiClientAssertions.AssertResponseMethodExamples();

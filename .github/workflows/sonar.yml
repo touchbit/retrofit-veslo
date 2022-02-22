@@ -2,7 +2,8 @@ name: Sonar
 on:
   push:
     branches:
-      - main
+      - 'main'
+      - '(branch|release)-.*'
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:

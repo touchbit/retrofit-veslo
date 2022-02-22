@@ -38,12 +38,6 @@ public class TestClientTests extends BaseUnitTest {
     private static final ExtensionConverterFactory C_FACTORY = new ExtensionConverterFactory();
     private static final Class<Client> CLI_CLASS = Client.class;
 
-    @Test
-    @DisplayName("Utility class")
-    public void test1643953705450() {
-        assertUtilityClassException(TestClient.class);
-    }
-
     @Nested
     @DisplayName("#build() method tests")
     public class BuildMethodTests {

@@ -17,6 +17,7 @@
 package veslo;
 
 import internal.test.utils.BaseUnitTest;
+import internal.test.utils.CorruptedTestException;
 import internal.test.utils.RetrofitTestUtils;
 import internal.test.utils.client.model.TestDTO;
 import internal.test.utils.client.model.pack.PackageDTO;
@@ -251,6 +252,20 @@ public class BaseCoreUnitTest extends BaseUnitTest {
                                                                    final Retrofit retrofit) {
             return responseBody -> type.toString();
         }
+
+    }
+
+    protected static  <R> R wrap(ExceptionWrapper<R> func) {
+        try {
+            return func.wrap();
+        } catch (Throwable e) {
+            throw new CorruptedTestException();
+        }
+    }
+
+    public interface ExceptionWrapper<R> {
+
+        R wrap() throws Throwable;
 
     }
 

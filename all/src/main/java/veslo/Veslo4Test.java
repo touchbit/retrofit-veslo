@@ -59,14 +59,14 @@ public class Veslo4Test {
      * {@link #U_INTERCEPTOR} is used as an interceptor (recommended using your own interceptor)
      * Client methods return type - {@link DualResponse}.
      *
-     * @param baseUrl            - HTTP resource URL.
-     * @param cli                - client interface class.
-     * @param <CLIENT>           - client interface.
+     * @param baseUrl - HTTP resource URL.
+     * @param cli     - client interface class.
+     * @param <C>     - client interface.
      * @return built client
      */
     @EverythingIsNonNull
-    public static <CLIENT> CLIENT buildJacksonClient(final String baseUrl,
-                                                     final Class<CLIENT> cli) {
+    public static <C> C buildJacksonClient(final String baseUrl,
+                                           final Class<C> cli) {
         return JacksonTestClient.build(baseUrl, U_INTERCEPTOR, new UniversalCallAdapterFactory(), cli);
     }
 
@@ -74,16 +74,16 @@ public class Veslo4Test {
      * Creates an HTTP client for testing with a built-in Jackson2 converter.
      * Client methods return type - {@link DualResponse}.
      *
-     * @param baseUrl            - HTTP resource URL.
-     * @param interceptor        - {@link CompositeInterceptor} (okhttp network interceptor).
-     * @param cli                - client interface class.
-     * @param <CLIENT>           - client interface.
+     * @param baseUrl     - HTTP resource URL.
+     * @param interceptor - {@link CompositeInterceptor} (okhttp network interceptor).
+     * @param cli         - client interface class.
+     * @param <C>         - client interface.
      * @return built client
      */
     @EverythingIsNonNull
-    public static <CLIENT> CLIENT buildJacksonClient(final String baseUrl,
-                                                     final Interceptor interceptor,
-                                                     final Class<CLIENT> cli) {
+    public static <C> C buildJacksonClient(final String baseUrl,
+                                           final Interceptor interceptor,
+                                           final Class<C> cli) {
         return JacksonTestClient.build(baseUrl, interceptor, new UniversalCallAdapterFactory(), cli);
     }
 
@@ -92,14 +92,14 @@ public class Veslo4Test {
      * {@link #A_INTERCEPTOR} is used as an interceptor (recommended using your own interceptor).
      * Client methods return type - {@link AResponse}.
      *
-     * @param baseUrl            - HTTP resource URL.
-     * @param cli                - client interface class.
-     * @param <CLIENT>           - client interface.
+     * @param baseUrl - HTTP resource URL.
+     * @param cli     - client interface class.
+     * @param <C>     - client interface.
      * @return built client
      */
     @EverythingIsNonNull
-    public static <CLIENT> CLIENT buildAllureJacksonClient(final String baseUrl,
-                                                           final Class<CLIENT> cli) {
+    public static <C> C buildAllureJacksonClient(final String baseUrl,
+                                                 final Class<C> cli) {
         return JacksonTestClient.build(baseUrl, A_INTERCEPTOR, new AllureCallAdapterFactory(), cli);
     }
 
@@ -107,16 +107,16 @@ public class Veslo4Test {
      * Creates an HTTP client for testing with a built-in Jackson2 converter and allure integration.
      * Client methods return type - {@link AResponse}.
      *
-     * @param baseUrl            - HTTP resource URL.
-     * @param interceptor        - {@link CompositeInterceptor} (okhttp network interceptor).
-     * @param cli                - client interface class.
-     * @param <CLIENT>           - client interface.
+     * @param baseUrl     - HTTP resource URL.
+     * @param interceptor - {@link CompositeInterceptor} (okhttp network interceptor).
+     * @param cli         - client interface class.
+     * @param <C>         - client interface.
      * @return built client
      */
     @EverythingIsNonNull
-    public static <CLIENT> CLIENT buildAllureJacksonClient(final String baseUrl,
-                                                           final Interceptor interceptor,
-                                                           final Class<CLIENT> cli) {
+    public static <C> C buildAllureJacksonClient(final String baseUrl,
+                                                 final Interceptor interceptor,
+                                                 final Class<C> cli) {
         return JacksonTestClient.build(baseUrl, interceptor, new AllureCallAdapterFactory(), cli);
     }
 
@@ -125,14 +125,14 @@ public class Veslo4Test {
      * {@link #U_INTERCEPTOR} is used as an interceptor (recommended using your own interceptor)
      * Client methods return type - {@link DualResponse}.
      *
-     * @param baseUrl            - HTTP resource URL.
-     * @param cli                - client interface class.
-     * @param <CLIENT>           - client interface.
+     * @param baseUrl - HTTP resource URL.
+     * @param cli     - client interface class.
+     * @param <C>     - client interface.
      * @return built client
      */
     @EverythingIsNonNull
-    public static <CLIENT> CLIENT buildGsonClient(final String baseUrl,
-                                                  final Class<CLIENT> cli) {
+    public static <C> C buildGsonClient(final String baseUrl,
+                                        final Class<C> cli) {
         return GsonTestClient.build(baseUrl, U_INTERCEPTOR, new UniversalCallAdapterFactory(), cli);
     }
 
@@ -140,16 +140,16 @@ public class Veslo4Test {
      * Creates an HTTP client for testing with a built-in Gson converter.
      * Client methods return type - {@link DualResponse}.
      *
-     * @param baseUrl            - HTTP resource URL.
-     * @param interceptor        - {@link CompositeInterceptor} (okhttp network interceptor).
-     * @param cli                - client interface class.
-     * @param <CLIENT>           - client interface.
+     * @param baseUrl     - HTTP resource URL.
+     * @param interceptor - {@link CompositeInterceptor} (okhttp network interceptor).
+     * @param cli         - client interface class.
+     * @param <C>         - client interface.
      * @return built client
      */
     @EverythingIsNonNull
-    public static <CLIENT> CLIENT buildGsonClient(final String baseUrl,
-                                                  final Interceptor interceptor,
-                                                  final Class<CLIENT> cli) {
+    public static <C> C buildGsonClient(final String baseUrl,
+                                        final Interceptor interceptor,
+                                        final Class<C> cli) {
         return GsonTestClient.build(baseUrl, interceptor, new UniversalCallAdapterFactory(), cli);
     }
 
@@ -158,14 +158,14 @@ public class Veslo4Test {
      * {@link #A_INTERCEPTOR} is used as an interceptor (recommended using your own interceptor).
      * Client methods return type - {@link AResponse}.
      *
-     * @param baseUrl            - HTTP resource URL.
-     * @param cli                - client interface class.
-     * @param <CLIENT>           - client interface.
+     * @param baseUrl - HTTP resource URL.
+     * @param cli     - client interface class.
+     * @param <C>     - client interface.
      * @return built client
      */
     @EverythingIsNonNull
-    public static <CLIENT> CLIENT buildAllureGsonClient(final String baseUrl,
-                                                        final Class<CLIENT> cli) {
+    public static <C> C buildAllureGsonClient(final String baseUrl,
+                                              final Class<C> cli) {
         return GsonTestClient.build(baseUrl, A_INTERCEPTOR, new AllureCallAdapterFactory(), cli);
     }
 
@@ -173,16 +173,16 @@ public class Veslo4Test {
      * Creates an HTTP client for testing with a built-in Gson converter and allure integration.
      * Client methods return type - {@link AResponse}.
      *
-     * @param baseUrl            - HTTP resource URL.
-     * @param interceptor        - {@link CompositeInterceptor} (okhttp network interceptor).
-     * @param cli                - client interface class.
-     * @param <CLIENT>           - client interface.
+     * @param baseUrl     - HTTP resource URL.
+     * @param interceptor - {@link CompositeInterceptor} (okhttp network interceptor).
+     * @param cli         - client interface class.
+     * @param <C>         - client interface.
      * @return built client
      */
     @EverythingIsNonNull
-    public static <CLIENT> CLIENT buildAllureGsonClient(final String baseUrl,
-                                                        final Interceptor interceptor,
-                                                        final Class<CLIENT> cli) {
+    public static <C> C buildAllureGsonClient(final String baseUrl,
+                                              final Interceptor interceptor,
+                                              final Class<C> cli) {
         return GsonTestClient.build(baseUrl, interceptor, new AllureCallAdapterFactory(), cli);
     }
 
@@ -194,15 +194,15 @@ public class Veslo4Test {
      * @param callAdapterFactory - {@link UniversalCallAdapterFactory} or heirs.
      * @param converterFactory   - {@link ExtensionConverterFactory} or heirs.
      * @param cli                - client interface class.
-     * @param <CLIENT>           - client interface.
+     * @param <C>                - client interface.
      * @return built client
      */
     @EverythingIsNonNull
-    public static <CLIENT> CLIENT build(final String baseUrl,
-                                        final Interceptor interceptor,
-                                        final CallAdapter.Factory callAdapterFactory,
-                                        final Converter.Factory converterFactory,
-                                        final Class<CLIENT> cli) {
+    public static <C> C build(final String baseUrl,
+                              final Interceptor interceptor,
+                              final CallAdapter.Factory callAdapterFactory,
+                              final Converter.Factory converterFactory,
+                              final Class<C> cli) {
         return TestClient.build(baseUrl, interceptor, callAdapterFactory, converterFactory, cli);
     }
 

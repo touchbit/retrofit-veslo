@@ -39,14 +39,14 @@ public class GsonTestClient {
      * @param interceptor        - {@link CompositeInterceptor} (okhttp network interceptor)
      * @param callAdapterFactory - {@link UniversalCallAdapterFactory} or heirs
      * @param cli                - client interface class
-     * @param <CLIENT>           - client interface
+     * @param <C>                - client interface
      * @return built client
      */
     @EverythingIsNonNull
-    public static <CLIENT> CLIENT build(final String baseUrl,
-                                        final Interceptor interceptor,
-                                        final CallAdapter.Factory callAdapterFactory,
-                                        final Class<CLIENT> cli) {
+    public static <C> C build(final String baseUrl,
+                              final Interceptor interceptor,
+                              final CallAdapter.Factory callAdapterFactory,
+                              final Class<C> cli) {
         return TestClient.build(baseUrl, interceptor, callAdapterFactory, new GsonConverterFactory(), cli);
     }
 

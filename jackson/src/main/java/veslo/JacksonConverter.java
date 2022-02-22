@@ -37,6 +37,7 @@ import java.lang.reflect.Type;
 
 import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES;
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
+import static veslo.constant.SonarRuleConstants.TYPE_PARAMETER_NAMING;
 
 /**
  * Jackson 2 converter
@@ -45,6 +46,7 @@ import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 08.11.2021
  */
+@SuppressWarnings(TYPE_PARAMETER_NAMING)
 public class JacksonConverter<DTO> implements ExtensionConverter<DTO> {
 
     /**

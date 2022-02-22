@@ -34,6 +34,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 import static com.google.gson.ToNumberPolicy.LONG_OR_DOUBLE;
+import static veslo.constant.SonarRuleConstants.TYPE_PARAMETER_NAMING;
 
 /**
  * Gson converter
@@ -42,6 +43,7 @@ import static com.google.gson.ToNumberPolicy.LONG_OR_DOUBLE;
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 01.12.2021
  */
+@SuppressWarnings(TYPE_PARAMETER_NAMING)
 public class GsonConverter<DTO> implements ExtensionConverter<DTO> {
 
     /**

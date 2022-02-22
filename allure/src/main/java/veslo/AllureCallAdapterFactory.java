@@ -90,6 +90,7 @@ public class AllureCallAdapterFactory extends UniversalCallAdapterFactory {
      */
     @Override
     @EverythingIsNonNull
+    @SuppressWarnings("java:S2583")
     public CallAdapter<Object, Object> get(final Type returnType,
                                            final Annotation[] methodAnnotations,
                                            final Retrofit retrofit) {
@@ -98,8 +99,7 @@ public class AllureCallAdapterFactory extends UniversalCallAdapterFactory {
             return super.get(returnType, methodAnnotations, retrofit);
         }
         final CallAdapter<Object, Object> adapter = super.get(returnType, methodAnnotations, retrofit);
-        //noinspection L101
-        if (adapter == null) {
+        if (adapter == null) { //NOSONAR
             throw new ConvertCallException("Missing CallAdapter for model " + returnType);
         }
         return new CallAdapter<Object, Object>() {
@@ -120,7 +120,7 @@ public class AllureCallAdapterFactory extends UniversalCallAdapterFactory {
             @Override
             public Object adapt(final @Nonnull Call<Object> call) {
                 final String endpointInfo = getEndpointInfo(methodAnnotations);
-                if (endpointInfo == null || endpointInfo.trim().isEmpty()) {
+                if (endpointInfo == null || endpointInfo.trim().isEmpty()) { //NOSONAR
                     return Allure.step("API call: no description", () -> {
                         Allure.addAttachment("ALLURE_ERROR", "Use annotations to describe the called API method:\n - " +
                                 Description.class + "\n - " + EndpointInfo.class + "\n\n" +
@@ -148,7 +148,7 @@ public class AllureCallAdapterFactory extends UniversalCallAdapterFactory {
             return description.value().trim();
         }
         final String endpointInfo = super.getEndpointInfo(methodAnnotations);
-        if (endpointInfo != null && !endpointInfo.trim().isEmpty()) {
+        if (endpointInfo != null && !endpointInfo.trim().isEmpty()) { //NOSONAR
             return endpointInfo;
         }
         return "";

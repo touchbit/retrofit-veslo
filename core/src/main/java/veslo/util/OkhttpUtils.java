@@ -216,6 +216,9 @@ public class OkhttpUtils {
      * @return extracted {@link Charset} from {@link MediaType} or UTF-8 by default
      */
     @Nonnull
+    // sonar  False-positive bug
+    // https://community.sonarsource.com/t/rule-bug-nonnull-values-should-not-be-set-to-null-java-s2637/58728
+    @SuppressWarnings("java:S2637")
     public static Charset getCharset(@Nullable MediaType mediaType) {
         final Charset charset = (mediaType == null) ? UTF_8 : mediaType.charset();
         return charset != null ? charset : UTF_8;

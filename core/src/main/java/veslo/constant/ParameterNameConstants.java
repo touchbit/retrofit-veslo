@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Shaburov Oleg
+ * Copyright 2021-2022 Shaburov Oleg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,15 @@
  * limitations under the License.
  */
 
-package veslo.util;
+package veslo.constant;
 
-import static veslo.constant.SonarRuleConstants.GENERIC_EXCEPTIONS_THROWN;
+public class ParameterNameConstants {
 
-/**
- * Auxiliary functional interface for Asserting
- * <p>
- *
- * @author Oleg Shaburov (shaburov.o.a@gmail.com)
- * Created: 20.11.2021
- * @see veslo.asserter.SoftlyAsserter#softly(ThrowableRunnable)
- */
-@FunctionalInterface
-public interface ThrowableRunnable {
+    public static final String DATA_PARAMETER = "data";
+    public static final String BYTES_PARAMETER = "bytes";
+    public static final String PATH_PARAMETER = "path";
+    public static final String CHARSET_PARAMETER = "charset";
+    public static final String FILE_PARAMETER = "file";
 
-    /**
-     * @throws Throwable to catch any errors and exceptions
-     */
-    @SuppressWarnings(GENERIC_EXCEPTIONS_THROWN)
-    void execute() throws Throwable;
 
 }

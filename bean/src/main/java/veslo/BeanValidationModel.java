@@ -35,6 +35,7 @@ import java.util.logging.Logger;
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 15.11.2021
  */
+@SuppressWarnings("java:S119")
 public interface BeanValidationModel<DTO> {
 
     /**
