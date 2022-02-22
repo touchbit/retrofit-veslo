@@ -25,6 +25,8 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static veslo.constant.SonarRuleConstants.TYPE_PARAMETER_NAMING;
+
 /**
  * A class with built-in soft checks for standard response headers.
  * <p>
@@ -32,7 +34,7 @@ import java.util.List;
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 19.11.2021
  */
-@SuppressWarnings({"UnusedReturnValue", "unused"})
+@SuppressWarnings({"UnusedReturnValue", "unused", TYPE_PARAMETER_NAMING})
 public class HeadersAsserter implements IHeadersAsserter {
 
     public static final String H_ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";

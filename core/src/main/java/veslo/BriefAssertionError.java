@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static veslo.constant.SonarRuleConstants.EXCEPTION_IMMUTABLE;
+
 /**
  * {@link AssertionError} with the ability to truncate StackTrace by {@link TruncationPredicate} function.
  * <p>
@@ -36,6 +38,7 @@ public class BriefAssertionError extends AssertionError {
      * Global truncation function applied to all {@link BriefAssertionError} instances
      * @see TruncationPredicate#defaultFunction
      */
+    @SuppressWarnings(EXCEPTION_IMMUTABLE)
     private static TruncationPredicate truncate = TruncationPredicate.defaultFunction();
 
     /**

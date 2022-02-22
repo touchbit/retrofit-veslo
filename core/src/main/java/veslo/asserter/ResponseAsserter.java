@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import static veslo.constant.SonarRuleConstants.TYPE_PARAMETER_NAMING;
+
 /**
  * {@link IDualResponse} asserter with built-in {@link IHeadersAsserter}
  * All examples for this class accumulated here {@link ExampleApiClientAssertions}
@@ -42,7 +44,7 @@ import java.util.function.Consumer;
  * @see ExampleApiClientAssertions.AssertResponseMethodExamples#example1639329013867()
  * @see ExampleApiClientAssertions.AssertResponseMethodExamples#example1639437048937()
  */
-@SuppressWarnings("UnusedReturnValue")
+@SuppressWarnings({"UnusedReturnValue", TYPE_PARAMETER_NAMING})
 public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> implements IResponseAsserter {
 
     private final List<Throwable> errors = new ArrayList<>();

@@ -16,6 +16,7 @@
 
 package veslo;
 
+import internal.test.utils.BaseUnitTest;
 import internal.test.utils.asserter.ThrowableRunnable;
 import internal.test.utils.client.TestClientBuilder;
 import org.junit.jupiter.api.DisplayName;
@@ -28,18 +29,18 @@ import veslo.client.model.UserPassport;
 import java.util.Locale;
 import java.util.UUID;
 
-import static internal.test.utils.asserter.ThrowableAsserter.assertThrow;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static java.util.logging.Level.OFF;
 import static org.hamcrest.Matchers.notNullValue;
 
 @SuppressWarnings("ConstantConditions")
-public class BeanValidationModelTests {
+public class BeanValidationModelTests extends BaseUnitTest {
 
     protected static final JakartaMockClient MOCK_CLIENT = TestClientBuilder
             .build(JakartaMockClient.class, new UniversalCallAdapterFactory(), new JacksonConverterFactory());
 
     static {
-        Locale.setDefault(Locale.ENGLISH);
+        BeanValidationConfiguration.setDefaultLocale(Locale.ENGLISH);
+        BeanValidationConfiguration.setLogLevel(OFF);
     }
 
     private static UserDTO genUserDTO() {
@@ -49,6 +50,12 @@ public class BeanValidationModelTests {
                 .passport(new UserPassport()
                         .series("1234")
                         .number("123456"));
+    }
+
+    @Test
+    @DisplayName("Util class test")
+    public void test1645545098632() {
+        assertUtilityClassException(BeanValidationConfiguration.class);
     }
 
     @Test

@@ -38,6 +38,11 @@ public class SonarRuleConstants {
     public static final String GENERIC_EXCEPTIONS_THROWN = "java:S112";
 
     /**
+     * Exception classes should be immutable
+     */
+    public static final String EXCEPTION_IMMUTABLE = "java:S1165";
+
+    /**
      * Utility class. Forbidden instantiation.
      */
     private SonarRuleConstants() {

@@ -32,6 +32,14 @@ public class ParameterNameConstants {
     public static final String PATH_PARAMETER = "path";
     public static final String CHARSET_PARAMETER = "charset";
     public static final String FILE_PARAMETER = "file";
+    public static final String COOKIE_NAME_PARAMETER = "cookieName";
+    public static final String COOKIES_PARAMETER = "cookies";
+    public static final String COOKIE_PARAMETER = "cookie";
+    public static final String DOMAIN_PARAMETER = "domain";
+    public static final String URL_PARAMETER = "url";
+    public static final String RESPONSE_PARAMETER = "response";
+    public static final String REQUEST_PARAMETER = "request";
+    public static final String COLLECTOR_PARAMETER = "collector";
 
     /**
      * Utility class. Forbidden instantiation.

@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * An interface for checking JavaBean specification/contract compliance.
@@ -46,7 +44,6 @@ public interface BeanValidationModel<DTO> {
      */
     @SuppressWarnings("unchecked")
     default DTO assertConsistency() {
-        Logger.getLogger("org.hibernate.validator.internal.util").setLevel(Level.SEVERE);
         final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         final Validator validator = validatorFactory.getValidator();
         final Set<ConstraintViolation<Object>> constraintViolations = validator.validate(this);
