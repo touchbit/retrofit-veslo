@@ -83,7 +83,7 @@ public class CompositeInterceptor implements Interceptor {
             for (RequestInterceptAction requestInterceptAction : requestInterceptActions) {
                 stringJoiner.add(requestInterceptAction.getClass().getName());
             }
-            logger.debug(stringJoiner.toString());
+            logger.debug("{}" ,stringJoiner);
         }
         return this;
     }
@@ -110,7 +110,7 @@ public class CompositeInterceptor implements Interceptor {
             for (ResponseInterceptAction responseInterceptAction : responseInterceptActions) {
                 stringJoiner.add(responseInterceptAction.getClass().getName());
             }
-            logger.debug(stringJoiner.toString());
+            logger.debug("{}", stringJoiner);
         }
         return this;
     }

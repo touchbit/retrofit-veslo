@@ -29,7 +29,9 @@ import java.lang.annotation.Annotation;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-@SuppressWarnings("UnusedReturnValue")
+import static veslo.constant.SonarRuleConstants.SONAR_TYPE_PARAMETER_NAMING;
+
+@SuppressWarnings({SONAR_TYPE_PARAMETER_NAMING})
 public abstract class BaseDualResponse<SUC_DTO, ERR_DTO, ASSERTER extends IResponseAsserter>
         implements IDualResponse<SUC_DTO, ERR_DTO> {
 

@@ -39,7 +39,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import static veslo.constant.ParameterNameConstants.*;
+import static veslo.constant.SonarRuleConstants.SONAR_GENERIC_WILDCARD_TYPES;
+import static veslo.constant.SonarRuleConstants.SONAR_TYPE_PARAMETER_NAMING;
 
+@SuppressWarnings({SONAR_TYPE_PARAMETER_NAMING, SONAR_GENERIC_WILDCARD_TYPES})
 public interface ExtensionConverter<DTO> {
 
     String NULL_JSON_VALUE = "NULL_JSON_VALUE";

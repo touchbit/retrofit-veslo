@@ -57,6 +57,7 @@ import static veslo.client.TransportEvent.RESPONSE;
 import static veslo.client.converter.api.ExtensionConverter.RequestBodyConverter;
 import static veslo.constant.ParameterNameConstants.*;
 import static veslo.constant.SonarRuleConstants.SONAR_COGNITIVE_COMPLEXITY;
+import static veslo.constant.SonarRuleConstants.SONAR_GENERIC_WILDCARD_TYPES;
 import static veslo.util.ConvertUtils.isIDualResponse;
 
 /**
@@ -73,6 +74,7 @@ import static veslo.util.ConvertUtils.isIDualResponse;
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 20.11.2021
  */
+@SuppressWarnings(SONAR_GENERIC_WILDCARD_TYPES)
 public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
 
     private final Map<Class<? extends Annotation>, ExtensionConverter<?>> modelAnnotationRequestConverters = new HashMap<>();

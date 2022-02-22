@@ -20,8 +20,6 @@ import veslo.asserter.AssertionMatcher;
 import veslo.asserter.SoftlyAsserter;
 import veslo.util.ExcludeFromJacocoGeneratedReport;
 
-import static veslo.asserter.AssertionMatcher.is;
-
 @ExcludeFromJacocoGeneratedReport()
 public class SucDTO implements DTO {
 
