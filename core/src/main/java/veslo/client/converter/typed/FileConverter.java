@@ -39,6 +39,8 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Set;
 
+import static veslo.constant.ParameterNameConstants.*;
+
 /**
  * {@link File} java type converter
  * <p>
@@ -62,10 +64,10 @@ public class FileConverter implements ExtensionConverter<File> {
                                                      final Annotation[] parameterAnnotations,
                                                      final Annotation[] methodAnnotations,
                                                      final Retrofit retrofit) {
-        Utils.parameterRequireNonNull(type, "type");
-        Utils.parameterRequireNonNull(parameterAnnotations, "parameterAnnotations");
-        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
-        Utils.parameterRequireNonNull(retrofit, "retrofit");
+        Utils.parameterRequireNonNull(type, TYPE_PARAMETER);
+        Utils.parameterRequireNonNull(parameterAnnotations, PARAMETER_ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(methodAnnotations, METHOD_ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(retrofit, RETROFIT_PARAMETER);
         return new RequestBodyConverter() {
 
             /**
@@ -100,9 +102,9 @@ public class FileConverter implements ExtensionConverter<File> {
     public ResponseBodyConverter<File> responseBodyConverter(final Type type,
                                                              final Annotation[] methodAnnotations,
                                                              final Retrofit retrofit) {
-        Utils.parameterRequireNonNull(type, "type");
-        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
-        Utils.parameterRequireNonNull(retrofit, "retrofit");
+        Utils.parameterRequireNonNull(type, TYPE_PARAMETER);
+        Utils.parameterRequireNonNull(methodAnnotations, METHOD_ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(retrofit, RETROFIT_PARAMETER);
         return new ResponseBodyConverter<File>() {
 
             /**

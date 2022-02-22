@@ -28,11 +28,13 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
 
+import static veslo.constant.ParameterNameConstants.*;
+
 public interface SoftlyAsserter extends Closeable {
 
     @EverythingIsNonNull
     static void softlyAsserter(Consumer<SoftlyAsserter> asserterConsumer) {
-        Utils.parameterRequireNonNull(asserterConsumer, "asserterConsumer");
+        Utils.parameterRequireNonNull(asserterConsumer, ASSERTER_CONSUMER_PARAMETER);
         try (final SoftlyAsserter softlyAsserter = get()) {
             asserterConsumer.accept(softlyAsserter);
         }
@@ -80,7 +82,7 @@ public interface SoftlyAsserter extends Closeable {
         Utils.parameterRequireNonNull(throwableArgs, "throwableArgs");
         List<Throwable> result = new ArrayList<>();
         for (Throwable throwable : throwableArgs) {
-            Utils.parameterRequireNonNull(throwable, "throwable");
+            Utils.parameterRequireNonNull(throwable, THROWABLE_PARAMETER);
             result.add(throwable);
         }
         addErrors(result);
@@ -88,7 +90,7 @@ public interface SoftlyAsserter extends Closeable {
 
     @EverythingIsNonNull
     default SoftlyAsserter softly(@Nonnull ThrowableRunnable throwableRunnable) {
-        Utils.parameterRequireNonNull(throwableRunnable, "throwableRunnable");
+        Utils.parameterRequireNonNull(throwableRunnable, THROWABLE_RUNNABLE_PARAMETER);
         try {
             throwableRunnable.execute();
         } catch (Throwable e) {

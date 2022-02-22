@@ -35,6 +35,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
+import static veslo.constant.ParameterNameConstants.*;
 import static veslo.constant.SonarRuleConstants.SONAR_GENERIC_WILDCARD_TYPES;
 
 /**
@@ -87,7 +88,7 @@ public class UniversalCallAdapterFactory extends JavaTypeCallAdapterFactory {
     public UniversalCallAdapterFactory(final Logger logger,
                                        final IDualResponseConsumer<IDualResponse<?, ?>> dualResponseConsumer) {
         super(logger);
-        Utils.parameterRequireNonNull(dualResponseConsumer, "dualResponseConsumer");
+        Utils.parameterRequireNonNull(dualResponseConsumer, DUAL_RESPONSE_CONSUMER_PARAMETER);
         this.dualResponseConsumer = dualResponseConsumer;
     }
 
@@ -133,12 +134,12 @@ public class UniversalCallAdapterFactory extends JavaTypeCallAdapterFactory {
                                                       final String endpointInfo,
                                                       final Annotation[] methodAnnotations,
                                                       final Retrofit retrofit) {
-        Utils.parameterRequireNonNull(type, "type");
-        Utils.parameterRequireNonNull(successType, "successType");
-        Utils.parameterRequireNonNull(errorType, "errorType");
-        Utils.parameterRequireNonNull(endpointInfo, "endpointInfo");
-        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
-        Utils.parameterRequireNonNull(retrofit, "retrofit");
+        Utils.parameterRequireNonNull(type, TYPE_PARAMETER);
+        Utils.parameterRequireNonNull(successType,  SUCCESS_TYPE_PARAMETER);
+        Utils.parameterRequireNonNull(errorType, ERROR_TYPE_PARAMETER);
+        Utils.parameterRequireNonNull(endpointInfo, ENDPOINT_INFO_PARAMETER);
+        Utils.parameterRequireNonNull(methodAnnotations, METHOD_ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(retrofit, RETROFIT_PARAMETER);
         return new CallAdapter<Object, Object>() {
 
             /**
@@ -178,7 +179,7 @@ public class UniversalCallAdapterFactory extends JavaTypeCallAdapterFactory {
      * @return {@link ParameterizedType} of the wrapper class
      */
     public ParameterizedType getParameterizedType(Type type) {
-        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(type, TYPE_PARAMETER);
         if (type instanceof ParameterizedType) {
             Class<?> rawClass = (Class<?>) ((ParameterizedType) type).getRawType();
             if (IDualResponse.class.isAssignableFrom(rawClass)) {
@@ -206,12 +207,12 @@ public class UniversalCallAdapterFactory extends JavaTypeCallAdapterFactory {
                                                 @Nonnull final String endpointInfo,
                                                 @Nonnull final Annotation[] methodAnnotations,
                                                 @Nonnull final Retrofit retrofit) {
-        Utils.parameterRequireNonNull(call, "call");
-        Utils.parameterRequireNonNull(successType, "successType");
-        Utils.parameterRequireNonNull(errorType, "errorType");
-        Utils.parameterRequireNonNull(endpointInfo, "endpointInfo");
-        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
-        Utils.parameterRequireNonNull(retrofit, "retrofit");
+        Utils.parameterRequireNonNull(call, CALL_PARAMETER);
+        Utils.parameterRequireNonNull(successType,  SUCCESS_TYPE_PARAMETER);
+        Utils.parameterRequireNonNull(errorType, ERROR_TYPE_PARAMETER);
+        Utils.parameterRequireNonNull(endpointInfo, ENDPOINT_INFO_PARAMETER);
+        Utils.parameterRequireNonNull(methodAnnotations, METHOD_ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(retrofit, RETROFIT_PARAMETER);
         final Response<Object> response;
         try {
             logger.debug("Make an API call");

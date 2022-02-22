@@ -16,6 +16,7 @@
 
 package veslo.client.adapter;
 
+import okhttp3.HttpUrl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import retrofit2.Call;
@@ -33,6 +34,8 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+
+import static veslo.constant.ParameterNameConstants.*;
 
 /**
  * Base extension call adapter factory {@link CallAdapter.Factory}
@@ -61,7 +64,7 @@ public class JavaTypeCallAdapterFactory extends CallAdapter.Factory {
      */
     @EverythingIsNonNull
     public JavaTypeCallAdapterFactory(final Logger logger) {
-        Utils.parameterRequireNonNull(logger, "logger");
+        Utils.parameterRequireNonNull(logger, LOGGER_PARAMETER);
         this.logger = logger;
     }
 
@@ -96,7 +99,9 @@ public class JavaTypeCallAdapterFactory extends CallAdapter.Factory {
              */
             @Override
             public Object adapt(final @Nonnull Call<Object> call) {
-                logger.info("API call: {} {}", call.request().method(), call.request().url());
+                final String method = call.request().method();
+                final HttpUrl url = call.request().url();
+                logger.info("API call: {} {}", method, url);
                 try {
                     final Response<Object> response = call.execute();
                     final Object dto;
@@ -139,10 +144,10 @@ public class JavaTypeCallAdapterFactory extends CallAdapter.Factory {
                                                final @Nonnull Type returnType,
                                                final @Nonnull Annotation[] annotations,
                                                final @Nonnull Retrofit retrofit) {
-        Utils.parameterRequireNonNull(response, "response");
-        Utils.parameterRequireNonNull(returnType, "returnType");
-        Utils.parameterRequireNonNull(annotations, "annotations");
-        Utils.parameterRequireNonNull(retrofit, "retrofit");
+        Utils.parameterRequireNonNull(response, RESPONSE_PARAMETER);
+        Utils.parameterRequireNonNull(returnType, RETURN_TYPE_PARAMETER);
+        Utils.parameterRequireNonNull(annotations, ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(retrofit, RETROFIT_PARAMETER);
         if (returnType == Void.TYPE || returnType == Void.class) {
             return null;
         }
@@ -190,10 +195,10 @@ public class JavaTypeCallAdapterFactory extends CallAdapter.Factory {
                                           final @Nonnull Type returnType,
                                           final @Nonnull Annotation[] annotations,
                                           final @Nonnull Retrofit retrofit) {
-        Utils.parameterRequireNonNull(response, "response");
-        Utils.parameterRequireNonNull(returnType, "returnType");
-        Utils.parameterRequireNonNull(annotations, "annotations");
-        Utils.parameterRequireNonNull(retrofit, "retrofit");
+        Utils.parameterRequireNonNull(response, RESPONSE_PARAMETER);
+        Utils.parameterRequireNonNull(returnType, RETURN_TYPE_PARAMETER);
+        Utils.parameterRequireNonNull(annotations, ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(retrofit, RETROFIT_PARAMETER);
         logger.debug("Get error response body model for type {}", returnType);
         if (returnType == Void.TYPE || returnType == Void.class) {
             return null;

@@ -37,6 +37,7 @@ import java.lang.reflect.Type;
 
 import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES;
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
+import static veslo.constant.ParameterNameConstants.*;
 import static veslo.constant.SonarRuleConstants.SONAR_TYPE_PARAMETER_NAMING;
 
 /**
@@ -90,10 +91,10 @@ public class JacksonConverter<DTO> implements ExtensionConverter<DTO> {
                                                      final Annotation[] parameterAnnotations,
                                                      final Annotation[] methodAnnotations,
                                                      final Retrofit retrofit) {
-        Utils.parameterRequireNonNull(type, "type");
-        Utils.parameterRequireNonNull(parameterAnnotations, "parameterAnnotations");
-        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
-        Utils.parameterRequireNonNull(retrofit, "retrofit");
+        Utils.parameterRequireNonNull(type, TYPE_PARAMETER);
+        Utils.parameterRequireNonNull(parameterAnnotations, PARAMETER_ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(methodAnnotations, METHOD_ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(retrofit, RETROFIT_PARAMETER);
         return new RequestBodyConverter() {
 
             /**
@@ -105,7 +106,7 @@ public class JacksonConverter<DTO> implements ExtensionConverter<DTO> {
             @Override
             @Nullable
             public RequestBody convert(@Nonnull Object body) {
-                Utils.parameterRequireNonNull(body, "body");
+                Utils.parameterRequireNonNull(body, BODY_PARAMETER);
                 final ObjectMapper objectMapper = getRequestObjectMapper();
                 final JavaType javaType = objectMapper.constructType(type);
                 final ObjectWriter objectWriter = objectMapper.writerFor(javaType);
@@ -134,9 +135,9 @@ public class JacksonConverter<DTO> implements ExtensionConverter<DTO> {
     public ResponseBodyConverter<DTO> responseBodyConverter(final Type type,
                                                             final Annotation[] methodAnnotations,
                                                             final Retrofit retrofit) {
-        Utils.parameterRequireNonNull(type, "type");
-        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
-        Utils.parameterRequireNonNull(retrofit, "retrofit");
+        Utils.parameterRequireNonNull(type, TYPE_PARAMETER);
+        Utils.parameterRequireNonNull(methodAnnotations, METHOD_ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(retrofit, RETROFIT_PARAMETER);
         return new ResponseBodyConverter<DTO>() {
 
             /**

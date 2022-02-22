@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import static veslo.client.header.ContentTypeConstants.*;
+import static veslo.constant.ParameterNameConstants.CONVERTER_PARAMETER;
 
 /**
  * Gson DTO converter factory
@@ -86,7 +87,7 @@ public class GsonConverterFactory extends ExtensionConverterFactory {
      */
     public GsonConverterFactory(Logger logger, ExtensionConverter<Object> converter) {
         super(logger);
-        Utils.parameterRequireNonNull(converter, "converter");
+        Utils.parameterRequireNonNull(converter,  CONVERTER_PARAMETER);
         registerMimeConverter(converter, APP_JSON, APP_JSON_UTF8, TEXT_JSON, TEXT_JSON_UTF8);
         registerJavaTypeConverter(converter, Map.class, List.class);
         registerModelAnnotationConverter(converter, GsonModel.class);

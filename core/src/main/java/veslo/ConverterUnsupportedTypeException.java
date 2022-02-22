@@ -24,6 +24,8 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static veslo.constant.ParameterNameConstants.*;
+
 public class ConverterUnsupportedTypeException extends RuntimeException {
 
     @EverythingIsNonNull
@@ -32,9 +34,9 @@ public class ConverterUnsupportedTypeException extends RuntimeException {
     }
 
     protected static String getExceptionMessage(Type converter, Type actual, Type... expected) {
-        Utils.parameterRequireNonNull(converter, "converter");
-        Utils.parameterRequireNonNull(actual, "actual");
-        Utils.parameterRequireNonNull(expected, "expected");
+        Utils.parameterRequireNonNull(converter, CONVERTER_PARAMETER);
+        Utils.parameterRequireNonNull(actual, ACTUAL_PARAMETER);
+        Utils.parameterRequireNonNull(expected, EXPECTED_PARAMETER);
         final String expectedTypes = Arrays.stream(expected)
                 .filter(Objects::nonNull)
                 .map(Type::getTypeName)

@@ -31,6 +31,8 @@ import java.nio.charset.Charset;
 import java.util.StringJoiner;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static veslo.constant.ParameterNameConstants.REQUEST_PARAMETER;
+import static veslo.constant.ParameterNameConstants.RESPONSE_PARAMETER;
 
 /**
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
@@ -59,7 +61,7 @@ public class OkhttpUtils {
      */
     @Nonnull
     public static String requestToString(@Nonnull final Request request) throws IOException {
-        Utils.parameterRequireNonNull(request, "request");
+        Utils.parameterRequireNonNull(request, REQUEST_PARAMETER);
         final StringJoiner resultMessage = new StringJoiner("\n");
         final RequestBody requestBody = request.body();
         final boolean hasRequestBody = requestBody != null && requestBody.contentLength() != 0;
@@ -106,7 +108,7 @@ public class OkhttpUtils {
     @Nonnull
     @SuppressWarnings("java:S3776")
     public static String responseToString(final Response response) throws IOException {
-        Utils.parameterRequireNonNull(response, "response");
+        Utils.parameterRequireNonNull(response, RESPONSE_PARAMETER);
         final StringJoiner resultMessage = new StringJoiner("\n");
         final ResponseBody responseBody = response.body();
         final boolean hasResponseBody = responseBody != null;
@@ -176,7 +178,7 @@ public class OkhttpUtils {
 
     @EverythingIsNonNull
     public static Headers getResponseHeaders(final Response response) {
-        Utils.parameterRequireNonNull(response, "response");
+        Utils.parameterRequireNonNull(response, RESPONSE_PARAMETER);
         final Headers headers = response.headers();
         final ResponseBody body = response.body();
         if (body == null) {

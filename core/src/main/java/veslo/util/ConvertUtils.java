@@ -30,6 +30,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
+import static veslo.constant.ParameterNameConstants.TYPE_PARAMETER;
+
 /**
  * Created: 08.11.2021
  *
@@ -50,7 +52,7 @@ public class ConvertUtils {
      */
     @EverythingIsNonNull
     public static boolean isIDualResponse(final Type type) {
-        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(type, TYPE_PARAMETER);
         return type instanceof ParameterizedType &&
                 IDualResponse.class.isAssignableFrom((Class<?>) ((ParameterizedType) type).getRawType());
     }

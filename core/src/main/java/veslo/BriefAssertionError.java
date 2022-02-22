@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static veslo.constant.ParameterNameConstants.TRUNCATION_PREDICATE_PARAMETER;
 import static veslo.constant.SonarRuleConstants.SONAR_EXCEPTION_IMMUTABLE;
 
 /**
@@ -36,6 +37,7 @@ public class BriefAssertionError extends AssertionError {
 
     /**
      * Global truncation function applied to all {@link BriefAssertionError} instances
+     *
      * @see TruncationPredicate#defaultFunction
      */
     @SuppressWarnings(SONAR_EXCEPTION_IMMUTABLE)
@@ -55,7 +57,7 @@ public class BriefAssertionError extends AssertionError {
      * Constructs a new error with the specified detail message and cause.
      * Note that the detail message associated with cause is not automatically incorporated in this error's detail message.
      *
-     * @param message the detail message (which is saved for later retrieval by the {@link #getMessage()} method).
+     * @param message   the detail message (which is saved for later retrieval by the {@link #getMessage()} method).
      * @param throwable the cause (which is saved for later retrieval by the {@link #getCause()} method).
      *                  (A null value is permitted, and indicates that the cause is nonexistent or unknown.)
      */
@@ -78,7 +80,7 @@ public class BriefAssertionError extends AssertionError {
      */
     @EverythingIsNonNull
     public static void truncateStackTrace(TruncationPredicate truncationPredicate) {
-        Utils.parameterRequireNonNull(truncationPredicate, "truncationPredicate");
+        Utils.parameterRequireNonNull(truncationPredicate, TRUNCATION_PREDICATE_PARAMETER);
         BriefAssertionError.truncate = truncationPredicate;
     }
 

@@ -36,6 +36,8 @@ import javax.annotation.Nonnull;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
+import static veslo.constant.ParameterNameConstants.METHOD_ANNOTATIONS_PARAMETER;
+
 /**
  * Factory for creating {@link CallAdapter} with support for Allure steps.
  * Overridden methods:
@@ -142,7 +144,7 @@ public class AllureCallAdapterFactory extends UniversalCallAdapterFactory {
     @Override
     @EverythingIsNonNull
     public String getEndpointInfo(Annotation[] methodAnnotations) {
-        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
+        Utils.parameterRequireNonNull(methodAnnotations, METHOD_ANNOTATIONS_PARAMETER);
         final Description description = Utils.getAnnotation(methodAnnotations, Description.class);
         if (description != null) {
             return description.value().trim();

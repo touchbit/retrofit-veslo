@@ -34,6 +34,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static veslo.constant.ParameterNameConstants.*;
+
 /**
  * Base default converter
  * Designed for aggregation of converters by any criterion
@@ -55,8 +57,8 @@ public abstract class BaseAggregatedConverter implements ExtensionConverter {
      */
     @EverythingIsNonNull
     public void addConverter(ExtensionConverter<?> converter, Type... types) {
-        Utils.parameterRequireNonNull(converter, "converter");
-        Utils.parameterRequireNonNull(types, "types");
+        Utils.parameterRequireNonNull(converter,  CONVERTER_PARAMETER);
+        Utils.parameterRequireNonNull(types, TYPES_PARAMETER);
         defaultConverters.put(converter, Stream.of(types).collect(Collectors.toSet()));
     }
 
@@ -66,7 +68,7 @@ public abstract class BaseAggregatedConverter implements ExtensionConverter {
      */
     @Nullable
     public ExtensionConverter<?> getConverterForType(@Nonnull Type type) {
-        Utils.parameterRequireNonNull(type, "type");
+        Utils.parameterRequireNonNull(type, TYPE_PARAMETER);
         final List<? extends ExtensionConverter<?>> result = defaultConverters.entrySet().stream()
                 .filter(e -> e.getValue().contains(type))
                 .map(Map.Entry::getKey)
@@ -98,16 +100,16 @@ public abstract class BaseAggregatedConverter implements ExtensionConverter {
     @Override
     @EverythingIsNonNull
     public RequestBodyConverter requestBodyConverter(final Type type,
-                                                     final Annotation[] paramAnnotations,
+                                                     final Annotation[] parameterAnnotations,
                                                      final Annotation[] methodAnnotations,
                                                      final Retrofit retrofit) {
-        Utils.parameterRequireNonNull(type, "type");
-        Utils.parameterRequireNonNull(paramAnnotations, "parameterAnnotations");
-        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
-        Utils.parameterRequireNonNull(retrofit, "retrofit");
+        Utils.parameterRequireNonNull(type, TYPE_PARAMETER);
+        Utils.parameterRequireNonNull(parameterAnnotations, PARAMETER_ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(methodAnnotations, METHOD_ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(retrofit, RETROFIT_PARAMETER);
         final ExtensionConverter<?> converter = getConverterForType(type);
         if (converter != null) {
-            return converter.requestBodyConverter(type, paramAnnotations, methodAnnotations, retrofit);
+            return converter.requestBodyConverter(type, parameterAnnotations, methodAnnotations, retrofit);
         }
         throw new ConverterUnsupportedTypeException(this.getClass(), type, getSupportedTypes());
     }
@@ -120,9 +122,9 @@ public abstract class BaseAggregatedConverter implements ExtensionConverter {
     public ResponseBodyConverter<?> responseBodyConverter(final Type type,
                                                           final Annotation[] methodAnnotations,
                                                           final Retrofit retrofit) {
-        Utils.parameterRequireNonNull(type, "type");
-        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
-        Utils.parameterRequireNonNull(retrofit, "retrofit");
+        Utils.parameterRequireNonNull(type, TYPE_PARAMETER);
+        Utils.parameterRequireNonNull(methodAnnotations, METHOD_ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(retrofit, RETROFIT_PARAMETER);
         final ExtensionConverter<?> converter = getConverterForType(type);
         if (converter != null) {
             return converter.responseBodyConverter(type, methodAnnotations, retrofit);

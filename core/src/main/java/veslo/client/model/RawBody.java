@@ -23,6 +23,8 @@ import veslo.util.Utils;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 
+import static veslo.constant.ParameterNameConstants.*;
+
 /**
  * Universal DTO model with built-in checks and helper methods.
  * <p>
@@ -96,16 +98,16 @@ public class RawBody {
     }
 
     public RawBody assertStringBodyContains(String... expectedStrings) {
-        Utils.parameterRequireNonNull(expectedStrings, "expectedStrings");
+        Utils.parameterRequireNonNull(expectedStrings, EXPECTED_STRINGS_PARAMETER);
         assertBodyIsNotNull();
         try (final SoftlyAsserter softlyAsserter = SoftlyAsserter.get()) {
-            for (String expected : expectedStrings) {
-                Utils.parameterRequireNonNull(expectedStrings, "expectedStrings");
+            for (String expectedString : expectedStrings) {
+                Utils.parameterRequireNonNull(expectedString, EXPECTED_STRING_PARAMETER);
                 //noinspection ConstantConditions -> assertBodyIsNotNull()
-                if (!string().contains(expected)) {
+                if (!string().contains(expectedString)) {
                     softlyAsserter.softly(() -> {
                         throw new BriefAssertionError("Response body\n" +
-                                "Expected: contains '" + expected + "'\n" +
+                                "Expected: contains '" + expectedString + "'\n" +
                                 "     but: does not contain\n");
                     });
                 }
@@ -115,16 +117,16 @@ public class RawBody {
     }
 
     public RawBody assertStringBodyContainsIgnoreCase(String... expectedStrings) {
-        Utils.parameterRequireNonNull(expectedStrings, "expectedStrings");
+        Utils.parameterRequireNonNull(expectedStrings, EXPECTED_STRINGS_PARAMETER);
         assertBodyIsNotNull();
         try (final SoftlyAsserter softlyAsserter = SoftlyAsserter.get()) {
-            for (String expected : expectedStrings) {
-                Utils.parameterRequireNonNull(expectedStrings, "expectedStrings");
+            for (String expectedString : expectedStrings) {
+                Utils.parameterRequireNonNull(expectedString, EXPECTED_STRING_PARAMETER);
                 //noinspection ConstantConditions -> assertBodyIsNotNull()
-                if (!string().toLowerCase().contains(expected.toLowerCase())) {
+                if (!string().toLowerCase().contains(expectedString.toLowerCase())) {
                     softlyAsserter.softly(() -> {
                         throw new BriefAssertionError("Response body\n" +
-                                "Expected: contains '" + expected + "' (ignore case)\n" +
+                                "Expected: contains '" + expectedString + "' (ignore case)\n" +
                                 "     but: does not contain\n");
                     });
                 }
@@ -134,7 +136,7 @@ public class RawBody {
     }
 
     public RawBody assertStringBodyIs(String expected) {
-        Utils.parameterRequireNonNull(expected, "expected");
+        Utils.parameterRequireNonNull(expected, EXPECTED_PARAMETER);
         assertBodyIsNotNull();
         if (!expected.equals(string())) {
             throw new BriefAssertionError("" +
@@ -146,7 +148,7 @@ public class RawBody {
     }
 
     public RawBody assertStringBodyIsIgnoreCase(String expected) {
-        Utils.parameterRequireNonNull(expected, "expected");
+        Utils.parameterRequireNonNull(expected, EXPECTED_PARAMETER);
         assertBodyIsNotNull();
         if (!expected.equalsIgnoreCase(string())) {
             throw new BriefAssertionError("" +

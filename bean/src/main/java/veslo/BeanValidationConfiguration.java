@@ -23,6 +23,8 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static veslo.constant.ParameterNameConstants.LOG_LEVEL_PARAMETER;
+
 /**
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 22.02.2022
@@ -53,7 +55,7 @@ public class BeanValidationConfiguration {
     @EverythingIsNonNull
     @SuppressWarnings("java:S4792")
     public static void setLogLevel(final Level logLevel) {
-        Utils.parameterRequireNonNull(logLevel, "logLevel");
+        Utils.parameterRequireNonNull(logLevel, LOG_LEVEL_PARAMETER);
         Logger.getLogger("org.hibernate.validator.internal.util").setLevel(logLevel);
     }
 

@@ -21,6 +21,8 @@ import veslo.util.Utils;
 import java.nio.charset.Charset;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static veslo.constant.ParameterNameConstants.CHARSET_PARAMETER;
+import static veslo.constant.ParameterNameConstants.RESOURCE_RELATIVE_PATH_PARAMETER;
 
 /**
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
@@ -36,8 +38,8 @@ public class ResourceFile {
     }
 
     public ResourceFile(String resourceRelativePath, Charset charset) {
-        Utils.parameterRequireNonNull(resourceRelativePath, "resourceRelativePath");
-        Utils.parameterRequireNonNull(charset, "charset");
+        Utils.parameterRequireNonNull(resourceRelativePath, RESOURCE_RELATIVE_PATH_PARAMETER);
+        Utils.parameterRequireNonNull(charset, CHARSET_PARAMETER);
         this.resourceRelativePath = resourceRelativePath;
         this.charset = charset;
     }

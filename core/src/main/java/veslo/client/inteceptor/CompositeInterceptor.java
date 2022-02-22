@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 
+import static veslo.constant.ParameterNameConstants.*;
+
 /**
  * Interceptor allows you to store multiple
  * request, response and exception handlers.
@@ -67,10 +69,10 @@ public class CompositeInterceptor implements Interceptor {
      * @return this
      */
     public CompositeInterceptor withRequestInterceptActionsChain(RequestInterceptAction... requestInterceptActions) {
-        Utils.parameterRequireNonNull(requestInterceptActions, "requestInterceptActions");
+        Utils.parameterRequireNonNull(requestInterceptActions,  REQUEST_INTERCEPT_ACTIONS_PARAMETER);
         this.requestInterceptActions.clear();
         for (RequestInterceptAction requestInterceptAction : requestInterceptActions) {
-            Utils.parameterRequireNonNull(requestInterceptAction, "requestInterceptAction");
+            Utils.parameterRequireNonNull(requestInterceptAction, REQUEST_INTERCEPT_ACTION_PARAMETER);
             this.requestInterceptActions.add(requestInterceptAction);
         }
         if (requestInterceptActions.length == 0) {
@@ -94,10 +96,10 @@ public class CompositeInterceptor implements Interceptor {
      * @return this
      */
     public CompositeInterceptor withResponseInterceptActionsChain(ResponseInterceptAction... responseInterceptActions) {
-        Utils.parameterRequireNonNull(responseInterceptActions, "responseInterceptActions");
+        Utils.parameterRequireNonNull(responseInterceptActions, RESPONSE_INTERCEPT_ACTIONS_PARAMETER);
         this.responseInterceptAction.clear();
         for (ResponseInterceptAction responseInterceptAction : responseInterceptActions) {
-            Utils.parameterRequireNonNull(responseInterceptAction, "responseInterceptAction");
+            Utils.parameterRequireNonNull(responseInterceptAction, RESPONSE_INTERCEPT_ACTION_PARAMETER);
             this.responseInterceptAction.add(responseInterceptAction);
         }
         if (responseInterceptActions.length == 0) {
