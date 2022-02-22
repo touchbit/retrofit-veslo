@@ -22,6 +22,7 @@ import veslo.util.Utils;
 import java.nio.charset.Charset;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static veslo.constant.ParameterNameConstants.*;
 
 /**
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
@@ -52,7 +53,7 @@ public interface IFormUrlEncodedMapper {
      */
     @EverythingIsNonNull
     default String marshal(Object model) {
-        Utils.parameterRequireNonNull(model, "model");
+        Utils.parameterRequireNonNull(model, MODEL_PARAMETER);
         return marshal(model, UTF_8, false);
     }
 
@@ -91,8 +92,8 @@ public interface IFormUrlEncodedMapper {
      */
     @EverythingIsNonNull
     default <M> M unmarshal(Class<M> modelClass, String encodedString) {
-        Utils.parameterRequireNonNull(modelClass, "modelClass");
-        Utils.parameterRequireNonNull(encodedString, "encodedString");
+        Utils.parameterRequireNonNull(modelClass, MODEL_CLASS_PARAMETER);
+        Utils.parameterRequireNonNull(encodedString, ENCODED_STRING_PARAMETER);
         return unmarshal(modelClass, encodedString, UTF_8);
     }
 

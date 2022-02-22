@@ -28,7 +28,7 @@ import java.lang.annotation.Annotation;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import static veslo.constant.SonarRuleConstants.TYPE_PARAMETER_NAMING;
+import static veslo.constant.SonarRuleConstants.SONAR_TYPE_PARAMETER_NAMING;
 
 /**
  * Allure dual model response
@@ -37,7 +37,7 @@ import static veslo.constant.SonarRuleConstants.TYPE_PARAMETER_NAMING;
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 26.12.2021
  */
-@SuppressWarnings(TYPE_PARAMETER_NAMING)
+@SuppressWarnings(SONAR_TYPE_PARAMETER_NAMING)
 public class AResponse<SUC_DTO, ERR_DTO> extends DualResponse<SUC_DTO, ERR_DTO> {
 
     /**

@@ -109,10 +109,13 @@ public interface SoftlyAsserter extends Closeable {
                 stringJoiner.add(error.getMessage());
             }
             final String header = "Collected the following errors:\n\n";
+            String errorMessages = stringJoiner.toString();
             // Cleaning up redundant header (nested asserts)
-            final String result = stringJoiner.toString().replaceAll(header, "");
+            while (errorMessages.contains(header)) {
+                errorMessages = errorMessages.replace(header, "");
+            }
             errors.clear();
-            throw new BriefAssertionError(header + result);
+            throw new BriefAssertionError(header + errorMessages);
         }
     }
 

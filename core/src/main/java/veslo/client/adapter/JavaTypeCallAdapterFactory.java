@@ -96,7 +96,7 @@ public class JavaTypeCallAdapterFactory extends CallAdapter.Factory {
              */
             @Override
             public Object adapt(final @Nonnull Call<Object> call) {
-                logger.info("API call: " + call.request().method() + " " + call.request().url());
+                logger.info("API call: {} {}", call.request().method(), call.request().url());
                 try {
                     final Response<Object> response = call.execute();
                     final Object dto;
@@ -111,8 +111,10 @@ public class JavaTypeCallAdapterFactory extends CallAdapter.Factory {
                     //noinspection ConstantConditions
                     return dto;
                 } catch (IOException e) {
-                    logger.error("Failed to make API call.", e);
-                    throw new HttpCallException("Failed to make API call.\n" + e.getMessage() + "\n", e);
+                    final HttpCallException exception = new HttpCallException("Failed to make API call.\n" +
+                            e.getMessage() + "\n", e);
+                    logger.error("Failed to make API call.", exception);
+                    throw exception;
                 }
             }
         };

@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static veslo.constant.SonarRuleConstants.TYPE_PARAMETER_NAMING;
+import static veslo.constant.SonarRuleConstants.SONAR_TYPE_PARAMETER_NAMING;
 
 /**
  * Jackson model additional properties base class
@@ -36,7 +36,7 @@ import static veslo.constant.SonarRuleConstants.TYPE_PARAMETER_NAMING;
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 17.01.2022
  */
-@SuppressWarnings({"unused", "unchecked", TYPE_PARAMETER_NAMING})
+@SuppressWarnings({"unused", "unchecked", SONAR_TYPE_PARAMETER_NAMING})
 public abstract class JacksonModelAdditionalProperties<DTO> {
 
     /**

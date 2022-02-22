@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static veslo.constant.SonarRuleConstants.TYPE_PARAMETER_NAMING;
+import static veslo.constant.SonarRuleConstants.SONAR_TYPE_PARAMETER_NAMING;
 
 /**
  * A class with built-in soft checks for standard response headers.
@@ -34,8 +34,10 @@ import static veslo.constant.SonarRuleConstants.TYPE_PARAMETER_NAMING;
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 19.11.2021
  */
-@SuppressWarnings({"UnusedReturnValue", "unused", TYPE_PARAMETER_NAMING})
+@SuppressWarnings({"UnusedReturnValue", "unused", SONAR_TYPE_PARAMETER_NAMING})
 public class HeadersAsserter implements IHeadersAsserter {
+
+    private static final String ERR_MSG_PREFIX = "Response header '";
 
     public static final String H_ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
     public static final String H_CONNECTION = "Connection";
@@ -213,7 +215,7 @@ public class HeadersAsserter implements IHeadersAsserter {
     public HeadersAsserter assertHeaderNotPresent(final String headerName) {
         final String actual = headers.get(headerName);
         if (actual != null) {
-            this.errors.add(getBriefAssertionError("Response header '" + headerName + "'", "not present", null, actual));
+            this.errors.add(getBriefAssertionError(ERR_MSG_PREFIX + headerName + "'", "not present", null, actual));
         }
         return this;
     }
@@ -221,7 +223,7 @@ public class HeadersAsserter implements IHeadersAsserter {
     public HeadersAsserter assertHeaderIsPresent(final String headerName) {
         final String actual = headers.get(headerName);
         if (actual == null) {
-            this.errors.add(getBriefAssertionError("Response header '" + headerName + "'", "is present", null, null));
+            this.errors.add(getBriefAssertionError(ERR_MSG_PREFIX + headerName + "'", "is present", null, null));
         }
         return this;
     }
@@ -229,7 +231,7 @@ public class HeadersAsserter implements IHeadersAsserter {
     public HeadersAsserter assertHeaderIs(final String headerName, final @Nonnull String expected) {
         final String actual = headers.get(headerName);
         if (actual == null || !actual.equalsIgnoreCase(expected)) {
-            this.errors.add(getBriefAssertionError("Response header '" + headerName + "'", "is", expected, actual));
+            this.errors.add(getBriefAssertionError(ERR_MSG_PREFIX + headerName + "'", "is", expected, actual));
         }
         return this;
     }
@@ -237,7 +239,7 @@ public class HeadersAsserter implements IHeadersAsserter {
     public HeadersAsserter assertHeaderContains(final String headerName, final @Nonnull String expected) {
         final String actual = headers.get(headerName);
         if (actual == null || !actual.trim().toLowerCase().contains(expected.toLowerCase())) {
-            this.errors.add(getBriefAssertionError("Response header '" + headerName + "'", "contains", expected, actual));
+            this.errors.add(getBriefAssertionError(ERR_MSG_PREFIX + headerName + "'", "contains", expected, actual));
         }
         return this;
     }

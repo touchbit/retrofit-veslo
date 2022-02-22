@@ -30,17 +30,27 @@ public class SonarRuleConstants {
     /**
      * Type parameter names should comply with a naming convention
      */
-    public static final String TYPE_PARAMETER_NAMING = "java:S119";
+    public static final String SONAR_TYPE_PARAMETER_NAMING = "java:S119";
+
+    /**
+     * Generic wildcard types should not be used in return types
+     */
+    public static final String SONAR_GENERIC_WILDCARD_TYPES = "java:S1452";
 
     /**
      * Generic exceptions should never be thrown
      */
-    public static final String GENERIC_EXCEPTIONS_THROWN = "java:S112";
+    public static final String SONAR_GENERIC_EXCEPTIONS_THROWN = "java:S112";
 
     /**
      * Exception classes should be immutable
      */
-    public static final String EXCEPTION_IMMUTABLE = "java:S1165";
+    public static final String SONAR_EXCEPTION_IMMUTABLE = "java:S1165";
+
+    /**
+     * Cognitive Complexity of methods should not be too high
+     */
+    public static final String SONAR_COGNITIVE_COMPLEXITY = "java:S3776";
 
     /**
      * Utility class. Forbidden instantiation.

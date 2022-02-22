@@ -51,6 +51,7 @@ public class BeanValidationConfiguration {
      * @param logLevel - hibernate validator logging level
      */
     @EverythingIsNonNull
+    @SuppressWarnings("java:S4792")
     public static void setLogLevel(final Level logLevel) {
         Utils.parameterRequireNonNull(logLevel, "logLevel");
         Logger.getLogger("org.hibernate.validator.internal.util").setLevel(logLevel);

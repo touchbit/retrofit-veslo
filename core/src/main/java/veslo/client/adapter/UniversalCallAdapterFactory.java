@@ -35,6 +35,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
+import static veslo.constant.SonarRuleConstants.SONAR_GENERIC_WILDCARD_TYPES;
+
 /**
  * Factory for creating {@link CallAdapter} with support {@link IDualResponse} type
  * <p>
@@ -42,6 +44,7 @@ import java.lang.reflect.Type;
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 11.12.2021
  */
+@SuppressWarnings(SONAR_GENERIC_WILDCARD_TYPES)
 public class UniversalCallAdapterFactory extends JavaTypeCallAdapterFactory {
 
     public static final UniversalCallAdapterFactory INSTANCE = new UniversalCallAdapterFactory();
@@ -100,7 +103,8 @@ public class UniversalCallAdapterFactory extends JavaTypeCallAdapterFactory {
                                            final Annotation[] methodAnnotations,
                                            final Retrofit retrofit) {
         if (Utils.isIDualResponse(returnType)) {
-            logger.debug("Prepare API call\nAPI method annotations:{}", Utils.arrayToPrettyString(methodAnnotations));
+            final String annotations = Utils.arrayToPrettyString(methodAnnotations);
+            logger.debug("Prepare API call\nAPI method annotations:{}", annotations);
             final ParameterizedType type = getParameterizedType(returnType);
             final String endpointInfo = getEndpointInfo(methodAnnotations);
             final Type successType = getParameterUpperBound(0, type);
@@ -159,7 +163,7 @@ public class UniversalCallAdapterFactory extends JavaTypeCallAdapterFactory {
                 } else {
                     finalInfo = endpointInfo.trim();
                 }
-                logger.info("API call: " + finalInfo);
+                logger.info("API call: {}", finalInfo);
                 return getIDualResponse(call, successType, errorType, finalInfo, methodAnnotations, retrofit);
             }
 
@@ -213,10 +217,8 @@ public class UniversalCallAdapterFactory extends JavaTypeCallAdapterFactory {
             logger.debug("Make an API call");
             response = call.execute();
         } catch (RuntimeException e) {
-            logger.error("API call error: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
-            logger.error("API call error: {}", e.getMessage());
             throw new HttpCallException("Failed to make API call. See the reason below.", e);
         }
         logger.debug("API call completed successfully.");

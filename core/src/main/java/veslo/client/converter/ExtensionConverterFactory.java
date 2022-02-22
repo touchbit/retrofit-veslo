@@ -55,6 +55,7 @@ import java.util.stream.Collectors;
 import static veslo.client.TransportEvent.REQUEST;
 import static veslo.client.TransportEvent.RESPONSE;
 import static veslo.client.converter.api.ExtensionConverter.RequestBodyConverter;
+import static veslo.constant.SonarRuleConstants.SONAR_COGNITIVE_COMPLEXITY;
 import static veslo.util.ConvertUtils.isIDualResponse;
 
 /**
@@ -129,6 +130,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      */
     @Override
     @EverythingIsNonNull
+    @SuppressWarnings(SONAR_COGNITIVE_COMPLEXITY)
     public RequestBodyConverter requestBodyConverter(final Type typeIgnored,
                                                      final Annotation[] pA,
                                                      final Annotation[] mA,
@@ -146,36 +148,31 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
                 final Class<?> bodyClass = body.getClass();
                 final String bodyTypeName = Utils.getTypeName(bodyClass);
                 logger.debug("Definition of request converter for type {}", bodyTypeName);
-                try {
-                    RequestBodyConverter converter = getRequestConverterFromCallAnnotation(bodyClass, pA, mA, rtf);
-                    if (converter == null) {
-                        converter = getRawRequestConverter(bodyClass, pA, mA, rtf);
-                    }
-                    if (converter == null) {
-                        converter = getModelAnnotationRequestConverter(bodyClass, pA, mA, rtf);
-                    }
-                    if (converter == null) {
-                        converter = getPackageRequestConverter(bodyClass, pA, mA, rtf);
-                    }
-                    if (converter == null) {
-                        converter = getMimeRequestConverter(bodyClass, pA, mA, rtf);
-                    }
-                    if (converter == null) {
-                        converter = getJavaTypeRequestConverter(bodyClass, pA, mA, rtf);
-                    }
-                    if (converter == null) {
-                        logger.error("Request converter not found");
-                        final String info = getSupportedConvertersInfo(REQUEST, mA);
-                        throw new ConverterNotFoundException(REQUEST, ConvertUtils.getContentType(mA), bodyClass, info);
-                    } else {
-                        logger.debug("Request converter found: " + Utils.getTypeName(converter));
-                        final RequestBody result = converter.convert(body);
-                        logger.debug("Converted request body: {}", Utils.getTypeName(result));
-                        return result;
-                    }
-                } catch (IOException | RuntimeException e) {
-                    logger.error("Error converting request body:\n{}", e.toString());
-                    throw e;
+                RequestBodyConverter converter = getRequestConverterFromCallAnnotation(bodyClass, pA, mA, rtf);
+                if (converter == null) {
+                    converter = getRawRequestConverter(bodyClass, pA, mA, rtf);
+                }
+                if (converter == null) {
+                    converter = getModelAnnotationRequestConverter(bodyClass, pA, mA, rtf);
+                }
+                if (converter == null) {
+                    converter = getPackageRequestConverter(bodyClass, pA, mA, rtf);
+                }
+                if (converter == null) {
+                    converter = getMimeRequestConverter(bodyClass, pA, mA, rtf);
+                }
+                if (converter == null) {
+                    converter = getJavaTypeRequestConverter(bodyClass, pA, mA, rtf);
+                }
+                if (converter == null) {
+                    logger.error("Request converter not found");
+                    final String info = getSupportedConvertersInfo(REQUEST, mA);
+                    throw new ConverterNotFoundException(REQUEST, ConvertUtils.getContentType(mA), bodyClass, info);
+                } else {
+                    logger.debug("Request converter found: {}", Utils.getTypeName(converter));
+                    final RequestBody result = converter.convert(body);
+                    logger.debug("Converted request body: {}", Utils.getTypeName(result));
+                    return result;
                 }
             }
         };
@@ -202,48 +199,44 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
              */
             @Override
             @Nullable
+            @SuppressWarnings(SONAR_COGNITIVE_COMPLEXITY)
             public Object convert(@Nullable final ResponseBody respBody) throws IOException {
                 final String responseBodyTypeName = ResponseBody.class.getTypeName();
                 logger.debug("Convert {} to type: {}", responseBodyTypeName, type);
                 final Type bodyType = getResponseBodyType(type);
                 final String bodyTypeName = Utils.getTypeName(bodyType);
                 logger.debug("Definition of response converter for type: {}", bodyTypeName);
-                try {
-                    ResponseBodyConverter<?> converter = getResponseConverterFromCallAnnotation(bodyType, mA, rtf);
-                    if (converter == null) {
-                        converter = getRawResponseConverter(bodyType, mA, rtf);
-                    }
-                    if (converter == null) {
-                        converter = getModelAnnotationResponseConverter(bodyType, mA, rtf);
-                    }
-                    if (converter == null) {
-                        converter = getPackageResponseConverter(bodyType, mA, rtf);
-                    }
-                    if (converter == null && respBody == null) {
-                        // It makes no sense to look for a converter further if there is no ResponseBody.
-                        logger.debug("{} not present. Nothing to convert.", responseBodyTypeName);
-                        return null;
-                    }
-                    if (converter == null) {
-                        converter = getMimeResponseConverter(respBody, bodyType, mA, rtf);
-                    }
-                    if (converter == null) {
-                        converter = getJavaTypeResponseConverter(bodyType, mA, rtf);
-                    }
-                    if (converter == null) {
-                        logger.error("Response converter not found");
-                        final String info = getSupportedConvertersInfo(RESPONSE, mA);
-                        final ContentType contentType = ConvertUtils.getContentType(respBody);
-                        throw new ConverterNotFoundException(RESPONSE, contentType, bodyType, info);
-                    } else {
-                        logger.debug("Response converter found: " + Utils.getTypeName(converter));
-                        final Object result = converter.convert(respBody);
-                        logger.debug("Response body successfully converted");
-                        return result;
-                    }
-                } catch (IOException | RuntimeException e) {
-                    logger.error("Error converting request body:\n{}", e.toString());
-                    throw e;
+                ResponseBodyConverter<?> converter = getResponseConverterFromCallAnnotation(bodyType, mA, rtf);
+                if (converter == null) {
+                    converter = getRawResponseConverter(bodyType, mA, rtf);
+                }
+                if (converter == null) {
+                    converter = getModelAnnotationResponseConverter(bodyType, mA, rtf);
+                }
+                if (converter == null) {
+                    converter = getPackageResponseConverter(bodyType, mA, rtf);
+                }
+                if (converter == null && respBody == null) {
+                    // It makes no sense to look for a converter further if there is no ResponseBody.
+                    logger.debug("{} not present. Nothing to convert.", responseBodyTypeName);
+                    return null;
+                }
+                if (converter == null) {
+                    converter = getMimeResponseConverter(respBody, bodyType, mA, rtf);
+                }
+                if (converter == null) {
+                    converter = getJavaTypeResponseConverter(bodyType, mA, rtf);
+                }
+                if (converter == null) {
+                    logger.error("Response converter not found");
+                    final String info = getSupportedConvertersInfo(RESPONSE, mA);
+                    final ContentType contentType = ConvertUtils.getContentType(respBody);
+                    throw new ConverterNotFoundException(RESPONSE, contentType, bodyType, info);
+                } else {
+                    logger.debug("Response converter found: " + Utils.getTypeName(converter));
+                    final Object result = converter.convert(respBody);
+                    logger.debug("Response body successfully converted");
+                    return result;
                 }
             }
         };

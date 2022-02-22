@@ -204,8 +204,8 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         @Test
         @DisplayName("Required parameters")
         public void test1645294525400() {
-            assertNPE(() -> MAPPER.parseAndDecodeUrlEncodedString(null, UTF_8), "urlEncodedString");
-            assertNPE(() -> MAPPER.parseAndDecodeUrlEncodedString("", null), "charset");
+            assertNPE(() -> MAPPER.parseAndDecodeUrlEncodedString(null, UTF_8), "encodedString");
+            assertNPE(() -> MAPPER.parseAndDecodeUrlEncodedString("", null), "codingCharset");
         }
 
         @Test
@@ -491,7 +491,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
         public void test1645377473744() {
             assertThrow(() -> MAPPER.convertUrlDecodedStringValueToType("false", Map.class))
                     .assertClass(IllegalArgumentException.class)
-                    .assertMessageIs("Received unsupported type for conversion: interface java.util.Map");
+                    .assertMessageIs("Received unsupported type for conversion:\ninterface java.util.Map");
         }
 
     }
@@ -551,7 +551,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
                     .assertMessageIs("" +
                             "Field does not contain a required annotation.\n" +
                             "    Field: withoutAnnotation\n" +
-                            "    Expected annotation: veslo.bean.urlencoded.FormUrlEncodedField\n");
+                            "    Expected type: veslo.bean.urlencoded.FormUrlEncodedField\n");
         }
 
     }
@@ -663,14 +663,14 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             assertThrow(() -> MAPPER.unmarshalDecodedValueToParameterizedType(model, field, genericType, value))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("" +
-                            "Received unsupported type for conversion.\n" +
+                            "Received unsupported type for conversion:\n" +
                             "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$TypedModel\n" +
                             "    Field type: java.util.List<java.lang.Enum<?>>\n" +
                             "    Field name: listEnumField\n" +
                             "    URL form field name: LIST_ENUM_FIELD\n" +
                             "    Type to convert: java.lang.Enum<?>\n" +
                             "    Value for convert: test\n" +
-                            "    Error cause: Received unsupported type for conversion: java.lang.Enum<?>\n");
+                            "    Error cause: Received unsupported type for conversion:\njava.lang.Enum<?>\n");
         }
 
     }
@@ -773,14 +773,14 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             assertThrow(() -> MAPPER.unmarshalDecodedValueToArrayType(model, field, type, value))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("" +
-                            "Received unsupported type for conversion.\n" +
+                            "Received unsupported type for conversion:\n" +
                             "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$TypedModel\n" +
                             "    Field type: Character[]\n" +
                             "    Field name: characterArrayField\n" +
                             "    URL form field name: CHARACTER_ARRAY_FIELD\n" +
                             "    Type to convert: class java.lang.Character\n" +
                             "    Value for convert: 1\n" +
-                            "    Error cause: Received unsupported type for conversion: class java.lang.Character\n");
+                            "    Error cause: Received unsupported type for conversion:\nclass java.lang.Character\n");
         }
 
     }
@@ -872,7 +872,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
                             "    Field name: characterField\n" +
                             "    URL form field name: CHARACTER_FIELD\n" +
                             "    Value for convert: 1\n" +
-                            "    Error cause: Received unsupported type for conversion: class java.lang.Character\n");
+                            "    Error cause: Received unsupported type for conversion:\nclass java.lang.Character\n");
         }
 
     }
@@ -1075,7 +1075,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             assertThrow(() -> MAPPER.unmarshal(PrivateModel.class, ""))
                     .assertClass(FormUrlEncodedMapperException.class)
                     .assertMessageIs("Unable to instantiate model class\n" +
-                            "    Model class: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$PrivateModel\n" +
+                            "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$PrivateModel\n" +
                             "    Error cause: No such accessible constructor on object: " +
                             "veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$PrivateModel\n");
         }
@@ -1165,7 +1165,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             when(mock.toString()).thenReturn("mock");
             assertThrow(() -> MAPPER.marshalCollectionToUrlEncodedString(model, field, "test1", mock, true))
                     .assertClass(FormUrlEncodedMapperException.class)
-                    .assertMessageIs("Unable to encode string to FormUrlEncoded format\n" +
+                    .assertMessageIs("Unable to encode string to FormUrlEncoded format.\n" +
                             "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$GoodModel\n" +
                             "    Field type: java.util.List\n" +
                             "    Field name: listStringField\n" +
@@ -1270,7 +1270,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             when(mock.toString()).thenReturn("mock");
             assertThrow(() -> MAPPER.marshalArrayToUrlEncodedString(model, field, "test1", mock, true))
                     .assertClass(FormUrlEncodedMapperException.class)
-                    .assertMessageIs("Unable to encode string to FormUrlEncoded format\n" +
+                    .assertMessageIs("Unable to encode string to FormUrlEncoded format.\n" +
                             "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$GoodModel\n" +
                             "    Field type: String[]\n" +
                             "    Field name: stringArrayField\n" +
@@ -1354,7 +1354,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             when(mock.toString()).thenReturn("mock");
             assertThrow(() -> MAPPER.marshalSingleTypeToUrlEncodedString(model, field, "test1", mock))
                     .assertClass(FormUrlEncodedMapperException.class)
-                    .assertMessageIs("Unable to encode string to FormUrlEncoded format\n" +
+                    .assertMessageIs("Unable to encode string to FormUrlEncoded format.\n" +
                             "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$GoodModel\n" +
                             "    Field type: class java.lang.Object\n" +
                             "    Field name: objectField\n" +
@@ -1598,7 +1598,7 @@ public class FormUrlEncodedMapperUnitTests extends BaseUnitTest {
             final Field field = GoodModel.class.getDeclaredField("additionalProperties");
             assertThrow(() -> MAPPER.marshalAdditionalProperties(model, field, mock, true))
                     .assertClass(FormUrlEncodedMapperException.class)
-                    .assertMessageIs("Unable to encode string to FormUrlEncoded format\n" +
+                    .assertMessageIs("Unable to encode string to FormUrlEncoded format.\n" +
                             "    Model type: veslo.bean.urlencoded.FormUrlEncodedMapperUnitTests$GoodModel\n" +
                             "    Field name: additionalProperties\n" +
                             "    URL form field name: foo\n" +

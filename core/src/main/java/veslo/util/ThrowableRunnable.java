@@ -16,7 +16,7 @@
 
 package veslo.util;
 
-import static veslo.constant.SonarRuleConstants.GENERIC_EXCEPTIONS_THROWN;
+import static veslo.constant.SonarRuleConstants.SONAR_GENERIC_EXCEPTIONS_THROWN;
 
 /**
  * Auxiliary functional interface for Asserting
@@ -32,7 +32,7 @@ public interface ThrowableRunnable {
     /**
      * @throws Throwable to catch any errors and exceptions
      */
-    @SuppressWarnings(GENERIC_EXCEPTIONS_THROWN)
+    @SuppressWarnings(SONAR_GENERIC_EXCEPTIONS_THROWN)
     void execute() throws Throwable;
 
 }
