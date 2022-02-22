@@ -16,6 +16,15 @@
 
 package veslo.constant;
 
+import veslo.UtilityClassException;
+
+/**
+ * Method parameters name constants
+ * <p>
+ *
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 22.02.2022
+ */
 public class ParameterNameConstants {
 
     public static final String DATA_PARAMETER = "data";
@@ -24,5 +33,11 @@ public class ParameterNameConstants {
     public static final String CHARSET_PARAMETER = "charset";
     public static final String FILE_PARAMETER = "file";
 
+    /**
+     * Utility class. Forbidden instantiation.
+     */
+    private ParameterNameConstants() {
+        throw new UtilityClassException();
+    }
 
 }

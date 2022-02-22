@@ -18,6 +18,13 @@ package veslo.constant;
 
 import veslo.UtilityClassException;
 
+/**
+ * Sonar rules constants
+ * <p>
+ *
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 22.02.2022
+ */
 public class SonarRuleConstants {
 
     /**
@@ -30,6 +37,9 @@ public class SonarRuleConstants {
      */
     public static final String GENERIC_EXCEPTIONS_THROWN = "java:S112";
 
+    /**
+     * Utility class. Forbidden instantiation.
+     */
     private SonarRuleConstants() {
         throw new UtilityClassException();
     }
