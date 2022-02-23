@@ -280,6 +280,51 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             assertThat("", converter, nullValue());
         }
 
+        @Test
+        @DisplayName("Return converter by wildcard '*'")
+        public void test1645614892840() {
+            final TestsExtensionConverterFactory factory = getTestFactory();
+            factory.registerPackageConverter(new TestPackageConverter(), "*");
+            final RequestBodyConverter result = factory.getPackageRequestConverter(String.class, AA, AA, RTF);
+            assertNotNull(result);
+        }
+
+        @Test
+        @DisplayName("Return converter by wildcard '*.converter'")
+        public void test1645614895223() {
+            final TestsExtensionConverterFactory factory = getTestFactory();
+            factory.registerPackageConverter(new TestPackageConverter(), "*.converter");
+            final RequestBodyConverter result = factory.getPackageRequestConverter(this.getClass(), AA, AA, RTF);
+            assertNotNull(result);
+        }
+
+        @Test
+        @DisplayName("Return converter by wildcard 'veslo.*.converter'")
+        public void test1645614898191() {
+            final TestsExtensionConverterFactory factory = getTestFactory();
+            factory.registerPackageConverter(new TestPackageConverter(), "veslo.*.converter");
+            final RequestBodyConverter result = factory.getPackageRequestConverter(this.getClass(), AA, AA, RTF);
+            assertNotNull(result);
+        }
+
+        @Test
+        @DisplayName("Return converter by wildcard 'veslo.*'")
+        public void test1645614901842() {
+            final TestsExtensionConverterFactory factory = getTestFactory();
+            factory.registerPackageConverter(new TestPackageConverter(), "veslo.*");
+            final RequestBodyConverter result = factory.getPackageRequestConverter(this.getClass(), AA, AA, RTF);
+            assertNotNull(result);
+        }
+
+        @Test
+        @DisplayName("Return null by wildcard ''")
+        public void test1645614905662() {
+            final TestsExtensionConverterFactory factory = getTestFactory();
+            factory.registerPackageConverter(new TestPackageConverter(), "");
+            final RequestBodyConverter result = factory.getPackageRequestConverter(this.getClass(), AA, AA, RTF);
+            assertIsNull(result);
+        }
+
     }
 
     @Nested
@@ -499,6 +544,51 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @DisplayName("return null for primitive")
         public void test1639972159603() {
             assertThat(getTestFactory().getPackageResponseConverter(Boolean.TYPE, AA, RTF), nullValue());
+        }
+
+        @Test
+        @DisplayName("Return converter by wildcard '*'")
+        public void test1645614292210() {
+            final TestsExtensionConverterFactory factory = getTestFactory();
+            factory.registerPackageConverter(new TestPackageConverter(), "*");
+            final ResponseBodyConverter<?> result = factory.getPackageResponseConverter(String.class, AA, RTF);
+            assertNotNull(result);
+        }
+
+        @Test
+        @DisplayName("Return converter by wildcard '*.converter'")
+        public void test1645614632996() {
+            final TestsExtensionConverterFactory factory = getTestFactory();
+            factory.registerPackageConverter(new TestPackageConverter(), "*.converter");
+            final ResponseBodyConverter<?> result = factory.getPackageResponseConverter(this.getClass(), AA, RTF);
+            assertNotNull(result);
+        }
+
+        @Test
+        @DisplayName("Return converter by wildcard 'veslo.*.converter'")
+        public void test1645614805994() {
+            final TestsExtensionConverterFactory factory = getTestFactory();
+            factory.registerPackageConverter(new TestPackageConverter(), "veslo.*.converter");
+            final ResponseBodyConverter<?> result = factory.getPackageResponseConverter(this.getClass(), AA, RTF);
+            assertNotNull(result);
+        }
+
+        @Test
+        @DisplayName("Return converter by wildcard 'veslo.*'")
+        public void test1645614837945() {
+            final TestsExtensionConverterFactory factory = getTestFactory();
+            factory.registerPackageConverter(new TestPackageConverter(), "veslo.*");
+            final ResponseBodyConverter<?> result = factory.getPackageResponseConverter(this.getClass(), AA, RTF);
+            assertNotNull(result);
+        }
+
+        @Test
+        @DisplayName("Return null by wildcard ''")
+        public void test1645614760460() {
+            final TestsExtensionConverterFactory factory = getTestFactory();
+            factory.registerPackageConverter(new TestPackageConverter(), "");
+            final ResponseBodyConverter<?> result = factory.getPackageResponseConverter(this.getClass(), AA, RTF);
+            assertIsNull(result);
         }
 
     }
