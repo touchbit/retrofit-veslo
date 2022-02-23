@@ -39,12 +39,6 @@ import static org.mockito.Mockito.when;
 @DisplayName("OkhttpUtils class tests")
 public class OkhttpUtilsUnitTests extends BaseCoreUnitTest {
 
-    @Test
-    @DisplayName("OkhttpUtils is utility class")
-    public void test1639065948117() {
-        assertUtilityClassException(OkhttpUtils.class);
-    }
-
     @Nested
     @DisplayName("#requestToString() method tests")
     public class RequestToStringMethodTests {

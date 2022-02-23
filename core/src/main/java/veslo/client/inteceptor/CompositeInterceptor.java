@@ -29,6 +29,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 
+import static veslo.constant.ParameterNameConstants.ACTIONS_PARAMETER;
+import static veslo.constant.ParameterNameConstants.ACTION_PARAMETER;
+
 /**
  * Interceptor allows you to store multiple
  * request, response and exception handlers.
@@ -63,25 +66,25 @@ public class CompositeInterceptor implements Interceptor {
      * The sequence of execution of {@link RequestInterceptAction} depends
      * on the sequence of passing them to the requestActionsChain
      *
-     * @param requestInterceptActions - sequence of execution of {@link RequestInterceptAction}
+     * @param actions - sequence of execution of {@link RequestInterceptAction}
      * @return this
      */
-    public CompositeInterceptor withRequestInterceptActionsChain(RequestInterceptAction... requestInterceptActions) {
-        Utils.parameterRequireNonNull(requestInterceptActions, "requestInterceptActions");
+    public CompositeInterceptor withRequestInterceptActionsChain(RequestInterceptAction... actions) {
+        Utils.parameterRequireNonNull(actions, ACTIONS_PARAMETER);
         this.requestInterceptActions.clear();
-        for (RequestInterceptAction requestInterceptAction : requestInterceptActions) {
-            Utils.parameterRequireNonNull(requestInterceptAction, "requestInterceptAction");
-            this.requestInterceptActions.add(requestInterceptAction);
+        for (RequestInterceptAction action : actions) {
+            Utils.parameterRequireNonNull(action, ACTION_PARAMETER);
+            this.requestInterceptActions.add(action);
         }
-        if (requestInterceptActions.length == 0) {
+        if (actions.length == 0) {
             logger.debug("Received an empty RequestInterceptAction list");
         } else {
             StringJoiner stringJoiner = new StringJoiner("\n * ",
                     "Received a list of RequestInterceptAction with the following execution sequence:\n * ", "");
-            for (RequestInterceptAction requestInterceptAction : requestInterceptActions) {
-                stringJoiner.add(requestInterceptAction.getClass().getName());
+            for (RequestInterceptAction action : actions) {
+                stringJoiner.add(action.getClass().getName());
             }
-            logger.debug(stringJoiner.toString());
+            logger.debug("{}", stringJoiner);
         }
         return this;
     }
@@ -90,25 +93,25 @@ public class CompositeInterceptor implements Interceptor {
      * The sequence of execution of {@link ResponseInterceptAction} depends
      * on the sequence of passing them to the responseActionsChain
      *
-     * @param responseInterceptActions - sequence of execution of {@link ResponseInterceptAction}
+     * @param actions - sequence of execution of {@link ResponseInterceptAction}
      * @return this
      */
-    public CompositeInterceptor withResponseInterceptActionsChain(ResponseInterceptAction... responseInterceptActions) {
-        Utils.parameterRequireNonNull(responseInterceptActions, "responseInterceptActions");
+    public CompositeInterceptor withResponseInterceptActionsChain(ResponseInterceptAction... actions) {
+        Utils.parameterRequireNonNull(actions, ACTIONS_PARAMETER);
         this.responseInterceptAction.clear();
-        for (ResponseInterceptAction responseInterceptAction : responseInterceptActions) {
-            Utils.parameterRequireNonNull(responseInterceptAction, "responseInterceptAction");
-            this.responseInterceptAction.add(responseInterceptAction);
+        for (ResponseInterceptAction action : actions) {
+            Utils.parameterRequireNonNull(action, ACTION_PARAMETER);
+            this.responseInterceptAction.add(action);
         }
-        if (responseInterceptActions.length == 0) {
+        if (actions.length == 0) {
             logger.debug("Received an empty ResponseInterceptAction list");
         } else {
             StringJoiner stringJoiner = new StringJoiner("\n * ",
                     "Received a list of ResponseInterceptAction with the following execution sequence:\n * ", "");
-            for (ResponseInterceptAction responseInterceptAction : responseInterceptActions) {
-                stringJoiner.add(responseInterceptAction.getClass().getName());
+            for (ResponseInterceptAction action : actions) {
+                stringJoiner.add(action.getClass().getName());
             }
-            logger.debug(stringJoiner.toString());
+            logger.debug("{}", stringJoiner);
         }
         return this;
     }

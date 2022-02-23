@@ -16,10 +16,10 @@
 
 package veslo.example.dto;
 
-public interface DTO {
+public interface DTO<M> {
 
     String getMsg();
 
-    void setMsg(String msg);
+    M setMsg(String msg);
 
 }

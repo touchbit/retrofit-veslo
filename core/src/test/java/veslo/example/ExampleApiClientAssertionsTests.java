@@ -57,13 +57,6 @@ public class ExampleApiClientAssertionsTests extends BaseCoreUnitTest {
     }
 
     @Test
-    @DisplayName("Util classes")
-    public void test1639981211052() {
-        assertUtilityClassException(ExampleApiClientAssertions.class);
-        assertUtilityClassException(ExampleApiClientAssertions.Assertions.class);
-    }
-
-    @Test
     @DisplayName("AssertResponseMethodTests")
     public void test1639586648784() {
         final ExampleApiClientAssertions.AssertResponseMethodExamples examples = new ExampleApiClientAssertions.AssertResponseMethodExamples();
@@ -140,6 +133,7 @@ public class ExampleApiClientAssertionsTests extends BaseCoreUnitTest {
         examples.example1639437397547();
     }
 
+    @SuppressWarnings("rawtypes")
     private static class ExampleExtensionConverter implements ExtensionConverter<Object> {
 
         @Override
@@ -171,10 +165,10 @@ public class ExampleApiClientAssertionsTests extends BaseCoreUnitTest {
                         return null;
                     }
                     if (type.equals(SucDTO.class)) {
-                        return new SucDTO(body.string());
+                        return new SucDTO().setMsg(body.string());
                     }
                     if (type.equals(ErrDTO.class)) {
-                        return new ErrDTO(body.string());
+                        return new ErrDTO().setMsg(body.string());
                     }
                     throw new CorruptedTestException();
                 }

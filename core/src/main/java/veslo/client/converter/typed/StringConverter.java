@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
+import static veslo.constant.ParameterNameConstants.*;
+
 /**
  * String java type converter
  * <p>
@@ -53,10 +55,10 @@ public class StringConverter implements ExtensionConverter<String> {
                                                      final Annotation[] parameterAnnotations,
                                                      final Annotation[] methodAnnotations,
                                                      final Retrofit retrofit) {
-        Utils.parameterRequireNonNull(type, "type");
-        Utils.parameterRequireNonNull(parameterAnnotations, "parameterAnnotations");
-        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
-        Utils.parameterRequireNonNull(retrofit, "retrofit");
+        Utils.parameterRequireNonNull(type, TYPE_PARAMETER);
+        Utils.parameterRequireNonNull(parameterAnnotations, PARAMETER_ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(methodAnnotations, METHOD_ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(retrofit, RETROFIT_PARAMETER);
         return new RequestBodyConverter() {
 
             /**
@@ -85,9 +87,9 @@ public class StringConverter implements ExtensionConverter<String> {
     public ResponseBodyConverter<String> responseBodyConverter(final Type type,
                                                                final Annotation[] methodAnnotations,
                                                                final Retrofit retrofit) {
-        Utils.parameterRequireNonNull(type, "type");
-        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
-        Utils.parameterRequireNonNull(retrofit, "retrofit");
+        Utils.parameterRequireNonNull(type, TYPE_PARAMETER);
+        Utils.parameterRequireNonNull(methodAnnotations, METHOD_ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(retrofit, RETROFIT_PARAMETER);
         return new ResponseBodyConverter<String>() {
 
             /**

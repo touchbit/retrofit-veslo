@@ -56,12 +56,6 @@ public class TemplateMapperTests extends BaseUnitTest {
             "    </body>\n" +
             "</note>";
 
-    @Test
-    @DisplayName("Utility class")
-    public void test1645208642059() {
-        assertUtilityClassException(TemplateMapper.class);
-    }
-
     @Nested
     @DisplayName("#readTemplate() method tests")
     public class ReadTemplateMethodTests {

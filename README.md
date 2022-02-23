@@ -1,5 +1,11 @@
 # Retrofit Veslo<sup>(paddle)</sup>
 
+[![Build](https://github.com/touchbit/retrofit-veslo/actions/workflows/build-deploy.yml/badge.svg?style=plastic)](https://github.com/touchbit/retrofit-veslo/actions/workflows/build-deploy.yml) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=touchbit_retrofit-veslo&metric=alert_status&style=plastic)](https://sonarcloud.io/summary/new_code?id=touchbit_retrofit-veslo) 
+
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=touchbit_retrofit-veslo&metric=security_rating&style=plastic)](https://sonarcloud.io/summary/new_code?id=touchbit_retrofit-veslo) [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=touchbit_retrofit-veslo&metric=reliability_rating&style=plastic)](https://sonarcloud.io/summary/new_code?id=touchbit_retrofit-veslo) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=touchbit_retrofit-veslo&metric=sqale_rating&style=plastic)](https://sonarcloud.io/summary/new_code?id=touchbit_retrofit-veslo) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=touchbit_retrofit-veslo&metric=coverage&style=plastic)](https://sonarcloud.io/summary/new_code?id=touchbit_retrofit-veslo) [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=touchbit_retrofit-veslo&metric=ncloc&style=plastic)](https://sonarcloud.io/summary/new_code?id=touchbit_retrofit-veslo)
+
+---
+
 ![](https://img.shields.io/badge/Java-8%2B-blue?style=plastic&logo=java) [![](https://maven-badges.herokuapp.com/maven-central/org.touchbit.retrofit.veslo/parent-pom/badge.svg?style=plastic)](https://mvnrepository.com/artifact/org.touchbit.retrofit.veslo)
 
 Описание на русском языке смотреть [тут](https://habr.com/ru/post/647499/).

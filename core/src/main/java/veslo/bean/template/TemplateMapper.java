@@ -28,6 +28,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static veslo.constant.ParameterNameConstants.FIELD_PARAMETER;
+import static veslo.constant.ParameterNameConstants.TEMPLATE_PARAMETER;
+
 /**
  * Reads a text template from a file using the {@link TemplateSource} annotation.
  * Replace strings in a template with values from fields using a regular expression from {@link TemplateReplaceAll} annotation.
@@ -72,7 +75,7 @@ public class TemplateMapper {
      */
     @EverythingIsNonNull
     public static String marshal(Object template) {
-        Utils.parameterRequireNonNull(template, "template");
+        Utils.parameterRequireNonNull(template, TEMPLATE_PARAMETER);
         final Field[] declaredFields = template.getClass().getDeclaredFields();
         final List<Field> replaceableFields = Arrays.stream(declaredFields)
                 .filter(f -> f.isAnnotationPresent(TemplateReplaceAll.class))
@@ -100,7 +103,7 @@ public class TemplateMapper {
      */
     @EverythingIsNonNull
     public static String readTemplate(Object template) {
-        Utils.parameterRequireNonNull(template, "template");
+        Utils.parameterRequireNonNull(template, TEMPLATE_PARAMETER);
         final TemplateSource source = template.getClass().getAnnotation(TemplateSource.class);
         if (source == null) {
             throw new TemplateException("The template class must contain an annotation.\n" +
@@ -135,8 +138,8 @@ public class TemplateMapper {
      */
     @EverythingIsNonNull
     public static String getReplacement(final Object template, final Field field) {
-        Utils.parameterRequireNonNull(template, "template");
-        Utils.parameterRequireNonNull(field, "field");
+        Utils.parameterRequireNonNull(template, TEMPLATE_PARAMETER);
+        Utils.parameterRequireNonNull(field, FIELD_PARAMETER);
         try {
             final Object rawValue = FieldUtils.readField(template, field.getName(), true);
             return String.valueOf(rawValue);

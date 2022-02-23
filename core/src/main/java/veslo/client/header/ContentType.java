@@ -66,11 +66,11 @@ public class ContentType {
         } else {
             this.type = mediaType.type().toLowerCase();
             this.subtype = mediaType.subtype().toLowerCase();
-            final Charset charset = mediaType.charset();
-            if (charset == null) {
+            final Charset mediaTypeCharset = mediaType.charset();
+            if (mediaTypeCharset == null) {
                 this.charset = null;
             } else {
-                this.charset = charset.toString().toLowerCase();
+                this.charset = mediaTypeCharset.toString().toLowerCase();
             }
         }
     }
@@ -109,8 +109,8 @@ public class ContentType {
         if (isNull()) {
             return "null";
         }
-        String charset = (getCharset() == null ? "" : "; charset=" + getCharset());
-        return (getType() + "/" + getSubtype() + charset);
+        String charsetPostfix = (getCharset() == null ? "" : "; charset=" + getCharset());
+        return (getType() + "/" + getSubtype() + charsetPostfix);
     }
 
     @Override

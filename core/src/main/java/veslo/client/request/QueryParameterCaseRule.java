@@ -60,17 +60,13 @@ public enum QueryParameterCaseRule {
             if (first) {
                 sb.append(toLowerCase(next));
                 first = false;
-                continue;
-            }
-            if (isUpperCase(next)) {
+            } else if (isUpperCase(next)) {
                 sb.append(DT).append(toLowerCase(next));
-                continue;
-            }
-            if (next.equals(SN) || next.equals(KB)) {
+            } else if (next.equals(SN) || next.equals(KB)) {
                 sb.append(DT);
-                continue;
+            } else {
+                sb.append(toLowerCase(next));
             }
-            sb.append(toLowerCase(next));
         }
         return sb.toString();
     }
@@ -82,17 +78,13 @@ public enum QueryParameterCaseRule {
             if (first) {
                 sb.append(toLowerCase(next));
                 first = false;
-                continue;
-            }
-            if (isUpperCase(next)) {
+            } else if (isUpperCase(next)) {
                 sb.append(SN).append(toLowerCase(next));
-                continue;
-            }
-            if (next.equals(DT) || next.equals(KB)) {
+            } else if (next.equals(DT) || next.equals(KB)) {
                 sb.append(SN);
-                continue;
+            } else {
+                sb.append(toLowerCase(next));
             }
-            sb.append(toLowerCase(next));
         }
         return sb.toString();
     }
@@ -104,17 +96,13 @@ public enum QueryParameterCaseRule {
             if (first) {
                 sb.append(toLowerCase(next));
                 first = false;
-                continue;
-            }
-            if (isUpperCase(next)) {
+            } else if (isUpperCase(next)) {
                 sb.append(KB).append(toLowerCase(next));
-                continue;
-            }
-            if (next.equals(DT) || next.equals(SN)) {
+            } else if (next.equals(DT) || next.equals(SN)) {
                 sb.append(KB);
-                continue;
+            } else {
+                sb.append(toLowerCase(next));
             }
-            sb.append(toLowerCase(next));
         }
         return sb.toString();
     }
@@ -127,17 +115,11 @@ public enum QueryParameterCaseRule {
             if (first) {
                 sb.append(toLowerCase(next));
                 first = false;
-                continue;
-            }
-            if (next.equals(KB) || next.equals(DT) || next.equals(SN)) {
+            } else if (next.equals(KB) || next.equals(DT) || next.equals(SN)) {
                 nextUpperCase = true;
-                continue;
-            }
-            if (isUpperCase(next)) {
+            } else if (isUpperCase(next)) {
                 sb.append(next);
-                continue;
-            }
-            if (nextUpperCase) {
+            } else if (nextUpperCase) {
                 sb.append(toUpperCase(next));
                 nextUpperCase = false;
             } else {
@@ -155,17 +137,11 @@ public enum QueryParameterCaseRule {
             if (first) {
                 sb.append(toUpperCase(next));
                 first = false;
-                continue;
-            }
-            if (isUpperCase(next)) {
+            } else if (isUpperCase(next)) {
                 sb.append(next);
-                continue;
-            }
-            if (next.equals(KB) || next.equals(DT) || next.equals(SN)) {
+            } else if (next.equals(KB) || next.equals(DT) || next.equals(SN)) {
                 nextUpperCase = true;
-                continue;
-            }
-            if (nextUpperCase) {
+            } else if (nextUpperCase) {
                 sb.append(toUpperCase(next));
                 nextUpperCase = false;
             } else {

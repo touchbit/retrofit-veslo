@@ -34,6 +34,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 import static com.google.gson.ToNumberPolicy.LONG_OR_DOUBLE;
+import static veslo.constant.ParameterNameConstants.*;
+import static veslo.constant.ParameterNameConstants.RETROFIT_PARAMETER;
+import static veslo.constant.SonarRuleConstants.SONAR_TYPE_PARAMETER_NAMING;
 
 /**
  * Gson converter
@@ -42,6 +45,7 @@ import static com.google.gson.ToNumberPolicy.LONG_OR_DOUBLE;
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 01.12.2021
  */
+@SuppressWarnings(SONAR_TYPE_PARAMETER_NAMING)
 public class GsonConverter<DTO> implements ExtensionConverter<DTO> {
 
     /**
@@ -96,6 +100,10 @@ public class GsonConverter<DTO> implements ExtensionConverter<DTO> {
                                                      final Annotation[] parameterAnnotations,
                                                      final Annotation[] methodAnnotations,
                                                      final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, TYPE_PARAMETER);
+        Utils.parameterRequireNonNull(parameterAnnotations, PARAMETER_ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(methodAnnotations, METHOD_ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(retrofit, RETROFIT_PARAMETER);
         return new RequestBodyConverter() {
 
             /**
@@ -107,7 +115,7 @@ public class GsonConverter<DTO> implements ExtensionConverter<DTO> {
             @Override
             @Nullable
             public RequestBody convert(@Nonnull Object body) {
-                Utils.parameterRequireNonNull(body, "body");
+                Utils.parameterRequireNonNull(body, BODY_PARAMETER);
                 final Gson gson = getRequestGson();
                 try {
                     final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
@@ -137,6 +145,9 @@ public class GsonConverter<DTO> implements ExtensionConverter<DTO> {
     public ResponseBodyConverter<DTO> responseBodyConverter(final Type type,
                                                             final Annotation[] methodAnnotations,
                                                             final Retrofit retrofit) {
+        Utils.parameterRequireNonNull(type, TYPE_PARAMETER);
+        Utils.parameterRequireNonNull(methodAnnotations, METHOD_ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(retrofit, RETROFIT_PARAMETER);
         return new ResponseBodyConverter<DTO>() {
 
             /**

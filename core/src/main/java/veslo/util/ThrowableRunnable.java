@@ -16,9 +16,23 @@
 
 package veslo.util;
 
+import static veslo.constant.SonarRuleConstants.SONAR_GENERIC_EXCEPTIONS_THROWN;
+
+/**
+ * Auxiliary functional interface for Asserting
+ * <p>
+ *
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 20.11.2021
+ * @see veslo.asserter.SoftlyAsserter#softly(ThrowableRunnable)
+ */
 @FunctionalInterface
 public interface ThrowableRunnable {
 
+    /**
+     * @throws Throwable to catch any errors and exceptions
+     */
+    @SuppressWarnings(SONAR_GENERIC_EXCEPTIONS_THROWN)
     void execute() throws Throwable;
 
 }

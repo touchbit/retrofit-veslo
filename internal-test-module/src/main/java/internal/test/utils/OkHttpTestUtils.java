@@ -25,8 +25,7 @@ public class OkHttpTestUtils {
     }
 
     public static String requestBodyToString(RequestBody requestBody) {
-        try {
-            final Buffer buffer = new Buffer();
+        try (final Buffer buffer = new Buffer()) {
             requestBody.writeTo(buffer);
             return buffer.readUtf8();
         } catch (Exception e) {

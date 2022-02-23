@@ -25,6 +25,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 
+import static veslo.constant.SonarRuleConstants.SONAR_TYPE_PARAMETER_NAMING;
+
+@SuppressWarnings(SONAR_TYPE_PARAMETER_NAMING)
 public class DualResponse<SUC_DTO, ERR_DTO>
         extends BaseDualResponse<SUC_DTO, ERR_DTO, ResponseAsserter<SUC_DTO, ERR_DTO, HeadersAsserter>> {
 

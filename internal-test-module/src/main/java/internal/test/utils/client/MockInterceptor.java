@@ -45,7 +45,6 @@ public class MockInterceptor implements Interceptor {
             mediaType = MediaType.get("text/plain");
         }
         final String code = url.queryParameter("status");
-        final Buffer buffer = new Buffer();
         final RequestBody requestBody = request.body();
         final String body;
         final ResponseBody responseBody;
@@ -55,12 +54,12 @@ public class MockInterceptor implements Interceptor {
             headers = request.headers();
         } else {
             if (requestBody != null) {
-                try {
+                try (final Buffer buffer = new Buffer()) {
                     requestBody.writeTo(buffer);
+                    body = buffer.readUtf8();
                 } catch (IOException e) {
                     throw new RuntimeException("Mock implementation error", e);
                 }
-                body = buffer.readUtf8();
             } else {
                 body = "";
             }

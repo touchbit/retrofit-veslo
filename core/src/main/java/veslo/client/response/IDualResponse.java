@@ -24,6 +24,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 
+import static veslo.constant.SonarRuleConstants.SONAR_TYPE_PARAMETER_NAMING;
+
 /**
  * Common generic interface for response API wrapper classes.
  * Contains the deserialized response body from the server, which can be
@@ -33,7 +35,7 @@ import java.lang.annotation.Annotation;
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 03.11.2021
  */
-@SuppressWarnings("unused")
+@SuppressWarnings(SONAR_TYPE_PARAMETER_NAMING)
 public interface IDualResponse<SUC_DTO, ERR_DTO> {
 
     /**

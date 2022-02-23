@@ -18,8 +18,6 @@ package veslo.client.converter.typed;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 import veslo.ConvertCallException;
@@ -34,10 +32,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.PosixFilePermission;
-import java.nio.file.attribute.PosixFilePermissions;
-import java.util.Set;
+
+import static veslo.constant.ParameterNameConstants.*;
 
 /**
  * {@link File} java type converter
@@ -62,10 +58,10 @@ public class FileConverter implements ExtensionConverter<File> {
                                                      final Annotation[] parameterAnnotations,
                                                      final Annotation[] methodAnnotations,
                                                      final Retrofit retrofit) {
-        Utils.parameterRequireNonNull(type, "type");
-        Utils.parameterRequireNonNull(parameterAnnotations, "parameterAnnotations");
-        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
-        Utils.parameterRequireNonNull(retrofit, "retrofit");
+        Utils.parameterRequireNonNull(type, TYPE_PARAMETER);
+        Utils.parameterRequireNonNull(parameterAnnotations, PARAMETER_ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(methodAnnotations, METHOD_ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(retrofit, RETROFIT_PARAMETER);
         return new RequestBodyConverter() {
 
             /**
@@ -100,9 +96,9 @@ public class FileConverter implements ExtensionConverter<File> {
     public ResponseBodyConverter<File> responseBodyConverter(final Type type,
                                                              final Annotation[] methodAnnotations,
                                                              final Retrofit retrofit) {
-        Utils.parameterRequireNonNull(type, "type");
-        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
-        Utils.parameterRequireNonNull(retrofit, "retrofit");
+        Utils.parameterRequireNonNull(type, TYPE_PARAMETER);
+        Utils.parameterRequireNonNull(methodAnnotations, METHOD_ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(retrofit, RETROFIT_PARAMETER);
         return new ResponseBodyConverter<File>() {
 
             /**

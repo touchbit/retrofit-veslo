@@ -31,6 +31,8 @@ import java.nio.charset.Charset;
 import java.util.StringJoiner;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static veslo.constant.ParameterNameConstants.REQUEST_PARAMETER;
+import static veslo.constant.ParameterNameConstants.RESPONSE_PARAMETER;
 
 /**
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
@@ -38,6 +40,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 @SuppressWarnings("DuplicatedCode")
 public class OkhttpUtils {
+
+    private static final String CONTENT_TYPE_KEY = "Content-Type";
+    private static final String CONTENT_LENGTH_KEY = "Content-Length";
 
     /**
      * Utility class
@@ -59,7 +64,7 @@ public class OkhttpUtils {
      */
     @Nonnull
     public static String requestToString(@Nonnull final Request request) throws IOException {
-        Utils.parameterRequireNonNull(request, "request");
+        Utils.parameterRequireNonNull(request, REQUEST_PARAMETER);
         final StringJoiner resultMessage = new StringJoiner("\n");
         final RequestBody requestBody = request.body();
         final boolean hasRequestBody = requestBody != null && requestBody.contentLength() != 0;
@@ -69,7 +74,7 @@ public class OkhttpUtils {
             resultMessage.add("Headers: (absent)");
         } else {
             resultMessage.add("Headers:");
-            resultMessage.add("  " + headers.toString().trim().replaceAll("\n", "\n  "));
+            resultMessage.add("  " + headers.toString().trim().replace("\n", "\n  ")); //NOSONAR
         }
         if (!hasRequestBody) {
             resultMessage.add("Body: (absent)");
@@ -78,14 +83,15 @@ public class OkhttpUtils {
         } else if (requestBody.isDuplex()) {
             resultMessage.add("Body: (duplex request body omitted)");
         } else {
-            final Buffer buffer = new Buffer();
-            requestBody.writeTo(buffer);
-            Charset charset = getCharset(requestBody);
-            if (isPlaintext(buffer)) {
-                resultMessage.add("Body: (" + buffer.size() + "-byte body)");
-                resultMessage.add("  " + buffer.readString(charset).replace("\n", "\n  "));
-            } else {
-                resultMessage.add("Body: (binary " + requestBody.contentLength() + "-byte body omitted)");
+            try (final Buffer buffer = new Buffer()) {
+                requestBody.writeTo(buffer);
+                Charset charset = getCharset(requestBody);
+                if (isPlaintext(buffer)) {
+                    resultMessage.add("Body: (" + buffer.size() + "-byte body)");
+                    resultMessage.add("  " + buffer.readString(charset).replace("\n", "\n  ")); //NOSONAR
+                } else {
+                    resultMessage.add("Body: (binary " + requestBody.contentLength() + "-byte body omitted)");
+                }
             }
         }
         return resultMessage.add("").toString();
@@ -103,8 +109,9 @@ public class OkhttpUtils {
      * @throws IOException - no comments
      */
     @Nonnull
+    @SuppressWarnings("java:S3776")
     public static String responseToString(final Response response) throws IOException {
-        Utils.parameterRequireNonNull(response, "response");
+        Utils.parameterRequireNonNull(response, RESPONSE_PARAMETER);
         final StringJoiner resultMessage = new StringJoiner("\n");
         final ResponseBody responseBody = response.body();
         final boolean hasResponseBody = responseBody != null;
@@ -117,7 +124,7 @@ public class OkhttpUtils {
             resultMessage.add("Headers: (absent)");
         } else {
             resultMessage.add("Headers:");
-            resultMessage.add("  " + responseHeaders.toString().trim().replaceAll("\n", "\n  "));
+            resultMessage.add("  " + responseHeaders.toString().trim().replaceAll("\n", "\n  ")); //NOSONAR
         }
         if (!hasResponseBody || !HttpHeaders.hasBody(response)) {
             resultMessage.add("Body: (absent)");
@@ -127,21 +134,27 @@ public class OkhttpUtils {
             final BufferedSource source = responseBody.source();
             source.request(Long.MAX_VALUE);
             Buffer buffer = source.getBuffer();
-            if ("gzip" .equalsIgnoreCase(responseHeaders.get("Content-Encoding"))) {
-                try (GzipSource gzippedResponseBody = new GzipSource(buffer.clone())) {
-                    buffer = new Buffer();
-                    buffer.writeAll(gzippedResponseBody);
+            try {
+                if ("gzip".equalsIgnoreCase(responseHeaders.get("Content-Encoding"))) {
+                    try (final GzipSource gzippedResponseBody = new GzipSource(buffer.clone())) {
+                        buffer = new Buffer();
+                        buffer.writeAll(gzippedResponseBody);
+                    }
                 }
-            }
-            Charset charset = getCharset(responseBody);
-            if (isPlaintext(buffer)) {
-                final String body = buffer.clone().readString(charset);
-                resultMessage.add("Body: (" + buffer.size() + "-byte body)");
-                if (body.length() > 0) {
-                    resultMessage.add("  " + body.replace("\n", "\n  "));
+                Charset charset = getCharset(responseBody);
+                if (isPlaintext(buffer)) {
+                    final String body = buffer.clone().readString(charset);
+                    resultMessage.add("Body: (" + buffer.size() + "-byte body)");
+                    if (body.length() > 0) {
+                        resultMessage.add("  " + body.replace("\n", "\n  "));
+                    }
+                } else {
+                    resultMessage.add("Body: (binary " + buffer.size() + "-byte body omitted)");
                 }
-            } else {
-                resultMessage.add("Body: (binary " + buffer.size() + "-byte body omitted)");
+            } finally {
+                if (buffer != null) {
+                    buffer.close();
+                }
             }
         }
         return resultMessage.add("").toString();
@@ -157,18 +170,18 @@ public class OkhttpUtils {
         }
         final Headers.Builder builder = headers.newBuilder();
         final MediaType mediaType = body.contentType();
-        if (headers.get("Content-Type") == null && mediaType != null) {
-            builder.add("Content-Type", mediaType.toString());
+        if (headers.get(CONTENT_TYPE_KEY) == null && mediaType != null) {
+            builder.add(CONTENT_TYPE_KEY, mediaType.toString());
         }
-        if (headers.get("Content-Length") == null) {
-            builder.add("Content-Length", String.valueOf(body.contentLength()));
+        if (headers.get(CONTENT_LENGTH_KEY) == null) {
+            builder.add(CONTENT_LENGTH_KEY, String.valueOf(body.contentLength()));
         }
         return builder.build();
     }
 
     @EverythingIsNonNull
     public static Headers getResponseHeaders(final Response response) {
-        Utils.parameterRequireNonNull(response, "response");
+        Utils.parameterRequireNonNull(response, RESPONSE_PARAMETER);
         final Headers headers = response.headers();
         final ResponseBody body = response.body();
         if (body == null) {
@@ -176,11 +189,11 @@ public class OkhttpUtils {
         }
         final Headers.Builder builder = headers.newBuilder();
         final MediaType mediaType = body.contentType();
-        if (headers.get("Content-Type") == null && mediaType != null) {
-            builder.add("Content-Type", mediaType.toString());
+        if (headers.get(CONTENT_TYPE_KEY) == null && mediaType != null) {
+            builder.add(CONTENT_TYPE_KEY, mediaType.toString());
         }
-        if (headers.get("Content-Length") == null) {
-            builder.add("Content-Length", String.valueOf(body.contentLength()));
+        if (headers.get(CONTENT_LENGTH_KEY) == null) {
+            builder.add(CONTENT_LENGTH_KEY, String.valueOf(body.contentLength()));
         }
         return builder.build();
     }
@@ -208,9 +221,12 @@ public class OkhttpUtils {
      * @return extracted {@link Charset} from {@link MediaType} or UTF-8 by default
      */
     @Nonnull
+    // sonar  False-positive bug
+    // https://community.sonarsource.com/t/rule-bug-nonnull-values-should-not-be-set-to-null-java-s2637/58728
+    @SuppressWarnings("java:S2637")
     public static Charset getCharset(@Nullable MediaType mediaType) {
         final Charset charset = (mediaType == null) ? UTF_8 : mediaType.charset();
-        return (charset == null) ? UTF_8 : charset;
+        return charset != null ? charset : UTF_8;
     }
 
     /**
@@ -218,8 +234,7 @@ public class OkhttpUtils {
      * @return - true if buffer is present and contains only unicode code points
      */
     public static boolean isPlaintext(Buffer buffer) {
-        try {
-            Buffer prefix = new Buffer();
+        try (final Buffer prefix = new Buffer()) {
             long byteCount = Math.min(buffer.size(), 64L);
             buffer.copyTo(prefix, 0L, byteCount);
             for (int i = 0; i < 16 && !prefix.exhausted(); ++i) {

@@ -23,24 +23,22 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import veslo.BaseCoreUnitTest;
 import veslo.RuntimeIOException;
+import veslo.client.response.DualResponse;
+import veslo.client.response.IDualResponse;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import static internal.test.utils.RetrofitTestUtils.getCallMethodAnnotations;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.mock;
 
-@SuppressWarnings({"ResultOfMethodCallIgnored", "ConstantConditions", "ObviousNullCheck"})
+@SuppressWarnings({"ConstantConditions", "ObviousNullCheck"})
 @DisplayName("Utils class tests")
 public class UtilsUnitTests extends BaseCoreUnitTest {
-
-    @Test
-    @DisplayName("Utility Class")
-    public void test1639065947880() {
-        assertUtilityClassException(Utils.class);
-    }
 
     @Nested
     @DisplayName("#parameterRequireNonNull() method tests")
@@ -270,6 +268,15 @@ public class UtilsUnitTests extends BaseCoreUnitTest {
                     .assertMessageIs("Resource file not readable: test1645210340598");
         }
 
+        @Test
+        @DisplayName("RuntimeIOException throws if invalid charset")
+        public void test1645537062375() {
+            final Charset mock = mock(Charset.class);
+            assertThrow(() -> Utils.readResourceFile("RequestConvertersInfo.txt", mock))
+                    .assertClass(RuntimeIOException.class)
+                    .assertMessageIs("Resource file not readable: RequestConvertersInfo.txt");
+        }
+
     }
 
     @Nested
@@ -308,6 +315,68 @@ public class UtilsUnitTests extends BaseCoreUnitTest {
             assertThrow(() -> Utils.readFile("test1645210859030"))
                     .assertClass(RuntimeIOException.class)
                     .assertMessageIs("File not readable: test1645210859030");
+        }
+
+    }
+
+    @Nested
+    @DisplayName("#isIDualResponse() method tests")
+    public class IsIDualResponseMethodTests {
+
+        @Test
+        @DisplayName("Return true if type = IDualResponse<String, String>")
+        public void test1645536401744() {
+            assertTrue(Utils.isIDualResponse(ResponseClass.getInterfaceType()));
+        }
+
+        @Test
+        @DisplayName("Return true if type = DualResponse<String, String>")
+        public void test1645536811903() {
+            assertTrue(Utils.isIDualResponse(ResponseClass.getClassType()));
+        }
+
+        @Test
+        @DisplayName("Return false if type = null")
+        public void test1645536360752() {
+            assertFalse(Utils.isIDualResponse(null));
+        }
+
+        @Test
+        @DisplayName("Return false if type = IDualResponse")
+        public void test1645536849477() {
+            assertFalse(Utils.isIDualResponse(ResponseClass.getRawInterfaceType()));
+        }
+
+        @Test
+        @DisplayName("Return false if type = DualResponse")
+        public void test1645536860616() {
+            assertFalse(Utils.isIDualResponse(ResponseClass.getRawClassType()));
+        }
+
+    }
+
+    @SuppressWarnings("rawtypes")
+    private static class ResponseClass {
+
+        IDualResponse<String, String> interfaceType;
+        IDualResponse rawInterfaceType;
+        DualResponse<String, String> classType;
+        DualResponse rawClassType;
+
+        static Type getInterfaceType() {
+            return wrap(() -> ResponseClass.class.getDeclaredField("interfaceType").getGenericType());
+        }
+
+        static Type getRawInterfaceType() {
+            return wrap(() -> ResponseClass.class.getDeclaredField("rawInterfaceType").getGenericType());
+        }
+
+        static Type getClassType() {
+            return wrap(() -> ResponseClass.class.getDeclaredField("classType").getGenericType());
+        }
+
+        static Type getRawClassType() {
+            return wrap(() -> ResponseClass.class.getDeclaredField("rawClassType").getGenericType());
         }
 
     }

@@ -21,20 +21,17 @@ import veslo.asserter.SoftlyAsserter;
 import veslo.util.ExcludeFromJacocoGeneratedReport;
 
 @ExcludeFromJacocoGeneratedReport()
-public class ErrDTO implements DTO {
+public class ErrDTO implements DTO<ErrDTO> {
 
-    public String msg;
-
-    public ErrDTO(String msg) {
-        this.msg = msg;
-    }
+    public String msg; //NOSONAR
 
     public String getMsg() {
         return msg;
     }
 
-    public void setMsg(String msg) {
+    public ErrDTO setMsg(String msg) {
         this.msg = msg;
+        return this;
     }
 
     public void assertConsistency() {

@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static veslo.constant.SonarRuleConstants.SONAR_TYPE_PARAMETER_NAMING;
+
 /**
  * Jackson model additional properties base class
  * Allows you to handle the case when the response from the server contains extra fields without throwing an error when
@@ -34,7 +36,7 @@ import java.util.Objects;
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 17.01.2022
  */
-@SuppressWarnings({"unused", "unchecked"})
+@SuppressWarnings({"unused", "unchecked", SONAR_TYPE_PARAMETER_NAMING})
 public abstract class JacksonModelAdditionalProperties<DTO> {
 
     /**

@@ -38,6 +38,11 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
+import static veslo.constant.ParameterNameConstants.*;
+import static veslo.constant.SonarRuleConstants.SONAR_GENERIC_WILDCARD_TYPES;
+import static veslo.constant.SonarRuleConstants.SONAR_TYPE_PARAMETER_NAMING;
+
+@SuppressWarnings({SONAR_TYPE_PARAMETER_NAMING, SONAR_GENERIC_WILDCARD_TYPES})
 public interface ExtensionConverter<DTO> {
 
     String NULL_JSON_VALUE = "NULL_JSON_VALUE";
@@ -73,7 +78,7 @@ public interface ExtensionConverter<DTO> {
      */
     @EverythingIsNonNull
     default void assertNotNullableBodyType(Type bodyType) {
-        Utils.parameterRequireNonNull(bodyType, "bodyType");
+        Utils.parameterRequireNonNull(bodyType, BODY_TYPE_PARAMETER);
         if (bodyType instanceof Class && ((Class<?>) bodyType).isPrimitive()) {
             throw new PrimitiveConvertCallException(bodyType);
         }
@@ -86,8 +91,8 @@ public interface ExtensionConverter<DTO> {
      */
     @EverythingIsNonNull
     default RequestBody createRequestBody(final Annotation[] methodAnnotations, String body) {
-        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
-        Utils.parameterRequireNonNull(body, "body");
+        Utils.parameterRequireNonNull(methodAnnotations, METHOD_ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(body, BODY_PARAMETER);
         return createRequestBody(methodAnnotations, body.getBytes());
     }
 
@@ -98,8 +103,8 @@ public interface ExtensionConverter<DTO> {
      */
     @EverythingIsNonNull
     default RequestBody createRequestBody(final Annotation[] methodAnnotations, byte[] body) {
-        Utils.parameterRequireNonNull(methodAnnotations, "methodAnnotations");
-        Utils.parameterRequireNonNull(body, "body");
+        Utils.parameterRequireNonNull(methodAnnotations, METHOD_ANNOTATIONS_PARAMETER);
+        Utils.parameterRequireNonNull(body, BODY_PARAMETER);
         final MediaType mediaType = ConvertUtils.getMediaType(methodAnnotations);
         return RequestBody.create(mediaType, body);
     }
@@ -112,9 +117,9 @@ public interface ExtensionConverter<DTO> {
      */
     @EverythingIsNonNull
     default void assertSupportedBodyType(ExtensionConverter<?> converter, Object body, Type... expectedTypes) {
-        Utils.parameterRequireNonNull(converter, "converter");
-        Utils.parameterRequireNonNull(body, "body");
-        Utils.parameterRequireNonNull(expectedTypes, "expectedTypes");
+        Utils.parameterRequireNonNull(converter, CONVERTER_PARAMETER);
+        Utils.parameterRequireNonNull(body, BODY_PARAMETER);
+        Utils.parameterRequireNonNull(expectedTypes, EXPECTED_TYPES_PARAMETER);
         final Class<?> bodyType = body.getClass();
         assertSupportedBodyType(converter, bodyType, expectedTypes);
     }
@@ -127,9 +132,9 @@ public interface ExtensionConverter<DTO> {
      */
     @EverythingIsNonNull
     default void assertSupportedBodyType(ExtensionConverter<?> converter, Type bodyType, Type... expectedTypes) {
-        Utils.parameterRequireNonNull(converter, "converter");
-        Utils.parameterRequireNonNull(bodyType, "bodyType");
-        Utils.parameterRequireNonNull(expectedTypes, "expectedTypes");
+        Utils.parameterRequireNonNull(converter, CONVERTER_PARAMETER);
+        Utils.parameterRequireNonNull(bodyType, BODY_TYPE_PARAMETER);
+        Utils.parameterRequireNonNull(expectedTypes, EXPECTED_TYPES_PARAMETER);
         if (!Arrays.asList(expectedTypes).contains(bodyType)) {
             throw new ConverterUnsupportedTypeException(converter.getClass(), bodyType, expectedTypes);
         }

@@ -29,6 +29,7 @@ import veslo.client.inteceptor.CompositeInterceptor;
 import veslo.util.Utils;
 
 import static veslo.client.TrustSocketHelper.*;
+import static veslo.constant.ParameterNameConstants.*;
 
 /**
  * Utility class for building an HTTP client for testing
@@ -46,21 +47,21 @@ public class TestClient {
      * @param interceptor        - {@link CompositeInterceptor} (okhttp network interceptor)
      * @param callAdapterFactory - {@link UniversalCallAdapterFactory} or heirs
      * @param converterFactory   - {@link ExtensionConverterFactory} or heirs
-     * @param clientClass                - client interface class
-     * @param <CLIENT>           - client interface
+     * @param clientClass        - client interface class
+     * @param <C>                - client interface
      * @return built client
      */
     @EverythingIsNonNull
-    public static <CLIENT> CLIENT build(final String baseUrl,
-                                        final Interceptor interceptor,
-                                        final CallAdapter.Factory callAdapterFactory,
-                                        final Converter.Factory converterFactory,
-                                        final Class<CLIENT> clientClass) {
-        Utils.parameterRequireNonNull(baseUrl, "baseUrl");
-        Utils.parameterRequireNonNull(interceptor, "interceptor");
-        Utils.parameterRequireNonNull(callAdapterFactory, "callAdapterFactory");
-        Utils.parameterRequireNonNull(converterFactory, "converterFactory");
-        Utils.parameterRequireNonNull(clientClass, "clientClass");
+    public static <C> C build(final String baseUrl,
+                              final Interceptor interceptor,
+                              final CallAdapter.Factory callAdapterFactory,
+                              final Converter.Factory converterFactory,
+                              final Class<C> clientClass) {
+        Utils.parameterRequireNonNull(baseUrl, BASE_URL_PARAMETER);
+        Utils.parameterRequireNonNull(interceptor, INTERCEPTOR_PARAMETER);
+        Utils.parameterRequireNonNull(callAdapterFactory, CALL_ADAPTER_FACTORY_PARAMETER);
+        Utils.parameterRequireNonNull(converterFactory, CONVERTER_FACTORY_PARAMETER);
+        Utils.parameterRequireNonNull(clientClass, CLIENT_CLASS_PARAMETER);
         return new Retrofit.Builder()
                 .client(new OkHttpClient.Builder()
                         // Configure this client to follow redirects

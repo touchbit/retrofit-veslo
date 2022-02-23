@@ -20,16 +20,10 @@ import veslo.asserter.AssertionMatcher;
 import veslo.asserter.SoftlyAsserter;
 import veslo.util.ExcludeFromJacocoGeneratedReport;
 
-import static veslo.asserter.AssertionMatcher.is;
-
 @ExcludeFromJacocoGeneratedReport()
-public class SucDTO implements DTO {
+public class SucDTO implements DTO<SucDTO> {
 
-    public String msg;
-
-    public SucDTO(String msg) {
-        this.msg = msg;
-    }
+    public String msg; //NOSONAR
 
     @Override
     public String getMsg() {
@@ -37,8 +31,9 @@ public class SucDTO implements DTO {
     }
 
     @Override
-    public void setMsg(String msg) {
+    public SucDTO setMsg(String msg) {
         this.msg = msg;
+        return this;
     }
 
     public void assertConsistency() {

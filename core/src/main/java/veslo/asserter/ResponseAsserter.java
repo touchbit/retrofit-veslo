@@ -24,10 +24,14 @@ import veslo.util.TripleConsumer;
 import veslo.util.Utils;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+
+import static veslo.constant.ParameterNameConstants.*;
+import static veslo.constant.SonarRuleConstants.SONAR_TYPE_PARAMETER_NAMING;
 
 /**
  * {@link IDualResponse} asserter with built-in {@link IHeadersAsserter}
@@ -42,7 +46,7 @@ import java.util.function.Consumer;
  * @see ExampleApiClientAssertions.AssertResponseMethodExamples#example1639329013867()
  * @see ExampleApiClientAssertions.AssertResponseMethodExamples#example1639437048937()
  */
-@SuppressWarnings("UnusedReturnValue")
+@SuppressWarnings({"UnusedReturnValue", SONAR_TYPE_PARAMETER_NAMING})
 public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> implements IResponseAsserter {
 
     private final List<Throwable> errors = new ArrayList<>();
@@ -56,8 +60,8 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      */
     @EverythingIsNonNull
     public ResponseAsserter(final IDualResponse<SUC_DTO, ERR_DTO> response, final HA headersAsserter) {
-        Utils.parameterRequireNonNull(response, "response");
-        Utils.parameterRequireNonNull(headersAsserter, "headersAsserter");
+        Utils.parameterRequireNonNull(response, RESPONSE_PARAMETER);
+        Utils.parameterRequireNonNull(headersAsserter, HEADERS_ASSERTER_PARAMETER);
         this.response = response;
         this.headersAsserter = headersAsserter;
     }
@@ -72,7 +76,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      */
     @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertHeaders(Consumer<HA> headerAsserterConsumer) {
-        Utils.parameterRequireNonNull(headerAsserterConsumer, "headerAsserterConsumer");
+        Utils.parameterRequireNonNull(headerAsserterConsumer, HEADER_ASSERTER_CONSUMER_PARAMETER);
         headerAsserterConsumer.accept(headersAsserter);
         addErrors(headersAsserter.getErrors());
         return this;
@@ -89,9 +93,10 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * @see ExampleApiClientAssertions.AssertSucResponseMethodExamples#example1639324202096()
      * @see ExampleApiClientAssertions.AssertSucResponseMethodExamples#example1639324398972()
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertSucResponse(final int expCode,
                                                                     final Consumer<SUC_DTO> assertionConsumer) {
-        Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
+        Utils.parameterRequireNonNull(assertionConsumer, ASSERTION_CONSUMER_PARAMETER);
         return assertHttpStatusCodeIs(expCode).assertSucBody(assertionConsumer);
     }
 
@@ -105,11 +110,12 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * @see ExampleApiClientAssertions.AssertSucResponseMethodExamples#example1639323829528()
      * @see ExampleApiClientAssertions.AssertSucResponseMethodExamples#example1639325042327()
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertSucResponse(final int expCode,
                                                                     final BiConsumer<SUC_DTO, SUC_DTO> assertionConsumer,
                                                                     final SUC_DTO expectedSucDto) {
-        Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
-        Utils.parameterRequireNonNull(expectedSucDto, "expectedSucDto");
+        Utils.parameterRequireNonNull(assertionConsumer, ASSERTION_CONSUMER_PARAMETER);
+        Utils.parameterRequireNonNull(expectedSucDto, EXPECTED_SUC_DTO_PARAMETER);
         return assertHttpStatusCodeIs(expCode).assertSucBody(assertionConsumer, expectedSucDto);
     }
 
@@ -122,9 +128,10 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * @see ExampleApiClientAssertions.AssertSucResponseMethodExamples#example1639328323975()
      * @see ExampleApiClientAssertions.AssertSucResponseMethodExamples#example1639328330398()
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertSucResponse(final int expCode,
                                                                     final BiConsumer<SoftlyAsserter, SUC_DTO> assertionConsumer) {
-        Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
+        Utils.parameterRequireNonNull(assertionConsumer, ASSERTION_CONSUMER_PARAMETER);
         return assertHttpStatusCodeIs(expCode).assertSucBody(assertionConsumer);
     }
 
@@ -137,11 +144,12 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * Examples:
      * @see ExampleApiClientAssertions.AssertSucResponseMethodExamples#example1639327810398()
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertSucResponse(final int expCode,
                                                                     final TripleConsumer<SoftlyAsserter, SUC_DTO, SUC_DTO> assertionConsumer,
                                                                     final SUC_DTO expectedSucDto) {
-        Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
-        Utils.parameterRequireNonNull(expectedSucDto, "expectedSucDto");
+        Utils.parameterRequireNonNull(assertionConsumer, ASSERTION_CONSUMER_PARAMETER);
+        Utils.parameterRequireNonNull(expectedSucDto, EXPECTED_SUC_DTO_PARAMETER);
         return assertHttpStatusCodeIs(expCode).assertSucBody(assertionConsumer, expectedSucDto);
     }
 
@@ -155,8 +163,9 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * @see ExampleApiClientAssertions.AssertSucBodyMethodExamples#example1639325443017()
      * @see ExampleApiClientAssertions.AssertSucBodyMethodExamples#example1639325444984()
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertSucBody(final Consumer<SUC_DTO> assertionConsumer) {
-        Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
+        Utils.parameterRequireNonNull(assertionConsumer, ASSERTION_CONSUMER_PARAMETER);
         final SUC_DTO actual = getResponse().getSucDTO();
         if (actual != null) {
             softly(() -> assertionConsumer.accept(actual));
@@ -176,10 +185,11 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * @see ExampleApiClientAssertions.AssertSucBodyMethodExamples#example1639325561761()
      * @see ExampleApiClientAssertions.AssertSucBodyMethodExamples#example1639325563806()
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertSucBody(final BiConsumer<SUC_DTO, SUC_DTO> assertionConsumer,
                                                                 final SUC_DTO expectedSucDto) {
-        Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
-        Utils.parameterRequireNonNull(expectedSucDto, "expectedSucDto");
+        Utils.parameterRequireNonNull(assertionConsumer, ASSERTION_CONSUMER_PARAMETER);
+        Utils.parameterRequireNonNull(expectedSucDto, EXPECTED_SUC_DTO_PARAMETER);
         final SUC_DTO actual = getResponse().getSucDTO();
         if (actual != null) {
             softly(() -> assertionConsumer.accept(actual, expectedSucDto));
@@ -195,8 +205,9 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * @see ExampleApiClientAssertions.AssertSucBodyMethodExamples#example1639325807124()
      * @see ExampleApiClientAssertions.AssertSucBodyMethodExamples#example1639326363134()
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertSucBody(final BiConsumer<SoftlyAsserter, SUC_DTO> assertionConsumer) {
-        Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
+        Utils.parameterRequireNonNull(assertionConsumer, ASSERTION_CONSUMER_PARAMETER);
         final SUC_DTO actual = getResponse().getSucDTO();
         if (actual != null) {
             softly(() -> assertionConsumer.accept(this, actual));
@@ -211,10 +222,11 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * Examples:
      * @see ExampleApiClientAssertions.AssertSucBodyMethodExamples#example1639326893023()
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertSucBody(final TripleConsumer<SoftlyAsserter, SUC_DTO, SUC_DTO> assertionConsumer,
                                                                 final SUC_DTO expectedSucDto) {
-        Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
-        Utils.parameterRequireNonNull(expectedSucDto, "expectedSucDto");
+        Utils.parameterRequireNonNull(assertionConsumer, ASSERTION_CONSUMER_PARAMETER);
+        Utils.parameterRequireNonNull(expectedSucDto, EXPECTED_SUC_DTO_PARAMETER);
         final SUC_DTO actual = getResponse().getSucDTO();
         if (actual != null) {
             softly(() -> assertionConsumer.accept(this, actual, expectedSucDto));
@@ -226,6 +238,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * @return this
      * @throws BriefAssertionError if HTTP status code not in range 200...299
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertIsSucHttpStatusCode() {
         final int code = getResponse().getHttpStatusCode();
         softly(() -> AssertionMatcher.inRange("Successful HTTP status code", code, 200, 299));
@@ -236,6 +249,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * @return this
      * @throws BriefAssertionError if success body is null
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertSucBodyNotNull() {
         softly(() -> AssertionMatcher.isNotNull("Successful body", getResponse().getSucDTO()));
         return this;
@@ -245,6 +259,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * @return this
      * @throws BriefAssertionError if success body is not null
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertSucBodyIsNull() {
         softly(() -> AssertionMatcher.isNull("Successful body", getResponse().getSucDTO()));
         return this;
@@ -261,9 +276,10 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * @see ExampleApiClientAssertions.AssertErrResponseMethodExamples#example1639435661467()
      * @see ExampleApiClientAssertions.AssertErrResponseMethodExamples#example1639435669326()
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertErrResponse(final int expCode,
                                                                     final Consumer<ERR_DTO> assertionConsumer) {
-        Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
+        Utils.parameterRequireNonNull(assertionConsumer, ASSERTION_CONSUMER_PARAMETER);
         return assertHttpStatusCodeIs(expCode).assertErrBody(assertionConsumer);
     }
 
@@ -277,11 +293,12 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * @see ExampleApiClientAssertions.AssertErrResponseMethodExamples#example1639435677413()
      * @see ExampleApiClientAssertions.AssertErrResponseMethodExamples#example1639435684781()
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertErrResponse(final int expCode,
                                                                     final BiConsumer<ERR_DTO, ERR_DTO> assertionConsumer,
                                                                     final ERR_DTO expectedErrDto) {
-        Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
-        Utils.parameterRequireNonNull(expectedErrDto, "expectedErrDto");
+        Utils.parameterRequireNonNull(assertionConsumer, ASSERTION_CONSUMER_PARAMETER);
+        Utils.parameterRequireNonNull(expectedErrDto, EXPECTED_ERR_DTO_PARAMETER);
         return assertHttpStatusCodeIs(expCode).assertErrBody(assertionConsumer, expectedErrDto);
     }
 
@@ -294,9 +311,10 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * @see ExampleApiClientAssertions.AssertErrResponseMethodExamples#example1639435692258()
      * @see ExampleApiClientAssertions.AssertErrResponseMethodExamples#example1639435699849()
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertErrResponse(final int expCode,
                                                                     final BiConsumer<SoftlyAsserter, ERR_DTO> assertionConsumer) {
-        Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
+        Utils.parameterRequireNonNull(assertionConsumer, ASSERTION_CONSUMER_PARAMETER);
         return assertHttpStatusCodeIs(expCode).assertErrBody(assertionConsumer);
     }
 
@@ -309,11 +327,12 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * Examples:
      * @see ExampleApiClientAssertions.AssertErrResponseMethodExamples#example1639435708260()
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertErrResponse(final int expCode,
                                                                     final TripleConsumer<SoftlyAsserter, ERR_DTO, ERR_DTO> assertionConsumer,
                                                                     final ERR_DTO expectedErrDto) {
-        Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
-        Utils.parameterRequireNonNull(expectedErrDto, "expectedErrDto");
+        Utils.parameterRequireNonNull(assertionConsumer, ASSERTION_CONSUMER_PARAMETER);
+        Utils.parameterRequireNonNull(expectedErrDto, EXPECTED_ERR_DTO_PARAMETER);
         return assertHttpStatusCodeIs(expCode).assertErrBody(assertionConsumer, expectedErrDto);
     }
 
@@ -327,8 +346,9 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * @see ExampleApiClientAssertions.AssertErrBodyMethodExamples#example1639437276238()
      * @see ExampleApiClientAssertions.AssertErrBodyMethodExamples#example1639437293672()
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertErrBody(final Consumer<ERR_DTO> assertionConsumer) {
-        Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
+        Utils.parameterRequireNonNull(assertionConsumer, ASSERTION_CONSUMER_PARAMETER);
         final ERR_DTO actual = getResponse().getErrDTO();
         if (actual != null) {
             softly(() -> assertionConsumer.accept(actual));
@@ -345,10 +365,11 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * @see ExampleApiClientAssertions.AssertErrBodyMethodExamples#example1639437371546()
      * @see ExampleApiClientAssertions.AssertErrBodyMethodExamples#example1639437376687()
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertErrBody(final BiConsumer<ERR_DTO, ERR_DTO> assertionConsumer,
                                                                 final ERR_DTO expectedErrDto) {
-        Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
-        Utils.parameterRequireNonNull(expectedErrDto, "expectedErrDto");
+        Utils.parameterRequireNonNull(assertionConsumer, ASSERTION_CONSUMER_PARAMETER);
+        Utils.parameterRequireNonNull(expectedErrDto, EXPECTED_ERR_DTO_PARAMETER);
         final ERR_DTO actual = getResponse().getErrDTO();
         if (actual != null) {
             softly(() -> assertionConsumer.accept(actual, expectedErrDto));
@@ -364,8 +385,9 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * @see ExampleApiClientAssertions.AssertErrBodyMethodExamples#example1639437383840()
      * @see ExampleApiClientAssertions.AssertErrBodyMethodExamples#example1639437391538()
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertErrBody(final BiConsumer<SoftlyAsserter, ERR_DTO> assertionConsumer) {
-        Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
+        Utils.parameterRequireNonNull(assertionConsumer, ASSERTION_CONSUMER_PARAMETER);
         final ERR_DTO actual = getResponse().getErrDTO();
         if (actual != null) {
             softly(() -> assertionConsumer.accept(this, actual));
@@ -381,10 +403,11 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * Examples:
      * @see ExampleApiClientAssertions.AssertErrBodyMethodExamples#example1639437397547()
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertErrBody(final TripleConsumer<SoftlyAsserter, ERR_DTO, ERR_DTO> assertionConsumer,
                                                                 final ERR_DTO expectedErrDto) {
-        Utils.parameterRequireNonNull(assertionConsumer, "assertionConsumer");
-        Utils.parameterRequireNonNull(expectedErrDto, "expectedErrDto");
+        Utils.parameterRequireNonNull(assertionConsumer, ASSERTION_CONSUMER_PARAMETER);
+        Utils.parameterRequireNonNull(expectedErrDto, EXPECTED_ERR_DTO_PARAMETER);
         final ERR_DTO actual = getResponse().getErrDTO();
         if (actual != null) {
             softly(() -> assertionConsumer.accept(this, actual, expectedErrDto));
@@ -396,6 +419,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * @return this
      * @throws BriefAssertionError if HTTP status code not in range 300...599
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertIsErrHttpStatusCode() {
         final int code = getResponse().getHttpStatusCode();
         softly(() -> AssertionMatcher.inRange("Error HTTP status code", code, 300, 599));
@@ -406,6 +430,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * @return this
      * @throws BriefAssertionError if error body is null
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertErrBodyNotNull() {
         softly(() -> AssertionMatcher.isNotNull("Error body", getResponse().getErrDTO()));
         return this;
@@ -415,6 +440,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * @return this
      * @throws BriefAssertionError if error body is not null
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertErrBodyIsNull() {
         softly(() -> AssertionMatcher.isNull("Error body", getResponse().getErrDTO()));
         return this;
@@ -424,6 +450,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * @return this
      * @throws BriefAssertionError if unexpected HTTP status code received
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertHttpStatusCodeIs(final int expected) {
         int actual = getResponse().getHttpStatusCode();
         softly(() -> AssertionMatcher.is("HTTP status code", actual, expected));
@@ -434,7 +461,8 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      * @return this
      * @throws BriefAssertionError if unexpected HTTP status message received
      */
-    public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertHttpStatusMessageIs(final String expected) {
+    @Nonnull
+    public ResponseAsserter<SUC_DTO, ERR_DTO, HA> assertHttpStatusMessageIs(@Nullable final String expected) {
         final String actual = getResponse().getHttpStatusMessage();
         softly(() -> AssertionMatcher.is("HTTP status message", actual, expected));
         return this;
@@ -445,6 +473,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
      *
      * @return this
      */
+    @EverythingIsNonNull
     public ResponseAsserter<SUC_DTO, ERR_DTO, HA> blame() {
         close();
         return this;
@@ -481,6 +510,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
     /**
      * @return {@link IHeadersAsserter} implementation object
      */
+    @EverythingIsNonNull
     public HA getHeadersAsserter() {
         return headersAsserter;
     }
@@ -488,7 +518,7 @@ public class ResponseAsserter<SUC_DTO, ERR_DTO, HA extends IHeadersAsserter> imp
     /**
      * @return {@link IDualResponse} implementation object
      */
-    @Nonnull
+    @EverythingIsNonNull
     public IDualResponse<SUC_DTO, ERR_DTO> getResponse() {
         return response;
     }

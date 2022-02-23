@@ -709,7 +709,7 @@ public class HeadersAsserterUnitTests extends BaseCoreUnitTest {
         Headers headers = Headers.of("any", "test1637494229934");
         final HeadersAsserter headersAsserter = new HeadersAsserter(headers);
         assertThat("", headersAsserter.getErrors().size(), is(0));
-        headersAsserter.addErrors(new BriefAssertionError());
+        headersAsserter.addErrors(new BriefAssertionError(""));
         assertThat("", headersAsserter.getErrors().size(), is(1));
     }
 

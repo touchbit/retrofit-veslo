@@ -121,6 +121,14 @@ public abstract class BaseUnitTest {
         assertThat(actual, is(expected));
     }
 
+    public static <DTO> void assertTrue(Boolean actual) {
+        assertThat(actual, is(true));
+    }
+
+    public static <DTO> void assertFalse(Boolean actual) {
+        assertThat(actual, is(false));
+    }
+
     public static <DTO> void assertNotNull(DTO actual) {
         assertThat(actual, notNullValue());
     }
