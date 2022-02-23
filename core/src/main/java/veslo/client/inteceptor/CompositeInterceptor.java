@@ -81,8 +81,8 @@ public class CompositeInterceptor implements Interceptor {
         } else {
             StringJoiner stringJoiner = new StringJoiner("\n * ",
                     "Received a list of RequestInterceptAction with the following execution sequence:\n * ", "");
-            for (RequestInterceptAction requestInterceptAction : actions) {
-                stringJoiner.add(requestInterceptAction.getClass().getName());
+            for (RequestInterceptAction action : actions) {
+                stringJoiner.add(action.getClass().getName());
             }
             logger.debug("{}", stringJoiner);
         }
@@ -108,8 +108,8 @@ public class CompositeInterceptor implements Interceptor {
         } else {
             StringJoiner stringJoiner = new StringJoiner("\n * ",
                     "Received a list of ResponseInterceptAction with the following execution sequence:\n * ", "");
-            for (ResponseInterceptAction responseInterceptAction : actions) {
-                stringJoiner.add(responseInterceptAction.getClass().getName());
+            for (ResponseInterceptAction action : actions) {
+                stringJoiner.add(action.getClass().getName());
             }
             logger.debug("{}", stringJoiner);
         }

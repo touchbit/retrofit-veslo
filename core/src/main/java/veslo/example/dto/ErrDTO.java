@@ -23,7 +23,7 @@ import veslo.util.ExcludeFromJacocoGeneratedReport;
 @ExcludeFromJacocoGeneratedReport()
 public class ErrDTO implements DTO<ErrDTO> {
 
-    public String msg;
+    public String msg; //NOSONAR
 
     public String getMsg() {
         return msg;

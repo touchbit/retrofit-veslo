@@ -23,7 +23,7 @@ import veslo.util.ExcludeFromJacocoGeneratedReport;
 @ExcludeFromJacocoGeneratedReport()
 public class SucDTO implements DTO<SucDTO> {
 
-    public String msg;
+    public String msg; //NOSONAR
 
     @Override
     public String getMsg() {

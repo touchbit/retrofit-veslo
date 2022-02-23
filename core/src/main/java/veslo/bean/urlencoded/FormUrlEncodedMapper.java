@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 import static veslo.constant.ParameterNameConstants.*;
 import static veslo.constant.SonarRuleConstants.SONAR_COGNITIVE_COMPLEXITY;
+import static veslo.constant.SonarRuleConstants.SONAR_GENERIC_WILDCARD_TYPES;
 
 /**
  * Convert model (JavaBean) to URL encoded form and back to model.
@@ -201,6 +202,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * @throws FormUrlEncodedMapperException if unsupported URL form coding {@link Charset}
      */
     @EverythingIsNonNull
+    @SuppressWarnings("java:S3776")
     protected String marshalAdditionalProperties(final Object model,
                                                  final Field field,
                                                  final Charset codingCharset,
@@ -252,10 +254,11 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * @return {@link Collection}
      * @throws FormUrlEncodedMapperException if value is not array or collection
      */
+    @SuppressWarnings(SONAR_GENERIC_WILDCARD_TYPES)
     protected Collection<?> arrayToCollection(Object value) {
         Utils.parameterRequireNonNull(value, VALUE_PARAMETER);
         if (value.getClass().isArray()) {
-             return Arrays.asList((Object[]) value);
+            return Arrays.asList((Object[]) value);
         }
         if (value instanceof Collection) {
             return ((Collection<?>) value);
