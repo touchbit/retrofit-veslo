@@ -74,7 +74,7 @@ public class OkhttpUtils {
             resultMessage.add("Headers: (absent)");
         } else {
             resultMessage.add("Headers:");
-            resultMessage.add("  " + headers.toString().trim());
+            resultMessage.add("  " + headers.toString().trim().replace("\n", "\n  ")); //NOSONAR
         }
         if (!hasRequestBody) {
             resultMessage.add("Body: (absent)");

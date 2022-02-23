@@ -137,7 +137,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Required parameters")
         public void test1639496565737() {
-            final SucDTO expected = new SucDTO("test1639496565737");
+            final SucDTO expected = new SucDTO().setMsg("test1639496565737");
             final ResponseAsserter asserter = getSucResponseAsserter(200, null);
             assertNPE(() -> asserter.assertSucResponse(200, NULL_CONSUMER_1), "assertionConsumer");
             assertNPE(() -> asserter.assertSucResponse(200, NULL_CONSUMER_2, expected), "assertionConsumer");
@@ -151,7 +151,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("(int, Consumer<SUC_DTO>) positive")
         public void test1639065947494() {
-            final ResponseAsserter asserter = getSucResponseAsserter(200, new SucDTO(""));
+            final ResponseAsserter asserter = getSucResponseAsserter(200, new SucDTO().setMsg(""));
             asserter.assertSucResponse(200, body -> assertThat("", body, notNullValue())).blame();
         }
 
@@ -174,7 +174,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("(int, BiConsumer<SUC_DTO, SUC_DTO>, SUC_DTO) positive")
         public void test1639497009347() {
-            final SucDTO expected = new SucDTO("test1639497009347");
+            final SucDTO expected = new SucDTO().setMsg("test1639497009347");
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, expected);
             asserter.assertSucResponse(200, ResponseAsserterUnitTests::assertSucDTO, expected).blame();
         }
@@ -182,7 +182,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("(int, BiConsumer<SUC_DTO, SUC_DTO>, SUC_DTO) negative")
         public void test1639497019782() {
-            final SucDTO expected = new SucDTO("test1639497019782");
+            final SucDTO expected = new SucDTO().setMsg("test1639497019782");
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(500, null);
             assertThrow(() -> asserter.assertSucResponse(200, ResponseAsserterUnitTests::assertSucDTO, expected).blame())
                     .assertClass(BriefAssertionError.class)
@@ -199,7 +199,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertSucResponse(int, BiConsumer<SoftlyAsserter, SUC_DTO>) positive")
         public void test1639497656767() {
-            final SucDTO expected = new SucDTO("test1639497656767");
+            final SucDTO expected = new SucDTO().setMsg("test1639497656767");
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, expected);
             asserter.assertSucResponse(200, (softly, act) -> assertSoftlySucDTO(softly, act, expected)).blame();
         }
@@ -207,7 +207,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertSucResponse(int, BiConsumer<SoftlyAsserter, SUC_DTO>) negative")
         public void test1639497681421() {
-            final SucDTO expected = new SucDTO("test1639497681421");
+            final SucDTO expected = new SucDTO().setMsg("test1639497681421");
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(500, null);
             assertThrow(() -> asserter.assertSucResponse(200, (softly, act) -> assertSoftlySucDTO(softly, act, expected)).blame())
                     .assertClass(BriefAssertionError.class)
@@ -224,7 +224,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertSucResponse(int, TripleConsumer<SoftlyAsserter, SUC_DTO, SUC_DTO>, SUC_DTO) positive")
         public void test1639571729257() {
-            final SucDTO expected = new SucDTO("test1639571729257");
+            final SucDTO expected = new SucDTO().setMsg("test1639571729257");
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, expected);
             asserter.assertSucResponse(200, ResponseAsserterUnitTests::assertSoftlySucDTO, expected).blame();
         }
@@ -232,7 +232,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertSucResponse(int, TripleConsumer<SoftlyAsserter, SUC_DTO, SUC_DTO>, SUC_DTO) negative")
         public void test1639571731704() {
-            final SucDTO expected = new SucDTO("test1639571731704");
+            final SucDTO expected = new SucDTO().setMsg("test1639571731704");
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(500, null);
             assertThrow(() -> asserter.assertSucResponse(200, ResponseAsserterUnitTests::assertSoftlySucDTO, expected).blame())
                     .assertClass(BriefAssertionError.class)
@@ -255,7 +255,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Required parameters")
         public void test1639572189573() {
-            final SucDTO expected = new SucDTO("test1639572189573");
+            final SucDTO expected = new SucDTO().setMsg("test1639572189573");
             final ResponseAsserter asserter = getSucResponseAsserter(200, null);
             assertNPE(() -> asserter.assertSucBody(NULL_CONSUMER_1), "assertionConsumer");
             assertNPE(() -> asserter.assertSucBody(NULL_CONSUMER_2, expected), "assertionConsumer");
@@ -269,7 +269,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertSucBody(Consumer<SUC_DTO>) positive")
         public void test1639572196947() {
-            final SucDTO expected = new SucDTO("test1639572196947");
+            final SucDTO expected = new SucDTO().setMsg("test1639572196947");
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, expected);
             asserter.assertSucBody(act -> assertSucDTO(act, expected)).blame();
         }
@@ -290,8 +290,8 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertSucBody(Consumer<SUC_DTO>) negative (exist body)")
         public void test1639574632570() {
-            final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, new SucDTO("foo"));
-            assertThrow(() -> asserter.assertSucBody(act -> assertSucDTO(act, new SucDTO("bar"))).blame())
+            final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, new SucDTO().setMsg("foo"));
+            assertThrow(() -> asserter.assertSucBody(act -> assertSucDTO(act, new SucDTO().setMsg("bar"))).blame())
                     .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
@@ -303,7 +303,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertSucBody(BiConsumer<SUC_DTO, SUC_DTO>, SUC_DTO) positive")
         public void test1639572218719() {
-            final SucDTO expected = new SucDTO("test1639572218719");
+            final SucDTO expected = new SucDTO().setMsg("test1639572218719");
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, expected);
             asserter.assertSucBody(ResponseAsserterUnitTests::assertSucDTO, expected).blame();
         }
@@ -311,7 +311,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertSucBody(BiConsumer<SUC_DTO, SUC_DTO>, SUC_DTO) negative (null body)")
         public void test1639572227705() {
-            final SucDTO expected = new SucDTO("test1639572227705");
+            final SucDTO expected = new SucDTO().setMsg("test1639572227705");
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, null);
             assertThrow(() -> asserter.assertSucBody(ResponseAsserterUnitTests::assertSucDTO, expected).blame())
                     .assertClass(BriefAssertionError.class)
@@ -325,8 +325,8 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertSucBody(BiConsumer<SUC_DTO, SUC_DTO>, SUC_DTO) negative (exist body)")
         public void test1639576070070() {
-            final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, new SucDTO("foo"));
-            assertThrow(() -> asserter.assertSucBody(ResponseAsserterUnitTests::assertSucDTO, new SucDTO("bar")).blame())
+            final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, new SucDTO().setMsg("foo"));
+            assertThrow(() -> asserter.assertSucBody(ResponseAsserterUnitTests::assertSucDTO, new SucDTO().setMsg("bar")).blame())
                     .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
@@ -338,7 +338,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertSucBody(int, BiConsumer<SoftlyAsserter, SUC_DTO>) positive")
         public void test1639572238235() {
-            final SucDTO expected = new SucDTO("test1639572238235");
+            final SucDTO expected = new SucDTO().setMsg("test1639572238235");
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, expected);
             asserter.assertSucBody((softly, act) -> assertSoftlySucDTO(softly, act, expected)).blame();
         }
@@ -346,7 +346,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertSucBody(BiConsumer<SoftlyAsserter, SUC_DTO>) negative (null body)")
         public void test1639572268635() {
-            final SucDTO expected = new SucDTO("test1639572268635");
+            final SucDTO expected = new SucDTO().setMsg("test1639572268635");
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, null);
             assertThrow(() -> asserter.assertSucBody((softly, act) -> assertSoftlySucDTO(softly, act, expected)).blame())
                     .assertClass(BriefAssertionError.class)
@@ -360,8 +360,8 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertSucBody(BiConsumer<SoftlyAsserter, SUC_DTO>) negative (exist body)")
         public void test1639577387233() {
-            final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, new SucDTO("foo"));
-            assertThrow(() -> asserter.assertSucBody((softly, act) -> assertSoftlySucDTO(softly, act, new SucDTO("bar"))).blame())
+            final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, new SucDTO().setMsg("foo"));
+            assertThrow(() -> asserter.assertSucBody((softly, act) -> assertSoftlySucDTO(softly, act, new SucDTO().setMsg("bar"))).blame())
                     .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
@@ -373,7 +373,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertSucBody(TripleConsumer<SoftlyAsserter, SUC_DTO, SUC_DTO>, SUC_DTO) positive")
         public void test1639572276347() {
-            final SucDTO expected = new SucDTO("test1639572238235");
+            final SucDTO expected = new SucDTO().setMsg("test1639572238235");
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, expected);
             asserter.assertSucBody(ResponseAsserterUnitTests::assertSoftlySucDTO, expected).blame();
         }
@@ -381,7 +381,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertSucBody(TripleConsumer<SoftlyAsserter, SUC_DTO, SUC_DTO>, SUC_DTO) negative (exist body)")
         public void test1639572284306() {
-            final SucDTO expected = new SucDTO("test1639572268635");
+            final SucDTO expected = new SucDTO().setMsg("test1639572268635");
             final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, null);
             assertThrow(() -> asserter.assertSucBody(ResponseAsserterUnitTests::assertSoftlySucDTO, expected).blame())
                     .assertClass(BriefAssertionError.class)
@@ -395,8 +395,8 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertSucBody(TripleConsumer<SoftlyAsserter, SUC_DTO, SUC_DTO>, SUC_DTO) negative (null body)")
         public void test1639577513399() {
-            final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, new SucDTO("foo"));
-            assertThrow(() -> asserter.assertSucBody(ResponseAsserterUnitTests::assertSoftlySucDTO, new SucDTO("bar")).blame())
+            final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, new SucDTO().setMsg("foo"));
+            assertThrow(() -> asserter.assertSucBody(ResponseAsserterUnitTests::assertSoftlySucDTO, new SucDTO().setMsg("bar")).blame())
                     .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
@@ -414,7 +414,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Positive test")
         public void test1639577948691() {
-            final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, new SucDTO(""));
+            final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, new SucDTO().setMsg(""));
             asserter.assertSucBodyNotNull().blame();
         }
 
@@ -447,7 +447,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Negative test")
         public void test1639577692294() {
-            final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, new SucDTO(""));
+            final ResponseAsserter<SucDTO, ?, ?> asserter = getSucResponseAsserter(200, new SucDTO().setMsg(""));
             assertThrow(() -> asserter.assertSucBodyIsNull().blame())
                     .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
@@ -492,7 +492,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Required parameters")
         public void test1639581994387() {
-            final ErrDTO expected = new ErrDTO("test");
+            final ErrDTO expected = new ErrDTO().setMsg("test");
             final ResponseAsserter asserter = getErrResponseAsserter(500, null);
             assertNPE(() -> asserter.assertErrResponse(200, NULL_CONSUMER_1), "assertionConsumer");
             assertNPE(() -> asserter.assertErrResponse(200, NULL_CONSUMER_2, expected), "assertionConsumer");
@@ -506,7 +506,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("(int, Consumer<SUC_DTO>) positive")
         public void test1639581997276() {
-            final ResponseAsserter asserter = getErrResponseAsserter(500, new ErrDTO(""));
+            final ResponseAsserter asserter = getErrResponseAsserter(500, new ErrDTO().setMsg(""));
             asserter.assertErrResponse(500, body -> assertThat("", body, notNullValue())).blame();
         }
 
@@ -529,7 +529,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("(int, BiConsumer<SUC_DTO, SUC_DTO>, SUC_DTO) positive")
         public void test1639582003077() {
-            final ErrDTO expected = new ErrDTO("test");
+            final ErrDTO expected = new ErrDTO().setMsg("test");
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, expected);
             asserter.assertErrResponse(500, ResponseAsserterUnitTests::assertErrDTO, expected).blame();
         }
@@ -537,7 +537,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("(int, BiConsumer<SUC_DTO, SUC_DTO>, SUC_DTO) negative")
         public void test1639582006729() {
-            final ErrDTO expected = new ErrDTO("test");
+            final ErrDTO expected = new ErrDTO().setMsg("test");
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(200, null);
             assertThrow(() -> asserter.assertErrResponse(500, ResponseAsserterUnitTests::assertErrDTO, expected).blame())
                     .assertClass(BriefAssertionError.class)
@@ -554,7 +554,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertErrResponse(int, BiConsumer<SoftlyAsserter, SUC_DTO>) positive")
         public void test1639582009952() {
-            final ErrDTO expected = new ErrDTO("test");
+            final ErrDTO expected = new ErrDTO().setMsg("test");
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, expected);
             asserter.assertErrResponse(500, (softly, act) -> assertSoftlyErrDTO(softly, act, expected)).blame();
         }
@@ -562,7 +562,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertErrResponse(int, BiConsumer<SoftlyAsserter, SUC_DTO>) negative")
         public void test1639582012623() {
-            final ErrDTO expected = new ErrDTO("test");
+            final ErrDTO expected = new ErrDTO().setMsg("test");
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(200, null);
             assertThrow(() -> asserter.assertErrResponse(500, (softly, act) -> assertSoftlyErrDTO(softly, act, expected)).blame())
                     .assertClass(BriefAssertionError.class)
@@ -579,7 +579,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertErrResponse(int, TripleConsumer<SoftlyAsserter, SUC_DTO, SUC_DTO>, SUC_DTO) positive")
         public void test1639582015591() {
-            final ErrDTO expected = new ErrDTO("test");
+            final ErrDTO expected = new ErrDTO().setMsg("test");
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, expected);
             asserter.assertErrResponse(500, ResponseAsserterUnitTests::assertSoftlyErrDTO, expected).blame();
         }
@@ -587,7 +587,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertErrResponse(int, TripleConsumer<SoftlyAsserter, SUC_DTO, SUC_DTO>, SUC_DTO) negative")
         public void test1639582019014() {
-            final ErrDTO expected = new ErrDTO("test");
+            final ErrDTO expected = new ErrDTO().setMsg("test");
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(200, null);
             assertThrow(() -> asserter.assertErrResponse(500, ResponseAsserterUnitTests::assertSoftlyErrDTO, expected).blame())
                     .assertClass(BriefAssertionError.class)
@@ -610,7 +610,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Required parameters")
         public void test1639582023470() {
-            final ErrDTO expected = new ErrDTO("test");
+            final ErrDTO expected = new ErrDTO().setMsg("test");
             final ResponseAsserter asserter = getErrResponseAsserter(500, null);
             assertNPE(() -> asserter.assertErrBody(NULL_CONSUMER_1), "assertionConsumer");
             assertNPE(() -> asserter.assertErrBody(NULL_CONSUMER_2, expected), "assertionConsumer");
@@ -624,7 +624,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertErrBody(Consumer<SUC_DTO>) positive")
         public void test1639582027537() {
-            final ErrDTO expected = new ErrDTO("test");
+            final ErrDTO expected = new ErrDTO().setMsg("test");
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, expected);
             asserter.assertErrBody(act -> assertErrDTO(act, expected)).blame();
         }
@@ -645,8 +645,8 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertErrBody(Consumer<SUC_DTO>) negative (exist body)")
         public void test1639582034789() {
-            final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, new ErrDTO("foo"));
-            assertThrow(() -> asserter.assertErrBody(act -> assertErrDTO(act, new ErrDTO("bar"))).blame())
+            final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, new ErrDTO().setMsg("foo"));
+            assertThrow(() -> asserter.assertErrBody(act -> assertErrDTO(act, new ErrDTO().setMsg("bar"))).blame())
                     .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
@@ -658,7 +658,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertErrBody(BiConsumer<SUC_DTO, SUC_DTO>, SUC_DTO) positive")
         public void test1639582040746() {
-            final ErrDTO expected = new ErrDTO("test");
+            final ErrDTO expected = new ErrDTO().setMsg("test");
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, expected);
             asserter.assertErrBody(ResponseAsserterUnitTests::assertErrDTO, expected).blame();
         }
@@ -666,7 +666,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertErrBody(BiConsumer<SUC_DTO, SUC_DTO>, SUC_DTO) negative (null body)")
         public void test1639582043621() {
-            final ErrDTO expected = new ErrDTO("test");
+            final ErrDTO expected = new ErrDTO().setMsg("test");
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, null);
             assertThrow(() -> asserter.assertErrBody(ResponseAsserterUnitTests::assertErrDTO, expected).blame())
                     .assertClass(BriefAssertionError.class)
@@ -680,8 +680,8 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertErrBody(BiConsumer<SUC_DTO, SUC_DTO>, SUC_DTO) negative (exist body)")
         public void test1639582047416() {
-            final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, new ErrDTO("foo"));
-            assertThrow(() -> asserter.assertErrBody(ResponseAsserterUnitTests::assertErrDTO, new ErrDTO("bar")).blame())
+            final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, new ErrDTO().setMsg("foo"));
+            assertThrow(() -> asserter.assertErrBody(ResponseAsserterUnitTests::assertErrDTO, new ErrDTO().setMsg("bar")).blame())
                     .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
@@ -693,7 +693,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertErrBody(int, BiConsumer<SoftlyAsserter, SUC_DTO>) positive")
         public void test1639582050586() {
-            final ErrDTO expected = new ErrDTO("test");
+            final ErrDTO expected = new ErrDTO().setMsg("test");
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, expected);
             asserter.assertErrBody((softly, act) -> assertSoftlyErrDTO(softly, act, expected)).blame();
         }
@@ -701,7 +701,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertErrBody(BiConsumer<SoftlyAsserter, SUC_DTO>) negative (null body)")
         public void test1639582053595() {
-            final ErrDTO expected = new ErrDTO("test");
+            final ErrDTO expected = new ErrDTO().setMsg("test");
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, null);
             assertThrow(() -> asserter.assertErrBody((softly, act) -> assertSoftlyErrDTO(softly, act, expected)).blame())
                     .assertClass(BriefAssertionError.class)
@@ -715,8 +715,8 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertErrBody(BiConsumer<SoftlyAsserter, SUC_DTO>) negative (exist body)")
         public void test1639582056530() {
-            final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, new ErrDTO("foo"));
-            assertThrow(() -> asserter.assertErrBody((softly, act) -> assertSoftlyErrDTO(softly, act, new ErrDTO("bar"))).blame())
+            final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, new ErrDTO().setMsg("foo"));
+            assertThrow(() -> asserter.assertErrBody((softly, act) -> assertSoftlyErrDTO(softly, act, new ErrDTO().setMsg("bar"))).blame())
                     .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
@@ -728,7 +728,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertErrBody(TripleConsumer<SoftlyAsserter, SUC_DTO, SUC_DTO>, SUC_DTO) positive")
         public void test1639582059395() {
-            final ErrDTO expected = new ErrDTO("test");
+            final ErrDTO expected = new ErrDTO().setMsg("test");
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, expected);
             asserter.assertErrBody(ResponseAsserterUnitTests::assertSoftlyErrDTO, expected).blame();
         }
@@ -736,7 +736,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertErrBody(TripleConsumer<SoftlyAsserter, SUC_DTO, SUC_DTO>, SUC_DTO) negative (exist body)")
         public void test1639582062204() {
-            final ErrDTO expected = new ErrDTO("test");
+            final ErrDTO expected = new ErrDTO().setMsg("test");
             final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, null);
             assertThrow(() -> asserter.assertErrBody(ResponseAsserterUnitTests::assertSoftlyErrDTO, expected).blame())
                     .assertClass(BriefAssertionError.class)
@@ -750,8 +750,8 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("#assertErrBody(TripleConsumer<SoftlyAsserter, SUC_DTO, SUC_DTO>, SUC_DTO) negative (null body)")
         public void test1639582064921() {
-            final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, new ErrDTO("foo"));
-            assertThrow(() -> asserter.assertErrBody(ResponseAsserterUnitTests::assertSoftlyErrDTO, new ErrDTO("bar")).blame())
+            final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(500, new ErrDTO().setMsg("foo"));
+            assertThrow(() -> asserter.assertErrBody(ResponseAsserterUnitTests::assertSoftlyErrDTO, new ErrDTO().setMsg("bar")).blame())
                     .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
                             "\n" +
@@ -769,7 +769,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Positive test")
         public void test1639582069076() {
-            final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(200, new ErrDTO(""));
+            final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(200, new ErrDTO().setMsg(""));
             asserter.assertErrBodyNotNull().blame();
         }
 
@@ -802,7 +802,7 @@ public class ResponseAsserterUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Negative test")
         public void test1639582081800() {
-            final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(200, new ErrDTO(""));
+            final ResponseAsserter<?, ErrDTO, ?> asserter = getErrResponseAsserter(200, new ErrDTO().setMsg(""));
             assertThrow(() -> asserter.assertErrBodyIsNull().blame())
                     .assertClass(BriefAssertionError.class)
                     .assertMessageIs("Collected the following errors:\n" +
