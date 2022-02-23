@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import static veslo.constant.ParameterNameConstants.*;
+import static veslo.constant.SonarRuleConstants.SONAR_COGNITIVE_COMPLEXITY;
 
 /**
  * Convert model (JavaBean) to URL encoded form and back to model.
@@ -200,7 +201,6 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * @throws FormUrlEncodedMapperException if unsupported URL form coding {@link Charset}
      */
     @EverythingIsNonNull
-    @SuppressWarnings({"unchecked", "ConstantConditions"})
     protected String marshalAdditionalProperties(final Object model,
                                                  final Field field,
                                                  final Charset codingCharset,
@@ -208,34 +208,14 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         Utils.parameterRequireNonNull(model, MODEL_PARAMETER);
         Utils.parameterRequireNonNull(field, FIELD_PARAMETER);
         Utils.parameterRequireNonNull(codingCharset, CODING_CHARSET_PARAMETER);
-        final Map<String, Object> additionalProperties;
-        try {
-            additionalProperties = (Map<String, Object>) FieldUtils.readField(model, field.getName(), true);
-        } catch (Exception e) {
-            throw new FormUrlEncodedMapperException(UNABLE_READ_FIELD_VALUE_ERR_MSG +
-                    MODEL_TYPE_ERR_MSG + model.getClass().getName() + "\n" +
-                    FIELD_TYPE_ERR_MSG + field.getType().getName() + "\n" +
-                    FIELD_NAME_ERR_MSG + field.getName() + "\n" +
-                    ERROR_CAUSE_ERR_MSG + e.getMessage().trim() + "\n", e);
-        }
-        if (additionalProperties == null || additionalProperties.isEmpty()) {
-            return "";
-        }
         StringJoiner result = new StringJoiner("&");
-        for (Map.Entry<String, Object> entry : additionalProperties.entrySet()) {
+        for (Map.Entry<String, Object> entry : readAdditionalProperties(model, field).entrySet()) {
             final String rawName = entry.getKey();
             final Object rawValue = entry.getValue();
             try {
-                if (rawValue == null) {
-                    result.add(rawName + "=");
-                } else if (rawValue instanceof Collection || rawValue.getClass().isArray()) {
+                if (rawValue instanceof Collection || rawValue.getClass().isArray()) {
                     final AtomicLong index = new AtomicLong(0);
-                    final Collection<?> values;
-                    if (rawValue.getClass().isArray()) {
-                        values = Arrays.asList((Object[]) rawValue);
-                    } else {
-                        values = ((Collection<?>) rawValue);
-                    }
+                    final Collection<?> values = arrayToCollection(rawValue);
                     if (values.isEmpty()) {
                         final long i = index.getAndIncrement();
                         final String fieldName = indexedArray ? rawName + "[" + i + "]" : rawName;
@@ -265,6 +245,52 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
             }
         }
         return result.toString();
+    }
+
+    /**
+     * @param value array || collection
+     * @return {@link Collection}
+     * @throws FormUrlEncodedMapperException if value is not array or collection
+     */
+    protected Collection<?> arrayToCollection(Object value) {
+        Utils.parameterRequireNonNull(value, VALUE_PARAMETER);
+        if (value.getClass().isArray()) {
+             return Arrays.asList((Object[]) value);
+        }
+        if (value instanceof Collection) {
+            return ((Collection<?>) value);
+        }
+        throw new FormUrlEncodedMapperException("Received unsupported type to convert to collection: " + value.getClass());
+    }
+
+    /**
+     * Reading a value from a model field annotated with the {@link FormUrlEncodedAdditionalProperties} annotation
+     *
+     * @param model - FormUrlEncoded model
+     * @param field - additionalProperties Field
+     * @return {@link Map} where key - form parameter name, value - form parameter value (not null)
+     * @throws FormUrlEncodedMapperException if model field not readable
+     */
+    @EverythingIsNonNull
+    @SuppressWarnings("unchecked")
+    protected Map<String, Object> readAdditionalProperties(final Object model, final Field field) {
+        Utils.parameterRequireNonNull(model, MODEL_PARAMETER);
+        Utils.parameterRequireNonNull(field, FIELD_PARAMETER);
+        final Map<String, Object> additionalProperties;
+        try {
+            additionalProperties = (Map<String, Object>) FieldUtils.readField(model, field.getName(), true);
+        } catch (Exception e) {
+            throw new FormUrlEncodedMapperException(UNABLE_READ_FIELD_VALUE_ERR_MSG +
+                    MODEL_TYPE_ERR_MSG + model.getClass().getName() + "\n" +
+                    FIELD_TYPE_ERR_MSG + field.getType().getName() + "\n" +
+                    FIELD_NAME_ERR_MSG + field.getName() + "\n" +
+                    ERROR_CAUSE_ERR_MSG + e.getMessage().trim() + "\n", e);
+        }
+        if (additionalProperties == null) {
+            return new HashMap<>();
+        }
+        return additionalProperties.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue() == null ? "" : e.getValue()));
     }
 
     /**
@@ -702,6 +728,7 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
      * @throws IllegalArgumentException if the value cannot be converted to {@link Boolean} type
      * @throws NumberFormatException    if the value cannot be converted to number types
      */
+    @SuppressWarnings(SONAR_COGNITIVE_COMPLEXITY)
     protected Object convertUrlDecodedStringValueToType(final String value, final Type targetType) {
         Utils.parameterRequireNonNull(value, VALUE_PARAMETER);
         Utils.parameterRequireNonNull(targetType, TARGET_TYPE_PARAMETER);
@@ -711,7 +738,8 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         }
         if (targetType.equals(String.class) || targetType.equals(Object.class)) {
             return value;
-        } else if (targetType.equals(Boolean.class)) {
+        }
+        if (targetType.equals(Boolean.class)) {
             if ("true".equals(value)) {
                 return true;
             }
@@ -719,23 +747,29 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
                 return false;
             }
             throw new IllegalArgumentException("Cannot convert string to boolean: '" + value + "'");
-        } else if (targetType.equals(Short.class)) {
-            return Short.valueOf(value);
-        } else if (targetType.equals(Long.class)) {
-            return Long.valueOf(value);
-        } else if (targetType.equals(Float.class)) {
-            return Float.valueOf(value);
-        } else if (targetType.equals(Integer.class)) {
-            return Integer.valueOf(value);
-        } else if (targetType.equals(Double.class)) {
-            return Double.valueOf(value);
-        } else if (targetType.equals(BigInteger.class)) {
-            return NumberUtils.createBigInteger(value);
-        } else if (targetType.equals(BigDecimal.class)) {
-            return NumberUtils.createBigDecimal(value);
-        } else {
-            throw new IllegalArgumentException(CONVERSION_UNSUPPORTED_TYPE_ERR_MSG + targetType);
         }
+        if (targetType.equals(Short.class)) {
+            return Short.valueOf(value);
+        }
+        if (targetType.equals(Long.class)) {
+            return Long.valueOf(value);
+        }
+        if (targetType.equals(Float.class)) {
+            return Float.valueOf(value);
+        }
+        if (targetType.equals(Integer.class)) {
+            return Integer.valueOf(value);
+        }
+        if (targetType.equals(Double.class)) {
+            return Double.valueOf(value);
+        }
+        if (targetType.equals(BigInteger.class)) {
+            return NumberUtils.createBigInteger(value);
+        }
+        if (targetType.equals(BigDecimal.class)) {
+            return NumberUtils.createBigDecimal(value);
+        }
+        throw new IllegalArgumentException(CONVERSION_UNSUPPORTED_TYPE_ERR_MSG + targetType);
     }
 
     /**
@@ -887,9 +921,9 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
         }
         final String prepared;
         if (urlEncodedString.startsWith("?")) {
-            prepared = urlEncodedString.substring(1).replaceAll("\n", "").replaceAll("\r", "");
+            prepared = urlEncodedString.substring(1).trim();
         } else {
-            prepared = urlEncodedString.replaceAll("\n", "").replaceAll("\r", "");
+            prepared = urlEncodedString.trim();
         }
         final String[] pairs = prepared.split("&");
         for (String pair : pairs) {
@@ -900,12 +934,12 @@ public class FormUrlEncodedMapper implements IFormUrlEncodedMapper {
             if (split.length > 2 || split.length == 0) {
                 throw new FormUrlEncodedMapperException("URL encoded string not in URL format:\n" + urlEncodedString);
             }
-            final String key = split[0].replaceAll("\\[.*]", "");
+            final String key = split[0].replaceAll("\\[.*]", "").trim();
             final String urlEncodedValue;
             if (split.length == 1) {
                 urlEncodedValue = "";
             } else {
-                urlEncodedValue = split[1];
+                urlEncodedValue = split[1].trim();
             }
             try {
                 final String urlDecodedValue = URLDecoder.decode(urlEncodedValue, codingCharset.name());

@@ -80,10 +80,8 @@ public class ParameterNameConstants {
     public static final String SUPPORTED_MODEL_ANNOTATION_PARAMETER = "supportedModelAnnotation";
     public static final String SUPPORTED_PACKAGE_NAMES_PARAMETER = "supportedPackageNames";
     public static final String SUPPORTED_PACKAGE_NAME_PARAMETER = "supportedPackageName";
-    public static final String REQUEST_INTERCEPT_ACTIONS_PARAMETER = "requestInterceptActions";
-    public static final String REQUEST_INTERCEPT_ACTION_PARAMETER = "requestInterceptAction";
-    public static final String RESPONSE_INTERCEPT_ACTIONS_PARAMETER = "responseInterceptActions";
-    public static final String RESPONSE_INTERCEPT_ACTION_PARAMETER = "responseInterceptAction";
+    public static final String ACTIONS_PARAMETER = "actions";
+    public static final String ACTION_PARAMETER = "action";
     public static final String SUPPORTED_PACKAGES_PARAMETER = "supportedPackages";
     public static final String SUPPORTED_PACKAGE_CLASSES_PARAMETER = "supportedPackageClasses";
     public static final String RETURN_TYPE_PARAMETER = "returnType";

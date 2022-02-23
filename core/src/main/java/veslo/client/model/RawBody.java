@@ -35,6 +35,8 @@ import static veslo.constant.ParameterNameConstants.*;
 @SuppressWarnings("UnusedReturnValue")
 public class RawBody {
 
+    private static final String RESPONSE_BODY_MSG = "Response body\n";
+
     private final byte[] bodyData;
 
     public RawBody() {
@@ -62,7 +64,7 @@ public class RawBody {
 
     public RawBody assertBodyIsNotNull() {
         if (isNullBody()) {
-            throw new BriefAssertionError("Response body\n" +
+            throw new BriefAssertionError(RESPONSE_BODY_MSG +
                     "Expected: is byte array\n" +
                     "     but: was " + Arrays.toString(bodyData) + "\n");
         }
@@ -71,7 +73,7 @@ public class RawBody {
 
     public RawBody assertBodyIsNull() {
         if (!isNullBody()) {
-            throw new BriefAssertionError("Response body\n" +
+            throw new BriefAssertionError(RESPONSE_BODY_MSG +
                     "Expected: is null\n" +
                     "     but: was array length '" + bodyData.length + "'\n");
         }
@@ -80,7 +82,7 @@ public class RawBody {
 
     public RawBody assertBodyIsNotEmpty() {
         if (isNullBody() || isEmptyBody()) {
-            throw new BriefAssertionError("Response body\n" +
+            throw new BriefAssertionError(RESPONSE_BODY_MSG +
                     "Expected: is not empty byte array\n" +
                     "     but: was " + Arrays.toString(bodyData) + "\n");
         }
@@ -90,7 +92,7 @@ public class RawBody {
     public RawBody assertBodyIsEmpty() {
         assertBodyIsNotNull();
         if (!isEmptyBody()) {
-            throw new BriefAssertionError("Response body\n" +
+            throw new BriefAssertionError(RESPONSE_BODY_MSG +
                     "Expected: is empty byte array\n" +
                     "     but: was array length '" + bodyData.length + "'\n");
         }
@@ -106,7 +108,7 @@ public class RawBody {
                 //noinspection ConstantConditions -> assertBodyIsNotNull()
                 if (!string().contains(expectedString)) {
                     softlyAsserter.softly(() -> {
-                        throw new BriefAssertionError("Response body\n" +
+                        throw new BriefAssertionError(RESPONSE_BODY_MSG +
                                 "Expected: contains '" + expectedString + "'\n" +
                                 "     but: does not contain\n");
                     });
@@ -125,7 +127,7 @@ public class RawBody {
                 //noinspection ConstantConditions -> assertBodyIsNotNull()
                 if (!string().toLowerCase().contains(expectedString.toLowerCase())) {
                     softlyAsserter.softly(() -> {
-                        throw new BriefAssertionError("Response body\n" +
+                        throw new BriefAssertionError(RESPONSE_BODY_MSG +
                                 "Expected: contains '" + expectedString + "' (ignore case)\n" +
                                 "     but: does not contain\n");
                     });
@@ -139,8 +141,7 @@ public class RawBody {
         Utils.parameterRequireNonNull(expected, EXPECTED_PARAMETER);
         assertBodyIsNotNull();
         if (!expected.equals(string())) {
-            throw new BriefAssertionError("" +
-                    "Response body\n" +
+            throw new BriefAssertionError(RESPONSE_BODY_MSG +
                     "Expected: '" + expected + "'\n" +
                     "     but: was '" + string() + "'\n");
         }
@@ -151,8 +152,7 @@ public class RawBody {
         Utils.parameterRequireNonNull(expected, EXPECTED_PARAMETER);
         assertBodyIsNotNull();
         if (!expected.equalsIgnoreCase(string())) {
-            throw new BriefAssertionError("" +
-                    "Response body\n" +
+            throw new BriefAssertionError(RESPONSE_BODY_MSG +
                     "Expected: '" + expected + "' (ignore case)\n" +
                     "     but: was '" + string() + "'\n");
         }

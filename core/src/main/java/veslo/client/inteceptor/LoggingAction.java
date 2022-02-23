@@ -60,7 +60,7 @@ public class LoggingAction implements InterceptAction {
     @Override
     public void errorAction(@Nonnull Throwable exception) {
         if (exception.getClass().getTypeName().startsWith("java.net.")) {
-            logger.error(exception.toString());
+            logger.error("{}", exception.toString());
         } else {
             logger.error("Transport error", exception);
         }

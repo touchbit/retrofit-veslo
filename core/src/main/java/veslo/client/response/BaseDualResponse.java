@@ -41,6 +41,7 @@ public abstract class BaseDualResponse<SUC_DTO, ERR_DTO, ASSERTER extends IRespo
     private final String endpointInfo;
     private final Annotation[] callAnnotations;
     private Logger logger = LoggerFactory.getLogger(BaseDualResponse.class);
+    private static final String WITHOUT_ERRORS_MSG = "Response check completed without errors.";
 
     /**
      * @param sucDTO          - nullable success response DTO
@@ -69,7 +70,7 @@ public abstract class BaseDualResponse<SUC_DTO, ERR_DTO, ASSERTER extends IRespo
         try (final ASSERTER responseAsserter = getResponseAsserter()) {
             respAsserter.accept(responseAsserter);
         }
-        logger.info("Response check completed without errors.");
+        logger.info(WITHOUT_ERRORS_MSG);
         return this;
     }
 
@@ -78,7 +79,7 @@ public abstract class BaseDualResponse<SUC_DTO, ERR_DTO, ASSERTER extends IRespo
         try (final ASSERTER responseAsserter = getResponseAsserter()) {
             respAsserter.accept(responseAsserter, expected);
         }
-        logger.info("Response check completed without errors.");
+        logger.info(WITHOUT_ERRORS_MSG);
         return this;
     }
 
@@ -87,7 +88,7 @@ public abstract class BaseDualResponse<SUC_DTO, ERR_DTO, ASSERTER extends IRespo
         try (final ASSERTER responseAsserter = getResponseAsserter()) {
             respAsserter.accept(responseAsserter, expected);
         }
-        logger.info("Response check completed without errors.");
+        logger.info(WITHOUT_ERRORS_MSG);
         return this;
     }
 

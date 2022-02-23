@@ -41,6 +41,9 @@ import static veslo.constant.ParameterNameConstants.RESPONSE_PARAMETER;
 @SuppressWarnings("DuplicatedCode")
 public class OkhttpUtils {
 
+    private static final String CONTENT_TYPE_KEY = "Content-Type";
+    private static final String CONTENT_LENGTH_KEY = "Content-Length";
+
     /**
      * Utility class
      */
@@ -71,7 +74,7 @@ public class OkhttpUtils {
             resultMessage.add("Headers: (absent)");
         } else {
             resultMessage.add("Headers:");
-            resultMessage.add("  " + headers.toString().trim().replaceAll("\n", "\n  "));
+            resultMessage.add("  " + headers.toString().trim());
         }
         if (!hasRequestBody) {
             resultMessage.add("Body: (absent)");
@@ -85,7 +88,7 @@ public class OkhttpUtils {
                 Charset charset = getCharset(requestBody);
                 if (isPlaintext(buffer)) {
                     resultMessage.add("Body: (" + buffer.size() + "-byte body)");
-                    resultMessage.add("  " + buffer.readString(charset).replace("\n", "\n  "));
+                    resultMessage.add("  " + buffer.readString(charset).replace("\n", "\n  ")); //NOSONAR
                 } else {
                     resultMessage.add("Body: (binary " + requestBody.contentLength() + "-byte body omitted)");
                 }
@@ -121,7 +124,7 @@ public class OkhttpUtils {
             resultMessage.add("Headers: (absent)");
         } else {
             resultMessage.add("Headers:");
-            resultMessage.add("  " + responseHeaders.toString().trim().replaceAll("\n", "\n  "));
+            resultMessage.add("  " + responseHeaders.toString().trim().replaceAll("\n", "\n  ")); //NOSONAR
         }
         if (!hasResponseBody || !HttpHeaders.hasBody(response)) {
             resultMessage.add("Body: (absent)");
@@ -167,11 +170,11 @@ public class OkhttpUtils {
         }
         final Headers.Builder builder = headers.newBuilder();
         final MediaType mediaType = body.contentType();
-        if (headers.get("Content-Type") == null && mediaType != null) {
-            builder.add("Content-Type", mediaType.toString());
+        if (headers.get(CONTENT_TYPE_KEY) == null && mediaType != null) {
+            builder.add(CONTENT_TYPE_KEY, mediaType.toString());
         }
-        if (headers.get("Content-Length") == null) {
-            builder.add("Content-Length", String.valueOf(body.contentLength()));
+        if (headers.get(CONTENT_LENGTH_KEY) == null) {
+            builder.add(CONTENT_LENGTH_KEY, String.valueOf(body.contentLength()));
         }
         return builder.build();
     }
@@ -186,11 +189,11 @@ public class OkhttpUtils {
         }
         final Headers.Builder builder = headers.newBuilder();
         final MediaType mediaType = body.contentType();
-        if (headers.get("Content-Type") == null && mediaType != null) {
-            builder.add("Content-Type", mediaType.toString());
+        if (headers.get(CONTENT_TYPE_KEY) == null && mediaType != null) {
+            builder.add(CONTENT_TYPE_KEY, mediaType.toString());
         }
-        if (headers.get("Content-Length") == null) {
-            builder.add("Content-Length", String.valueOf(body.contentLength()));
+        if (headers.get(CONTENT_LENGTH_KEY) == null) {
+            builder.add(CONTENT_LENGTH_KEY, String.valueOf(body.contentLength()));
         }
         return builder.build();
     }

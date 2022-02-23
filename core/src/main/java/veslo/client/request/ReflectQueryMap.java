@@ -46,14 +46,12 @@ public abstract class ReflectQueryMap extends HashMap<String, Object> {
     @SuppressWarnings("ConstantConditions")
     public Set<Entry<String, Object>> entrySet() {
         for (Field declaredField : this.getClass().getDeclaredFields()) {
-            // ignore fields types implements ReflectQueryMap (protection from StackOverflowError)
-            if (ReflectQueryMap.class.isAssignableFrom(declaredField.getType())) {
-                continue;
-            }
             final QueryMapParameterRules classRules = this.getClass().getAnnotation(QueryMapParameterRules.class);
             final QueryMapParameter queryMapParameter = declaredField.getAnnotation(QueryMapParameter.class);
             final String declaredFieldName = declaredField.getName();
-            if (declaredFieldName.contains("jacocoData")) {
+            // ignore jacocoData fields and types implements ReflectQueryMap (protection from StackOverflowError)
+            if (ReflectQueryMap.class.isAssignableFrom(declaredField.getType()) ||
+                    declaredFieldName.contains("jacocoData")) {
                 continue;
             }
             final Object declaredFieldValue = readField(declaredField.getName());

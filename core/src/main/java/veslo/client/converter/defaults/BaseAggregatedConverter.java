@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static veslo.constant.ParameterNameConstants.*;
+import static veslo.constant.SonarRuleConstants.SONAR_GENERIC_WILDCARD_TYPES;
 
 /**
  * Base default converter
@@ -44,7 +45,7 @@ import static veslo.constant.ParameterNameConstants.*;
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 15.12.2021
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes", SONAR_GENERIC_WILDCARD_TYPES})
 public abstract class BaseAggregatedConverter implements ExtensionConverter {
 
     private final Map<ExtensionConverter<?>, Set<Type>> defaultConverters = new HashMap<>();
