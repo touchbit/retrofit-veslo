@@ -1,6 +1,8 @@
 Change Log
 ==========
 
+* **New** `FormUrlEncodedMapper` to serialize/deserialize data in 'form-urlencoded' format (RFC-3986)
+* **New** Register converter for wildcard package name
 * **New** Register converter for annotated models (`ExtensionConverterFactory`)
 * **New** Reading and modifying template text files through a helper class (`TemplateMapper`)
 * **Change** `ResourceFile` - added charset support

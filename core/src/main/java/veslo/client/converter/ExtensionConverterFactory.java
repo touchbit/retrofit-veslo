@@ -52,6 +52,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.io.FilenameUtils.wildcardMatch;
 import static veslo.client.TransportEvent.REQUEST;
 import static veslo.client.TransportEvent.RESPONSE;
 import static veslo.client.converter.api.ExtensionConverter.RequestBodyConverter;
@@ -343,7 +344,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     }
 
     /**
-     * Get {@link RequestBodyConverter} by bodyClass package
+     * Get {@link RequestBodyConverter} by bodyClass package (wildcard match)
      *
      * @param bodyClass            - request method body class.
      * @param parameterAnnotations - API client called method parameters annotations
@@ -364,7 +365,11 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
         if (aPackage == null) {
             return null;
         }
-        final ExtensionConverter<?> converter = getPackageRequestConverters().get(aPackage.getName());
+        final ExtensionConverter<?> converter = getPackageRequestConverters()
+                .entrySet().stream().filter(e -> wildcardMatch(aPackage.getName(), e.getKey()))
+                .findFirst()
+                .map(Map.Entry::getValue)
+                .orElse(null);
         return converter == null ? null :
                 converter.requestBodyConverter(bodyClass, parameterAnnotations, methodAnnotations, retrofit);
     }
@@ -483,7 +488,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     }
 
     /**
-     * Get {@link ResponseBodyConverter} from bodyClass package
+     * Get {@link ResponseBodyConverter} from bodyClass package (wildcard match)
      *
      * @param bodyType          - response body type.
      * @param methodAnnotations - API client called method annotations
@@ -515,7 +520,11 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
                 return null;
             }
             final String modelPackage = bodyClass.getPackage().getName();
-            final ExtensionConverter<?> extensionConverter = getPackageResponseConverters().get(modelPackage);
+            final ExtensionConverter<?> extensionConverter = getPackageRequestConverters()
+                    .entrySet().stream().filter(e -> wildcardMatch(modelPackage, e.getKey()))
+                    .findFirst()
+                    .map(Map.Entry::getValue)
+                    .orElse(null);
             if (extensionConverter == null) {
                 return null;
             }
@@ -693,7 +702,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      */
     @EverythingIsNonNull
     public void registerMimeConverter(ExtensionConverter<?> converter, ContentType... supportedContentTypes) {
-        Utils.parameterRequireNonNull(converter,  CONVERTER_PARAMETER);
+        Utils.parameterRequireNonNull(converter, CONVERTER_PARAMETER);
         Utils.parameterRequireNonNull(supportedContentTypes, SUPPORTED_CONTENT_TYPES_PARAMETER);
         registerMimeRequestConverter(converter, supportedContentTypes);
         registerMimeResponseConverter(converter, supportedContentTypes);
@@ -715,7 +724,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      */
     @EverythingIsNonNull
     public void registerMimeRequestConverter(ExtensionConverter<?> converter, ContentType... supportedContentTypes) {
-        Utils.parameterRequireNonNull(converter,  CONVERTER_PARAMETER);
+        Utils.parameterRequireNonNull(converter, CONVERTER_PARAMETER);
         Utils.parameterRequireNonNull(supportedContentTypes, SUPPORTED_CONTENT_TYPES_PARAMETER);
         for (ContentType supportedContentType : supportedContentTypes) {
             Utils.parameterRequireNonNull(supportedContentType, SUPPORTED_CONTENT_TYPE_PARAMETER);
@@ -739,7 +748,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      */
     @EverythingIsNonNull
     public void registerMimeResponseConverter(ExtensionConverter<?> converter, ContentType... supportedContentTypes) {
-        Utils.parameterRequireNonNull(converter,  CONVERTER_PARAMETER);
+        Utils.parameterRequireNonNull(converter, CONVERTER_PARAMETER);
         Utils.parameterRequireNonNull(supportedContentTypes, SUPPORTED_CONTENT_TYPES_PARAMETER);
         for (ContentType supportedContentType : supportedContentTypes) {
             Utils.parameterRequireNonNull(supportedContentType, SUPPORTED_CONTENT_TYPE_PARAMETER);
@@ -755,7 +764,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      */
     @EverythingIsNonNull
     public void registerRawConverter(ExtensionConverter<?> converter, Type... supportedRawClasses) {
-        Utils.parameterRequireNonNull(converter,  CONVERTER_PARAMETER);
+        Utils.parameterRequireNonNull(converter, CONVERTER_PARAMETER);
         Utils.parameterRequireNonNull(supportedRawClasses, SUPPORTED_RAW_CLASSES_PARAMETER);
         registerRawRequestConverter(converter, supportedRawClasses);
         registerRawResponseConverter(converter, supportedRawClasses);
@@ -777,7 +786,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      */
     @EverythingIsNonNull
     public void registerRawRequestConverter(ExtensionConverter<?> converter, Type... supportedRawClasses) {
-        Utils.parameterRequireNonNull(converter,  CONVERTER_PARAMETER);
+        Utils.parameterRequireNonNull(converter, CONVERTER_PARAMETER);
         Utils.parameterRequireNonNull(supportedRawClasses, SUPPORTED_RAW_CLASSES_PARAMETER);
         for (Type supportedRawClass : supportedRawClasses) {
             Utils.parameterRequireNonNull(supportedRawClass, SUPPORTED_RAW_CLASS_PARAMETER);
@@ -801,7 +810,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      */
     @EverythingIsNonNull
     public void registerRawResponseConverter(ExtensionConverter<?> converter, Type... supportedRawClasses) {
-        Utils.parameterRequireNonNull(converter,  CONVERTER_PARAMETER);
+        Utils.parameterRequireNonNull(converter, CONVERTER_PARAMETER);
         Utils.parameterRequireNonNull(supportedRawClasses, SUPPORTED_RAW_CLASSES_PARAMETER);
         for (Type supportedRawClass : supportedRawClasses) {
             Utils.parameterRequireNonNull(supportedRawClass, SUPPORTED_RAW_CLASS_PARAMETER);
@@ -817,7 +826,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      */
     @EverythingIsNonNull
     public void registerJavaTypeConverter(ExtensionConverter<?> converter, Type... supportedJavaTypeClasses) {
-        Utils.parameterRequireNonNull(converter,  CONVERTER_PARAMETER);
+        Utils.parameterRequireNonNull(converter, CONVERTER_PARAMETER);
         Utils.parameterRequireNonNull(supportedJavaTypeClasses, SUPPORTED_JAVA_TYPE_CLASSES_PARAMETER);
         registerJavaTypeRequestConverter(converter, supportedJavaTypeClasses);
         registerJavaTypeResponseConverter(converter, supportedJavaTypeClasses);
@@ -839,7 +848,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      */
     @EverythingIsNonNull
     public void registerJavaTypeRequestConverter(ExtensionConverter<?> converter, Type... supportedJavaTypeClasses) {
-        Utils.parameterRequireNonNull(converter,  CONVERTER_PARAMETER);
+        Utils.parameterRequireNonNull(converter, CONVERTER_PARAMETER);
         Utils.parameterRequireNonNull(supportedJavaTypeClasses, SUPPORTED_JAVA_TYPE_CLASSES_PARAMETER);
         for (Type supportedJavaTypeClass : supportedJavaTypeClasses) {
             Utils.parameterRequireNonNull(supportedJavaTypeClass, SUPPORTED_JAVA_TYPE_CLASS_PARAMETER);
@@ -863,7 +872,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
      */
     @EverythingIsNonNull
     public void registerJavaTypeResponseConverter(ExtensionConverter<?> converter, Type... supportedJavaTypeClasses) {
-        Utils.parameterRequireNonNull(converter,  CONVERTER_PARAMETER);
+        Utils.parameterRequireNonNull(converter, CONVERTER_PARAMETER);
         Utils.parameterRequireNonNull(supportedJavaTypeClasses, SUPPORTED_JAVA_TYPE_CLASSES_PARAMETER);
         for (Type supportedJavaTypeClass : supportedJavaTypeClasses) {
             Utils.parameterRequireNonNull(supportedJavaTypeClass, SUPPORTED_JAVA_TYPE_CLASS_PARAMETER);
@@ -880,7 +889,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     @EverythingIsNonNull
     public void registerModelAnnotationConverter(final ExtensionConverter<?> converter,
                                                  final Class<? extends Annotation> supportedModelAnnotation) {
-        Utils.parameterRequireNonNull(converter,  CONVERTER_PARAMETER);
+        Utils.parameterRequireNonNull(converter, CONVERTER_PARAMETER);
         Utils.parameterRequireNonNull(supportedModelAnnotation, SUPPORTED_MODEL_ANNOTATION_PARAMETER);
         registerModelAnnotationRequestConverter(converter, supportedModelAnnotation);
         registerModelAnnotationResponseConverter(converter, supportedModelAnnotation);
@@ -903,7 +912,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     @EverythingIsNonNull
     public void registerModelAnnotationRequestConverter(final ExtensionConverter<?> converter,
                                                         final Class<? extends Annotation> supportedModelAnnotation) {
-        Utils.parameterRequireNonNull(converter,  CONVERTER_PARAMETER);
+        Utils.parameterRequireNonNull(converter, CONVERTER_PARAMETER);
         Utils.parameterRequireNonNull(supportedModelAnnotation, SUPPORTED_MODEL_ANNOTATION_PARAMETER);
         getModelAnnotationRequestConverters().put(supportedModelAnnotation, converter);
     }
@@ -925,21 +934,21 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     @EverythingIsNonNull
     public void registerModelAnnotationResponseConverter(final ExtensionConverter<?> converter,
                                                          final Class<? extends Annotation> supportedModelAnnotation) {
-        Utils.parameterRequireNonNull(converter,  CONVERTER_PARAMETER);
+        Utils.parameterRequireNonNull(converter, CONVERTER_PARAMETER);
         Utils.parameterRequireNonNull(supportedModelAnnotation, SUPPORTED_MODEL_ANNOTATION_PARAMETER);
         getModelAnnotationResponseConverters().put(supportedModelAnnotation, converter);
     }
 
     /**
-     * Add converter for specified package names
+     * Add converter for specified package names (wildcard)
      *
      * @param converter             - Converter implementing interface {@link ExtensionConverter}
-     * @param supportedPackageNames - array list of package names supported by the {@link ExtensionConverter}
+     * @param supportedPackageNames - array list of package wildcard names supported by the {@link ExtensionConverter}
      */
     @EverythingIsNonNull
     public void registerPackageConverter(final ExtensionConverter<?> converter,
                                          final String... supportedPackageNames) {
-        Utils.parameterRequireNonNull(converter,  CONVERTER_PARAMETER);
+        Utils.parameterRequireNonNull(converter, CONVERTER_PARAMETER);
         Utils.parameterRequireNonNull(supportedPackageNames, SUPPORTED_PACKAGE_NAMES_PARAMETER);
         registerPackageRequestConverter(converter, supportedPackageNames);
         registerPackageResponseConverter(converter, supportedPackageNames);
@@ -954,7 +963,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     @EverythingIsNonNull
     public void registerPackageConverter(final ExtensionConverter<?> converter,
                                          final Package... supportedPackages) {
-        Utils.parameterRequireNonNull(converter,  CONVERTER_PARAMETER);
+        Utils.parameterRequireNonNull(converter, CONVERTER_PARAMETER);
         Utils.parameterRequireNonNull(supportedPackages, SUPPORTED_PACKAGES_PARAMETER);
         final String[] packageNames = Arrays.stream(supportedPackages)
                 .filter(Objects::nonNull)
@@ -972,7 +981,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     @EverythingIsNonNull
     public void registerPackageConverter(final ExtensionConverter<?> converter,
                                          final Class<?>... supportedPackageClasses) {
-        Utils.parameterRequireNonNull(converter,  CONVERTER_PARAMETER);
+        Utils.parameterRequireNonNull(converter, CONVERTER_PARAMETER);
         Utils.parameterRequireNonNull(supportedPackageClasses, SUPPORTED_PACKAGE_CLASSES_PARAMETER);
         final Package[] packages = Arrays.stream(supportedPackageClasses)
                 .filter(Objects::nonNull)
@@ -990,15 +999,15 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     }
 
     /**
-     * Add converter for specified package names
+     * Add converter for specified package names (wildcard)
      *
      * @param converter             - Converter implementing interface {@link ExtensionConverter}
-     * @param supportedPackageNames - array list of package names supported by the {@link ExtensionConverter}
+     * @param supportedPackageNames - array list of package wildcard names supported by the {@link ExtensionConverter}
      */
     @EverythingIsNonNull
     public void registerPackageRequestConverter(final ExtensionConverter<?> converter,
                                                 final String... supportedPackageNames) {
-        Utils.parameterRequireNonNull(converter,  CONVERTER_PARAMETER);
+        Utils.parameterRequireNonNull(converter, CONVERTER_PARAMETER);
         Utils.parameterRequireNonNull(supportedPackageNames, SUPPORTED_PACKAGE_NAMES_PARAMETER);
         for (String supportedPackageName : supportedPackageNames) {
             Utils.parameterRequireNonNull(supportedPackageName, SUPPORTED_PACKAGE_NAME_PARAMETER);
@@ -1015,15 +1024,15 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     }
 
     /**
-     * Add converter for specified package names
+     * Add converter for specified package names (wildcard)
      *
      * @param converter             - Converter implementing interface {@link ExtensionConverter}
-     * @param supportedPackageNames - array list of package names supported by the {@link ExtensionConverter}
+     * @param supportedPackageNames - array list of package wildcard names supported by the {@link ExtensionConverter}
      */
     @EverythingIsNonNull
     public void registerPackageResponseConverter(final ExtensionConverter<?> converter,
                                                  final String... supportedPackageNames) {
-        Utils.parameterRequireNonNull(converter,  CONVERTER_PARAMETER);
+        Utils.parameterRequireNonNull(converter, CONVERTER_PARAMETER);
         Utils.parameterRequireNonNull(supportedPackageNames, SUPPORTED_PACKAGE_NAMES_PARAMETER);
         for (String supportedPackageName : supportedPackageNames) {
             Utils.parameterRequireNonNull(supportedPackageName, SUPPORTED_PACKAGE_NAME_PARAMETER);

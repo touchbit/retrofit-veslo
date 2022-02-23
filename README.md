@@ -164,7 +164,7 @@ following sequence:
 
 * by annotations: `@Converters`, `@RequestConverter`, `@ResponseConverter`;
 * by raw body types (`RawBody`, `File`, `ResourceFile`, `Byte[]`, `byte[]`);
-* by models package name (strict match);
+* by models package name (wildcard match);
 * by Content-Type header (MIME);
 * by primitive/reference java types (`Byte`, `Character`, `Double`, `Float`, `Integer`, `Long`, `Short`, `String`);
 
@@ -182,7 +182,7 @@ public class CustomConverterFactory extends ExtensionConverterFactory {
         registerJavaTypeConverter(jacksonConverter, Map.class, List.class);
         // use custom converter for custom model
         registerRawConverter(new CustomConverter<>(), CustomBody.class);
-        // use GsonConverter for any models in the package "com.example.model.gson" (strict match)
+        // use GsonConverter for any models in the package "com.example.model.gson" (wildcard match)
         registerPackageConverter(new GsonConverter(), "com.example.model.gson");
     }
 
