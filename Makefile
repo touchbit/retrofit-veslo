@@ -38,4 +38,4 @@ upv:
 
 ver:
 	mvn versions:set -DnewVersion=${VERSION}
-	mvn install
+	mvn clean install

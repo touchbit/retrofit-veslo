@@ -7,11 +7,11 @@
     <parent>
         <groupId>org.touchbit.retrofit.veslo</groupId>
         <artifactId>parent-pom</artifactId>
-        <version>1.0.1</version>
+        <version>1.1.0</version>
     </parent>
 
     <artifactId>allure</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
     <name>Veslo Allure Module</name>
     <description>The module allows you to integrate with the allure framework to add steps on call events and when validating a server response. It also allows you to add request/response attachments to steps.</description>

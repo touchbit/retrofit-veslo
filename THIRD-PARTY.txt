@@ -1,8 +1,9 @@
 
-Lists of 25 third-party dependencies.
+Lists of 26 third-party dependencies.
      (Apache License, Version 2.0) allure-java-commons (io.qameta.allure:allure-java-commons:2.17.2 - https://github.com/allure-framework/allure-java)
      (Apache License, Version 2.0) allure-model (io.qameta.allure:allure-model:2.17.2 - https://github.com/allure-framework/allure-java)
      (Apache License, Version 2.0) allure-test-filter (io.qameta.allure:allure-test-filter:2.17.2 - https://github.com/allure-framework/allure-java)
+     (Apache License, Version 2.0) Apache Commons IO (commons-io:commons-io:2.11.0 - https://commons.apache.org/proper/commons-io/)
      (Apache License, Version 2.0) Apache Commons Lang (org.apache.commons:commons-lang3:3.12.0 - https://commons.apache.org/proper/commons-lang/)
      (Apache License, Version 2.0) ClassMate (com.fasterxml:classmate:1.5.1 - https://github.com/FasterXML/java-classmate)
      (Apache License, Version 2.0) FindBugs-jsr305 (com.google.code.findbugs:jsr305:3.0.2 - http://findbugs.sourceforge.net/)
@@ -19,9 +20,9 @@ Lists of 25 third-party dependencies.
      (Apache License, Version 2.0) Okio (com.squareup.okio:okio:1.17.2 - https://github.com/square/okio/okio)
      (Apache License, Version 2.0) Retrofit (com.squareup.retrofit2:retrofit:2.9.0 - https://github.com/square/retrofit)
      (MIT License) SLF4J API Module (org.slf4j:slf4j-api:1.7.25 - http://www.slf4j.org)
-     (Apache License, Version 2.0) Veslo all modules in one (org.touchbit.retrofit.veslo:all:1.0.1 - https://github.com/touchbit/retrofit-veslo)
-     (Apache License, Version 2.0) Veslo Allure Module (org.touchbit.retrofit.veslo:allure:1.0.1 - https://github.com/touchbit/retrofit-veslo)
-     (Apache License, Version 2.0) Veslo Bean Validation Module (org.touchbit.retrofit.veslo:bean:1.0.1 - https://github.com/touchbit/retrofit-veslo)
-     (Apache License, Version 2.0) Veslo Core Module (org.touchbit.retrofit.veslo:core:1.0.1 - https://github.com/touchbit/retrofit-veslo)
-     (Apache License, Version 2.0) Veslo Gson Module (org.touchbit.retrofit.veslo:gson:1.0.1 - https://github.com/touchbit/retrofit-veslo)
-     (Apache License, Version 2.0) Veslo Jackson2 Module (org.touchbit.retrofit.veslo:jackson:1.0.1 - https://github.com/touchbit/retrofit-veslo)
+     (Apache License, Version 2.0) Veslo all modules in one (org.touchbit.retrofit.veslo:all:1.1.0 - https://github.com/touchbit/retrofit-veslo)
+     (Apache License, Version 2.0) Veslo Allure Module (org.touchbit.retrofit.veslo:allure:1.1.0 - https://github.com/touchbit/retrofit-veslo)
+     (Apache License, Version 2.0) Veslo Bean Validation Module (org.touchbit.retrofit.veslo:bean:1.1.0 - https://github.com/touchbit/retrofit-veslo)
+     (Apache License, Version 2.0) Veslo Core Module (org.touchbit.retrofit.veslo:core:1.1.0 - https://github.com/touchbit/retrofit-veslo)
+     (Apache License, Version 2.0) Veslo Gson Module (org.touchbit.retrofit.veslo:gson:1.1.0 - https://github.com/touchbit/retrofit-veslo)
+     (Apache License, Version 2.0) Veslo Jackson2 Module (org.touchbit.retrofit.veslo:jackson:1.1.0 - https://github.com/touchbit/retrofit-veslo)

@@ -531,7 +531,7 @@ public class GsonConverterFactoryClientFuncTests extends BaseFuncTest {
             assertThrow(() -> CLIENT.returnCharacter(OK, EMPTY_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("\nResponse body not convertible to type class java.lang.Character\n" +
-                            "Expecting character, got: ");
+                            "Expecting character, got: ; at $");
         }
 
         @Test
@@ -540,7 +540,7 @@ public class GsonConverterFactoryClientFuncTests extends BaseFuncTest {
             assertThrow(() -> CLIENT.returnCharacter(OK, BLANK_STRING))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("\nResponse body not convertible to type class java.lang.Character\n" +
-                            "Expecting character, got:     ");
+                            "Expecting character, got:     ; at $");
         }
 
         @Test

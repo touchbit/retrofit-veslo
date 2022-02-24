@@ -7,11 +7,11 @@
     <parent>
         <groupId>org.touchbit.retrofit.veslo</groupId>
         <artifactId>parent-pom</artifactId>
-        <version>1.0.1</version>
+        <version>1.1.0</version>
     </parent>
 
     <artifactId>internal-test-module</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
 
     <properties>

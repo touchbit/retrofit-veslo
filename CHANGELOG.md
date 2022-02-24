@@ -1,11 +1,16 @@
 Change Log
 ==========
 
+## Version 1.1.0
+
 * **New** `FormUrlEncodedMapper` to serialize/deserialize data in 'form-urlencoded' format (RFC-3986)
 * **New** Register converter for wildcard package name
 * **New** Register converter for annotated models (`ExtensionConverterFactory`)
 * **New** Reading and modifying template text files through a helper class (`TemplateMapper`)
+* **Change** `ExtensionConverterFactory` - fluent API for converter registration methods
 * **Change** `ResourceFile` - added charset support
+* **Update** up `allure-java-commons` version from 2.17.2 to 2.17.3
+* **Update** up `gson` version from 2.8.9 to 2.9.0
 
 ## Version 1.0.1
 
