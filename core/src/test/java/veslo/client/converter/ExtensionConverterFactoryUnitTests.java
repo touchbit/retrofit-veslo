@@ -608,8 +608,8 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("return converter for registered nullable body (content type not present)")
         public void test1639972946035() {
-            final TestsExtensionConverterFactory testFactory = getTestFactory();
-            testFactory.registerMimeConverter(TestConverter.INSTANCE, new ContentType(null));
+            final ExtensionConverterFactory testFactory = getTestFactory()
+                    .registerMimeConverter(TestConverter.INSTANCE, new ContentType(null));
             assertThat(testFactory.getMimeResponseConverter(null, OBJ_C, AA, RTF), notNullValue());
         }
 
@@ -655,8 +655,8 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("return converter for registered raw type")
         public void test1639973828920() {
-            final TestsExtensionConverterFactory testFactory = getTestFactory();
-            testFactory.registerJavaTypeConverter(TestConverter.INSTANCE, List.class);
+            final ExtensionConverterFactory testFactory = getTestFactory()
+                    .registerJavaTypeConverter(TestConverter.INSTANCE, List.class);
             assertThat(testFactory.getJavaTypeResponseConverter(List.class, AA, RTF), notNullValue());
         }
 
@@ -915,9 +915,9 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Register request MIME converter")
         public void test1639974577039() {
-            final TestsExtensionConverterFactory testFactory = getTestFactory();
             final ContentType contentType = new ContentType("foo", "bar");
-            testFactory.registerMimeRequestConverter(TestConverter.INSTANCE, contentType);
+            final ExtensionConverterFactory testFactory = getTestFactory()
+                    .registerMimeRequestConverter(TestConverter.INSTANCE, contentType);
             assertThat(testFactory.getMimeRequestConverters().get(contentType), notNullValue());
             assertThat(testFactory.getMimeResponseConverters().get(contentType), nullValue());
         }
@@ -939,9 +939,9 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Register response MIME converter")
         public void test1639975000187() {
-            final TestsExtensionConverterFactory testFactory = getTestFactory();
             final ContentType contentType = new ContentType("foo", "bar");
-            testFactory.registerMimeResponseConverter(TestConverter.INSTANCE, contentType);
+            final ExtensionConverterFactory testFactory = getTestFactory()
+                    .registerMimeResponseConverter(TestConverter.INSTANCE, contentType);
             assertThat(testFactory.getMimeRequestConverters().get(contentType), nullValue());
             assertThat(testFactory.getMimeResponseConverters().get(contentType), notNullValue());
         }
@@ -962,8 +962,8 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Register request/response MIME converter")
         public void test1639975089092() {
-            final TestsExtensionConverterFactory testFactory = getTestFactory();
-            testFactory.registerRawConverter(TestConverter.INSTANCE, Object.class);
+            final ExtensionConverterFactory testFactory = getTestFactory()
+                    .registerRawConverter(TestConverter.INSTANCE, Object.class);
             assertThat(testFactory.getRawRequestConverters().get(Object.class), notNullValue());
             assertThat(testFactory.getRawResponseConverters().get(Object.class), notNullValue());
         }
@@ -985,8 +985,8 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Register request raw type converter")
         public void test1639975221236() {
-            final TestsExtensionConverterFactory testFactory = getTestFactory();
-            testFactory.registerRawRequestConverter(TestConverter.INSTANCE, OBJ_C);
+            final ExtensionConverterFactory testFactory = getTestFactory()
+                    .registerRawRequestConverter(TestConverter.INSTANCE, OBJ_C);
             assertThat(testFactory.getRawRequestConverters().get(OBJ_C), notNullValue());
             assertThat(testFactory.getRawResponseConverters().get(OBJ_C), nullValue());
         }
@@ -1008,8 +1008,8 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Register response raw type converter")
         public void test1639975215407() {
-            final TestsExtensionConverterFactory testFactory = getTestFactory();
-            testFactory.registerRawResponseConverter(TestConverter.INSTANCE, OBJ_C);
+            final ExtensionConverterFactory testFactory = getTestFactory()
+                    .registerRawResponseConverter(TestConverter.INSTANCE, OBJ_C);
             assertThat(testFactory.getRawRequestConverters().get(OBJ_C), nullValue());
             assertThat(testFactory.getRawResponseConverters().get(OBJ_C), notNullValue());
         }
@@ -1053,8 +1053,8 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Register request java type type converter")
         public void test1639975538977() {
-            final TestsExtensionConverterFactory testFactory = getTestFactory();
-            testFactory.registerJavaTypeRequestConverter(TestConverter.INSTANCE, OBJ_C);
+            final ExtensionConverterFactory testFactory = getTestFactory()
+                    .registerJavaTypeRequestConverter(TestConverter.INSTANCE, OBJ_C);
             assertThat(testFactory.getJavaTypeRequestConverters().get(OBJ_C), notNullValue());
             assertThat(testFactory.getJavaTypeResponseConverters().get(OBJ_C), nullValue());
         }
@@ -1076,8 +1076,8 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Register response java type converter")
         public void test1639975637486() {
-            final TestsExtensionConverterFactory testFactory = getTestFactory();
-            testFactory.registerJavaTypeResponseConverter(TestConverter.INSTANCE, OBJ_C);
+            final ExtensionConverterFactory testFactory = getTestFactory()
+                    .registerJavaTypeResponseConverter(TestConverter.INSTANCE, OBJ_C);
             assertThat(testFactory.getJavaTypeRequestConverters().get(OBJ_C), nullValue());
             assertThat(testFactory.getJavaTypeResponseConverters().get(OBJ_C), notNullValue());
         }
@@ -1098,9 +1098,9 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Register request/response package converter for package name")
         public void test1640471562938() {
-            final TestsExtensionConverterFactory testFactory = getTestFactory();
             final String packageName = OBJ_C.getPackage().getName();
-            testFactory.registerPackageConverter(TestConverter.INSTANCE, packageName);
+            final ExtensionConverterFactory testFactory = getTestFactory()
+                    .registerPackageConverter(TestConverter.INSTANCE, packageName);
             assertThat(testFactory.getPackageRequestConverters().get(packageName), notNullValue());
             assertThat(testFactory.getPackageResponseConverters().get(packageName), notNullValue());
         }
@@ -1108,8 +1108,8 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Register request/response package converter for package")
         public void test1640471571997() {
-            final TestsExtensionConverterFactory testFactory = getTestFactory();
-            testFactory.registerPackageConverter(TestConverter.INSTANCE, OBJ_C.getPackage());
+            final ExtensionConverterFactory testFactory = getTestFactory()
+                    .registerPackageConverter(TestConverter.INSTANCE, OBJ_C.getPackage());
             final String packageName = OBJ_C.getPackage().getName();
             assertThat(testFactory.getPackageRequestConverters().get(packageName), notNullValue());
             assertThat(testFactory.getPackageResponseConverters().get(packageName), notNullValue());
@@ -1118,9 +1118,9 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Register request/response package converter for class package")
         public void test1640471575450() {
-            final TestsExtensionConverterFactory testFactory = getTestFactory();
             final String packageName = OBJ_C.getPackage().getName();
-            testFactory.registerPackageConverter(TestConverter.INSTANCE, OBJ_C);
+            final ExtensionConverterFactory testFactory = getTestFactory()
+                    .registerPackageConverter(TestConverter.INSTANCE, OBJ_C);
             assertThat(testFactory.getPackageRequestConverters().get(packageName), notNullValue());
             assertThat(testFactory.getPackageResponseConverters().get(packageName), notNullValue());
         }
@@ -1142,9 +1142,9 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Register request package converter")
         public void test1639978160350() {
-            final TestsExtensionConverterFactory testFactory = getTestFactory();
             final String name = OBJ_C.getPackage().getName();
-            testFactory.registerPackageRequestConverter(TestConverter.INSTANCE, name);
+            final ExtensionConverterFactory testFactory = getTestFactory()
+                    .registerPackageRequestConverter(TestConverter.INSTANCE, name);
             assertThat(testFactory.getPackageRequestConverters().get(name), notNullValue());
             assertThat(testFactory.getPackageResponseConverters().get(name), nullValue());
         }
@@ -1166,9 +1166,9 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Register response package converter")
         public void test1640471548754() {
-            final TestsExtensionConverterFactory testFactory = getTestFactory();
             final String name = OBJ_C.getPackage().getName();
-            testFactory.registerPackageResponseConverter(TestConverter.INSTANCE, name);
+            final ExtensionConverterFactory testFactory = getTestFactory()
+                    .registerPackageResponseConverter(TestConverter.INSTANCE, name);
             assertThat(testFactory.getPackageRequestConverters().get(name), nullValue());
             assertThat(testFactory.getPackageResponseConverters().get(name), notNullValue());
         }

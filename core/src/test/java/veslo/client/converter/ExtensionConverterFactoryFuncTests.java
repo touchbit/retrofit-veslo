@@ -184,8 +184,8 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
         @Test
         @DisplayName("Successfully converting annotated model")
         public void test1645044663567() throws IOException {
-            final TestsExtensionConverterFactory factory = new TestsExtensionConverterFactory();
-            factory.registerModelAnnotationConverter(TestToStringConverter.INSTANCE, ModelAnnotation.class);
+            final ExtensionConverterFactory factory = new TestsExtensionConverterFactory()
+                    .registerModelAnnotationConverter(TestToStringConverter.INSTANCE, ModelAnnotation.class);
             final RequestBody dto = factory.requestBodyConverter(Model.class, arrayOf(), arrayOf(), RTF)
                     .convert(new Model());
             assertThat("RequestBody", dto, notNullValue());
@@ -356,6 +356,53 @@ public class ExtensionConverterFactoryFuncTests extends BaseCoreUnitTest {
             final Object dto = factory.responseBodyConverter(Model.class, arrayOf(), RTF)
                     .convert(ResponseBody.create(null, ""));
             assertThat("PackDTO", dto, is(Model.class.toString()));
+        }
+
+    }
+
+    @Nested
+    @DisplayName("#registerModelAnnotationRequestConverter() method tests")
+    public class RegisterModelAnnotationRequestConverterMethodTests {
+
+        @Test
+        @DisplayName("Required parameters")
+        public void test1645680557010() {
+            assertNPE(() -> getTestFactory().registerModelAnnotationRequestConverter(null, ModelAnnotation.class), "converter");
+            assertNPE(() -> getTestFactory().registerModelAnnotationRequestConverter(TestToStringConverter.INSTANCE, null), "supportedModelAnnotation");
+        }
+
+        @Test
+        @DisplayName("registerModelAnnotationRequestConverter")
+        public void test1645680562719() throws IOException {
+            final ExtensionConverterFactory factory = new TestsExtensionConverterFactory()
+                    .registerModelAnnotationRequestConverter(TestToStringConverter.INSTANCE, ModelAnnotation.class);
+            final RequestBody requestBody = factory.requestBodyConverter(Model.class, AA, AA, RTF)
+                    .convert(new Model());
+            final String requestBodyString = requestBodyToString(requestBody);
+            assertThat("Model", requestBodyString, is(Model.class.getName()));
+        }
+
+    }
+
+    @Nested
+    @DisplayName("#registerModelAnnotationResponseConverter() method tests")
+    public class RegisterModelAnnotationResponseConverterMethodTests {
+
+        @Test
+        @DisplayName("Required parameters")
+        public void test1645680651400() {
+            assertNPE(() -> getTestFactory().registerModelAnnotationResponseConverter(null, ModelAnnotation.class), "converter");
+            assertNPE(() -> getTestFactory().registerModelAnnotationResponseConverter(TestToStringConverter.INSTANCE, null), "supportedModelAnnotation");
+        }
+
+        @Test
+        @DisplayName("registerModelAnnotationResponseConverter")
+        public void test1645680655388() throws IOException {
+            final ExtensionConverterFactory factory = new TestsExtensionConverterFactory()
+                    .registerModelAnnotationResponseConverter(TestToStringConverter.INSTANCE, ModelAnnotation.class);
+            final Object dto = factory.responseBodyConverter(Model.class, arrayOf(), RTF)
+                    .convert(ResponseBody.create(null, ""));
+            assertThat("Model", dto, is(Model.class.toString()));
         }
 
     }
