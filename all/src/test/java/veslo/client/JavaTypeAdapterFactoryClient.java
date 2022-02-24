@@ -16,6 +16,7 @@
 
 package veslo.client;
 
+import okhttp3.Response;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
@@ -45,6 +46,10 @@ public interface JavaTypeAdapterFactoryClient {
     @POST("/api/mock/ResourceFile")
     @Headers("Content-Type: text/plain")
     ResourceFile returnResourceFileReferenceType(@Query("status") int status, @Body Object responseBody);
+
+    @POST("/api/mock/ResourceFile")
+    @Headers("Content-Type: text/plain")
+    Response returnRawResponseType(@Query("status") int status, @Body Object responseBody);
 
     // Reference types
 

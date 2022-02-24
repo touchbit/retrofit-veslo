@@ -17,6 +17,7 @@
 package veslo;
 
 import internal.test.utils.asserter.ThrowableRunnable;
+import okhttp3.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,10 +29,10 @@ import veslo.client.model.RawBody;
 import veslo.client.model.ResourceFile;
 
 import java.io.File;
+import java.io.IOException;
 
 import static internal.test.utils.client.MockInterceptor.*;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static veslo.client.converter.api.ExtensionConverter.NULL_BODY_VALUE;
 
 @DisplayName("JavaTypeAdapterFactory functional tests")
@@ -50,6 +51,7 @@ public class JavaTypeCallAdapterFactoryFuncTests extends BaseFuncTest {
             new UniversalCallAdapterFactory(),
             new ExtensionConverterFactory());
 
+    @SuppressWarnings("ConstantConditions")
     @Nested
     @DisplayName("API method return Raw type")
     public class ReturnRawTypeConversionTests {
@@ -173,6 +175,16 @@ public class JavaTypeCallAdapterFactoryFuncTests extends BaseFuncTest {
             assertThrow(() -> CLIENT.returnResourceFileReferenceType(OK, new ResourceFile("not_empty.txt")))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("It is forbidden to use the ResourceFile type to convert the response body.");
+        }
+
+        @Test
+        @DisplayName("File: return empty File if body not present (HTTP status 204 'no content')")
+        public void test1645698581424() throws IOException {
+            final Response actual = CLIENT.returnRawResponseType(OK, "test1645698581424");
+            assertThat(actual, notNullValue());
+            assertThat(actual.code(), is(OK));
+            assertThat(actual.body(), notNullValue());
+            assertThat(actual.body().string(), is("test1645698581424"));
         }
 
     }

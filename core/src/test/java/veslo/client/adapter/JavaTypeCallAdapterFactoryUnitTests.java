@@ -17,6 +17,7 @@
 package veslo.client.adapter;
 
 import internal.test.utils.RetrofitTestUtils;
+import okhttp3.Request;
 import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -35,6 +36,8 @@ import veslo.client.converter.defaults.JavaReferenceTypeConverter;
 
 import java.io.IOException;
 
+import static internal.test.utils.OkHttpTestUtils.getRequest;
+import static internal.test.utils.RetrofitTestUtils.getResponse;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -86,6 +89,36 @@ public class JavaTypeCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
                 final Call<Object> call = RetrofitTestUtils.getCall(200, "test1639240907548");
                 final Object result = FACTORY.get(STRING_C, AA, RETROFIT).adapt(call);
                 assertThat(result, is("test1639240907548"));
+            }
+
+            @Test
+            @DisplayName("return raw response if success response")
+            public void test1645694351429() throws IOException {
+                final Request request = getRequest();
+                final Response response = getResponse(200, "test1645694351429");
+                final Call<Object> call = RetrofitTestUtils.getCall(request, response);
+                final okhttp3.Response result = (okhttp3.Response) FACTORY
+                        .get(okhttp3.Response.class, AA, RETROFIT).adapt(call);
+                assertThat(result, notNullValue());
+                assertThat(result.isSuccessful(), is(true));
+                assertThat(result.code(), is(200));
+                assertThat(result.body(), notNullValue());
+                assertThat(result.body().string(), is("test1645694351429"));
+            }
+
+            @Test
+            @DisplayName("return raw response if error response")
+            public void test1645697458546() throws IOException {
+                final Request request = getRequest();
+                final Response response = getResponse(500, "test1645697458546");
+                final Call<Object> call = RetrofitTestUtils.getCall(request, response);
+                final okhttp3.Response result = (okhttp3.Response) FACTORY
+                        .get(okhttp3.Response.class, AA, RETROFIT).adapt(call);
+                assertThat(result, notNullValue());
+                assertThat(result.isSuccessful(), is(false));
+                assertThat(result.code(), is(500));
+                assertThat(result.body(), notNullValue());
+                assertThat(result.body().string(), is("test1645697458546"));
             }
 
             @Test

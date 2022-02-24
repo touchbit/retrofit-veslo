@@ -17,6 +17,7 @@
 package veslo.client.converter;
 
 import okhttp3.RequestBody;
+import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.slf4j.Logger;
@@ -38,6 +39,7 @@ import veslo.client.converter.api.ResponseConverter;
 import veslo.client.converter.defaults.JavaPrimitiveTypeConverter;
 import veslo.client.converter.defaults.JavaReferenceTypeConverter;
 import veslo.client.converter.defaults.RawBodyTypeConverter;
+import veslo.client.converter.typed.OkHttpResponseConverter;
 import veslo.client.header.ContentType;
 import veslo.util.ConvertUtils;
 import veslo.util.Utils;
@@ -110,6 +112,7 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
         // Raw body converters
         final RawBodyTypeConverter rawBodyTypeConverter = RawBodyTypeConverter.INSTANCE;
         registerRawConverter(rawBodyTypeConverter, rawBodyTypeConverter.getSupportedTypes());
+        registerRawConverter(OkHttpResponseConverter.INSTANCE, Response.class);
         // Java type primitive converters
         final JavaPrimitiveTypeConverter javaPrimitiveTypeConverter = JavaPrimitiveTypeConverter.INSTANCE;
         registerJavaTypeConverter(javaPrimitiveTypeConverter, javaPrimitiveTypeConverter.getSupportedTypes());

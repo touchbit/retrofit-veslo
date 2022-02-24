@@ -17,6 +17,7 @@
 package veslo.client.adapter;
 
 import okhttp3.HttpUrl;
+import okhttp3.ResponseBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import retrofit2.Call;
@@ -104,6 +105,18 @@ public class JavaTypeCallAdapterFactory extends CallAdapter.Factory {
                 logger.info("API call: {} {}", method, url);
                 try {
                     final Response<Object> response = call.execute();
+                    // return raw response
+                    if (returnType == okhttp3.Response.class) {
+                        final okhttp3.Response okhttp3Response;
+                        if (response.isSuccessful()) {
+                            final ResponseBody body = (ResponseBody) response.body();
+                            okhttp3Response = response.raw().newBuilder().body(body).build();
+                        } else {
+                            okhttp3Response = response.raw();
+                        }
+                        logger.debug("Return raw response (" + returnType + ")");
+                        return okhttp3Response;
+                    }
                     final Object dto;
                     logger.debug("Retrieving the response body.");
                     if (response.isSuccessful()) {
