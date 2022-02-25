@@ -18,6 +18,7 @@ package veslo.util;
 
 import org.apache.commons.lang3.ArrayUtils;
 import retrofit2.internal.EverythingIsNonNull;
+import veslo.FormUrlEncodedMapperException;
 import veslo.RuntimeIOException;
 import veslo.UtilityClassException;
 import veslo.client.response.IDualResponse;
@@ -33,10 +34,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static veslo.constant.ParameterNameConstants.*;
+import static veslo.constant.SonarRuleConstants.SONAR_GENERIC_WILDCARD_TYPES;
 
 /**
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
@@ -114,7 +117,7 @@ public class Utils {
             return (byte[]) bytes;
         }
         throw new IllegalArgumentException("Received unsupported type: " + bytes.getClass() + "\n" +
-                "Expected: " + Byte[].class.getTypeName() + " or " + byte[].class.getTypeName());
+                                           "Expected: " + Byte[].class.getTypeName() + " or " + byte[].class.getTypeName());
     }
 
     /**
@@ -290,6 +293,24 @@ public class Utils {
      */
     public static ClassLoader getClassLoader() {
         return Thread.currentThread().getContextClassLoader();
+    }
+
+    /**
+     * @param value array || collection
+     * @return {@link Collection}
+     * @throws FormUrlEncodedMapperException if value is not array or collection
+     */
+    @SuppressWarnings(SONAR_GENERIC_WILDCARD_TYPES)
+    protected Collection<?> arrayToCollection(final Object value) {
+        Utils.parameterRequireNonNull(value, VALUE_PARAMETER);
+        if (value.getClass().isArray()) {
+            return Arrays.asList((Object[]) value);
+        }
+        if (value instanceof Collection) {
+            return ((Collection<?>) value);
+        }
+        // TODO
+        throw new RuntimeException("Received unsupported type to convert to collection: " + value.getClass());
     }
 
 }

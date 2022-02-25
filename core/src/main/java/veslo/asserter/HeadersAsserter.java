@@ -19,7 +19,7 @@ package veslo.asserter;
 import okhttp3.Headers;
 import retrofit2.internal.EverythingIsNonNull;
 import veslo.BriefAssertionError;
-import veslo.client.response.DualResponse;
+import veslo.client.response.IDualResponse;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public class HeadersAsserter implements IHeadersAsserter {
     private final Headers headers;
     private boolean isIgnoreNPE = false;
 
-    public <ERR_DTO, SUC_DTO> HeadersAsserter(DualResponse<?, ?> response) {
+    public <ERR_DTO, SUC_DTO> HeadersAsserter(final IDualResponse<?, ?> response) {
         this(response.getHeaders());
     }
 
