@@ -286,7 +286,7 @@ public class GsonConverterUnitTests extends BaseUnitTest {
         assertThrow(() -> getResponseConverter(Map.class).convert(body))
                 .assertClass(ConvertCallException.class)
                 .assertMessageIs("\nResponse body not convertible to type interface java.util.Map\n" +
-                        "java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $")
+                                 "java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $")
                 .assertCause(cause -> cause.assertClass(JsonSyntaxException.class));
     }
 
@@ -301,14 +301,12 @@ public class GsonConverterUnitTests extends BaseUnitTest {
     private void assertGsonDualConverterFactory(GsonConverterFactory factory, Class<?> expectedConverter) {
         final Set<ExtensionConverter<?>> mimeConverters = new HashSet<>(factory.getMimeRequestConverters().values());
         mimeConverters.addAll(factory.getMimeResponseConverters().values());
-        assertThat(mimeConverters, hasSize(1));
+        assertThat(mimeConverters, hasSize(2));
         assertThat(mimeConverters, hasItem(instanceOf(expectedConverter)));
         final Set<ContentType> requestContentTypes = factory.getMimeRequestConverters().keySet();
-        assertThat(requestContentTypes, hasSize(4));
-        assertThat(requestContentTypes, containsInAnyOrder(APP_JSON, APP_JSON_UTF8, TEXT_JSON, TEXT_JSON_UTF8));
+        assertThat(requestContentTypes, containsInAnyOrder(APP_JSON, APP_JSON_UTF8, TEXT_JSON, TEXT_JSON_UTF8, APP_FORM_URLENCODED, APP_X_FORM_URLENCODED, APP_FORM_URLENCODED_UTF8, APP_X_FORM_URLENCODED_UTF8));
         final Set<ContentType> responseContentTypes = factory.getMimeResponseConverters().keySet();
-        assertThat(responseContentTypes, hasSize(4));
-        assertThat(responseContentTypes, containsInAnyOrder(APP_JSON, APP_JSON_UTF8, TEXT_JSON, TEXT_JSON_UTF8));
+        assertThat(responseContentTypes, containsInAnyOrder(APP_JSON, APP_JSON_UTF8, TEXT_JSON, TEXT_JSON_UTF8, APP_FORM_URLENCODED, APP_X_FORM_URLENCODED, APP_FORM_URLENCODED_UTF8, APP_X_FORM_URLENCODED_UTF8));
         final Set<Type> requestJavaTypes = factory.getJavaTypeRequestConverters().keySet();
         assertThat(requestJavaTypes, hasItems(Map.class, List.class));
         final Set<Type> responseJavaTypes = factory.getJavaTypeResponseConverters().keySet();

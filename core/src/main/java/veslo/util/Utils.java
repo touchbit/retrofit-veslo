@@ -301,7 +301,7 @@ public class Utils {
      * @throws FormUrlEncodedMapperException if value is not array or collection
      */
     @SuppressWarnings(SONAR_GENERIC_WILDCARD_TYPES)
-    protected Collection<?> arrayToCollection(final Object value) {
+    public static Collection<?> arrayToCollection(final Object value) {
         Utils.parameterRequireNonNull(value, VALUE_PARAMETER);
         if (value.getClass().isArray()) {
             return Arrays.asList((Object[]) value);

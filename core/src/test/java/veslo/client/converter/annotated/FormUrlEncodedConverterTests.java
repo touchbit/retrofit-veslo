@@ -25,9 +25,9 @@ import okhttp3.ResponseBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import veslo.bean.urlencoded.FormUrlEncoded;
-import veslo.bean.urlencoded.FormUrlEncodedAdditionalProperties;
-import veslo.bean.urlencoded.FormUrlEncodedField;
+import org.touchbit.www.form.urlencoded.marshaller.pojo.FormUrlEncoded;
+import org.touchbit.www.form.urlencoded.marshaller.pojo.FormUrlEncodedAdditionalProperties;
+import org.touchbit.www.form.urlencoded.marshaller.pojo.FormUrlEncodedField;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -44,23 +44,22 @@ import static org.hamcrest.Matchers.is;
 public class FormUrlEncodedConverterTests extends BaseUnitTest {
 
     private static final FormUrlEncodedConverter CONVERTER = FormUrlEncodedConverter.INSTANCE;
-    private static final String FORM_STRING = "" +
-            "stringField=%D1%82%D0%B5%D1%81%D1%82&" +
-            "integerField=1&" +
-            "listStringField=1&" +
-            "listStringField=2&" +
-            "listIntegerField=1&" +
-            "listIntegerField=2&" +
-            "ap2=foobar&" +
-            "ap1=foo&" +
-            "ap1=bar";
+    private static final String FORM_STRING = "ap2=foobar&" +
+                                              "ap1=foo&" +
+                                              "ap1=%D1%82%D0%B5%D1%81%D1%82&" +
+                                              "listIntegerField=1&" +
+                                              "listIntegerField=2&" +
+                                              "integerField=1&" +
+                                              "listStringField=1&" +
+                                              "listStringField=2&" +
+                                              "stringField=%D1%82%D0%B5%D1%81%D1%82";
     private static final GoodModel FORM_MODEL = new GoodModel()
             .listStringField(listOf("1", "2"))
             .listIntegerField(listOf(1, 2))
             .integerField(1)
             .stringField("тест")
             .additionalProperties(new HashMap<String, Object>() {{
-                put("ap1", listOf("foo", "bar"));
+                put("ap1", listOf("foo", "тест"));
                 put("ap2", "foobar");
             }});
     private static final ParameterizedModel<?, ?> FORM_MAP_MODEL = new ParameterizedModel<>()
@@ -69,7 +68,7 @@ public class FormUrlEncodedConverterTests extends BaseUnitTest {
             .integerField(1)
             .stringField("тест")
             .additionalProperties(new HashMap<String, Object>() {{
-                put("ap1", listOf("foo", "bar"));
+                put("ap1", listOf("foo", "тест"));
                 put("ap2", "foobar");
             }});
 
@@ -84,7 +83,7 @@ public class FormUrlEncodedConverterTests extends BaseUnitTest {
             assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, null, AA, RTF), "parameterAnnotations");
             assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, null, RTF), "methodAnnotations");
             assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, null), "retrofit");
-            assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(null), "model");
+            assertNPE(() -> CONVERTER.requestBodyConverter(OBJ_C, AA, AA, RTF).convert(null), "body");
         }
 
         @Test

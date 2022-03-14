@@ -17,12 +17,20 @@
 package veslo.util;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
+import retrofit2.internal.EverythingIsNonNull;
 import veslo.UtilityClassException;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.Map;
 
 import static veslo.constant.ParameterNameConstants.FIELD_PARAMETER;
+import static veslo.constant.ParameterNameConstants.TYPE_PARAMETER;
 
 /**
  * TODO
@@ -82,6 +90,62 @@ public class ReflectUtils {
         } catch (Exception e) {
             throw new RuntimeException("Unable to get value from field: " + fieldName, e);
         }
+    }
+
+    @EverythingIsNonNull
+    public static boolean isGenericMap(final Field field) {
+        Utils.parameterRequireNonNull(field, FIELD_PARAMETER);
+        final ParameterizedType type = getParameterizedType(field);
+        return type != null && type.getRawType() == Map.class;
+    }
+
+    @EverythingIsNonNull
+    public static boolean isGenericMap(final Type type) {
+        Utils.parameterRequireNonNull(type, TYPE_PARAMETER);
+        final ParameterizedType parameterizedType = getParameterizedType(type);
+        return parameterizedType != null && parameterizedType.getRawType() == Map.class;
+    }
+
+    @EverythingIsNonNull
+    public static boolean isGenericCollection(final Field field) {
+        Utils.parameterRequireNonNull(field, FIELD_PARAMETER);
+        final ParameterizedType type = getParameterizedType(field);
+        return type != null && type.getRawType() == Collection.class;
+    }
+
+    @EverythingIsNonNull
+    public static boolean isGenericCollection(final Type type) {
+        Utils.parameterRequireNonNull(type, TYPE_PARAMETER);
+        final ParameterizedType parameterizedType = getParameterizedType(type);
+        return parameterizedType != null && parameterizedType.getRawType() == Collection.class;
+    }
+
+    @EverythingIsNonNull
+    public static boolean isArray(final Field field) {
+        Utils.parameterRequireNonNull(field, FIELD_PARAMETER);
+        return field.getType().isArray();
+    }
+
+    @EverythingIsNonNull
+    public static boolean isArray(final Type type) {
+        Utils.parameterRequireNonNull(type, TYPE_PARAMETER);
+        return (type instanceof Class) && ((Class<?>) type).isArray();
+    }
+
+    @Nullable
+    public static ParameterizedType getParameterizedType(@Nonnull final Field field) {
+        Utils.parameterRequireNonNull(field, FIELD_PARAMETER);
+        final Type genericType = field.getGenericType();
+        return getParameterizedType(genericType);
+    }
+
+    @Nullable
+    public static ParameterizedType getParameterizedType(@Nonnull final Type type) {
+        Utils.parameterRequireNonNull(type, TYPE_PARAMETER);
+        if (type instanceof ParameterizedType) {
+            return (ParameterizedType) type;
+        }
+        return null;
     }
 
 }

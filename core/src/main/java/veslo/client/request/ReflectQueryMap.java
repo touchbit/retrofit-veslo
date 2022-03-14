@@ -23,8 +23,12 @@ import veslo.QueryMapException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * * public class ExampleQueryMap extends ReflectQueryMap {
@@ -45,15 +49,14 @@ public abstract class ReflectQueryMap extends HashMap<String, Object> {
     @Override
     @SuppressWarnings("ConstantConditions")
     public Set<Entry<String, Object>> entrySet() {
-        for (Field declaredField : this.getClass().getDeclaredFields()) {
+        final List<Field> declaredFields = Arrays.stream(this.getClass().getDeclaredFields())
+                .filter(f -> !Modifier.isTransient(f.getModifiers()))
+                .filter(f -> !ReflectQueryMap.class.isAssignableFrom(f.getType()))
+                .collect(Collectors.toList());
+        for (Field declaredField : declaredFields) {
             final QueryMapParameterRules classRules = this.getClass().getAnnotation(QueryMapParameterRules.class);
             final QueryMapParameter queryMapParameter = declaredField.getAnnotation(QueryMapParameter.class);
             final String declaredFieldName = declaredField.getName();
-            // ignore jacocoData fields and types implements ReflectQueryMap (protection from StackOverflowError)
-            if (ReflectQueryMap.class.isAssignableFrom(declaredField.getType()) ||
-                    declaredFieldName.contains("jacocoData")) {
-                continue;
-            }
             final Object declaredFieldValue = readField(declaredField.getName());
             final String parameterName = getParameterName(queryMapParameter, classRules, declaredFieldName);
             final Object parameterValue = getParameterValue(queryMapParameter, classRules, declaredFieldValue);

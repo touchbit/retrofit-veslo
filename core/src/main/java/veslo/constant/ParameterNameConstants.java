@@ -47,6 +47,7 @@ public class ParameterNameConstants {
     public static final String EXPECTED_ERR_DTO_PARAMETER = "expectedErrDto";
     public static final String TEMPLATE_PARAMETER = "template";
     public static final String FIELD_PARAMETER = "field";
+    public static final String OBJECT_PARAMETER = "object";
     public static final String MODEL_PARAMETER = "model";
     public static final String TYPE_PARAMETER = "type";
     public static final String TYPES_PARAMETER = "types";

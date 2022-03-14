@@ -144,6 +144,11 @@
             </dependency>
             <!-- utils dependencies -->
             <dependency>
+                <groupId>org.touchbit.web</groupId>
+                <artifactId>form-urlencoded-marshaller</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
                 <version>3.0.2</version>

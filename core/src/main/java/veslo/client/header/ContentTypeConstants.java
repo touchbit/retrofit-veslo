@@ -28,13 +28,16 @@ public class ContentTypeConstants {
     public static final String PLAIN_SUBTYPE = "plain";
     public static final String HTML_SUBTYPE = "html";
     public static final String OCTET_SUBTYPE = "octet-stream";
-    public static final String FORM_URLENCODED_SUBTYPE = "x-www-form-urlencoded";
+    public static final String FORM_URLENCODED_SUBTYPE = "www-form-urlencoded";
+    public static final String X_FORM_URLENCODED_SUBTYPE = "x-www-form-urlencoded";
     public static final ContentType APP_JSON = new ContentType(APP_TYPE, JSON_SUBTYPE);
     public static final ContentType APP_JSON_UTF8 = new ContentType(APP_TYPE, JSON_SUBTYPE, UTF8);
     public static final ContentType APP_XML = new ContentType(APP_TYPE, XML_SUBTYPE);
     public static final ContentType APP_XML_UTF8 = new ContentType(APP_TYPE, XML_SUBTYPE, UTF8);
     public static final ContentType APP_FORM_URLENCODED = new ContentType(APP_TYPE, FORM_URLENCODED_SUBTYPE);
+    public static final ContentType APP_X_FORM_URLENCODED = new ContentType(APP_TYPE, X_FORM_URLENCODED_SUBTYPE);
     public static final ContentType APP_FORM_URLENCODED_UTF8 = new ContentType(APP_TYPE, FORM_URLENCODED_SUBTYPE, UTF8);
+    public static final ContentType APP_X_FORM_URLENCODED_UTF8 = new ContentType(APP_TYPE, X_FORM_URLENCODED_SUBTYPE, UTF8);
     public static final ContentType APP_OCTET_STREAM = new ContentType(APP_TYPE, OCTET_SUBTYPE);
     public static final ContentType TEXT_JSON = new ContentType(TXT_TYPE, JSON_SUBTYPE);
     public static final ContentType TEXT_JSON_UTF8 = new ContentType(TXT_TYPE, JSON_SUBTYPE, UTF8);
