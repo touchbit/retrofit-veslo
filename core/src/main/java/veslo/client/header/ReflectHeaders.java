@@ -16,22 +16,16 @@
 
 package veslo.client.header;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
-import retrofit2.internal.EverythingIsNonNull;
+import veslo.util.CaseUtils;
+import veslo.util.ReflectUtils;
 import veslo.util.Utils;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.util.*;
-import java.util.function.Function;
+import java.util.AbstractMap;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
-
-import static java.lang.Character.isUpperCase;
-import static java.lang.Character.toLowerCase;
-import static veslo.constant.ParameterNameConstants.FIELD_PARAMETER;
-import static veslo.util.ReflectUtils.*;
 
 /**
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
@@ -39,96 +33,40 @@ import static veslo.util.ReflectUtils.*;
  */
 public abstract class ReflectHeaders extends HashMap<String, String> {
 
-    private static final Character DT = '.';
-    private static final Character KB = '-';
-    private static final Character SN = '_';
-
-
+    /**
+     * @return a set view of the mappings contained in this map and the values of serializable class fields
+     */
     @SuppressWarnings("ConstantConditions")
     public Set<Map.Entry<String, String>> entrySet() {
-        this.putAll(readReflectHeadersFields());
+        this.putAll(readHeadersFields());
         return super.entrySet();
     }
 
-    protected Map<String, String> readReflectHeadersFields() {
-        Map<String, String> result = new HashMap<>();
-        final List<Field> fields = FieldUtils.getAllFieldsList(this.getClass()).stream()
-                .filter(f -> f.getDeclaringClass() != HashMap.class)
-                .filter(f -> f.getDeclaringClass() != AbstractMap.class)
-                .filter(f -> isNotAssignableConstantField(this, f))
-                .collect(Collectors.toList());
-        for (Field field : fields) {
-            // ignore jacocoData fields and types implements ReflectHeaders (protection from StackOverflowError)
-            if (isAssignableConstantField(ReflectHeaders.class, field) || isJacocoDataField(field)) {
-                continue;
-            }
-            final String headerName = getHeaderName(field);
-            final Object value = readField(this, field);
-            final String headerValue = getHeaderValue(value);
-            if (headerValue != null) {
-                result.put(headerName, headerValue);
+    /**
+     * The method receives values from the fields of the class through reflection.
+     * The key is formed from the field name (kebab case)
+     * or taken from annotation: {@link HeaderKey#value()}.
+     *
+     * @return map of serialized (!transient) class field
+     */
+    protected Map<String, String> readHeadersFields() {
+        final Map<String, String> result = new HashMap<>();
+        for (final Field field : ReflectUtils.getAllSerializableFields(this, HashMap.class, AbstractMap.class)) {
+            final HeaderKey annotation = field.getAnnotation(HeaderKey.class);
+            final String headerName = Utils.isNullOrBlank(HeaderKey::value, annotation) ?
+                    CaseUtils.toKebabCase(field.getName()) :
+                    annotation.value().trim(); // trim to avoid throwing IllegalArgumentException
+            final Object value = ReflectUtils.readFieldValue(this, field);
+            if (value != null) {
+                result.put(headerName, value.toString());
             }
         }
         return result;
     }
 
-    @EverythingIsNonNull
-    protected String getHeaderName(final Field field) {
-        Utils.parameterRequireNonNull(field, FIELD_PARAMETER);
-        final String fieldName = field.getName();
-        final HeaderKey annotation = field.getAnnotation(HeaderKey.class);
-        if (isNullOrEmpty(HeaderKey::value, annotation)) {
-            return toKebabCase(fieldName);
-        }
-        // trim to avoid throwing IllegalArgumentException
-        return annotation.value().trim();
-    }
-
-    @Nullable
-    protected String getHeaderValue(final @Nullable Object value) {
-        if (value == null) {
-            return null;
-        }
-        if (value.getClass().isArray() || value instanceof ParameterizedType) {
-            throw new RuntimeException("Unsupported header value type.\n" +
-                                       "Expected: simple type (String, Integer, etc.)\n" +
-                                       "Actual: " + value.getClass().getName());
-        }
-        return value.toString();
-    }
-
-    // TODO utils
-    protected List<String> collectionToStringList(final Collection<?> collection) {
-        return collection.stream()
-                .filter(Objects::nonNull)
-                .map(Object::toString)
-                .collect(Collectors.toList());
-    }
-
-    // TODO utils
-    public static String toKebabCase(String raw) {
-        StringBuilder sb = new StringBuilder();
-        boolean first = true;
-        for (Character next : raw.trim().toCharArray()) {
-            if (first) {
-                sb.append(toLowerCase(next));
-                first = false;
-            } else if (isUpperCase(next)) {
-                sb.append(KB).append(toLowerCase(next));
-            } else if (next.equals(DT) || next.equals(SN)) {
-                sb.append(KB);
-            } else {
-                sb.append(toLowerCase(next));
-            }
-        }
-        return sb.toString();
-    }
-
-    // TODO utils
-    public static <O> boolean isNullOrEmpty(@Nonnull final Function<O, String> function, @Nullable final O object) {
-        return object == null || function.apply(object).trim().isEmpty();
-    }
-
+    /**
+     * @return headers in format {@code key: value} separated by newline
+     */
     @Override
     public String toString() {
         return entrySet().stream()

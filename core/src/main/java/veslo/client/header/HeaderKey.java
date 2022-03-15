@@ -39,6 +39,6 @@ public @interface HeaderKey {
     /**
      * @return The header name (ignored if empty ir blank string).
      */
-    String value() default "";
+    String value();
 
 }

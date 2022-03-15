@@ -26,6 +26,10 @@ import java.util.stream.Collectors;
 
 import static veslo.constant.ParameterNameConstants.*;
 
+/**
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 26.12.2021
+ */
 public class ConverterUnsupportedTypeException extends RuntimeException {
 
     @EverythingIsNonNull

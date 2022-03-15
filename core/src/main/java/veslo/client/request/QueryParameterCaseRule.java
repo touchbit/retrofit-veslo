@@ -16,7 +16,7 @@
 
 package veslo.client.request;
 
-import static java.lang.Character.*;
+import veslo.util.CaseUtils;
 
 /**
  * see constant descriptions
@@ -25,7 +25,6 @@ import static java.lang.Character.*;
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
  * Created: 20.12.2021
  */
-@SuppressWarnings("DuplicatedCode")
 public enum QueryParameterCaseRule {
 
     CAMEL_CASE,
@@ -35,120 +34,18 @@ public enum QueryParameterCaseRule {
     PASCAL_CASE,
     ;
 
-    private static final Character DT = '.';
-    private static final Character KB = '-';
-    private static final Character SN = '_';
-
     public String format(String raw) {
         if (this == QueryParameterCaseRule.DOT_CASE) {
-            return toDotCase(raw);
+            return CaseUtils.toDotCase(raw);
         } else if (this == QueryParameterCaseRule.CAMEL_CASE) {
-            return toCamelCase(raw);
+            return CaseUtils.toCamelCase(raw);
         } else if (this == QueryParameterCaseRule.KEBAB_CASE) {
-            return toKebabCase(raw);
+            return CaseUtils.toKebabCase(raw);
         } else if (this == QueryParameterCaseRule.SNAKE_CASE) {
-            return toSnakeCase(raw);
+            return CaseUtils.toSnakeCase(raw);
         } else {
-            return toPascalCase(raw);
+            return CaseUtils.toPascalCase(raw);
         }
-    }
-
-    public static String toDotCase(String raw) {
-        StringBuilder sb = new StringBuilder();
-        boolean first = true;
-        for (Character next : raw.toCharArray()) {
-            if (first) {
-                sb.append(toLowerCase(next));
-                first = false;
-            } else if (isUpperCase(next)) {
-                sb.append(DT).append(toLowerCase(next));
-            } else if (next.equals(SN) || next.equals(KB)) {
-                sb.append(DT);
-            } else {
-                sb.append(toLowerCase(next));
-            }
-        }
-        return sb.toString();
-    }
-
-    public static String toSnakeCase(String raw) {
-        StringBuilder sb = new StringBuilder();
-        boolean first = true;
-        for (Character next : raw.toCharArray()) {
-            if (first) {
-                sb.append(toLowerCase(next));
-                first = false;
-            } else if (isUpperCase(next)) {
-                sb.append(SN).append(toLowerCase(next));
-            } else if (next.equals(DT) || next.equals(KB)) {
-                sb.append(SN);
-            } else {
-                sb.append(toLowerCase(next));
-            }
-        }
-        return sb.toString();
-    }
-
-    public static String toKebabCase(String raw) {
-        StringBuilder sb = new StringBuilder();
-        boolean first = true;
-        for (Character next : raw.toCharArray()) {
-            if (first) {
-                sb.append(toLowerCase(next));
-                first = false;
-            } else if (isUpperCase(next)) {
-                sb.append(KB).append(toLowerCase(next));
-            } else if (next.equals(DT) || next.equals(SN)) {
-                sb.append(KB);
-            } else {
-                sb.append(toLowerCase(next));
-            }
-        }
-        return sb.toString();
-    }
-
-    public static String toCamelCase(String raw) {
-        StringBuilder sb = new StringBuilder();
-        boolean first = true;
-        boolean nextUpperCase = false;
-        for (Character next : raw.toCharArray()) {
-            if (first) {
-                sb.append(toLowerCase(next));
-                first = false;
-            } else if (next.equals(KB) || next.equals(DT) || next.equals(SN)) {
-                nextUpperCase = true;
-            } else if (isUpperCase(next)) {
-                sb.append(next);
-            } else if (nextUpperCase) {
-                sb.append(toUpperCase(next));
-                nextUpperCase = false;
-            } else {
-                sb.append(toLowerCase(next));
-            }
-        }
-        return sb.toString();
-    }
-
-    public static String toPascalCase(String raw) {
-        StringBuilder sb = new StringBuilder();
-        boolean first = true;
-        boolean nextUpperCase = false;
-        for (Character next : raw.toCharArray()) {
-            if (first) {
-                sb.append(toUpperCase(next));
-                first = false;
-            } else if (isUpperCase(next)) {
-                sb.append(next);
-            } else if (next.equals(KB) || next.equals(DT) || next.equals(SN)) {
-                nextUpperCase = true;
-            } else if (nextUpperCase) {
-                sb.append(toUpperCase(next));
-                nextUpperCase = false;
-            } else {
-                sb.append(toLowerCase(next));
-            }
-        }
-        return sb.toString();
     }
 
 }

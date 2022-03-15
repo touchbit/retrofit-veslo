@@ -20,7 +20,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import veslo.BaseCoreUnitTest;
-import veslo.QueryMapException;
 
 import java.lang.annotation.Annotation;
 import java.util.Map;
@@ -32,7 +31,7 @@ import static veslo.client.request.QueryParameterCaseRule.CAMEL_CASE;
 import static veslo.client.request.QueryParameterCaseRule.SNAKE_CASE;
 import static veslo.client.request.QueryParameterNullValueRule.*;
 
-@SuppressWarnings({"SameParameterValue", "RedundantOperationOnEmptyContainer", "MismatchedQueryAndUpdateOfCollection", "unused"})
+@SuppressWarnings({"SameParameterValue", "MismatchedQueryAndUpdateOfCollection", "unused"})
 @DisplayName("ReflectQueryMap.class unit tests")
 public class ReflectQueryMapUnitTests extends BaseCoreUnitTest {
 
@@ -89,33 +88,6 @@ public class ReflectQueryMapUnitTests extends BaseCoreUnitTest {
     }
 
     @Nested
-    @DisplayName("#readField() method tests")
-    public class ReadFieldMethodTests {
-
-        @Test
-        @DisplayName("return field value")
-        public void test1640009405578() {
-            final NullMarkerSnakeCaseQueryMap map = new NullMarkerSnakeCaseQueryMap();
-            map.ruleEmptyStringField = "test";
-            final Object result = map.readField("ruleEmptyStringField");
-            assertThat(result, is("test"));
-        }
-
-
-        @Test
-        @DisplayName("QueryMapException if it is impossible to read the field value")
-        public void test1640009495995() {
-            assertThrow(() -> new NullMarkerSnakeCaseQueryMap().readField("fooBar"))
-                    .assertClass(QueryMapException.class)
-                    .assertMessageIs("Unable to get value from field: fooBar")
-                    .assertCause(cause -> cause
-                            .assertClass(IllegalArgumentException.class)
-                            .assertMessageIs("Cannot locate field fooBar on " + NullMarkerSnakeCaseQueryMap.class));
-        }
-
-    }
-
-    @Nested
     @DisplayName("#getParameterName() method tests")
     public class GetParameterNameMethodTests {
 
@@ -149,7 +121,6 @@ public class ReflectQueryMapUnitTests extends BaseCoreUnitTest {
             final String result = new DefaultQueryMap().getParameterName(fieldRule, null, "test");
             assertThat(result, is("foo_bar"));
         }
-
 
     }
 

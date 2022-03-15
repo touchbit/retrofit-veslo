@@ -72,6 +72,7 @@ public abstract class JacksonModelAdditionalProperties<DTO> {
     @JsonIgnore
     public DTO assertNoAdditionalProperties() {
         if (!additionalProperties().isEmpty()) {
+            DTO dto = (DTO) this;
             final String name = this.getClass().getSimpleName();
             throw new ContractViolationException("The presence of extra fields in the model: " + name + "\n" +
                     "Expected: no extra fields\n" +

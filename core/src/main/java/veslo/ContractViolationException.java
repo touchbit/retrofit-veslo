@@ -16,12 +16,17 @@
 
 package veslo;
 
+/**
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 26.12.2021
+ */
 public class ContractViolationException extends RuntimeException {
 
-    public ContractViolationException(String message, Throwable t) {
-        super(message, t);
-    }
-
+    /**
+     * Constructs a new runtime exception with the specified detail message.
+     *
+     * @param message the detail message
+     */
     public ContractViolationException(String message) {
         super(message);
     }

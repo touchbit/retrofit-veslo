@@ -16,19 +16,16 @@
 
 package veslo.client.request;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
 import retrofit2.internal.EverythingIsNonNull;
-import veslo.QueryMapException;
+import veslo.util.ReflectUtils;
+import veslo.util.Utils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
+import java.util.AbstractMap;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * * public class ExampleQueryMap extends ReflectQueryMap {
@@ -49,45 +46,33 @@ public abstract class ReflectQueryMap extends HashMap<String, Object> {
     @Override
     @SuppressWarnings("ConstantConditions")
     public Set<Entry<String, Object>> entrySet() {
-        final List<Field> declaredFields = Arrays.stream(this.getClass().getDeclaredFields())
-                .filter(f -> !Modifier.isTransient(f.getModifiers()))
-                .filter(f -> !ReflectQueryMap.class.isAssignableFrom(f.getType()))
-                .collect(Collectors.toList());
-        for (Field declaredField : declaredFields) {
-            final QueryMapParameterRules classRules = this.getClass().getAnnotation(QueryMapParameterRules.class);
-            final QueryMapParameter queryMapParameter = declaredField.getAnnotation(QueryMapParameter.class);
-            final String declaredFieldName = declaredField.getName();
-            final Object declaredFieldValue = readField(declaredField.getName());
-            final String parameterName = getParameterName(queryMapParameter, classRules, declaredFieldName);
-            final Object parameterValue = getParameterValue(queryMapParameter, classRules, declaredFieldValue);
-            if (parameterValue != null) {
-                this.put(parameterName, parameterValue);
-            }
-        }
+        this.putAll(readReflectQueryMapParameters(this));
         return super.entrySet();
     }
 
-    protected Object readField(String fieldName) {
-        try {
-            return FieldUtils.readField(this, fieldName, true);
-        } catch (Exception e) {
-            throw new QueryMapException("Unable to get value from field: " + fieldName, e);
+    protected HashMap<String, Object> readReflectQueryMapParameters(final Object source) {
+        Utils.parameterRequireNonNull(source, "source");
+        final HashMap<String, Object> result = new HashMap<>();
+        for (Field declaredField : ReflectUtils.getAllSerializableFields(source, HashMap.class, AbstractMap.class)) {
+            final QueryMapParameterRules classRules = source.getClass().getAnnotation(QueryMapParameterRules.class);
+            final QueryMapParameter queryMapParameter = declaredField.getAnnotation(QueryMapParameter.class);
+            final Object declaredFieldValue = ReflectUtils.readFieldValue(source, declaredField);
+            final String parameterName = getParameterName(queryMapParameter, classRules, declaredField.getName());
+            final Object parameterValue = getParameterValue(queryMapParameter, classRules, declaredFieldValue);
+            if (parameterValue != null) {
+                result.put(parameterName, parameterValue);
+            }
         }
+        return result;
     }
 
     @EverythingIsNonNull
     protected String getParameterName(final @Nullable QueryMapParameter queryMapParameter,
                                       final @Nullable QueryMapParameterRules classRules,
                                       final @Nonnull String declaredFieldName) {
-        if (queryMapParameter != null && !queryMapParameter.name().trim().isEmpty()) {
-            return queryMapParameter.name();
-        } else {
-            if (classRules != null) {
-                return classRules.caseRule().format(declaredFieldName);
-            } else {
-                return declaredFieldName;
-            }
-        }
+        return !Utils.isNullOrBlank(QueryMapParameter::name, queryMapParameter) ?
+                queryMapParameter.name() : classRules != null ?
+                classRules.caseRule().format(declaredFieldName) : declaredFieldName;
     }
 
     @Nullable

@@ -108,6 +108,7 @@ public class ParameterNameConstants {
     public static final String CONVERTER_FACTORY_PARAMETER = "converterFactory";
     public static final String CLIENT_CLASS_PARAMETER = "clientClass";
     public static final String TRUNCATION_PREDICATE_PARAMETER = "truncationPredicate";
+    public static final String EXCLUDE_CLASSES = "excludeClasses";
 
     /**
      * Utility class. Forbidden instantiation.

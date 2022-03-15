@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Shaburov Oleg
+ * Copyright 2021-2022 Shaburov Oleg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package veslo;
+package assist;
 
-import java.lang.reflect.Type;
+public class Private {
 
-/**
- * @author Oleg Shaburov (shaburov.o.a@gmail.com)
- * Created: 15.03.2022
- */
-public class PrimitiveConvertCallException extends ConvertCallException {
+    private Private() {
 
-    public PrimitiveConvertCallException(Type type) {
-        super("Cannot convert empty response body to primitive type: " + type);
     }
 
 }

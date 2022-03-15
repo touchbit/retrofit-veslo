@@ -186,6 +186,38 @@ public class UniversalCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
         }
 
         @Test
+        @DisplayName("Get DualResponse with null success body if successType = Void")
+        public void test1647374899900() {
+            final Call call = RetrofitTestUtils.getCall(200, "");
+            final IDualResponse iDualResponse = FACTORY.getIDualResponse(call, Void.class, STRING_C, INFO, AA, RETROFIT);
+            assertIsNull(iDualResponse.getSucDTO());
+        }
+
+        @Test
+        @DisplayName("Get DualResponse with null success body if successType = void")
+        public void test1647374969722() {
+            final Call call = RetrofitTestUtils.getCall(200, "");
+            final IDualResponse iDualResponse = FACTORY.getIDualResponse(call, Void.TYPE, STRING_C, INFO, AA, RETROFIT);
+            assertIsNull(iDualResponse.getSucDTO());
+        }
+
+        @Test
+        @DisplayName("Get DualResponse with null success body if errorType = Void")
+        public void test1647374984280() {
+            final Call call = RetrofitTestUtils.getCall(200, "");
+            final IDualResponse iDualResponse = FACTORY.getIDualResponse(call, STRING_C, Void.class, INFO, AA, RETROFIT);
+            assertIsNull(iDualResponse.getErrDTO());
+        }
+
+        @Test
+        @DisplayName("Get DualResponse with null success body if errorType = void")
+        public void test1647375000736() {
+            final Call call = RetrofitTestUtils.getCall(200, "");
+            final IDualResponse iDualResponse = FACTORY.getIDualResponse(call, STRING_C, Void.TYPE, INFO, AA, RETROFIT);
+            assertIsNull(iDualResponse.getErrDTO());
+        }
+
+        @Test
         @DisplayName("Get custom IDualResponse implementation")
         public void test1639065951507() {
             final Call call = RetrofitTestUtils.getCall(200, "");

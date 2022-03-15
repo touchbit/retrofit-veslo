@@ -18,6 +18,7 @@ package veslo.client.converter;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,7 @@ import veslo.client.converter.defaults.JavaReferenceTypeConverter;
 import veslo.client.converter.defaults.RawBodyTypeConverter;
 import veslo.client.header.ContentType;
 import veslo.util.ConvertUtils;
+import veslo.util.ReflectUtils;
 import veslo.util.Utils;
 
 import javax.annotation.Nonnull;
@@ -669,32 +671,14 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
             throw new ConvertCallException("Received an unsupported annotation type: " + annotation.getClass());
         }
         if (converterBodyClasses.length == 0) {
-            return newInstance(converterClass);
+            return ReflectUtils.invokeConstructor(converterClass);
         }
         for (Class<?> converterBodyClass : converterBodyClasses) {
             if (converterBodyClass.equals(bodyType)) {
-                return newInstance(converterClass);
+                return ReflectUtils.invokeConstructor(converterClass);
             }
         }
         return null;
-    }
-
-    /**
-     * @param converterClass - The class of the object that implements the {@link ExtensionConverter}
-     * @return - new instance of converterClass
-     * @throws ConvertCallException if there were errors while creating an instance of converterClass
-     */
-    @EverythingIsNonNull
-    @SuppressWarnings("rawtypes")
-    protected ExtensionConverter<?> newInstance(@Nonnull final Class<? extends ExtensionConverter> converterClass) {
-        Utils.parameterRequireNonNull(converterClass, CONVERTER_CLASS_PARAMETER);
-        try {
-            return converterClass.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new ConvertCallException("" +
-                                           "Unable to create new instance of " + converterClass + "\n" +
-                                           "See details below.", e);
-        }
     }
 
     /**

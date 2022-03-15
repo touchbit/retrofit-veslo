@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Shaburov Oleg
+ * Copyright 2021-2022 Shaburov Oleg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-package veslo;
+package assist;
 
-public class QueryMapException extends RuntimeException {
-
-    public QueryMapException(String message, Throwable t) {
-        super(message, t);
-    }
+public class Public {
 
 }

@@ -26,9 +26,6 @@ import org.junit.jupiter.api.Test;
 import veslo.RuntimeIOException;
 import veslo.TemplateException;
 
-import java.lang.reflect.Field;
-import java.util.Arrays;
-
 import static veslo.bean.template.TemplateSourceType.FILE;
 import static veslo.bean.template.TemplateSourceType.RESOURCE;
 
@@ -37,24 +34,24 @@ import static veslo.bean.template.TemplateSourceType.RESOURCE;
 public class TemplateMapperTests extends BaseUnitTest {
 
     private static final String TEMPLATE = "<note>\n" +
-            "    <to>[note.to]</to>\n" +
-            "    <from>replace_note_from</from>\n" +
-            "    <heading>Reminder</heading>\n" +
-            "    <body>\n" +
-            "        <content>{note_body_content}</content>\n" +
-            "        <status>DRAFT</status>\n" +
-            "    </body>\n" +
-            "</note>";
+                                           "    <to>[note.to]</to>\n" +
+                                           "    <from>replace_note_from</from>\n" +
+                                           "    <heading>Reminder</heading>\n" +
+                                           "    <body>\n" +
+                                           "        <content>{note_body_content}</content>\n" +
+                                           "        <status>DRAFT</status>\n" +
+                                           "    </body>\n" +
+                                           "</note>";
 
     private static final String NOT_FILLED = "<note>\n" +
-            "    <to>null</to>\n" +
-            "    <from>null</from>\n" +
-            "    <heading>Reminder</heading>\n" +
-            "    <body>\n" +
-            "        <content>null</content>\n" +
-            "        <status>DRAFT</status>\n" +
-            "    </body>\n" +
-            "</note>";
+                                             "    <to>null</to>\n" +
+                                             "    <from>null</from>\n" +
+                                             "    <heading>Reminder</heading>\n" +
+                                             "    <body>\n" +
+                                             "        <content>null</content>\n" +
+                                             "        <status>DRAFT</status>\n" +
+                                             "    </body>\n" +
+                                             "</note>";
 
     @Nested
     @DisplayName("#readTemplate() method tests")
@@ -97,10 +94,10 @@ public class TemplateMapperTests extends BaseUnitTest {
             assertThrow(() -> TemplateMapper.readTemplate(notes))
                     .assertClass(TemplateException.class)
                     .assertMessageIs("TemplateSource annotation contains unsupported Charset.\n" +
-                            "Template: " + ResourceNotesBadCharset.class + "\n" +
-                            "Source path: test/data/Notes_utf_8.txt\n" +
-                            "Source type: RESOURCE\n" +
-                            "Source charset: FooBar\n");
+                                     "Template: " + ResourceNotesBadCharset.class + "\n" +
+                                     "Source path: test/data/Notes_utf_8.txt\n" +
+                                     "Source type: RESOURCE\n" +
+                                     "Source charset: FooBar\n");
         }
 
         @Test
@@ -110,8 +107,8 @@ public class TemplateMapperTests extends BaseUnitTest {
             assertThrow(() -> TemplateMapper.readTemplate(template))
                     .assertClass(TemplateException.class)
                     .assertMessageIs("The template class must contain an annotation.\n" +
-                            "Template: veslo.bean.template.TemplateMapperTests$TemplateWithoutAnnotation\n" +
-                            "Annotation: veslo.bean.template.TemplateSource\n");
+                                     "Template: veslo.bean.template.TemplateMapperTests$TemplateWithoutAnnotation\n" +
+                                     "Annotation: veslo.bean.template.TemplateSource\n");
         }
 
         @Test
@@ -135,56 +132,6 @@ public class TemplateMapperTests extends BaseUnitTest {
     }
 
     @Nested
-    @DisplayName("#getReplacement() method tests")
-    public class GetReplacementMethodTests {
-
-        @Test
-        @DisplayName("Required parameters")
-        public void test1645208022855() {
-            final Field field = ResourceNotesUTF8.class.getDeclaredFields()[0];
-            assertNPE(() -> TemplateMapper.getReplacement(null, field), "template");
-            assertNPE(() -> TemplateMapper.getReplacement(ResourceNotesUTF8.class, null), "field");
-        }
-
-        @Test
-        @DisplayName("Get value from nullable field")
-        public void test1645208145857() {
-            final ResourceNotesUTF8 resource = new ResourceNotesUTF8().to(null);
-            final Field field = Arrays.stream(resource.getClass().getDeclaredFields())
-                    .filter(f -> f.getName().equals("to"))
-                    .findFirst()
-                    .orElseThrow(RuntimeException::new);
-            final String replacement = TemplateMapper.getReplacement(resource, field);
-            assertIs(replacement, "null");
-        }
-
-        @Test
-        @DisplayName("Get value from filled field")
-        public void test1645208336371() {
-            final ResourceNotesUTF8 resource = new ResourceNotesUTF8().to("123");
-            final Field field = Arrays.stream(resource.getClass().getDeclaredFields())
-                    .filter(f -> f.getName().equals("to"))
-                    .findFirst()
-                    .orElseThrow(RuntimeException::new);
-            final String replacement = TemplateMapper.getReplacement(resource, field);
-            assertIs(replacement, "123");
-        }
-
-        @Test
-        @DisplayName("RuntimeIOException throws field not readable")
-        public void test1645208390755() {
-            final ResourceNotesUTF8 resource = new ResourceNotesUTF8().to("123");
-            final Field field = TemplateMapperTests.class.getDeclaredFields()[0];
-            assertThrow(() -> TemplateMapper.getReplacement(resource, field))
-                    .assertClass(TemplateException.class)
-                    .assertMessageIs("Unable to get value from field.\n" +
-                            "Class: veslo.bean.template.TemplateMapperTests$ResourceNotesUTF8\n" +
-                            "Field: TEMPLATE\n");
-        }
-
-    }
-
-    @Nested
     @DisplayName("#marshal() method tests")
     public class MarshalMethodTests {
 
@@ -200,15 +147,15 @@ public class TemplateMapperTests extends BaseUnitTest {
             final ResourceNotesUTF8 template = new ResourceNotesUTF8().to("1").from("2").bodyContent("3");
             final String result = TemplateMapper.marshal(template);
             assertIs(result, "" +
-                    "<note>\n" +
-                    "    <to>1</to>\n" +
-                    "    <from>2</from>\n" +
-                    "    <heading>Reminder</heading>\n" +
-                    "    <body>\n" +
-                    "        <content>3</content>\n" +
-                    "        <status>DRAFT</status>\n" +
-                    "    </body>\n" +
-                    "</note>");
+                             "<note>\n" +
+                             "    <to>1</to>\n" +
+                             "    <from>2</from>\n" +
+                             "    <heading>Reminder</heading>\n" +
+                             "    <body>\n" +
+                             "        <content>3</content>\n" +
+                             "        <status>DRAFT</status>\n" +
+                             "    </body>\n" +
+                             "</note>");
         }
 
         @Test

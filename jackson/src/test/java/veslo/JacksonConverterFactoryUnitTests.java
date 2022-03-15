@@ -20,6 +20,7 @@ import internal.test.utils.BaseUnitTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import veslo.client.converter.api.ExtensionConverter;
 import veslo.client.header.ContentType;
 
@@ -32,11 +33,21 @@ import static org.hamcrest.Matchers.is;
 @DisplayName("JacksonDualConverterFactory.class unit tests")
 public class JacksonConverterFactoryUnitTests extends BaseUnitTest {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(JacksonConverterFactoryUnitTests.class);
+
     @Test
     @DisplayName("Required parameters")
     public void test1645006625893() {
         assertThrow(() -> new JacksonConverterFactory((Logger) null)).assertNPE("logger");
         assertThrow(() -> new JacksonConverterFactory((ExtensionConverter<Object>) null)).assertNPE("converter");
+    }
+
+    @Test
+    @DisplayName("Constructor tests")
+    public void test1647376468582() {
+        final Logger logger = new JacksonConverterFactory(LOGGER).getLogger();
+        assertIs(logger, LOGGER);
+        new JacksonConverterFactory(new JacksonConverter<>());
     }
 
     @Test

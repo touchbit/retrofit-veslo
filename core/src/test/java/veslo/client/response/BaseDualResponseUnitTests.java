@@ -39,7 +39,7 @@ public class BaseDualResponseUnitTests extends BaseCoreUnitTest {
         final Annotation[] annotations = new Annotation[]{};
         BaseDualResponse<String, String, ResponseAsserter<String, String, HeadersAsserter>> responseBase =
                 new BaseDualResponse<String, String, ResponseAsserter<String, String, HeadersAsserter>>
-                        ("test1639065948701", "test1639065948701", response, "info", annotations) {
+                        ("success", "error", response, "info", annotations) {
                     @Override
                     public HeadersAsserter getHeadersAsserter() {
                         return new HeadersAsserter(getResponse().headers());
@@ -51,14 +51,38 @@ public class BaseDualResponseUnitTests extends BaseCoreUnitTest {
                     }
                 };
         assertThat("", responseBase.getResponse(), is(response));
-        assertThat("", responseBase.getSucDTO(), is("test1639065948701"));
-        assertThat("", responseBase.getErrDTO(), is("test1639065948701"));
+        assertThat("", responseBase.getSucDTO(), is("success"));
+        assertThat("", responseBase.getErrDTO(), is("error"));
         assertThat("", responseBase.getEndpointInfo(), is("info"));
         assertThat("", responseBase.getCallAnnotations(), is(annotations));
         responseBase.assertResponse(asserter -> asserter
-                .assertSucBody(BaseUnitTest::assertIs, "test1639065948701")
+                .assertSucBody(BaseUnitTest::assertIs, "success")
+                .assertErrBody(BaseUnitTest::assertIs, "error")
                 .assertHeaders(headersAsserter -> headersAsserter.contentTypeIs("text/plain"))
         );
+        responseBase.assertSucResponse(this::assertSuccessResponse, "success");
+        responseBase.assertErrResponse(this::assertErrorResponse, "error");
     }
+
+    public void assertSuccessResponse(ResponseAsserter<String, ?, HeadersAsserter> asserter, String expected) {
+        asserter.assertSucBody(actual -> assertThat("", actual, is(expected)));
+    }
+
+    public void assertErrorResponse(ResponseAsserter<String, ?, HeadersAsserter> asserter, String expected) {
+        asserter.assertErrBody(actual -> assertThat("", actual, is(expected)));
+    }
+
+    @Test
+    @DisplayName("assertSucResponse")
+    public void test1647375138577() {
+
+    }
+
+    @Test
+    @DisplayName("assertErrResponse")
+    public void test1647375150477() {
+
+    }
+
 
 }
