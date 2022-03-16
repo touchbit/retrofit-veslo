@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package veslo.bean.urlencoded;
+package veslo.client.header;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -24,44 +23,22 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Named pair for a form-encoded request/response.
- * Values are converted to URL encoded form and back to model using {@link FormUrlEncodedMapper}.
- * null values are ignored.
- * Passing a List or array will result in a field pair for each non-null item.
- * Simple Example:
- * <pre><code>
- * &#64;FormUrlEncoded()
- * public class ExampleModel {
- *
- *     &#64;FormUrlEncodedField("foo")
- *     private String foo;
- *
- *     &#64;FormUrlEncodedField("bar")
- *     private List<Object> bar;
- *
- *     &#64;FormUrlEncodedAdditionalProperties()
- *     private Map<String, Object> additionalProperties;
- *
- * }
- * </code></pre>
+ * Annotation for {@link ReflectHeaders} map
+ * Used for class fields to explicitly specify the header name
  * <p>
  *
  * @author Oleg Shaburov (shaburov.o.a@gmail.com)
- * Created: 19.02.2022
- * @see FormUrlEncodedMapper
- * @see FormUrlEncoded
- * @see FormUrlEncodedAdditionalProperties
+ * Created: 25.02.2022
+ * @see ReflectHeaders
  */
 @Documented
 @Target(FIELD)
 @Retention(RUNTIME)
-public @interface FormUrlEncodedField {
-
-    String value();
+public @interface HeaderKey {
 
     /**
-     * Specifies whether the {@linkplain #value() name} and value are already URL encoded.
+     * @return The header name (ignored if empty ir blank string).
      */
-    boolean encoded() default false;
+    String value();
 
 }

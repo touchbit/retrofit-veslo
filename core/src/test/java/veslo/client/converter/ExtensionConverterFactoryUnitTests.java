@@ -82,7 +82,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
                 .softly(() -> assertThat("Request raw converter", rawRqt.get(Byte[].class), instanceOf(RawBodyTypeConverter.class)))
                 .softly(() -> assertThat("Request raw converter", rawRqt.get(File.class), instanceOf(RawBodyTypeConverter.class)))
                 .softly(() -> assertThat("Request raw converter", rawRqt.get(ResourceFile.class), instanceOf(RawBodyTypeConverter.class)))
-                .softly(() -> assertThat("Request mime converters size", mimeRqt.size(), is(0)))
+                .softly(() -> assertThat("Request mime converters size", mimeRqt.size(), is(4)))
                 .softly(() -> assertThat("Request java type converters size", javaTypeRqt.size(), is(17)))
                 .softly(() -> assertThat("Request java type converter", javaTypeRqt.get(Character.TYPE), instanceOf(JavaPrimitiveTypeConverter.class)))
                 .softly(() -> assertThat("Request java type converter", javaTypeRqt.get(Boolean.TYPE), instanceOf(JavaPrimitiveTypeConverter.class)))
@@ -107,7 +107,7 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
                 .softly(() -> assertThat("Response raw converter", rawRsp.get(Byte[].class), instanceOf(RawBodyTypeConverter.class)))
                 .softly(() -> assertThat("Response raw converter", rawRsp.get(File.class), instanceOf(RawBodyTypeConverter.class)))
                 .softly(() -> assertThat("Response raw converter", rawRsp.get(ResourceFile.class), instanceOf(RawBodyTypeConverter.class)))
-                .softly(() -> assertThat("Response mime converters size", mimeRsp.size(), is(0)))
+                .softly(() -> assertThat("Response mime converters size", mimeRsp.size(), is(4)))
                 .softly(() -> assertThat("Response java type converters size", javaTypeRsp.size(), is(17)))
                 .softly(() -> assertThat("Response java type converter", javaTypeRsp.get(Character.TYPE), instanceOf(JavaPrimitiveTypeConverter.class)))
                 .softly(() -> assertThat("Response java type converter", javaTypeRsp.get(Boolean.TYPE), instanceOf(JavaPrimitiveTypeConverter.class)))
@@ -134,9 +134,9 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
     public void test1639065949524() {
         final String result = getTestFactory().toString();
         assertThat("", result, is("" +
-                "Converter factory: class veslo.BaseCoreUnitTest$TestsExtensionConverterFactory" +
-                "\n\n" + REQUEST_CONVERTERS_INFO +
-                "\n\n" + RESPONSE_CONVERTERS_INFO));
+                                  "Converter factory: class veslo.BaseCoreUnitTest$TestsExtensionConverterFactory" +
+                                  "\n\n" + REQUEST_CONVERTERS_INFO +
+                                  "\n\n" + RESPONSE_CONVERTERS_INFO));
     }
 
     @Test
@@ -234,9 +234,9 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             assertThrow(() -> getTestFactory().getRequestConverterFromCallAnnotation(OBJ_C, AA, annotations, RTF))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("API method contains concurrent annotations.\n" +
-                            "Use only one of:\n" +
-                            " * interface veslo.client.converter.api.RequestConverter\n" +
-                            " * interface veslo.client.converter.api.Converters");
+                                     "Use only one of:\n" +
+                                     " * interface veslo.client.converter.api.RequestConverter\n" +
+                                     " * interface veslo.client.converter.api.Converters");
         }
 
     }
@@ -762,9 +762,9 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             assertThrow(() -> getTestFactory().getResponseConverterFromCallAnnotation(OBJ_C, annotations, RTF))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("API method contains concurrent annotations.\n" +
-                            "Use only one of:\n" +
-                            " * interface veslo.client.converter.api.ResponseConverter\n" +
-                            " * interface veslo.client.converter.api.Converters");
+                                     "Use only one of:\n" +
+                                     " * interface veslo.client.converter.api.ResponseConverter\n" +
+                                     " * interface veslo.client.converter.api.Converters");
         }
 
     }
@@ -830,49 +830,6 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             assertThrow(() -> getTestFactory().getExtensionConverter(nullable, OBJ_C))
                     .assertClass(ConvertCallException.class)
                     .assertMessageIs("Received an unsupported annotation type: " + nullable.getClass());
-        }
-
-    }
-
-    @Nested
-    @DisplayName("#newInstance() method tests")
-    public class NewInstanceMethodTests {
-
-        @Test
-        @DisplayName("Required parameters")
-        public void test1640471499107() {
-            assertNPE(() -> getTestFactory().newInstance(null), "converterClass");
-        }
-
-        @Test
-        @DisplayName("return new instance if TestConverter.class")
-        public void test1640471501615() {
-            final ExtensionConverter<?> converter = getTestFactory().newInstance(TestConverter.class);
-            assertThat("TestConverter", converter, notNullValue());
-            assertThat("TestConverter", converter, instanceOf(TestConverter.class));
-        }
-
-        @Test
-        @DisplayName("ConvertCallException being throw if class is null")
-        public void test1640471504484() {
-            assertThrow(() -> getTestFactory().newInstance(null)).assertNPE("converterClass");
-        }
-
-        @Test
-        @DisplayName("ConvertCallException being throw if class has privet constructor")
-        public void test1640471506711() {
-            assertThrow(() -> getTestFactory().newInstance(PrivateConstructorConverter.class))
-                    .assertClass(ConvertCallException.class)
-                    .assertMessageIs("" +
-                            "Unable to create new instance of " + PrivateConstructorConverter.class + "\n" +
-                            "See details below.")
-                    .assertCause(cause -> cause
-                            .assertClass(IllegalAccessException.class)
-                            .assertMessageContains(
-                                    "veslo.client.converter.ExtensionConverterFactory ",
-                                    "not access a member of " + PrivateConstructorConverter.class,
-                                    "with modifiers \"private\"")
-                    );
         }
 
     }
@@ -1362,11 +1319,11 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             factory.getJavaTypeRequestConverters().clear();
             final String info = factory.getSupportedConvertersInfo(TransportEvent.REQUEST, AA);
             assertThat("", info, is("SUPPORTED REQUEST CONVERTERS:\n" +
-                    "Annotated converters: <absent>\n" +
-                    "Raw converters: <absent>\n" +
-                    "Package converters: <absent>\n" +
-                    "Content type converters: <absent>\n" +
-                    "Java type converters: <absent>"));
+                                    "Annotated converters: <absent>\n" +
+                                    "Raw converters: <absent>\n" +
+                                    "Package converters: <absent>\n" +
+                                    "Content type converters: <absent>\n" +
+                                    "Java type converters: <absent>"));
         }
 
         @Test
@@ -1380,11 +1337,11 @@ public class ExtensionConverterFactoryUnitTests extends BaseCoreUnitTest {
             factory.getJavaTypeResponseConverters().clear();
             final String info = factory.getSupportedConvertersInfo(TransportEvent.RESPONSE, AA);
             assertThat("", info, is("SUPPORTED RESPONSE CONVERTERS:\n" +
-                    "Annotated converters: <absent>\n" +
-                    "Raw converters: <absent>\n" +
-                    "Package converters: <absent>\n" +
-                    "Content type converters: <absent>\n" +
-                    "Java type converters: <absent>"));
+                                    "Annotated converters: <absent>\n" +
+                                    "Raw converters: <absent>\n" +
+                                    "Package converters: <absent>\n" +
+                                    "Content type converters: <absent>\n" +
+                                    "Java type converters: <absent>"));
         }
 
         @Test

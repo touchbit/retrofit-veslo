@@ -42,7 +42,7 @@ public class TrustSocketHelper {
             sslContext.init(null, new X509TrustManager[]{manager}, new SecureRandom());
             return sslContext;
         } catch (Exception e) {
-            throw new IllegalStateException("Unable to create " + context + " context", e);
+            throw new IllegalStateException("Unable to create " + context + " SSL context", e);
         }
     }
 

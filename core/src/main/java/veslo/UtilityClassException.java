@@ -16,8 +16,13 @@
 
 package veslo;
 
+/**
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 26.12.2021
+ */
 public class UtilityClassException extends RuntimeException {
 
+    /***/
     public UtilityClassException() {
         super("Utility class. Instantiation is prohibited.");
     }

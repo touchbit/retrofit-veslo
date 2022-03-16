@@ -7,17 +7,21 @@
     <parent>
         <groupId>org.touchbit.retrofit.veslo</groupId>
         <artifactId>parent-pom</artifactId>
-        <version>1.1.0</version>
+        <version>1.2.0</version>
     </parent>
 
     <artifactId>core</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <packaging>jar</packaging>
     <name>Veslo Core Module</name>
     <description>The core implementation of the Retrofit-Veslo library. For more information see the project documentation: https://github.com/touchbit/retrofit-veslo</description>
     <url>https://github.com/touchbit/retrofit-veslo</url>
 
     <dependencies>
+        <dependency>
+            <groupId>org.touchbit.web</groupId>
+            <artifactId>form-urlencoded-marshaller</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.squareup.retrofit2</groupId>
             <artifactId>retrofit</artifactId>

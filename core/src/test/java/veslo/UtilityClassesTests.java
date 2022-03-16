@@ -21,10 +21,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import veslo.bean.template.TemplateMapper;
 import veslo.client.TestClient;
+import veslo.client.TrustSocketHelper;
 import veslo.constant.ParameterNameConstants;
 import veslo.constant.SonarRuleConstants;
 import veslo.example.ExampleApiClientAssertions;
+import veslo.util.CaseUtils;
 import veslo.util.OkhttpUtils;
+import veslo.util.ReflectUtils;
 import veslo.util.Utils;
 
 @DisplayName("Utility class tests")
@@ -37,9 +40,12 @@ public class UtilityClassesTests extends BaseUnitTest {
         assertUtilityClassException(ExampleApiClientAssertions.class);
         assertUtilityClassException(ParameterNameConstants.class);
         assertUtilityClassException(SonarRuleConstants.class);
+        assertUtilityClassException(TrustSocketHelper.class);
         assertUtilityClassException(TemplateMapper.class);
+        assertUtilityClassException(ReflectUtils.class);
         assertUtilityClassException(OkhttpUtils.class);
         assertUtilityClassException(TestClient.class);
+        assertUtilityClassException(CaseUtils.class);
         assertUtilityClassException(Utils.class);
     }
 

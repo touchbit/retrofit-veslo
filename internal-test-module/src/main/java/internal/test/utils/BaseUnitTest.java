@@ -18,6 +18,7 @@ package internal.test.utils;
 
 import internal.test.utils.asserter.ThrowableAsserter;
 import internal.test.utils.asserter.ThrowableRunnable;
+import okhttp3.MultipartBody;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.slf4j.Logger;
@@ -102,6 +103,7 @@ public abstract class BaseUnitTest {
     }
 
     public static void assertUtilityClassException(Class<?> aClass) {
+
         ThrowableAsserter.assertUtilityClassException(aClass);
     }
 
@@ -174,6 +176,34 @@ public abstract class BaseUnitTest {
         @GET("/api/call")
         Call<Object> call();
 
+    }
+
+    protected static Map<String, Object> mapOf() {
+        return new HashMap<>();
+    }
+
+    protected static Map<String, Object> mapOf(String k1, Object v1) {
+        final Map<String, Object> map = new HashMap<>();
+        map.put(k1, v1);
+        return map;
+    }
+
+    protected static Map<String, Object> mapOf(String k1, Object v1,
+                                               String k2, Object v2) {
+        final Map<String, Object> map = new HashMap<>();
+        map.put(k1, v1);
+        map.put(k2, v2);
+        return map;
+    }
+
+    protected static Map<String, Object> mapOf(String k1, Object v1,
+                                               String k2, Object v2,
+                                               String k3, Object v3) {
+        final Map<String, Object> map = new HashMap<>();
+        map.put(k1, v1);
+        map.put(k2, v2);
+        map.put(k3, v3);
+        return map;
     }
 
     public void assertUniqTestNames() throws IOException {

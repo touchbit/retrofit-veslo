@@ -18,15 +18,16 @@ package veslo.client.converter;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.touchbit.www.form.urlencoded.marshaller.pojo.FormUrlEncoded;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
 import veslo.ConvertCallException;
 import veslo.ConverterNotFoundException;
 import veslo.bean.template.TemplateSource;
-import veslo.bean.urlencoded.FormUrlEncoded;
 import veslo.client.TransportEvent;
 import veslo.client.converter.annotated.FormUrlEncodedConverter;
 import veslo.client.converter.annotated.TemplateSourceConverter;
@@ -40,6 +41,7 @@ import veslo.client.converter.defaults.JavaReferenceTypeConverter;
 import veslo.client.converter.defaults.RawBodyTypeConverter;
 import veslo.client.header.ContentType;
 import veslo.util.ConvertUtils;
+import veslo.util.ReflectUtils;
 import veslo.util.Utils;
 
 import javax.annotation.Nonnull;
@@ -56,6 +58,7 @@ import static org.apache.commons.io.FilenameUtils.wildcardMatch;
 import static veslo.client.TransportEvent.REQUEST;
 import static veslo.client.TransportEvent.RESPONSE;
 import static veslo.client.converter.api.ExtensionConverter.RequestBodyConverter;
+import static veslo.client.header.ContentTypeConstants.*;
 import static veslo.constant.ParameterNameConstants.*;
 import static veslo.constant.SonarRuleConstants.SONAR_COGNITIVE_COMPLEXITY;
 import static veslo.constant.SonarRuleConstants.SONAR_GENERIC_WILDCARD_TYPES;
@@ -119,6 +122,9 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
         // Annotated java bean converters
         registerModelAnnotationConverter(TemplateSourceConverter.INSTANCE, TemplateSource.class);
         registerModelAnnotationConverter(FormUrlEncodedConverter.INSTANCE, FormUrlEncoded.class);
+        // MIME types converters
+        registerMimeConverter(FormUrlEncodedConverter.INSTANCE,
+                APP_FORM_URLENCODED, APP_X_FORM_URLENCODED, APP_FORM_URLENCODED_UTF8, APP_X_FORM_URLENCODED_UTF8);
     }
 
     /**
@@ -268,9 +274,9 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
         final Converters aConverters = Utils.getAnnotation(methodAnnotations, Converters.class);
         if (aRequestConverter != null && aConverters != null) {
             throw new ConvertCallException("API method contains concurrent annotations.\n" +
-                    "Use only one of:\n" +
-                    " * " + RequestConverter.class + "\n" +
-                    " * " + Converters.class);
+                                           "Use only one of:\n" +
+                                           " * " + RequestConverter.class + "\n" +
+                                           " * " + Converters.class);
         }
         if ((aRequestConverter == null && aConverters == null)) {
             return null;
@@ -610,9 +616,9 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
         final Converters converters = Utils.getAnnotation(methodAnnotations, Converters.class);
         if (responseConverter != null && converters != null) {
             throw new ConvertCallException("API method contains concurrent annotations.\n" +
-                    "Use only one of:\n" +
-                    " * " + ResponseConverter.class + "\n" +
-                    " * " + Converters.class);
+                                           "Use only one of:\n" +
+                                           " * " + ResponseConverter.class + "\n" +
+                                           " * " + Converters.class);
         }
         if ((responseConverter == null && converters == null)) {
             return null;
@@ -665,32 +671,14 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
             throw new ConvertCallException("Received an unsupported annotation type: " + annotation.getClass());
         }
         if (converterBodyClasses.length == 0) {
-            return newInstance(converterClass);
+            return ReflectUtils.invokeConstructor(converterClass);
         }
         for (Class<?> converterBodyClass : converterBodyClasses) {
             if (converterBodyClass.equals(bodyType)) {
-                return newInstance(converterClass);
+                return ReflectUtils.invokeConstructor(converterClass);
             }
         }
         return null;
-    }
-
-    /**
-     * @param converterClass - The class of the object that implements the {@link ExtensionConverter}
-     * @return - new instance of converterClass
-     * @throws ConvertCallException if there were errors while creating an instance of converterClass
-     */
-    @EverythingIsNonNull
-    @SuppressWarnings("rawtypes")
-    protected ExtensionConverter<?> newInstance(@Nonnull final Class<? extends ExtensionConverter> converterClass) {
-        Utils.parameterRequireNonNull(converterClass, CONVERTER_CLASS_PARAMETER);
-        try {
-            return converterClass.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new ConvertCallException("" +
-                    "Unable to create new instance of " + converterClass + "\n" +
-                    "See details below.", e);
-        }
     }
 
     /**
@@ -1160,11 +1148,11 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
                     .collect(Collectors.toMap(e -> "@" + e.getKey().getName(), e -> e.getValue().getClass())));
         }
         return "SUPPORTED " + transportEvent + " CONVERTERS:\n" +
-                buildSummary("Annotated converters:", annotated, Type::getTypeName, p -> p) + "\n" +
-                buildSummary("Raw converters:", raw, v -> v.getClass().getName(), Type::getTypeName) + "\n" +
-                buildSummary("Package converters:", pack, v -> v.getClass().getName(), p -> p) + "\n" +
-                buildSummary("Content type converters:", mime, v -> v.getClass().getName(), ContentType::toString) + "\n" +
-                buildSummary("Java type converters:", javaType, v -> v.getClass().getName(), Type::getTypeName);
+               buildSummary("Annotated converters:", annotated, Type::getTypeName, p -> p) + "\n" +
+               buildSummary("Raw converters:", raw, v -> v.getClass().getName(), Type::getTypeName) + "\n" +
+               buildSummary("Package converters:", pack, v -> v.getClass().getName(), p -> p) + "\n" +
+               buildSummary("Content type converters:", mime, v -> v.getClass().getName(), ContentType::toString) + "\n" +
+               buildSummary("Java type converters:", javaType, v -> v.getClass().getName(), Type::getTypeName);
     }
 
     protected <K, V> String buildSummary(final String convertersInfo,
@@ -1188,8 +1176,8 @@ public class ExtensionConverterFactory extends retrofit2.Converter.Factory {
     @Override
     public String toString() {
         return "Converter factory: " + this.getClass() + "\n\n" +
-                getSupportedConvertersInfo(REQUEST, new Annotation[]{}) + "\n\n" +
-                getSupportedConvertersInfo(RESPONSE, new Annotation[]{});
+               getSupportedConvertersInfo(REQUEST, new Annotation[]{}) + "\n\n" +
+               getSupportedConvertersInfo(RESPONSE, new Annotation[]{});
     }
 
     public Logger getLogger() {

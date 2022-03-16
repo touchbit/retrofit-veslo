@@ -6,7 +6,7 @@
 
     <groupId>org.touchbit.retrofit.veslo</groupId>
     <artifactId>parent-pom</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <name>Veslo (parent pom)</name>
     <description>The extension is intended for API testing. Allows you to work with a response from a HTTP-service, which contains two data models (DTO) for processing/checking both positive and negative cases when testing the service.</description>
     <packaging>pom</packaging>
@@ -102,47 +102,52 @@
             <dependency>
                 <groupId>org.touchbit.retrofit.veslo</groupId>
                 <artifactId>all</artifactId>
-                <version>1.1.0</version>
+                <version>1.2.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.touchbit.retrofit.veslo</groupId>
                 <artifactId>core</artifactId>
-                <version>1.1.0</version>
+                <version>1.2.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.touchbit.retrofit.veslo</groupId>
                 <artifactId>jackson</artifactId>
-                <version>1.1.0</version>
+                <version>1.2.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.touchbit.retrofit.veslo</groupId>
                 <artifactId>gson</artifactId>
-                <version>1.1.0</version>
+                <version>1.2.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.touchbit.retrofit.veslo</groupId>
                 <artifactId>bean</artifactId>
-                <version>1.1.0</version>
+                <version>1.2.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.touchbit.retrofit.veslo</groupId>
                 <artifactId>allure</artifactId>
-                <version>1.1.0</version>
+                <version>1.2.0</version>
                 <scope>compile</scope>
             </dependency>
             <!-- project test dependencies -->
             <dependency>
                 <groupId>org.touchbit.retrofit.veslo</groupId>
                 <artifactId>internal-test-module</artifactId>
-                <version>1.1.0</version>
+                <version>1.2.0</version>
                 <scope>test</scope>
             </dependency>
             <!-- utils dependencies -->
+            <dependency>
+                <groupId>org.touchbit.web</groupId>
+                <artifactId>form-urlencoded-marshaller</artifactId>
+                <version>1.0.0</version>
+            </dependency>
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>

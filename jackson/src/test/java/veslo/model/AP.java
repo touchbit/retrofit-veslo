@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Shaburov Oleg
+ * Copyright 2021-2022 Shaburov Oleg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,9 @@
  * limitations under the License.
  */
 
-package veslo;
+package veslo.model;
 
-/**
- * @author Oleg Shaburov (shaburov.o.a@gmail.com)
- * Created: 18.02.2022
- */
-public class FormUrlEncodedMapperException extends RuntimeException {
+import veslo.JacksonModelAdditionalProperties;
 
-    public FormUrlEncodedMapperException(String message) {
-        super(message);
-    }
-
-    public FormUrlEncodedMapperException(String message, Throwable t) {
-        super(message, t);
-    }
-
+public class AP extends JacksonModelAdditionalProperties<AP> {
 }

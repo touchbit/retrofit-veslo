@@ -1,6 +1,15 @@
 Change Log
 ==========
 
+## Version 1.2.0
+
+* **New** `FormUrlQueryData` simplified mechanism for working with QueryMap. Reading values from variables through
+  reflection. Managing rules for handling `null` values, support for nested POJO objects.
+* **New** `FormUrlEncodedConverter` support for request/response body in "x-www-form-urlencoded" format. Support for nested POJO objects.
+* **New** `ReflectHeaders` simplified mechanism for working with request @HeadersMap. Reading headers from variables through
+  reflection with naming control.
+* **Change** `FormUrlEncodedMapper` moved to a separate library (`org.touchbit.web:form-urlencoded-marshaller`).
+
 ## Version 1.1.0
 
 * **New** `FormUrlEncodedMapper` to serialize/deserialize data in 'form-urlencoded' format (RFC-3986)
@@ -37,7 +46,6 @@ Change Log
 * **New**: `ResourceFile` reading request body from project resources.
 * **New**: `ReflectQueryMap` simplified mechanism for working with QueryMap. Reading values from variables through
   reflection. Parameter naming format control. Managing rules for handling `null` values.
-* **New**: `ReflectQueryMap` simplified mechanism for working with QueryMap.
 * **New**: `DualResponse` basic implementation of `IDualResponse` with inline request headers and body assertions.
 * **New**: `TrustSocketHelper` trust any certificates and domains (for test environments)
   `OkHttpClient.Builder().sslSocketFactory(TRUST_ALL_SSL_SOCKET_FACTORY, TRUST_ALL_CERTS_MANAGER)`.

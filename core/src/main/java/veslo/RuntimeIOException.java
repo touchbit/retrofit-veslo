@@ -22,10 +22,21 @@ package veslo;
  */
 public class RuntimeIOException extends RuntimeException {
 
+    /**
+     * Constructs a new runtime exception with the specified detail message.
+     *
+     * @param message the detail message
+     */
     public RuntimeIOException(String message) {
         super(message);
     }
 
+    /**
+     * Constructs a new runtime exception with the specified detail message and cause.
+     *
+     * @param message the detail message (which is saved for later retrieval by the getMessage() method).
+     * @param t the cause
+     */
     public RuntimeIOException(String message, Throwable t) {
         super(message, t);
     }

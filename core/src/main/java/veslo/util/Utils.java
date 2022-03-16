@@ -34,6 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static veslo.constant.ParameterNameConstants.*;
@@ -114,7 +115,7 @@ public class Utils {
             return (byte[]) bytes;
         }
         throw new IllegalArgumentException("Received unsupported type: " + bytes.getClass() + "\n" +
-                "Expected: " + Byte[].class.getTypeName() + " or " + byte[].class.getTypeName());
+                                           "Expected: " + Byte[].class.getTypeName() + " or " + byte[].class.getTypeName());
     }
 
     /**
@@ -290,6 +291,10 @@ public class Utils {
      */
     public static ClassLoader getClassLoader() {
         return Thread.currentThread().getContextClassLoader();
+    }
+
+    public static <O> boolean isNullOrBlank(@Nonnull final Function<O, String> function, @Nullable final O object) {
+        return object == null || function.apply(object).trim().isEmpty();
     }
 
 }

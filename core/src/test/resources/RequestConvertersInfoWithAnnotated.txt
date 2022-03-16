@@ -4,7 +4,7 @@ veslo.BaseCoreUnitTest$TestConverter
     internal.test.utils.client.model.TestDTO
     java.lang.Object
 veslo.client.converter.annotated.FormUrlEncodedConverter
-    @veslo.bean.urlencoded.FormUrlEncoded
+    @org.touchbit.www.form.urlencoded.marshaller.pojo.FormUrlEncoded
 veslo.client.converter.annotated.TemplateSourceConverter
     @veslo.bean.template.TemplateSource
 Raw converters:
@@ -20,6 +20,11 @@ veslo.BaseCoreUnitTest$TestPackageConverter
 Content type converters:
 veslo.BaseCoreUnitTest$TestConverter
     text/plain
+veslo.client.converter.annotated.FormUrlEncodedConverter
+    application/www-form-urlencoded
+    application/www-form-urlencoded; charset=utf-8
+    application/x-www-form-urlencoded
+    application/x-www-form-urlencoded; charset=utf-8
 Java type converters:
 veslo.client.converter.defaults.JavaPrimitiveTypeConverter
     boolean

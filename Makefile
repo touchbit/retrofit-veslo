@@ -18,6 +18,11 @@ i:
 t:
 	mvn clean test
 
+r:
+	@mvn surefire-report:report -Daggregate=true site -DgenerateReports=false -Dcoverage
+	@open ./all/target/site/jacoco-aggregate/index.html
+	@open target/site/surefire-report.html
+
 c:
 	mvn clean test -Dcoverage
 	open ./all/target/site/jacoco-aggregate/index.html

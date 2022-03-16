@@ -211,6 +211,20 @@ public class JavaTypeCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
         }
 
         @Test
+        @DisplayName("Return null if Response returnType = Void")
+        public void test1647374543997() {
+            final Object result = FACTORY.getSuccessfulResponseBody(mock(Response.class), Void.class, AA, RTF);
+            assertThat(result, nullValue());
+        }
+
+        @Test
+        @DisplayName("Return null if Response returnType = void")
+        public void test1647374557732() {
+            final Object result = FACTORY.getSuccessfulResponseBody(mock(Response.class), Void.TYPE, AA, RTF);
+            assertThat(result, nullValue());
+        }
+
+        @Test
         @DisplayName("ConvertCallException if Response body not convertable and response.isSuccessful() = true")
         public void test1639174338437() {
             final Response<Object> response = mock(Response.class);
@@ -325,6 +339,20 @@ public class JavaTypeCallAdapterFactoryUnitTests extends BaseCoreUnitTest {
             final Retrofit retrofit = mock(Retrofit.class);
             when(retrofit.responseBodyConverter(OBJ_T, AA)).thenThrow(new ConvertCallException("test1639176754352"));
             final Object result = FACTORY.getErrorResponseBody(response, OBJ_T, AA, retrofit);
+            assertThat(result, nullValue());
+        }
+
+        @Test
+        @DisplayName("Return null if returnType = Void")
+        public void test1647374677950() {
+            final Object result = FACTORY.getErrorResponseBody(mock(Response.class), Void.class, AA, RTF);
+            assertThat(result, nullValue());
+        }
+
+        @Test
+        @DisplayName("Return null if returnType = void")
+        public void test1647374681450() {
+            final Object result = FACTORY.getErrorResponseBody(mock(Response.class), Void.TYPE, AA, RTF);
             assertThat(result, nullValue());
         }
 

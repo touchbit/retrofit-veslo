@@ -48,25 +48,25 @@ public class ReflectQueryMapFuncTests extends BaseCoreUnitTest {
             .create(Client.class);
 
     @Test
-    @DisplayName("Get values from QueryMap without annotations (null values)")
+    @DisplayName("Get values from ReflectQueryMap without annotations (null values)")
     public void test1640009960749() {
-        DefaultQueryMap map = new DefaultQueryMap();
-        final Response response = CLIENT.defaultQueryMapCall(map).getResponse();
+        DefaultReflectQueryMap map = new DefaultReflectQueryMap();
+        final Response response = CLIENT.defaultReflectQueryMapCall(map).getResponse();
         assertThat(response.request().url().toString(), is("http://localhost/api/test"));
     }
 
     @Test
-    @DisplayName("Get values from QueryMap without annotations (filled)")
+    @DisplayName("Get values from ReflectQueryMap without annotations (filled)")
     public void test1640010167646() {
-        DefaultQueryMap map = new DefaultQueryMap();
+        DefaultReflectQueryMap map = new DefaultReflectQueryMap();
         map.firstName = "foo";
         map.lastName = "bar";
-        final Response response = CLIENT.defaultQueryMapCall(map).getResponse();
+        final Response response = CLIENT.defaultReflectQueryMapCall(map).getResponse();
         assertThat(response.request().url().toString(), is("http://localhost/api/test?firstName=foo&lastName=bar"));
     }
 
     @Test
-    @DisplayName("Get values from QueryMap with annotations (filled)")
+    @DisplayName("Get values from ReflectQueryMap with annotations (filled)")
     public void test1640010267136() {
         NullMarkerSnakeCaseQueryMap map = new NullMarkerSnakeCaseQueryMap();
         map.ruleEmptyStringField = "foo";
@@ -76,7 +76,7 @@ public class ReflectQueryMapFuncTests extends BaseCoreUnitTest {
     }
 
     @Test
-    @DisplayName("Get values from QueryMap with annotations (null values)")
+    @DisplayName("Get values from ReflectQueryMap with annotations (null values)")
     public void test1640010272640() {
         NullMarkerSnakeCaseQueryMap map = new NullMarkerSnakeCaseQueryMap();
         final Response response = CLIENT.nullMarkerSnakeCaseQueryMap(map).getResponse();
@@ -86,14 +86,14 @@ public class ReflectQueryMapFuncTests extends BaseCoreUnitTest {
     private interface Client {
 
         @GET("/api/test")
-        DualResponse<String, String> defaultQueryMapCall(@QueryMap DefaultQueryMap map);
+        DualResponse<String, String> defaultReflectQueryMapCall(@QueryMap() DefaultReflectQueryMap map);
 
         @GET("/api/test")
-        DualResponse<String, String> nullMarkerSnakeCaseQueryMap(@QueryMap NullMarkerSnakeCaseQueryMap map);
+        DualResponse<String, String> nullMarkerSnakeCaseQueryMap(@QueryMap() NullMarkerSnakeCaseQueryMap map);
 
     }
 
-    private static final class DefaultQueryMap extends ReflectQueryMap {
+    private static final class DefaultReflectQueryMap extends ReflectQueryMap {
 
         private Object firstName;
         private Object lastName;

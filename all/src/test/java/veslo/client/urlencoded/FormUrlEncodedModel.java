@@ -19,9 +19,9 @@ package veslo.client.urlencoded;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import veslo.bean.urlencoded.FormUrlEncoded;
-import veslo.bean.urlencoded.FormUrlEncodedAdditionalProperties;
-import veslo.bean.urlencoded.FormUrlEncodedField;
+import org.touchbit.www.form.urlencoded.marshaller.pojo.FormUrlEncoded;
+import org.touchbit.www.form.urlencoded.marshaller.pojo.FormUrlEncodedAdditionalProperties;
+import org.touchbit.www.form.urlencoded.marshaller.pojo.FormUrlEncodedField;
 
 import java.util.List;
 import java.util.Map;

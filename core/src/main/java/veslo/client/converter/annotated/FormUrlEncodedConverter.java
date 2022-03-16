@@ -18,11 +18,10 @@ package veslo.client.converter.annotated;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import org.touchbit.www.form.urlencoded.marshaller.FormUrlMarshaller;
+import org.touchbit.www.form.urlencoded.marshaller.pojo.FormUrlEncoded;
 import retrofit2.Retrofit;
 import retrofit2.internal.EverythingIsNonNull;
-import veslo.bean.urlencoded.FormUrlEncoded;
-import veslo.bean.urlencoded.FormUrlEncodedMapper;
-import veslo.bean.urlencoded.IFormUrlEncodedMapper;
 import veslo.client.converter.api.ExtensionConverter;
 import veslo.util.Utils;
 
@@ -49,22 +48,22 @@ public class FormUrlEncodedConverter implements ExtensionConverter<Object> {
     public static final FormUrlEncodedConverter INSTANCE = new FormUrlEncodedConverter();
 
     /**
-     * {@link IFormUrlEncodedMapper} mapper implementation
+     * {@link FormUrlMarshaller}
      */
-    private final IFormUrlEncodedMapper mapper;
+    private final FormUrlMarshaller marshaller;
 
     /**
-     * Default constructor with {@link FormUrlEncodedMapper} by default
+     * Default constructor with {@link FormUrlMarshaller}
      */
     public FormUrlEncodedConverter() {
-        this(FormUrlEncodedMapper.INSTANCE);
+        this(FormUrlMarshaller.INSTANCE);
     }
 
     /**
-     * @param mapper - {@link IFormUrlEncodedMapper} mapper implementation
+     * @param marshaller - {@link FormUrlMarshaller}
      */
-    public FormUrlEncodedConverter(final IFormUrlEncodedMapper mapper) {
-        this.mapper = mapper;
+    public FormUrlEncodedConverter(final FormUrlMarshaller marshaller) {
+        this.marshaller = marshaller;
     }
 
     /**
@@ -89,7 +88,8 @@ public class FormUrlEncodedConverter implements ExtensionConverter<Object> {
             @Override
             @EverythingIsNonNull
             public RequestBody convert(Object body) {
-                return createRequestBody(methodAnnotations, mapper.marshal(body));
+                Utils.parameterRequireNonNull(body, BODY_PARAMETER);
+                return createRequestBody(methodAnnotations, marshaller.marshal(body));
             }
 
         };
@@ -124,7 +124,7 @@ public class FormUrlEncodedConverter implements ExtensionConverter<Object> {
                     final ParameterizedType parameterizedType = (ParameterizedType) type;
                     modelType = (Class<?>) parameterizedType.getRawType();
                 }
-                return mapper.unmarshal(modelType, body);
+                return marshaller.unmarshal(modelType, body);
             }
 
         };

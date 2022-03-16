@@ -22,6 +22,10 @@ import veslo.client.header.ContentType;
 
 import java.lang.reflect.Type;
 
+/**
+ * @author Oleg Shaburov (shaburov.o.a@gmail.com)
+ * Created: 26.12.2021
+ */
 public class ConverterNotFoundException extends RuntimeException {
 
     @EverythingIsNonNull
