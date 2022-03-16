@@ -268,9 +268,9 @@ public class GeneratedQueryMap extends HashMap<String, Object> {
 **QueryParameterNullValueRule**
 
 - `RULE_IGNORE` - Игнорировать параметры c значением `null` (по умолчанию)
-- `RULE_NULL_MARKER` - заменить `null` на `null marker` -> `/api/call?POJO=%00`
-- `RULE_EMPTY_STRING` - заменить `null` на пустую строку -> `/api/call?POJO=`
-- `RULE_NULL_STRING` - заменить `null` на `null` строку -> `/api/call?POJO=null`
+- `RULE_NULL_MARKER` - заменить `null` на `null marker` -> `/api/call?foo=%00`
+- `RULE_EMPTY_STRING` - заменить `null` на пустую строку -> `/api/call?foo=`
+- `RULE_NULL_STRING` - заменить `null` на `null` строку -> `/api/call?foo=null`
 
 ```java
 // для всех переменных класса

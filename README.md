@@ -311,9 +311,9 @@ public class LoginUserQueryMap extends ReflectQueryMap {
 #### QueryParameterNullValueRule
 
 - RULE_IGNORE - Ignore null value parameters
-- RULE_NULL_MARKER - replace null to null marker -> `/api/call?POJO=%00`
-- RULE_EMPTY_STRING - replace null to empty string -> `/api/call?POJO=`
-- RULE_NULL_STRING - replace null to null string -> `/api/call?POJO=null`
+- RULE_NULL_MARKER - replace null to null marker -> `/api/call?foo=%00`
+- RULE_EMPTY_STRING - replace null to empty string -> `/api/call?foo=`
+- RULE_NULL_STRING - replace null to null string -> `/api/call?foo=null`
 
 #### QueryParameterCaseRule
 
