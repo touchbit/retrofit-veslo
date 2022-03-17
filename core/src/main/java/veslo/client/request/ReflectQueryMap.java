@@ -16,12 +16,9 @@
 
 package veslo.client.request;
 
-import retrofit2.internal.EverythingIsNonNull;
 import veslo.util.ReflectUtils;
 import veslo.util.Utils;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.AbstractMap;
 import java.util.HashMap;
@@ -66,19 +63,18 @@ public abstract class ReflectQueryMap extends HashMap<String, Object> {
         return result;
     }
 
-    @EverythingIsNonNull
-    protected String getParameterName(final @Nullable QueryMapParameter queryMapParameter,
-                                      final @Nullable QueryMapParameterRules classRules,
-                                      final @Nonnull String declaredFieldName) {
-        return !Utils.isNullOrBlank(QueryMapParameter::name, queryMapParameter) ?
-                queryMapParameter.name() : classRules != null ?
-                classRules.caseRule().format(declaredFieldName) : declaredFieldName;
+    protected String getParameterName(final QueryMapParameter queryMapParameter,
+                                      final QueryMapParameterRules classRules,
+                                      final String declaredFieldName) {
+        if (!Utils.isNullOrBlank(QueryMapParameter::name, queryMapParameter)) {
+            return queryMapParameter.name();
+        }
+        return classRules != null ? classRules.caseRule().format(declaredFieldName) : declaredFieldName;
     }
 
-    @Nullable
-    protected Object getParameterValue(final @Nullable QueryMapParameter queryMapParameter,
-                                       final @Nullable QueryMapParameterRules classRules,
-                                       final @Nullable Object value) {
+    protected Object getParameterValue(final QueryMapParameter queryMapParameter,
+                                       final QueryMapParameterRules classRules,
+                                       final Object value) {
         QueryParameterNullValueRule rule = null;
         if (classRules != null) {
             rule = classRules.nullRule();

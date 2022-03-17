@@ -2,7 +2,7 @@ name: Build
 on: [ push ]
 jobs:
   Build_JDK:
-    if: "!contains(github.event.commits[0].message, '[sonar]')"
+    if: "!contains(github.event.commits[0].message, '[sonar]') && !contains(github.event.commits[0].message, '[skipCI]')"
     runs-on: ubuntu-latest
     permissions:
       contents: read
