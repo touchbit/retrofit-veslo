@@ -37,12 +37,10 @@ import java.util.*;
  */
 public abstract class FormUrlQueryData extends HashMap<String, Object> {
 
-    protected transient FormUrlMarshaller marshaller = FormUrlMarshaller.INSTANCE;
-
     @Override
     public Set<Entry<String, Object>> entrySet() {
         final Set<Entry<String, Object>> entries = new HashSet<>(super.entrySet());
-        for (Entry<String, List<String>> entry : marshaller.marshalToMap(this).entrySet()) {
+        for (Entry<String, List<String>> entry : getMarshaller().marshalToMap(this).entrySet()) {
             for (String value : entry.getValue()) {
                 entries.add(new SimpleEntry<>(entry.getKey(), value));
             }
@@ -56,6 +54,13 @@ public abstract class FormUrlQueryData extends HashMap<String, Object> {
         final StringJoiner stringJoiner = new StringJoiner("&");
         this.entrySet().forEach(e -> stringJoiner.add(e.getKey() + "=" + e.getValue()));
         return stringJoiner.toString();
+    }
+
+    /**
+     * @return {@link FormUrlMarshaller}
+     */
+    protected FormUrlMarshaller getMarshaller() {
+        return FormUrlMarshaller.INSTANCE;
     }
 
 }

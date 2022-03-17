@@ -36,6 +36,7 @@ public abstract class ReflectHeaders extends HashMap<String, String> {
     /**
      * @return a set view of the mappings contained in this map and the values of serializable class fields
      */
+    @Override
     @SuppressWarnings("ConstantConditions")
     public Set<Map.Entry<String, String>> entrySet() {
         this.putAll(readHeadersFields());

@@ -18,7 +18,6 @@ package veslo.client.converter;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
-import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
