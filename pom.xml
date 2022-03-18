@@ -471,19 +471,28 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.3.1</version>
+                    <version>3.3.2</version>
+                    <configuration>
+                        <source>${jdk.version}</source>
+                        <failOnError>false</failOnError>
+                        <failOnWarnings>false</failOnWarnings>
+                        <detectOfflineLinks>false</detectOfflineLinks>
+                        <excludes>internal-test-module, example</excludes>
+                    </configuration>
                     <executions>
                         <execution>
+                            <id>default</id>
                             <goals>
                                 <goal>jar</goal>
                             </goals>
-                            <phase>install</phase>
-                            <configuration>
-                                <source>${jdk.version}</source>
-                                <failOnError>false</failOnError>
-                                <failOnWarnings>false</failOnWarnings>
-                                <detectOfflineLinks>false</detectOfflineLinks>
-                            </configuration>
+                            <phase>package</phase>
+                        </execution>
+                        <execution>
+                            <id>aggregate</id>
+                            <goals>
+                                <goal>aggregate</goal>
+                            </goals>
+                            <phase>package</phase>
                         </execution>
                     </executions>
                 </plugin>

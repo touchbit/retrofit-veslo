@@ -1,0 +1,26 @@
+-classpath
+'/Users/ra/repo/src/github.com/touchbit/retrofit-veslo/all/target/classes:/Users/ra/repo/src/github.com/touchbit/retrofit-veslo/core/target/classes:/Users/ra/repo/src/github.com/touchbit/retrofit-veslo/gson/target/classes:/Users/ra/repo/src/github.com/touchbit/retrofit-veslo/jackson/target/classes:/Users/ra/repo/src/github.com/touchbit/retrofit-veslo/bean/target/classes:/Users/ra/repo/src/github.com/touchbit/retrofit-veslo/allure/target/classes:/Users/ra/repo/src/github.com/touchbit/retrofit-veslo/example/target/classes:/Users/ra/.m2/repository/org/touchbit/web/form-urlencoded-marshaller/1.0.0/form-urlencoded-marshaller-1.0.0.jar:/Users/ra/.m2/repository/com/squareup/retrofit2/retrofit/2.9.0/retrofit-2.9.0.jar:/Users/ra/.m2/repository/com/squareup/okhttp3/okhttp/3.14.9/okhttp-3.14.9.jar:/Users/ra/.m2/repository/com/squareup/okio/okio/1.17.2/okio-1.17.2.jar:/Users/ra/.m2/repository/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar:/Users/ra/.m2/repository/org/slf4j/slf4j-api/1.7.35/slf4j-api-1.7.35.jar:/Users/ra/.m2/repository/org/apache/commons/commons-lang3/3.12.0/commons-lang3-3.12.0.jar:/Users/ra/.m2/repository/commons-io/commons-io/2.11.0/commons-io-2.11.0.jar:/Users/ra/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.13.1/jackson-databind-2.13.1.jar:/Users/ra/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.13.1/jackson-annotations-2.13.1.jar:/Users/ra/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.13.1/jackson-core-2.13.1.jar:/Users/ra/.m2/repository/com/google/code/gson/gson/2.9.0/gson-2.9.0.jar:/Users/ra/.m2/repository/org/glassfish/jakarta.el/4.0.2/jakarta.el-4.0.2.jar:/Users/ra/.m2/repository/jakarta/el/jakarta.el-api/4.0.0/jakarta.el-api-4.0.0.jar:/Users/ra/.m2/repository/org/hibernate/validator/hibernate-validator/7.0.2.Final/hibernate-validator-7.0.2.Final.jar:/Users/ra/.m2/repository/jakarta/validation/jakarta.validation-api/3.0.0/jakarta.validation-api-3.0.0.jar:/Users/ra/.m2/repository/org/jboss/logging/jboss-logging/3.4.1.Final/jboss-logging-3.4.1.Final.jar:/Users/ra/.m2/repository/com/fasterxml/classmate/1.5.1/classmate-1.5.1.jar:/Users/ra/.m2/repository/io/qameta/allure/allure-java-commons/2.17.3/allure-java-commons-2.17.3.jar:/Users/ra/.m2/repository/io/qameta/allure/allure-model/2.17.3/allure-model-2.17.3.jar:/Users/ra/.m2/repository/org/apache/logging/log4j/log4j-core/2.17.1/log4j-core-2.17.1.jar:/Users/ra/.m2/repository/org/apache/logging/log4j/log4j-api/2.17.1/log4j-api-2.17.1.jar:/Users/ra/.m2/repository/org/apache/logging/log4j/log4j-slf4j-impl/2.17.1/log4j-slf4j-impl-2.17.1.jar:/Users/ra/.m2/repository/com/github/javafaker/javafaker/1.0.2/javafaker-1.0.2.jar:/Users/ra/.m2/repository/org/yaml/snakeyaml/1.23/snakeyaml-1.23-android.jar:/Users/ra/.m2/repository/com/github/mifmif/generex/1.0.2/generex-1.0.2.jar:/Users/ra/.m2/repository/dk/brics/automaton/automaton/1.11-8/automaton-1.11-8.jar:/Users/ra/.m2/repository/io/qameta/allure/allure-junit5/2.17.3/allure-junit5-2.17.3.jar:/Users/ra/.m2/repository/io/qameta/allure/allure-junit-platform/2.17.3/allure-junit-platform-2.17.3.jar:/Users/ra/.m2/repository/org/projectlombok/lombok/1.18.22/lombok-1.18.22.jar'
+-encoding
+'UTF-8'
+-protected
+-source
+'1.8'
+-sourcepath
+'/Users/ra/repo/src/github.com/touchbit/retrofit-veslo/all/src/main/java:/Users/ra/repo/src/github.com/touchbit/retrofit-veslo/all/target/generated-sources/annotations:/Users/ra/repo/src/github.com/touchbit/retrofit-veslo/core/src/main/java:/Users/ra/repo/src/github.com/touchbit/retrofit-veslo/core/target/generated-sources/annotations:/Users/ra/repo/src/github.com/touchbit/retrofit-veslo/gson/src/main/java:/Users/ra/repo/src/github.com/touchbit/retrofit-veslo/gson/target/generated-sources/annotations:/Users/ra/repo/src/github.com/touchbit/retrofit-veslo/jackson/src/main/java:/Users/ra/repo/src/github.com/touchbit/retrofit-veslo/jackson/target/generated-sources/annotations:/Users/ra/repo/src/github.com/touchbit/retrofit-veslo/bean/src/main/java:/Users/ra/repo/src/github.com/touchbit/retrofit-veslo/bean/target/generated-sources/annotations:/Users/ra/repo/src/github.com/touchbit/retrofit-veslo/allure/src/main/java:/Users/ra/repo/src/github.com/touchbit/retrofit-veslo/allure/target/generated-sources/annotations'
+-author
+-bottom
+'Copyright &#169; 2022. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'/Users/ra/repo/src/github.com/touchbit/retrofit-veslo/target/site/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'Veslo (parent pom) 1.2.0 API'
+-linkoffline
+'https://docs.oracle.com/javase/8/docs/api' '/Users/ra/repo/src/github.com/touchbit/retrofit-veslo/target/javadoc-bundle-options'
+-use
+-version
+-windowtitle
+'Veslo (parent pom) 1.2.0 API'

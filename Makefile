@@ -44,3 +44,11 @@ upv:
 ver:
 	mvn versions:set -DnewVersion=${VERSION}
 	mvn clean install
+
+doc:
+	@rm -r ./docs && mkdir ./docs
+	@#mvn package -DskipTests
+	@cp -r ./target/site/apidocs ./docs/apidocs
+	@docker build --no-cache -t retrofit-veslo/docs -f ./sphinx/Dockerfile .
+	@docker cp $$(docker create --rm retrofit-veslo/docs):/root/docs ./
+	@open ./docs/index.html
