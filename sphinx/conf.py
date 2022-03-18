@@ -49,7 +49,7 @@ from sphinx.highlighting import lexers
 needs_sphinx = '1.7'
 
 sys.path.append(os.path.abspath('extensions'))
-extensions = ['sphinx.ext.imgmath', 'sphinx.ext.extlinks', 'sphinx.ext.commonlinks']
+extensions = ['sphinx.ext.imgmath', 'sphinx.ext.extlinks', 'sphinx.ext.commonlinks', 'sphinx.ext.githubpages']
 templates_path = ['_templates']
 
 source_suffix = '.rst'
